@@ -1,0 +1,42 @@
+- user opens profile page
+- signs up
+- clicks subscribe
+- backend created rzp and local subscribtion
+- user is taken to checkout
+- payment is successful
+- rzp payment response is sent to backend
+- backend verifies it
+- backend updates the subscription status?
+
+
+---
+
+- consider 3 plans
+- standard
+    - Rs. 100/month
+    - benefits?
+
+        can see posts marked 'standard'?
+        can comment posts marked 'standard'?
+- pro
+    - Rs. 300/month
+- premium
+    - Rs. 500/month
+
+
+user_1 comes
+- chooses to custom pledge for Rs. 350
+- a new payment plan is created
+- inherits - payment plan
+
+
+---
+
+---
+
+generic benefits
+
+- visible to all "subscribers"
+- visible to public
+- all subscribers can comment
+
