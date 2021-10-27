@@ -15,7 +15,7 @@ class Post(BaseModel):
     slug = AutoSlugField(populate_from="title", allow_duplicates=True)
     content = models.OneToOneField("posts.Content", on_delete=models.CASCADE)
 
-    author = models.ForeignKey("users.User", on_delete=models.CASCADE)
+    author_user = models.ForeignKey("users.User", on_delete=models.CASCADE)
 
     visibility = models.CharField(
         max_length=16, choices=Visiblity.choices, default=Visiblity.PUBLIC
@@ -44,6 +44,6 @@ class Content(BaseModel):
 class Comment(BaseModel):
     post = models.ForeignKey("posts.Post", on_delete=models.CASCADE)
     body = models.TextField()
-    author = models.ForeignKey("users.User", on_delete=models.CASCADE)
+    author_user = models.ForeignKey("users.User", on_delete=models.CASCADE)
 
     is_published = models.BooleanField(default=True)

@@ -5,14 +5,13 @@ from django.db.models import CharField
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
+from memberships.payments.models import BankAccount
 
 from memberships.utils.models import BaseModel
 from versatileimagefield.fields import VersatileImageField
 
 
 class User(AbstractUser, BaseModel):
-    """Default user for Memberships."""
-
     # First and last name do not cover name patterns around the globe
     name = CharField(_("Name of User"), blank=True, max_length=255)
     first_name = None
@@ -37,9 +36,13 @@ class User(AbstractUser, BaseModel):
 
     def can_accept_payments(self):
         return (
-            self.bank_account.status == UserPreference.Status.LINKED
+            self.bank_accounts.filter(status=BankAccount.Status.LINKED).exists()
             and self.user_preferences.is_accepting_payments
         )
+
+    @property
+    def auth_token(self):
+        return self
 
     def will_accept(self, amount):
         return (
@@ -85,14 +88,15 @@ class Following(BaseModel):
         constraints = [
             models.UniqueConstraint(fields=["from_user", "to_user"], name="following")
         ]
-        unique_together = ("from_user", "to_user")
 
 
 class UserPreference(BaseModel):
-    user = models.OneToOneField("users.User", on_delete=models.CASCADE)
+    user = models.OneToOneField(
+        "users.User", on_delete=models.CASCADE, related_name="user_preferences"
+    )
 
     is_accepting_payments = models.BooleanField(default=True)
-    minimum_amount = MoneyField(max_digits=7, decimal_places=2)
+    minimum_amount = MoneyField(max_digits=7, decimal_places=2, default=settings.MINIMUM_PAYMENT_AMOUNT)
 
     platform_fee_percent = models.DecimalField(
         decimal_places=2, max_digits=3, default=settings.DEFAULT_PLATFORM_FEE_PERCENT

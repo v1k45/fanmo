@@ -42,7 +42,7 @@ LOCALE_PATHS = [str(ROOT_DIR / "locale")]
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {"default": env.db("DATABASE_URL")}
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
-DEFAULT_AUTO_FIELD = 'hashid_field.HashidAutoField'
+# DEFAULT_AUTO_FIELD = 'hashid_field.HashidAutoField'
 
 # URLS
 # ------------------------------------------------------------------------------
@@ -108,13 +108,6 @@ AUTH_USER_MODEL = "users.User"
 LOGIN_REDIRECT_URL = "users:redirect"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-url
 LOGIN_URL = "account_login"
-
-# Mock token authentication
-REST_AUTH_TOKEN_MODEL = "memberships.users.models.User"
-REST_AUTH_TOKEN_CREATOR = "memberships.utils.authentication.create_auth_token"
-REST_AUTH_SERIALIZERS = {
-    "TOKEN_SERIALIZER": "memberships.users.api.serializers.UserSerializer"
-}
 
 
 # PASSWORDS
@@ -305,6 +298,13 @@ REST_FRAMEWORK = {
     "EXCEPTION_HANDLER": "memberships.utils.exception_handlers.handle_drf_exception",
 }
 
+# Mock token authentication
+REST_AUTH_TOKEN_MODEL = "memberships.users.models.User"
+REST_AUTH_TOKEN_CREATOR = "memberships.utils.authentication.create_auth_token"
+REST_AUTH_SERIALIZERS = {
+    "TOKEN_SERIALIZER": "memberships.users.api.serializers.UserSerializer"
+}
+
 SPECTACULAR_SETTINGS = {
     "TITLE": "Memberships API",
     "DESCRIPTION": "",
@@ -328,6 +328,7 @@ RAZORPAY_SECRET = "FANMO_SECRET_CHANGE_ME"
 
 # business logic
 DEFAULT_PLATFORM_FEE_PERCENT = 5.00
+MINIMUM_PAYMENT_AMOUNT = 10.00
 
 
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup

@@ -27,7 +27,7 @@ class Tier(BaseModel):
     is_active = models.BooleanField(default=True)
     is_public = models.BooleanField(default=True)
 
-    seller = models.ForeignKey("users.User", on_delete=models.CASCADE)
+    seller_user = models.ForeignKey("users.User", on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -44,9 +44,9 @@ class Plan(BaseModel):
     amount = MoneyField(max_digits=7, decimal_places=2)
     external_id = models.CharField(max_length=255)
 
-    seller = models.ForeignKey("users.User", on_delete=models.CASCADE)
-    buyer = models.ForeignKey(
-        "users.User", on_delete=models.CASCADE, related_name="created_plans"
+    seller_user = models.ForeignKey("users.User", on_delete=models.CASCADE)
+    buyer_user = models.ForeignKey(
+        "users.User", on_delete=models.CASCADE, related_name="custom_plans", null=True
     )
 
     is_active = models.BooleanField(default=True)
@@ -57,7 +57,7 @@ class Plan(BaseModel):
     @classmethod
     def for_subscription(cls, amount, seller, buyer):
         tier = (
-            Tier.objects.filter(amount__lte=amount, seller=seller)
+            Tier.objects.filter(amount__lte=amount, seller_user=seller)
             .order_by("-amount")
             .first()
         )
@@ -69,8 +69,8 @@ class Plan(BaseModel):
         plan, created = cls.objects.get_or_create(
             amount=amount,
             tier=tier,
-            seller=seller,
-            created_by=seller if tier else buyer,
+            seller_user=seller,
+            buyer_user=buyer,
             defaults={"name": default_name},
         )
         if created:
@@ -121,13 +121,19 @@ class Subscription(BaseModel):
     status = FSMField(default=Status.CREATED)
     external_id = models.CharField(max_length=255)
 
-    is_active = models.BooleanField(default=False)
-    expires_at = models.DateTimeField()
+    # inception and end
+    cycle_start_at = models.DateField()
+    cycle_end_at = models.DateField()
 
-    seller = models.ForeignKey(
+    is_active = models.BooleanField(default=False)
+
+    seller_user = models.ForeignKey(
         "users.User", on_delete=models.CASCADE, related_name="subscribers"
     )
-    buyer = models.ForeignKey("users.User", on_delete=models.CASCADE)
+    buyer_user = models.ForeignKey("users.User", on_delete=models.CASCADE)
+
+    scheduled_to_cancel = models.BooleanField(default=False)
+    scheduled_to_change = models.BooleanField(default=True)
 
     def create_external(self):
         external_subscription = razorpay_client.subscription.create(
@@ -145,9 +151,12 @@ class Subscription(BaseModel):
         source=[Status.AUTHENTICATED, Status.PENDING, Status.HALTED],
         target=Status.ACTIVE,
     )
-    def activate(self):
-        self.expires_at = relativedelta(timezone.now(), months=1)
+    def activate(self, start_at):
+        self.cycle_start_at = start_at
+        self.cycle_end_at = relativedelta(start_at, months=1)
+        self.save() 
 
+    # tbd?
     @transition(field=status, source=Status.ACTIVE, target=Status.PAUSED)
     def pause(self):
         razorpay_client.subscription.post_url(
@@ -155,6 +164,7 @@ class Subscription(BaseModel):
             {"pause_at": "now"},
         )
 
+    # tbd?
     @transition(field=status, source=Status.PAUSED, target=Status.ACTIVE)
     def resume(self):
         razorpay_client.subscription.post_url(
@@ -164,17 +174,26 @@ class Subscription(BaseModel):
 
     @transition(field=status, source="*", target=Status.CANCELLED)
     def cancel(self):
-        razorpay_client.subscription.cancel(self.external_id)
+        razorpay_client.subscription.cancel(
+            self.external_id,
+            {"schedule_change_at": "cycle_end"}
+        )
+        self.scheduled_to_cancel = True
+        self.save() 
 
     @transition(field=status, source=[Status.ACTIVE], target=Status.COMPLETED)
-    def update(self, plan, schedule_at_end=True):
+    def update(self, plan):
         razorpay_client.subscription.post_url(
             f"{razorpay_client.subscription.base_url}/{self.external_id}/update",
             {
                 "plan_id": plan.external_id,
-                "schedule_change_at": "cycle_end" if schedule_at_end else "now",
+                "schedule_change_at": "cycle_end",
             },
         )
+
+        self.scheduled_to_change = True
+        self.save()
+
         new_subscription = copy.deepcopy(self)
         new_subscription.pk = None
         new_subscription.plan = plan
@@ -190,13 +209,19 @@ class Subscription(BaseModel):
         target=Status.PENDING,
     )
     def start_renewal(self):
+        """
+        Subscription is past its end time, attempt renewal
+        """ 
         pass
 
     @transition(
         field=status, source=[Status.PENDING, Status.ACTIVE], target=Status.ACTIVE
     )
     def renew(self):
-        self.expires_at = relativedelta(timezone.now(), months=1)
+        """Subscription was renewned""" 
+        self.cycle_start_at = timezone.now()
+        self.cycle_end_at = relativedelta(self.cycle_start_at, months=1)
+        self.save()
 
     @transition(
         field=status, source=[Status.PENDING, Status.ACTIVE], target=Status.HALTED

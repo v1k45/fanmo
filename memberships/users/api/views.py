@@ -1,6 +1,7 @@
 from rest_framework.decorators import action
-from rest_framework.generics import GenericAPIView
-from rest_framework.mixins import RetrieveModelMixin, UpdateModelMixin
+from rest_framework.generics import RetrieveUpdateAPIView
+from rest_framework.mixins import RetrieveModelMixin
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import GenericViewSet
 
 from memberships.users.models import User
@@ -12,11 +13,9 @@ from drf_spectacular.utils import extend_schema
 
 class UserViewSet(RetrieveModelMixin, GenericViewSet):
     serializer_class = UserSerializer
+    # only show active? 
     queryset = User.objects.all()
     lookup_field = "username"
-
-    def get_queryset(self):
-        return super().get_queryset()
 
     @extend_schema(request=None)
     @action(detail=True, methods=["POST"])
@@ -32,6 +31,7 @@ class UserViewSet(RetrieveModelMixin, GenericViewSet):
         self.request.user.unfollow(user)
         return self.detail(request, *args, **kwargs)
 
+    # create a nested viewset
     @action(detail=True, methods=["GET"])
     def followers(self, request, *args, **kwargs):
         pass
@@ -41,14 +41,9 @@ class UserViewSet(RetrieveModelMixin, GenericViewSet):
         pass
 
 
-class OwnUserAPIView(RetrieveModelMixin, UpdateModelMixin, GenericAPIView):
+class OwnUserAPIView(RetrieveUpdateAPIView):
     serializer_class = UserSerializer
+    permission_classes = [IsAuthenticated] 
 
     def get_object(self):
         return self.request.user
-
-    def get(self, request, *args, **kwargs):
-        return self.retrieve(request, *args, **kwargs)
-
-    def patch(self, request, *args, **kwargs):
-        return self.partial_update(request, *args, **kwargs)

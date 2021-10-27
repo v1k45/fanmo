@@ -37,7 +37,7 @@ class UserPreferenceSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    tiers = UserTierSerializer(many=True, read_only=True, source="public_tiers")
+    tiers = UserTierSerializer(many=True, read_only=True)
     social_links = SocialLinkSerializer()
     user_preferences = UserPreferenceSerializer()
     avatar = VersatileImageFieldSerializer("user_avatar")

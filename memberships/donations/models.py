@@ -7,22 +7,22 @@ from model_utils import Choices
 from django_fsm import FSMField, transition
 from razorpay.errors import SignatureVerificationError
 from memberships.utils.models import BaseModel
-from utils import razorpay_client
+from memberships.utils import razorpay_client
 
 
 class Donation(BaseModel):
     class Status(models.TextChoices):
         PENDING = "pending"
         FAILED = "failed"
-        COMPLETED = "completed"
+        SUCCESSFUL = "successful"
 
-    sender = models.ForeignKey("users.User", on_delete=models.SET_NULL, null=True)
-    receiver = models.ForeignKey(
+    sender_user = models.ForeignKey("users.User", on_delete=models.SET_NULL, null=True)
+    receiver_user = models.ForeignKey(
         "users.User", on_delete=models.CASCADE, related_name="received_donations"
     )
 
     name = models.CharField(max_length=30, blank=True)
-    message = models.TextField(blank=True)
+    message = models.TextField(blank=True, max_length=500)
     is_anonymous = models.BooleanField(default=False)
 
     status = FSMField(default=Status.PENDING, choices=Status.choices)

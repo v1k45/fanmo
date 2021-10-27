@@ -32,10 +32,10 @@ class Payment(BaseModel):
         "donations.Donation", on_delete=models.CASCADE, null=True
     )
 
-    seller = models.ForeignKey(
+    seller_user = models.ForeignKey(
         "users.User", on_delete=models.CASCADE, related_name="received_payments"
     )
-    buyer = models.ForeignKey("users.User", on_delete=models.CASCADE, null=True)
+    buyer_user = models.ForeignKey("users.User", on_delete=models.CASCADE, null=True)
 
     status = FSMField(default=Status.CREATED, choices=Status.choices)
     type = models.CharField(max_length=16, choices=Type.choices)
@@ -127,7 +127,6 @@ class Payout(BaseModel):
         SCHEDULED = "scheduled"
         PROCESSED = "processed"
 
-    recipient = models.ForeignKey("users.User", on_delete=models.CASCADE)
     payment = models.ForeignKey("payments.Payment", on_delete=models.CASCADE)
     status = models.CharField(
         max_length=16, choices=Status.choices, default=Status.SCHEDULED
@@ -141,7 +140,6 @@ class Payout(BaseModel):
     @classmethod
     def for_payment(cls, payment):
         payout = cls.objects.create(
-            recipient=payment.seller,
             payment=payment,
             amount=deduct_platform_fee(payment.amount, payment.seller),
         )
@@ -177,7 +175,7 @@ class BankAccount(BaseModel):
         PROCESSING = "processing"
         LINKED = "linked"
 
-    user = models.ForeignKey("users.User", on_delete=models.CASCADE)
+    beneficiary_user = models.ForeignKey("users.User", on_delete=models.CASCADE)
     status = models.CharField(
         max_length=16, choices=Status.choices, default=Status.PROCESSING
     )
