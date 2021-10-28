@@ -1,5 +1,4 @@
 from django.conf import settings
-from hashid_field.rest import HashidSerializerCharField
 from memberships.subscriptions.models import Plan, Subscription, Tier
 from memberships.users.api.serializers import UserPreviewSerializer
 from memberships.users.models import User
@@ -8,7 +7,6 @@ from djmoney.contrib.django_rest_framework import MoneyField
 
 
 class TierSerializer(serializers.ModelSerializer):
-    id = HashidSerializerCharField(read_only=True)
 
     class Meta:
         model = Tier
@@ -46,7 +44,6 @@ class TierSerializer(serializers.ModelSerializer):
 
 
 class TierPreviewSerializer(serializers.ModelSerializer):
-    id = HashidSerializerCharField(read_only=True)
 
     class Meta:
         model = Tier
@@ -54,25 +51,23 @@ class TierPreviewSerializer(serializers.ModelSerializer):
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
-    id = HashidSerializerCharField(read_only=True)
     seller = UserPreviewSerializer()
     amount = MoneyField(max_digits=7, decimal_places=2, source="plan.amount")
     tier = TierPreviewSerializer(source="plan.tier")
 
     class Meta:
         model = Subscription
-        fields = ["id", "seller", "amount", "tier", "status", "expires_at", "is_active"]
+        fields = ["id", "seller", "amount", "tier", "status", "cycle_end_at", "is_active"]
 
 
 class SubscriberSerializer(serializers.ModelSerializer):
-    id = HashidSerializerCharField(read_only=True)
     buyer = UserPreviewSerializer()
     amount = MoneyField(max_digits=7, decimal_places=2, source="plan.amount")
     tier = TierPreviewSerializer(source="plan.tier")
 
     class Meta:
         model = Subscription
-        fields = ["id", "buyer", "amount", "tier", "status", "expires_at", "is_active"]
+        fields = ["id", "buyer", "amount", "tier", "status", "cycle_end_at", "is_active"]
 
 
 class SubscriptionPaymentSerializer(serializers.ModelSerializer):
@@ -98,7 +93,6 @@ class SubscriptionPaymentSerializer(serializers.ModelSerializer):
 
 
 class SubscriptionCreateSerializer(serializers.ModelSerializer):
-    id = HashidSerializerCharField(read_only=True)
     username = serializers.SlugRelatedField(
         slug_field="username",
         queryset=User.objects.filter(is_active=True),
@@ -123,14 +117,14 @@ class SubscriptionCreateSerializer(serializers.ModelSerializer):
             "tier",
             "payment_processor",
             "payment_payload",
-            "expires_at",
+            "cycle_end_at",
         ]
         read_only_fields = [
             "seller",
             "tier",
             "payment_processor",
             "payment_payload",
-            "expires_at",
+            "cycle_end_at",
         ]
 
     def validate(self, attrs):

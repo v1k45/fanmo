@@ -1,4 +1,3 @@
-from hashid_field.rest import HashidSerializerCharField
 from rest_framework import serializers
 
 from memberships.posts.models import Content, Post
@@ -11,7 +10,6 @@ class ContentSerializer(serializers.ModelSerializer):
 
 
 class PostSerializer(serializers.ModelSerializer):
-    id = HashidSerializerCharField(read_only=True)
     content = ContentSerializer()
 
     class Meta:

@@ -1,7 +1,6 @@
 from django.conf import settings
 
 from djmoney.contrib.django_rest_framework.fields import MoneyField
-from hashid_field.rest import HashidSerializerCharField
 from rest_framework import serializers
 
 from memberships.donations.models import Donation
@@ -34,7 +33,6 @@ class DonationPaymentSerializer(serializers.ModelSerializer):
 
 
 class DonationCreateSerializer(serializers.ModelSerializer):
-    id = HashidSerializerCharField(read_only=True)
     username = serializers.SlugRelatedField(
         slug_field="username",
         queryset=User.objects.filter(is_active=True),
@@ -81,7 +79,6 @@ class DonationCreateSerializer(serializers.ModelSerializer):
 
 
 class DonationSerializer(serializers.ModelSerializer):
-    id = HashidSerializerCharField(read_only=True)
     receiver = UserPreviewSerializer()
 
     class Meta:

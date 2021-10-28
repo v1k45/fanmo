@@ -6,11 +6,8 @@ from memberships.users.models import SocialLink, User, UserPreference
 
 from versatileimagefield.serializers import VersatileImageFieldSerializer
 
-from hashid_field.rest import HashidSerializerCharField
-
 
 class UserTierSerializer(serializers.ModelSerializer):
-    id = HashidSerializerCharField()
     amount = MoneyField(max_digits=7, decimal_places=2, source="payment_plan.amount")
 
     class Meta:

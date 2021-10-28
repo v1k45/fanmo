@@ -1,4 +1,3 @@
-from hashid_field.rest import HashidSerializerCharField
 from rest_framework import serializers
 from memberships.donations.api.serializers import DonationSerializer
 
@@ -20,7 +19,6 @@ class RazorpayResponseSerializer(serializers.Serializer):
 
 
 class PaymentProcessingSerializer(serializers.ModelSerializer):
-    id = HashidSerializerCharField(read_only=True)
     processor = serializers.ChoiceField(
         choices=["razorpay"], default="razorpay", write_only=True
     )
@@ -60,7 +58,6 @@ class PaymentProcessingSerializer(serializers.ModelSerializer):
 
 
 class PaymentSerializer(serializers.ModelSerializer):
-    id = HashidSerializerCharField(read_only=True)
     seller = UserPreviewSerializer()
     donation = DonationSerializer()
     subscription = SubscriptionSerializer()
@@ -79,7 +76,6 @@ class PaymentSerializer(serializers.ModelSerializer):
 
 
 class PaymentPreviewSerializer(serializers.ModelSerializer):
-    id = HashidSerializerCharField(read_only=True)
     buyer = UserPreviewSerializer()
 
     class Meta:
@@ -88,7 +84,6 @@ class PaymentPreviewSerializer(serializers.ModelSerializer):
 
 
 class PayoutSerializer(serializers.ModelSerializer):
-    id = HashidSerializerCharField(read_only=True)
     payment = PaymentPreviewSerializer()
 
     class Meta:
