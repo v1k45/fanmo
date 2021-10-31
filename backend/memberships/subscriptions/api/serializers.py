@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.http.request import validate_host
 from memberships.subscriptions.models import Plan, Subscription, Tier
 from memberships.users.api.serializers import UserPreviewSerializer
 from memberships.users.models import User
@@ -7,7 +8,6 @@ from djmoney.contrib.django_rest_framework import MoneyField
 
 
 class TierSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Tier
         fields = [
@@ -24,50 +24,58 @@ class TierSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = self.context["request"].user
-
-        payment_plan_data = {
-            "name": f"{validated_data['name']} ({validated_data['amount']}) - {user.display_name}",
-            "amount": validated_data["amount"],
-            "owner": user,
-            "created_by": user,
-        }
-        payment_plan = Plan.objects.create(**payment_plan_data)
-
-        tier = super().create(
-            {**validated_data, "owner": user, "payment_plan": payment_plan}
+        validated_data["seller_user"] = user
+        tier = super().create(validated_data)
+        payment_plan = Plan.objects.create(
+            name=f"{validated_data['name']} ({validated_data['amount']}) - {user.display_name}",
+            amount=validated_data["amount"],
+            seller_user=user,
+            tier=tier,
         )
-
-        payment_plan.tier = tier
         payment_plan.create_external()
-
         return tier
 
 
 class TierPreviewSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Tier
         fields = ["id", "name", "amount"]
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
-    seller = UserPreviewSerializer()
+    seller_user = UserPreviewSerializer()
     amount = MoneyField(max_digits=7, decimal_places=2, source="plan.amount")
     tier = TierPreviewSerializer(source="plan.tier")
 
     class Meta:
         model = Subscription
-        fields = ["id", "seller", "amount", "tier", "status", "cycle_end_at", "is_active"]
+        fields = [
+            "id",
+            "seller_user",
+            "amount",
+            "tier",
+            "status",
+            "cycle_end_at",
+            "is_active",
+        ]
 
 
 class SubscriberSerializer(serializers.ModelSerializer):
-    buyer = UserPreviewSerializer()
+    buyer_user = UserPreviewSerializer()
     amount = MoneyField(max_digits=7, decimal_places=2, source="plan.amount")
     tier = TierPreviewSerializer(source="plan.tier")
 
     class Meta:
         model = Subscription
-        fields = ["id", "buyer", "amount", "tier", "status", "cycle_end_at", "is_active"]
+        fields = [
+            "id",
+            "buyer_user",
+            "amount",
+            "tier",
+            "status",
+            "cycle_end_at",
+            "is_active",
+        ]
 
 
 class SubscriptionPaymentSerializer(serializers.ModelSerializer):
@@ -96,16 +104,20 @@ class SubscriptionCreateSerializer(serializers.ModelSerializer):
     username = serializers.SlugRelatedField(
         slug_field="username",
         queryset=User.objects.filter(is_active=True),
-        source="seller",
+        source="seller_user",
         write_only=True,
     )
-    amount = MoneyField(max_digits=7, decimal_places=2, source="plan.amount")
+    amount = MoneyField(
+        max_digits=7, decimal_places=2, source="plan.amount", default_currency="INR"
+    )
 
-    seller = UserPreviewSerializer(read_only=True)
+    seller_user = UserPreviewSerializer(read_only=True)
     tier = TierPreviewSerializer(source="plan.tier", read_only=True)
 
     payment_processor = serializers.CharField(read_only=True, default="razorpay")
     payment_payload = SubscriptionPaymentSerializer(source="*", read_only=True)
+
+    requires_payment = serializers.SerializerMethodField()
 
     class Meta:
         model = Subscription
@@ -113,42 +125,64 @@ class SubscriptionCreateSerializer(serializers.ModelSerializer):
             "id",
             "username",
             "amount",
-            "seller",
+            "status",
+            "seller_user",
             "tier",
             "payment_processor",
             "payment_payload",
             "cycle_end_at",
         ]
         read_only_fields = [
-            "seller",
+            "status",
+            "seller_user",
             "tier",
             "payment_processor",
             "payment_payload",
             "cycle_end_at",
+            "requires_payment",
         ]
 
+    def get_requires_payment(self, subscription):
+        return subscription.status == Subscription.Status.CREATED
+
     def validate(self, attrs):
-        seller = attrs["seller"]
-        if not seller.can_accept_payments():
+        seller_user = attrs["seller_user"]
+        if not seller_user.can_accept_payments():
             raise serializers.ValidationError(
-                f"{seller.name} is currently not accepting payments.",
+                f"{seller_user.display_name} is currently not accepting payments.",
                 "cannot_accept_payments",
             )
 
-        min_amount = seller.user_preferences.minimum_amount
-        if min_amount > attrs["amount"]:
+        amount = attrs["plan"]["amount"]
+        min_amount = seller_user.user_preferences.minimum_amount
+        if amount < min_amount:
             raise serializers.ValidationError(
                 f"Amount cannot be lower than {min_amount.amount}",
                 "min_payment_account",
             )
+
+        try:
+            existing_subscription = Subscription.get_current(
+                seller_user, self.context["request"].user
+            )
+            if existing_subscription.plan.amount == amount:
+                raise serializers.ValidationError(
+                    f"You are already subscribed to {seller_user.display_name} using this amount.",
+                    "already_subscribed",
+                )
+        except Subscription.DoesNotExist:
+            print("new sub")
+            pass
+
+        # todo: prevent recent reordering?
         return attrs
 
     def create(self, validated_data):
         buyer = self.context["request"].user
         payment_plan = Plan.for_subscription(
             validated_data["plan"]["amount"],
-            validated_data["seller"],
+            validated_data["seller_user"],
             buyer,
         )
-        subscription = payment_plan.subscribe(buyer)
-        return subscription
+        # upgrade to another active plan?
+        return payment_plan.subscribe()

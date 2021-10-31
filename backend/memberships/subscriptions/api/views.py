@@ -7,6 +7,7 @@ from memberships.subscriptions.api.serializers import (
     SubscriptionSerializer,
     TierSerializer,
 )
+from memberships.subscriptions.models import Subscription
 
 
 class TierViewSet(
@@ -23,29 +24,14 @@ class SubscriptionViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return self.request.user.subscriptions.all()
+        return self.request.user.subscriptions.exclude(
+            status=Subscription.Status.CREATED
+        )
 
     def get_serializer_class(self):
         if self.action == "create":
             return SubscriptionCreateSerializer
         return SubscriptionSerializer
-
-    # do we need pause/resume?
-    @extend_schema(request=None)
-    @action(methods=["POST"], detail=True)
-    def pause(self, request, *args, **kwargs):
-        subscription = self.get_object()
-        subscription.pause()
-        subscription.save()
-        return self.retrieve(request, *args, **kwargs)
-
-    @extend_schema(request=None)
-    @action(methods=["POST"], detail=True)
-    def resume(self, request, *args, **kwargs):
-        subscription = self.get_object()
-        subscription.resume()
-        subscription.save()
-        return self.retrieve(request, *args, **kwargs)
 
     @extend_schema(request=None)
     @action(methods=["POST"], detail=True)

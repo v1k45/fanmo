@@ -12,107 +12,203 @@ import versatileimagefield.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0001_initial'),
+        ("users", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='user',
-            options={'default_related_name': 'users', 'ordering': ('-created_at',), 'verbose_name': 'user', 'verbose_name_plural': 'users'},
+            name="user",
+            options={
+                "default_related_name": "users",
+                "ordering": ("-created_at",),
+                "verbose_name": "user",
+                "verbose_name_plural": "users",
+            },
         ),
         migrations.AddField(
-            model_name='user',
-            name='about',
+            model_name="user",
+            name="about",
             field=models.TextField(blank=True),
         ),
         migrations.AddField(
-            model_name='user',
-            name='avatar',
-            field=versatileimagefield.fields.VersatileImageField(blank=True, upload_to='profiles/avatars/'),
+            model_name="user",
+            name="avatar",
+            field=versatileimagefield.fields.VersatileImageField(
+                blank=True, upload_to="profiles/avatars/"
+            ),
         ),
         migrations.AddField(
-            model_name='user',
-            name='cover',
-            field=versatileimagefield.fields.VersatileImageField(blank=True, upload_to='profiles/covers/'),
+            model_name="user",
+            name="cover",
+            field=versatileimagefield.fields.VersatileImageField(
+                blank=True, upload_to="profiles/covers/"
+            ),
         ),
         migrations.AddField(
-            model_name='user',
-            name='created_at',
-            field=models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now),
+            model_name="user",
+            name="created_at",
+            field=models.DateTimeField(
+                auto_now_add=True, default=django.utils.timezone.now
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='user',
-            name='follower_count',
+            model_name="user",
+            name="follower_count",
             field=models.PositiveSmallIntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='user',
-            name='subscriber_count',
+            model_name="user",
+            name="subscriber_count",
             field=models.PositiveSmallIntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='user',
-            name='updated_at',
+            model_name="user",
+            name="updated_at",
             field=models.DateTimeField(auto_now=True),
         ),
         migrations.AlterField(
-            model_name='user',
-            name='id',
-            field=hashid_field.field.HashidAutoField(alphabet='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890', auto_created=True, min_length=7, prefix='', primary_key=True, serialize=False, verbose_name='ID'),
+            model_name="user",
+            name="id",
+            field=hashid_field.field.HashidAutoField(
+                alphabet="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
+                auto_created=True,
+                min_length=7,
+                prefix="",
+                primary_key=True,
+                serialize=False,
+                verbose_name="ID",
+            ),
         ),
         migrations.AlterModelTable(
-            name='user',
-            table='users',
+            name="user",
+            table="users",
         ),
         migrations.CreateModel(
-            name='UserPreference',
+            name="UserPreference",
             fields=[
-                ('id', hashid_field.field.HashidAutoField(alphabet='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890', auto_created=True, min_length=7, prefix='', primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('is_accepting_payments', models.BooleanField(default=True)),
-                ('minimum_amount_currency', djmoney.models.fields.CurrencyField(choices=[('INR', 'Indian Rupee')], default='INR', editable=False, max_length=3)),
-                ('minimum_amount', djmoney.models.fields.MoneyField(decimal_places=2, max_digits=7)),
-                ('platform_fee_percent', models.DecimalField(decimal_places=2, default=5.0, max_digits=3)),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='user_preferences', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    hashid_field.field.HashidAutoField(
+                        alphabet="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
+                        auto_created=True,
+                        min_length=7,
+                        prefix="",
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("is_accepting_payments", models.BooleanField(default=True)),
+                (
+                    "minimum_amount_currency",
+                    djmoney.models.fields.CurrencyField(
+                        choices=[("INR", "Indian Rupee")],
+                        default="INR",
+                        editable=False,
+                        max_length=3,
+                    ),
+                ),
+                (
+                    "minimum_amount",
+                    djmoney.models.fields.MoneyField(decimal_places=2, max_digits=7),
+                ),
+                (
+                    "platform_fee_percent",
+                    models.DecimalField(decimal_places=2, default=5.0, max_digits=3),
+                ),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="user_preferences",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'db_table': 'user_preferences',
-                'ordering': ('-created_at',),
-                'abstract': False,
-                'default_related_name': 'user_preferences',
+                "db_table": "user_preferences",
+                "ordering": ("-created_at",),
+                "abstract": False,
+                "default_related_name": "user_preferences",
             },
         ),
         migrations.CreateModel(
-            name='SocialLink',
+            name="SocialLink",
             fields=[
-                ('id', hashid_field.field.HashidAutoField(alphabet='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890', auto_created=True, min_length=7, prefix='', primary_key=True, serialize=False, verbose_name='ID')),
-                ('website_url', models.URLField(blank=True)),
-                ('youtube_url', models.URLField(blank=True)),
-                ('facebook_url', models.URLField(blank=True)),
-                ('instagram_url', models.URLField(blank=True)),
-                ('twitter_url', models.URLField(blank=True)),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='social_links', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    hashid_field.field.HashidAutoField(
+                        alphabet="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
+                        auto_created=True,
+                        min_length=7,
+                        prefix="",
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("website_url", models.URLField(blank=True)),
+                ("youtube_url", models.URLField(blank=True)),
+                ("facebook_url", models.URLField(blank=True)),
+                ("instagram_url", models.URLField(blank=True)),
+                ("twitter_url", models.URLField(blank=True)),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="social_links",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Following',
+            name="Following",
             fields=[
-                ('id', hashid_field.field.HashidAutoField(alphabet='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890', auto_created=True, min_length=7, prefix='', primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('from_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='followers', to=settings.AUTH_USER_MODEL)),
-                ('to_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='followings', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    hashid_field.field.HashidAutoField(
+                        alphabet="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
+                        auto_created=True,
+                        min_length=7,
+                        prefix="",
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "from_user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="followers",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "to_user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="followings",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'db_table': 'followings',
-                'ordering': ('-created_at',),
-                'default_related_name': 'followings',
+                "db_table": "followings",
+                "ordering": ("-created_at",),
+                "default_related_name": "followings",
             },
         ),
         migrations.AddConstraint(
-            model_name='following',
-            constraint=models.UniqueConstraint(fields=('from_user', 'to_user'), name='following'),
+            model_name="following",
+            constraint=models.UniqueConstraint(
+                fields=("from_user", "to_user"), name="following"
+            ),
         ),
     ]

@@ -12,6 +12,7 @@ def process_razorpay_webhook(webhook_message_id):
     webhook_message = WebhookMessage.objects.get(pk=webhook_message_id)
 
     handlers = {
+        "subscription.authenticated": subscription_authenticated,
         "subscription.charged": subscription_charged,
         "order.paid": order_paid,
     }
@@ -21,6 +22,10 @@ def process_razorpay_webhook(webhook_message_id):
 
     webhook_message.is_processed = True
     webhook_message.save()
+
+
+def subscription_authenticated(payload):
+    pass
 
 
 def subscription_charged(payload):

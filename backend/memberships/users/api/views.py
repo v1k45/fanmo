@@ -13,7 +13,7 @@ from drf_spectacular.utils import extend_schema
 
 class UserViewSet(RetrieveModelMixin, GenericViewSet):
     serializer_class = UserSerializer
-    # only show active? 
+    # only show active?
     queryset = User.objects.all()
     lookup_field = "username"
 
@@ -43,7 +43,7 @@ class UserViewSet(RetrieveModelMixin, GenericViewSet):
 
 class OwnUserAPIView(RetrieveUpdateAPIView):
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated] 
+    permission_classes = [IsAuthenticated]
 
     def get_object(self):
         return self.request.user

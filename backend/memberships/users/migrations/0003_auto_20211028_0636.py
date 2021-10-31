@@ -8,33 +8,43 @@ import djmoney.models.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0002_auto_20211027_0728'),
+        ("users", "0002_auto_20211027_0728"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='following',
-            name='id',
-            field=models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID'),
+            model_name="following",
+            name="id",
+            field=models.AutoField(
+                auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+            ),
         ),
         migrations.AlterField(
-            model_name='sociallink',
-            name='id',
-            field=models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID'),
+            model_name="sociallink",
+            name="id",
+            field=models.AutoField(
+                auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+            ),
         ),
         migrations.AlterField(
-            model_name='user',
-            name='id',
-            field=models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID'),
+            model_name="user",
+            name="id",
+            field=models.AutoField(
+                auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+            ),
         ),
         migrations.AlterField(
-            model_name='userpreference',
-            name='id',
-            field=models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID'),
+            model_name="userpreference",
+            name="id",
+            field=models.AutoField(
+                auto_created=True, primary_key=True, serialize=False, verbose_name="ID"
+            ),
         ),
         migrations.AlterField(
-            model_name='userpreference',
-            name='minimum_amount',
-            field=djmoney.models.fields.MoneyField(decimal_places=2, default=Decimal('10.0'), max_digits=7),
+            model_name="userpreference",
+            name="minimum_amount",
+            field=djmoney.models.fields.MoneyField(
+                decimal_places=2, default=Decimal("10.0"), max_digits=7
+            ),
         ),
     ]

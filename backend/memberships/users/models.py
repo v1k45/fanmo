@@ -11,7 +11,7 @@ from memberships.utils.models import BaseModel
 from versatileimagefield.fields import VersatileImageField
 
 
-class User(AbstractUser, BaseModel):
+class User(BaseModel, AbstractUser):
     # First and last name do not cover name patterns around the globe
     name = CharField(_("Name of User"), blank=True, max_length=255)
     first_name = None
@@ -31,6 +31,7 @@ class User(AbstractUser, BaseModel):
     def public_tiers(self):
         return self.tiers.filter(is_public=True)
 
+    @property
     def display_name(self):
         return self.name or self.username
 
@@ -96,7 +97,9 @@ class UserPreference(BaseModel):
     )
 
     is_accepting_payments = models.BooleanField(default=True)
-    minimum_amount = MoneyField(max_digits=7, decimal_places=2, default=settings.MINIMUM_PAYMENT_AMOUNT)
+    minimum_amount = MoneyField(
+        max_digits=7, decimal_places=2, default=settings.MINIMUM_PAYMENT_AMOUNT
+    )
 
     platform_fee_percent = models.DecimalField(
         decimal_places=2, max_digits=3, default=settings.DEFAULT_PLATFORM_FEE_PERCENT

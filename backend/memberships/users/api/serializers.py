@@ -8,7 +8,7 @@ from versatileimagefield.serializers import VersatileImageFieldSerializer
 
 
 class UserTierSerializer(serializers.ModelSerializer):
-    amount = MoneyField(max_digits=7, decimal_places=2, source="payment_plan.amount")
+    # amount = MoneyField(max_digits=7, decimal_places=2, source="plan.amount")
 
     class Meta:
         model = Tier

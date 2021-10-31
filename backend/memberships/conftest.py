@@ -19,4 +19,3 @@ def user() -> User:
 @pytest.fixture
 def api_client():
     return APIClient()
- 

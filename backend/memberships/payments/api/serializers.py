@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from memberships.donations.api.serializers import DonationSerializer
 
-from memberships.payments.models import Payment, Payout
+from memberships.payments.models import Payment, Payout, BankAccount
 from memberships.subscriptions.api.serializers import SubscriptionSerializer
 from memberships.users.api.serializers import UserPreviewSerializer
 
@@ -89,3 +89,23 @@ class PayoutSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payout
         fields = ["id", "amount", "status", "payment", "created_at"]
+
+
+class BankAccountSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BankAccount
+        fields = [
+            "id",
+            "status",
+            "account_name",
+            "mobile_number",
+            "account_type",
+            "beneficiary_name",
+            "ifsc",
+            "created_at",
+        ]
+        read_only_fields = ["status", "created_at"]
+
+    def create(self, validated_data):
+        validated_data["beneficiary_user"] = self.context["request"].user
+        return super().create(validated_data)

@@ -8,26 +8,39 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='WebhookMessage',
+            name="WebhookMessage",
             fields=[
-                ('id', hashid_field.field.HashidAutoField(alphabet='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890', auto_created=True, min_length=7, prefix='', primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('sender', models.CharField(choices=[('razorpay', 'Razorpay')], max_length=15)),
-                ('payload', models.JSONField()),
-                ('is_processed', models.BooleanField(default=False)),
-                ('external_id', models.CharField(max_length=255, unique=True)),
+                (
+                    "id",
+                    hashid_field.field.HashidAutoField(
+                        alphabet="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
+                        auto_created=True,
+                        min_length=7,
+                        prefix="",
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "sender",
+                    models.CharField(choices=[("razorpay", "Razorpay")], max_length=15),
+                ),
+                ("payload", models.JSONField()),
+                ("is_processed", models.BooleanField(default=False)),
+                ("external_id", models.CharField(max_length=255, unique=True)),
             ],
             options={
-                'db_table': 'webhook_messages',
-                'ordering': ('-created_at',),
-                'abstract': False,
-                'default_related_name': 'webhook_messages',
+                "db_table": "webhook_messages",
+                "ordering": ("-created_at",),
+                "abstract": False,
+                "default_related_name": "webhook_messages",
             },
         ),
     ]

@@ -11,7 +11,7 @@ from memberships.users.models import User
 class DonationPaymentSerializer(serializers.ModelSerializer):
     key = serializers.SerializerMethodField()
     order_id = serializers.CharField(source="external_id")
-    name = serializers.CharField(source="payment_plan.name")
+    name = serializers.CharField(source="receiver_user.display_name")
     prefill = serializers.SerializerMethodField()
     notes = serializers.SerializerMethodField()
 

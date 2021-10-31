@@ -42,7 +42,7 @@ LOCALE_PATHS = [str(ROOT_DIR / "locale")]
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 DATABASES = {"default": env.db("DATABASE_URL")}
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
-DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # URLS
 # ------------------------------------------------------------------------------
@@ -74,14 +74,13 @@ THIRD_PARTY_APPS = [
     "corsheaders",
     "drf_spectacular",
     "djmoney",
-    "versatileimagefield", 
+    "versatileimagefield",
 ]
 
 LOCAL_APPS = [
     "memberships.users.apps.UsersConfig",
     "memberships.subscriptions.apps.SubscriptionsConfig",
     "memberships.posts.apps.PostsConfig",
- 
     "memberships.payments",
     "memberships.donations",
     "memberships.webhooks",
@@ -216,11 +215,13 @@ FIXTURE_DIRS = (str(APPS_DIR / "fixtures"),)
 # https://docs.djangoproject.com/en/dev/ref/settings/#session-cookie-httponly
 SESSION_COOKIE_HTTPONLY = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-httponly
-CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_HTTPONLY = False
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-browser-xss-filter
 SECURE_BROWSER_XSS_FILTER = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#x-frame-options
 X_FRAME_OPTIONS = "DENY"
+CSRF_COOKIE_SAMESITE = "Strict"
+SESSION_COOKIE_SAMESITE = "Strict"
 
 # EMAIL
 # ------------------------------------------------------------------------------
@@ -267,21 +268,18 @@ LOGGING = {
 
 # django-allauth
 # ------------------------------------------------------------------------------
+# https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_ALLOW_REGISTRATION = env.bool("DJANGO_ACCOUNT_ALLOW_REGISTRATION", True)
-# https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_AUTHENTICATION_METHOD = "username"
-# https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_EMAIL_REQUIRED = True
-# https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_EMAIL_VERIFICATION = "optional"
-# https://django-allauth.readthedocs.io/en/latest/configuration.html
 ACCOUNT_ADAPTER = "memberships.users.adapters.AccountAdapter"
-# https://django-allauth.readthedocs.io/en/latest/configuration.html
 SOCIALACCOUNT_ADAPTER = "memberships.users.adapters.SocialAccountAdapter"
+ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
 
 # django-rest-framework
 # -------------------------------------------------------------------------------
-# django-rest-framework - https://www.django-rest-framework.org/api-guide/settings/
+# https://www.django-rest-framework.org/api-guide/settings/
 REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
@@ -296,6 +294,7 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 100,
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "EXCEPTION_HANDLER": "memberships.utils.exception_handlers.handle_drf_exception",
+    "TEST_REQUEST_DEFAULT_FORMAT": "json",
 }
 
 # Mock token authentication
@@ -317,8 +316,9 @@ SPECTACULAR_SETTINGS = {
 
 
 # money - https://github.com/django-money/django-money
-CURRENCIES = ('INR', )
+CURRENCIES = ("INR",)
 from moneyed import INR
+
 DEFAULT_CURRENCY = INR
 
 # payments
@@ -336,13 +336,13 @@ CORS_URLS_REGEX = r"^/api/.*$"
 
 # django-versatileimagefield - https://github.com/respondcreate/django-versatileimagefield
 VERSATILEIMAGEFIELD_RENDITION_KEY_SETS = {
-    'user_avatar': [
-        ('full', 'url'),
+    "user_avatar": [
+        ("full", "url"),
     ],
-    'user_cover': [
-        ('full', 'url'),
+    "user_cover": [
+        ("full", "url"),
     ],
-    'tier_cover': [
-        ('full', 'url'),
+    "tier_cover": [
+        ("full", "url"),
     ],
 }

@@ -5,6 +5,7 @@ from django.db import models
 from django_extensions.db.fields import RandomCharField
 from django_fsm import FSMField
 from djmoney.models.fields import MoneyField
+
 from memberships.donations.models import Donation
 from memberships.subscriptions.models import Subscription
 
@@ -68,7 +69,13 @@ class Payment(BaseModel):
 
     @classmethod
     def capture_subscription(cls, payload):
-        razorpay_client.utils.verify_subscription_payment_signature(payload)
+        payload.update(
+            {
+                "razorpay_order_id": payload["razorpay_payment_id"],
+                "razorpay_payment_id": payload["razorpay_subscription_id"],
+            }
+        )
+        razorpay_client.utility.verify_payment_signature(payload)
 
         subscription = Subscription.objects.select_for_update().get(
             external_id=payload["razorpay_subscription_id"]
@@ -79,23 +86,23 @@ class Payment(BaseModel):
             subscription=subscription,
             amount=subscription.plan.amount,
             external_id=payload["razorpay_payment_id"],
-            seller=subscription.seller,
-            buyer=subscription.buyer,
-            defaults={"status": Payment.Status.CAPTURED},
+            seller_user=subscription.seller_user,
+            buyer_user=subscription.buyer_user,
+            defaults={"status": Payment.Status.AUTHORIZED},
         )
 
         # fetch subscription?
         if _created:
-            subscription.activate()
+            subscription.authenticate()
             subscription.save()
 
         # in background?
-        Payout.for_payment(payment)
+        # Payout.for_payment(payment)
         return payment
 
     @classmethod
     def capture_donation(cls, payload):
-        razorpay_client.utils.verify_payment_signature(payload)
+        razorpay_client.utility.verify_payment_signature(payload)
 
         donation = Donation.objects.get(external_id=payload["razorpay_order_id"])
 

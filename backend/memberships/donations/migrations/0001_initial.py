@@ -18,26 +18,74 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Donation',
+            name="Donation",
             fields=[
-                ('id', hashid_field.field.HashidAutoField(alphabet='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890', auto_created=True, min_length=7, prefix='', primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('name', models.CharField(blank=True, max_length=30)),
-                ('message', models.TextField(blank=True, max_length=500)),
-                ('is_anonymous', models.BooleanField(default=False)),
-                ('status', django_fsm.FSMField(choices=[('pending', 'Pending'), ('failed', 'Failed'), ('successful', 'Successful')], default='pending', max_length=50)),
-                ('amount_currency', djmoney.models.fields.CurrencyField(choices=[('INR', 'Indian Rupee')], default='INR', editable=False, max_length=3)),
-                ('amount', djmoney.models.fields.MoneyField(decimal_places=2, max_digits=7)),
-                ('external_id', models.CharField(max_length=12)),
-                ('receiver_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='received_donations', to=settings.AUTH_USER_MODEL)),
-                ('sender_user', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='donations', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    hashid_field.field.HashidAutoField(
+                        alphabet="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890",
+                        auto_created=True,
+                        min_length=7,
+                        prefix="",
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("name", models.CharField(blank=True, max_length=30)),
+                ("message", models.TextField(blank=True, max_length=500)),
+                ("is_anonymous", models.BooleanField(default=False)),
+                (
+                    "status",
+                    django_fsm.FSMField(
+                        choices=[
+                            ("pending", "Pending"),
+                            ("failed", "Failed"),
+                            ("successful", "Successful"),
+                        ],
+                        default="pending",
+                        max_length=50,
+                    ),
+                ),
+                (
+                    "amount_currency",
+                    djmoney.models.fields.CurrencyField(
+                        choices=[("INR", "Indian Rupee")],
+                        default="INR",
+                        editable=False,
+                        max_length=3,
+                    ),
+                ),
+                (
+                    "amount",
+                    djmoney.models.fields.MoneyField(decimal_places=2, max_digits=7),
+                ),
+                ("external_id", models.CharField(max_length=12)),
+                (
+                    "receiver_user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="received_donations",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
+                (
+                    "sender_user",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        related_name="donations",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'db_table': 'donations',
-                'ordering': ('-created_at',),
-                'abstract': False,
-                'default_related_name': 'donations',
+                "db_table": "donations",
+                "ordering": ("-created_at",),
+                "abstract": False,
+                "default_related_name": "donations",
             },
         ),
     ]

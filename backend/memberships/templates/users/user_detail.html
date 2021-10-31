@@ -30,5 +30,24 @@
 <!-- End Action buttons -->
 {% endif %}
 
+<!-- subscriptions? -->
+<div class="container">
+{% for tier in object.tiers.all %}
+  <div class="row">
+    <div class="col-md-4">
+      {{ tier.name }}
+    </div>
+    <div class="col-md-4">
+      {{ tier.amount }}
+    </div>
+    <div class="col-md-4">
+      <button onclick="subscribe('{{ object.username }}', {{ tier.amount.amount }})">
+        Subscribe
+      </button>
+    </div>
+  </div>
+{% endfor %}
+</div>
+
 </div>
 {% endblock content %}

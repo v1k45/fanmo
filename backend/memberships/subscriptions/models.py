@@ -1,4 +1,5 @@
 import copy
+from datetime import time
 from dateutil.relativedelta import relativedelta
 
 from django.db import models
@@ -78,12 +79,25 @@ class Plan(BaseModel):
 
         return plan
 
-    def subscribe(self, subscriber):
+    def subscribe(self):
+        # update subscription if it already exists.
+        try:
+            existing_subscription = Subscription.get_current(
+                self.seller_user, self.buyer_user
+            )
+            updated_subscription = existing_subscription.update(self)
+            existing_subscription.save()
+            return updated_subscription
+        except Subscription.DoesNotExist:
+            pass
+
         subscription = Subscription.objects.create(
             plan=self,
             status=Subscription.Status.CREATED,
-            subscriber=subscriber,
-            expires_at=timezone.now() + relativedelta(month=1),
+            seller_user=self.seller_user,
+            buyer_user=self.buyer_user,
+            cycle_start_at=timezone.now(),
+            cycle_end_at=timezone.now() + relativedelta(months=1),
         )
         subscription.create_external()
         return subscription
@@ -122,8 +136,8 @@ class Subscription(BaseModel):
     external_id = models.CharField(max_length=255)
 
     # inception and end
-    cycle_start_at = models.DateField()
-    cycle_end_at = models.DateField()
+    cycle_start_at = models.DateTimeField()
+    cycle_end_at = models.DateTimeField()
 
     is_active = models.BooleanField(default=False)
 
@@ -148,13 +162,23 @@ class Subscription(BaseModel):
 
     @transition(
         field=status,
+        source=Status.CREATED,
+        target=Status.AUTHENTICATED,
+    )
+    def authenticate(self):
+        # auto activate when we have a capture t
+        pass
+
+    @transition(
+        field=status,
         source=[Status.AUTHENTICATED, Status.PENDING, Status.HALTED],
         target=Status.ACTIVE,
     )
-    def activate(self, start_at):
-        self.cycle_start_at = start_at
-        self.cycle_end_at = relativedelta(start_at, months=1)
-        self.save() 
+    def activate(self):
+        self.cycle_start_at = timezone.now()
+        self.cycle_end_at = timezone.now() + relativedelta(timezone.now(), months=1)
+        self.is_active = True
+        self.save()
 
     # tbd?
     @transition(field=status, source=Status.ACTIVE, target=Status.PAUSED)
@@ -175,29 +199,47 @@ class Subscription(BaseModel):
     @transition(field=status, source="*", target=Status.CANCELLED)
     def cancel(self):
         razorpay_client.subscription.cancel(
-            self.external_id,
-            {"schedule_change_at": "cycle_end"}
+            self.external_id, {"schedule_change_at": "cycle_end"}
         )
         self.scheduled_to_cancel = True
-        self.save() 
+        self.save()
 
-    @transition(field=status, source=[Status.ACTIVE], target=Status.COMPLETED)
+        # todo
+        # update active subscription to cancel update
+
     def update(self, plan):
-        razorpay_client.subscription.post_url(
-            f"{razorpay_client.subscription.base_url}/{self.external_id}/update",
+        # todo
+        # when using upi, subscription cannot be updated
+        # create a new one
+        # and schedule current one for cancellation only after new one is authorized.
+
+        # todo
+        # if subscription is scheduled to cancel
+        # create a new one
+
+        subscription_update_url = (
+            f"{razorpay_client.subscription.base_url}/{self.external_id}"
+        )
+        razorpay_client.subscription.patch_url(
+            subscription_update_url,
             {
                 "plan_id": plan.external_id,
                 "schedule_change_at": "cycle_end",
             },
         )
-
         self.scheduled_to_change = True
         self.save()
 
-        new_subscription = copy.deepcopy(self)
-        new_subscription.pk = None
-        new_subscription.plan = plan
-        new_subscription.status = self.Status.AUTHENTICATED
+        new_subscription = Subscription(
+            plan=plan,
+            status=Subscription.Status.AUTHENTICATED,
+            # pad time to day end?
+            cycle_start_at=self.cycle_end_at,
+            cycle_end_at=self.cycle_end_at + relativedelta(months=1),
+            buyer_user=self.buyer_user,
+            seller_user=self.seller_user,
+            external_id=self.external_id,
+        )
         new_subscription.save()
         return new_subscription
 
@@ -211,14 +253,14 @@ class Subscription(BaseModel):
     def start_renewal(self):
         """
         Subscription is past its end time, attempt renewal
-        """ 
+        """
         pass
 
     @transition(
         field=status, source=[Status.PENDING, Status.ACTIVE], target=Status.ACTIVE
     )
     def renew(self):
-        """Subscription was renewned""" 
+        """Subscription was renewned"""
         self.cycle_start_at = timezone.now()
         self.cycle_end_at = relativedelta(self.cycle_start_at, months=1)
         self.save()
@@ -228,3 +270,13 @@ class Subscription(BaseModel):
     )
     def halt(self):
         pass
+
+    @classmethod
+    def get_current(cls, seller_user, buyer_user):
+        return cls.objects.get(
+            seller_user=seller_user,
+            buyer_user=buyer_user,
+            cycle_start_at__lte=timezone.now(),
+            cycle_end_at__gte=timezone.now(),
+            status__in=[Subscription.Status.ACTIVE, Subscription.Status.AUTHENTICATED],
+        )
