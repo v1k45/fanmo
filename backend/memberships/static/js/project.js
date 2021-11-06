@@ -25,3 +25,17 @@ function subscribe(username, amount) {
         rzp1.open()
     });
 }
+
+
+function submitSubscribe(event) {
+    event.preventDefault(); 
+    const formData = new FormData(event.target);
+    subscribe(formData.get('username'), formData.get('amount'))
+}
+
+
+function cancelSubscription(id) {
+    axios.post(`/api/subscriptions/${id}/cancel/`).then(function (response) {
+        alert("Cancelled subscription!")
+    });
+}

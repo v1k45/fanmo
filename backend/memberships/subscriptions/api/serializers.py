@@ -22,18 +22,9 @@ class TierSerializer(serializers.ModelSerializer):
         ]
         extra_kwargs = {"cover": {"required": False}}
 
-    def create(self, validated_data):
-        user = self.context["request"].user
-        validated_data["seller_user"] = user
-        tier = super().create(validated_data)
-        payment_plan = Plan.objects.create(
-            name=f"{validated_data['name']} ({validated_data['amount']}) - {user.display_name}",
-            amount=validated_data["amount"],
-            seller_user=user,
-            tier=tier,
-        )
-        payment_plan.create_external()
-        return tier
+    def validate(self, attrs):
+        attrs["seller_user"] = self.context["request"].user
+        return super().validate(attrs)
 
 
 class TierPreviewSerializer(serializers.ModelSerializer):
@@ -108,7 +99,10 @@ class SubscriptionCreateSerializer(serializers.ModelSerializer):
         write_only=True,
     )
     amount = MoneyField(
-        max_digits=7, decimal_places=2, source="plan.amount", default_currency="INR"
+        max_digits=7,
+        decimal_places=2,
+        source="plan.amount",
+        default_currency="INR",
     )
 
     seller_user = UserPreviewSerializer(read_only=True)
@@ -131,6 +125,7 @@ class SubscriptionCreateSerializer(serializers.ModelSerializer):
             "payment_processor",
             "payment_payload",
             "cycle_end_at",
+            "requires_payment",
         ]
         read_only_fields = [
             "status",

@@ -22,7 +22,6 @@ class PaymentProcessingSerializer(serializers.ModelSerializer):
     processor = serializers.ChoiceField(
         choices=["razorpay"], default="razorpay", write_only=True
     )
-    type = serializers.ChoiceField(choices=["donation", "subscription"])
     payload = RazorpayResponseSerializer(write_only=True)
 
     seller = UserPreviewSerializer(read_only=True)
@@ -52,9 +51,9 @@ class PaymentProcessingSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        if validated_data["type"] == "donation":
+        if validated_data["type"] == Payment.Type.DONATION:
             return Payment.capture_donation(validated_data["payload"])
-        return Payment.capture_subscription(validated_data["payload"])
+        return Payment.authenticate_subscription(validated_data["payload"])
 
 
 class PaymentSerializer(serializers.ModelSerializer):
@@ -68,6 +67,7 @@ class PaymentSerializer(serializers.ModelSerializer):
             "id",
             "type",
             "amount",
+            "method",
             "seller",
             "subscription",
             "donation",
@@ -80,7 +80,7 @@ class PaymentPreviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Payment
-        fields = ["id", "amount", "type", "buyer", "created_at"]
+        fields = ["id", "amount", "method", "type", "buyer", "created_at"]
 
 
 class PayoutSerializer(serializers.ModelSerializer):

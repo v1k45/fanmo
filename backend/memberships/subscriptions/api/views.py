@@ -47,4 +47,6 @@ class SubscriberViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return self.request.user.subscribers.all()
+        return self.request.user.subscribers.exclude(
+            status=Subscription.Status.CREATED
+        ).all()

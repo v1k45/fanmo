@@ -39,6 +39,7 @@ class TestAuthenticationFlow:
             },
             "follower_count": 0,
             "subscriber_count": 0,
+            "tiers": [],
         }
         assert User.objects.get(username="ashok").email == "ashok@gmail.com"
 
@@ -65,6 +66,7 @@ class TestAuthenticationFlow:
             },
             "follower_count": 0,
             "subscriber_count": 0,
+            "tiers": [],
         }
 
     def test_update(self, user, api_client):
@@ -107,4 +109,5 @@ class TestAuthenticationFlow:
             },
             "follower_count": 0,
             "subscriber_count": 0,
+            "tiers": [],
         }

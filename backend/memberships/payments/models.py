@@ -26,32 +26,32 @@ class Payment(BaseModel):
         REFUNDED = "refunded"
         FAILED = "failed"
 
+    class Method(models.TextChoices):
+        CARD = "card"
+        NETBANKING = "netbanking"
+        UPI = "upi"
+        WALLET = "wallet"
+
     subscription = models.ForeignKey(
-        "subscriptions.Subscription", on_delete=models.CASCADE, null=True
+        "subscriptions.Subscription", on_delete=models.CASCADE, null=True, blank=True
     )
     donation = models.ForeignKey(
-        "donations.Donation", on_delete=models.CASCADE, null=True
+        "donations.Donation", on_delete=models.CASCADE, null=True, blank=True
     )
 
     seller_user = models.ForeignKey(
         "users.User", on_delete=models.CASCADE, related_name="received_payments"
     )
-    buyer_user = models.ForeignKey("users.User", on_delete=models.CASCADE, null=True)
+    buyer_user = models.ForeignKey(
+        "users.User", on_delete=models.CASCADE, null=True, blank=True
+    )
 
     status = FSMField(default=Status.CREATED, choices=Status.choices)
     type = models.CharField(max_length=16, choices=Type.choices)
+    method = models.CharField(max_length=16, choices=Method.choices)
 
     amount = MoneyField(max_digits=7, decimal_places=2)
     external_id = models.CharField(max_length=255)
-
-    @classmethod
-    def from_razorpay_response(cls, payload):
-        pass
-
-    @classmethod
-    def from_razorpay_webhook(cls, payload):
-        razorpay_client.utils.verify_payment_signature(payload)
-        pass
 
     @classmethod
     def for_subscription(cls, subscription, payload):
@@ -68,7 +68,8 @@ class Payment(BaseModel):
         return payment
 
     @classmethod
-    def capture_subscription(cls, payload):
+    def authenticate_subscription(cls, payload):
+        # authenticate_subscription?
         payload.update(
             {
                 "razorpay_order_id": payload["razorpay_payment_id"],

@@ -42,7 +42,9 @@ def subscription_charged(payload):
         type=Payment.Type.SUBSCRIPTION,
         subscription=subscription,
         status=Payment.Status.CAPTURED,
-        amount=get_money_from_subunit(payload["amount"], payload["currency"]),
+        amount=get_money_from_subunit(
+            payment_payload["amount"], payment_payload["currency"]
+        ),
         external_id=payment_payload["id"],
         seller=subscription.seller,
         buyer=subscription.buyer,
@@ -56,13 +58,29 @@ def order_paid(payload):
     """
     Update donation publish state, record payment, issue a payout.
     """
-    order_id = payload["payload"]["order"]["id"]
+    order_id = payload["payload"]["order"]["entity"]["id"]
     if not Donation.objects.filter(external_id=order_id).exists():
         # donation with this order id does not exists.
         # this was most likely a subscription
         return
 
     donation = Donation.objects.select_for_update().get(external_id=order_id)
+
+    payment_payload = payload["payload"]["payment"]["entity"]
+    payment, _ = Payment.objects.get_or_create(
+        type=Payment.Type.DONATION,
+        donation=donation,
+        status=Payment.Status.CAPTURED,
+        amount=get_money_from_subunit(
+            payment_payload["amount"], payment_payload["currency"]
+        ),
+        external_id=payment_payload["id"],
+        seller=donation.receiver_user,
+        buyer=donation.sender_user,
+    )
+
+    # send payout
+    Payout.for_payment(payment)
 
 
 def get_money_from_subunit(amount, currency_code):

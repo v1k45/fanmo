@@ -11,6 +11,8 @@ from memberships.utils import razorpay_client
 from memberships.webhooks.models import WebhookMessage
 from razorpay.errors import SignatureVerificationError
 
+from memberships.webhooks.tasks import process_razorpay_webhook
+
 
 @csrf_exempt
 @require_POST
@@ -25,11 +27,15 @@ def razorpay_webhook(request):
     except (SignatureVerificationError, KeyError):
         return HttpResponseForbidden("Invalid payload.", content_type="text/plain")
 
+    event_id = request.headers["x-razorpay-event-id"]
+    if WebhookMessage.objects.filter(external_id=event_id).exists():
+        return HttpResponse("Already Received.", content_type="text/plain")
+
     payload = json.loads(request.body)
     webhook_message = WebhookMessage.objects.create(
         sender=WebhookMessage.Sender.RAZORPAY,
-        external_id=request.headers["x-razorpay-event-id"],
+        external_id=event_id,
         payload=payload,
     )
-    # process_webhook_payload(webhook_message)
+    process_razorpay_webhook(webhook_message.pk)
     return HttpResponse("Ok.", content_type="text/plain")

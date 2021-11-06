@@ -4,6 +4,7 @@ from dateutil.relativedelta import relativedelta
 
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
+from django.core.exceptions import ValidationError
 
 from django.utils import timezone
 from versatileimagefield.fields import VersatileImageField
@@ -131,9 +132,19 @@ class Subscription(BaseModel):
         EXPIRED = "expired"
         COMPLETED = "completed"
 
+    class PaymentMethod(models.TextChoices):
+        CARD = "card"
+        EMANDATE = "emandate"
+        UPI = "upi"
+        WALLET = "wallet"
+
     plan = models.ForeignKey("subscriptions.Plan", on_delete=models.CASCADE)
     status = FSMField(default=Status.CREATED)
     external_id = models.CharField(max_length=255)
+
+    payment_method = models.CharField(
+        max_length=16, choices=PaymentMethod.choices, blank=True
+    )
 
     # inception and end
     cycle_start_at = models.DateTimeField()
@@ -147,7 +158,7 @@ class Subscription(BaseModel):
     buyer_user = models.ForeignKey("users.User", on_delete=models.CASCADE)
 
     scheduled_to_cancel = models.BooleanField(default=False)
-    scheduled_to_change = models.BooleanField(default=True)
+    scheduled_to_change = models.BooleanField(default=False)
 
     def create_external(self):
         external_subscription = razorpay_client.subscription.create(
@@ -166,8 +177,16 @@ class Subscription(BaseModel):
         target=Status.AUTHENTICATED,
     )
     def authenticate(self):
-        # auto activate when we have a capture t
-        pass
+        # schedule current subscription to cancel
+        try:
+            existing_subscription = Subscription.get_current(
+                self.seller_user, self.buyer_user
+            )
+            if existing_subscription.external_id != self.external_id:
+                existing_subscription.cancel()
+                existing_subscription.save()
+        except Subscription.DoesNotExist:
+            pass
 
     @transition(
         field=status,
@@ -175,8 +194,6 @@ class Subscription(BaseModel):
         target=Status.ACTIVE,
     )
     def activate(self):
-        self.cycle_start_at = timezone.now()
-        self.cycle_end_at = timezone.now() + relativedelta(timezone.now(), months=1)
         self.is_active = True
         self.save()
 
@@ -199,7 +216,7 @@ class Subscription(BaseModel):
     @transition(field=status, source="*", target=Status.CANCELLED)
     def cancel(self):
         razorpay_client.subscription.cancel(
-            self.external_id, {"schedule_change_at": "cycle_end"}
+            self.external_id, {"cancel_at_cycle_end": 1}
         )
         self.scheduled_to_cancel = True
         self.save()
@@ -208,10 +225,21 @@ class Subscription(BaseModel):
         # update active subscription to cancel update
 
     def update(self, plan):
-        # todo
         # when using upi, subscription cannot be updated
         # create a new one
         # and schedule current one for cancellation only after new one is authorized.
+        if self.payment_method == self.PaymentMethod.UPI:
+            new_subscription = Subscription.objects.create(
+                plan=plan,
+                status=Subscription.Status.CREATED,
+                # pad time to day end?
+                cycle_start_at=self.cycle_end_at,
+                cycle_end_at=self.cycle_end_at + relativedelta(months=1),
+                buyer_user=self.buyer_user,
+                seller_user=self.seller_user,
+            )
+            new_subscription.create_external()
+            return new_subscription
 
         # todo
         # if subscription is scheduled to cancel
