@@ -1,0 +1,36 @@
+{
+  "name": "patrkaar",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate",
+    "lint:js": "eslint --ext \".js,.vue\" --ignore-path .gitignore .",
+    "lint": "yarn lint:js"
+  },
+  "dependencies": {
+    "@nuxtjs/axios": "^5.13.6",
+    "@tailwindcss/aspect-ratio": "^0.3.0",
+    "core-js": "^3.15.1",
+    "daisyui": "^1.14.2",
+    "lucide-vue": "^0.16.11",
+    "nuxt": "^2.15.7",
+    "simplebar-vue": "^1.6.8",
+    "tailwind-bootstrap-grid": "^4.0.0"
+  },
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.14.7",
+    "@nuxtjs/eslint-config": "^6.0.1",
+    "@nuxtjs/eslint-module": "^3.0.2",
+    "@nuxtjs/tailwindcss": "^4.2.0",
+    "eslint": "^7.29.0",
+    "eslint-plugin-nuxt": "^2.0.0",
+    "eslint-plugin-vue": "^7.12.1",
+    "fibers": "^5.0.0",
+    "postcss": "^8.3.5",
+    "sass": "^1.43.2",
+    "sass-loader": "10"
+  }
+}

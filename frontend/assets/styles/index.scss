@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap');
+
+@mixin scrollbars($color: $primary-opacity) {
+  /* Works on Firefox */
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+  transition: all 0.3 ease;
+
+  /* Works on Chrome, Edge, and Safari */
+  &::-webkit-scrollbar {
+    @apply w-1.5 h-1.5;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    @apply bg-transparent rounded-md;
+
+    transition: all 0.3 ease;
+  }
+
+  &:hover {
+    &::-webkit-scrollbar-thumb {
+      background-color: $color;
+    }
+
+    scrollbar-color: $color transparent;
+  }
+}
+
+.scrollbar {
+  @include scrollbars(#aaa);
+}
