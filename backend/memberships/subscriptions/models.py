@@ -123,10 +123,13 @@ class Plan(BaseModel):
 class Subscription(BaseModel):
     class Status(models.TextChoices):
         CREATED = "created"
+        # scheduled_to_activate?
         AUTHENTICATED = "authenticated"
         ACTIVE = "active"
         PENDING = "pending"
         HALTED = "halted"
+        # used when updating current subscription.
+        SCHEDULED_TO_CANCEL = "scheduled_to_cancel"
         CANCELLED = "cancelled"
         PAUSED = "paused"
         EXPIRED = "expired"
@@ -183,7 +186,7 @@ class Subscription(BaseModel):
                 self.seller_user, self.buyer_user
             )
             if existing_subscription.external_id != self.external_id:
-                existing_subscription.cancel()
+                existing_subscription.schedule_to_cancel()
                 existing_subscription.save()
         except Subscription.DoesNotExist:
             pass
@@ -195,34 +198,19 @@ class Subscription(BaseModel):
     )
     def activate(self):
         self.is_active = True
-        self.save()
 
-    # tbd?
-    @transition(field=status, source=Status.ACTIVE, target=Status.PAUSED)
-    def pause(self):
-        razorpay_client.subscription.post_url(
-            f"{razorpay_client.subscription.base_url}/{self.external_id}/pause",
-            {"pause_at": "now"},
-        )
-
-    # tbd?
-    @transition(field=status, source=Status.PAUSED, target=Status.ACTIVE)
-    def resume(self):
-        razorpay_client.subscription.post_url(
-            f"{razorpay_client.subscription.base_url}/{self.external_id}/resume",
-            {"resume_at": "now"},
-        )
-
-    @transition(field=status, source="*", target=Status.CANCELLED)
-    def cancel(self):
+    @transition(field=status, source="*", target=Status.SCHEDULED_TO_CANCEL)
+    def schedule_to_cancel(self):
         razorpay_client.subscription.cancel(
             self.external_id, {"cancel_at_cycle_end": 1}
         )
-        self.scheduled_to_cancel = True
-        self.save()
 
-        # todo
-        # update active subscription to cancel update
+    @transition(
+        field=status, source=Status.SCHEDULED_TO_CANCEL, target=Status.CANCELLED
+    )
+    def cancel(self):
+        # hard cancel when the subscription is future not charged yet.
+        pass
 
     def update(self, plan):
         # when using upi, subscription cannot be updated
@@ -239,36 +227,31 @@ class Subscription(BaseModel):
                 seller_user=self.seller_user,
             )
             new_subscription.create_external()
-            return new_subscription
+        else:
+            # todo
+            # if subscription is scheduled to cancel
+            # create a new one
+            razorpay_client.subscription.patch_url(
+                f"{razorpay_client.subscription.base_url}/{self.external_id}",
+                {
+                    "plan_id": plan.external_id,
+                    "schedule_change_at": "cycle_end",
+                },
+            )
 
-        # todo
-        # if subscription is scheduled to cancel
-        # create a new one
-
-        subscription_update_url = (
-            f"{razorpay_client.subscription.base_url}/{self.external_id}"
-        )
-        razorpay_client.subscription.patch_url(
-            subscription_update_url,
-            {
-                "plan_id": plan.external_id,
-                "schedule_change_at": "cycle_end",
-            },
-        )
-        self.scheduled_to_change = True
-        self.save()
-
-        new_subscription = Subscription(
-            plan=plan,
-            status=Subscription.Status.AUTHENTICATED,
-            # pad time to day end?
-            cycle_start_at=self.cycle_end_at,
-            cycle_end_at=self.cycle_end_at + relativedelta(months=1),
-            buyer_user=self.buyer_user,
-            seller_user=self.seller_user,
-            external_id=self.external_id,
-        )
-        new_subscription.save()
+            # treat current subscripton as cancelled after the update.
+            self.schedule_to_cancel()
+            self.save()
+            new_subscription = Subscription.objects.create(
+                plan=plan,
+                status=Subscription.Status.AUTHENTICATED,
+                # pad time to day end?
+                cycle_start_at=self.cycle_end_at,
+                cycle_end_at=self.cycle_end_at + relativedelta(months=1),
+                buyer_user=self.buyer_user,
+                seller_user=self.seller_user,
+                external_id=self.external_id,
+            )
         return new_subscription
 
     @transition(

@@ -41,10 +41,6 @@ class User(BaseModel, AbstractUser):
             and self.user_preferences.is_accepting_payments
         )
 
-    @property
-    def auth_token(self):
-        return self
-
     def will_accept(self, amount):
         return (
             self.can_accept_payments()

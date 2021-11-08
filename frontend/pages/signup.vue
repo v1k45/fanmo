@@ -4,7 +4,8 @@
     <div class="max-w-md flex-grow card sm:bg-white sm:shadow-lg border">
       <div class="card-body">
         <h1 class="font-extrabold text-3xl">
-          {{ modeText.title }} {{ signin ? 'to' : 'for' }} fanmo
+          {{ modeText.title }} {{ signin ? 'to' : 'for' }}
+          <span class="text-success"><span class="text-primary">Patr</span>kaar</span>
         </h1>
         <div class="font-medium mt-3">
           {{ modeText.alternateActionDescription }}
@@ -12,7 +13,14 @@
         </div>
 
         <form v-if="signin" class="mt-6" @submit.prevent="userLogin">
-          <error-alert :errors="loginErrors"></error-alert>
+          <div v-if="loginErrors.non_field_errors" class="alert alert-error">
+            <div class="flex-1">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-6 h-6 mx-2 stroke-current">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+              </svg>
+              <label v-for="(error, index) in loginErrors.non_field_errors" :key="index">{{ error.message }}</label>
+            </div>
+          </div>
           <div class="form-control">
             <label class="label label-text">Email address</label>
             <input v-model="loginForm.email" type="email" class="input input-bordered" :class="{ 'input-error': loginErrors.email }" required>
@@ -30,7 +38,14 @@
           <button class="btn btn-primary btn-block mt-4 normal-case">{{ modeText.title }}</button>
         </form>
         <form v-else class="mt-6" @submit.prevent="register">
-          <error-alert :errors="signupErrors"></error-alert>
+          <div v-if="signupErrors.non_field_errors" class="alert alert-error">
+            <div class="flex-1">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-6 h-6 mx-2 stroke-current">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+              </svg>
+              <label v-for="(error, index) in signupErrors.non_field_errors" :key="index">{{ error.message }}</label>
+            </div>
+          </div>
           <div class="form-control">
             <label class="label label-text">Username</label>
             <input v-model="signupForm.username" type="text" class="input input-bordered" :class="{ 'input-error': signupErrors.username }" required>
@@ -68,13 +83,11 @@
 </template>
 
 <script>
-import errorAlert from '../components/ui/error-alert.vue';
 export default {
-  components: { errorAlert },
   layout: 'empty',
   data() {
     return {
-      signin: true,
+      signin: false,
       loginForm: {
         email: '',
         password: ''
@@ -118,7 +131,6 @@ export default {
       try {
         const response = await this.$axios.$post('/api/auth/register/', this.signupForm);
         console.log(response);
-        this.$auth.setUser(response);
       } catch (err) {
         console.log(err);
         this.signupErrors = err.response.data;

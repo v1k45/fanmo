@@ -37,6 +37,7 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    '~/plugins/axios'
   ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
@@ -54,11 +55,45 @@ export default {
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/axios
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    '@nuxtjs/auth-next'
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {},
+  axios: {
+    proxy: true,
+    credentials: true
+  },
+
+  auth: {
+    redirect: {
+      login: '/login',
+      logout: '/',
+      callback: '/login',
+      home: '/'
+    },
+    strategies: {
+      cookie: {
+        cookie: {
+          // (optional) If set, we check this cookie existence for loggedIn check
+          name: 'sessionid'
+        },
+        endpoints: {
+          // (optional) If set, we send a get request to this endpoint before login
+          login: { url: '/api/auth/login/', method: 'post' },
+          logout: { url: '/api/auth/logout/', method: 'post' },
+          user: { url: '/api/me/', method: 'get', propertyName: '' }
+        },
+        user: {
+          property: false
+        }
+      }
+    }
+  },
+
+  proxy: {
+    '/api/': 'http://0.0.0.0:8801/'
+  },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {

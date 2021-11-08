@@ -1,11 +1,10 @@
-from django.conf import settings
 from django.urls.conf import include, path
-from rest_framework.routers import DefaultRouter, SimpleRouter
+from rest_framework.routers import SimpleRouter
 from memberships.donations.api.views import DonationViewSet
 from memberships.payments.api.views import PaymentViewSet, PayoutViewSet
 from memberships.posts.api.views import PostViewSet
 
-from memberships.users.api.views import OwnUserAPIView, UserViewSet
+from memberships.users.api.views import OwnUserAPIView, UserViewSet, RegisterView, LoginView
 from memberships.subscriptions.api.views import (
     SubscriberViewSet,
     SubscriptionViewSet,
@@ -13,14 +12,12 @@ from memberships.subscriptions.api.views import (
 )
 
 from dj_rest_auth.views import (
-    LoginView,
     LogoutView,
     PasswordChangeView,
     PasswordResetConfirmView,
     PasswordResetView,
 )
 from dj_rest_auth.registration.views import (
-    RegisterView,
     VerifyEmailView,
     ResendEmailVerificationView,
 )

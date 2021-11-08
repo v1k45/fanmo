@@ -3,10 +3,10 @@
 
   <div class="navbar text-neutral-content">
     <div class="flex-1 px-2 mx-2">
-      <span class="text-xl font-extrabold">Name Undecided</span>
+      <span class="text-xl font-extrabold">fanmo</span>
     </div>
     <div class="flex-none hidden px-2 mx-2 lg:flex">
-      <div class="flex items-stretch norm">
+      <div v-if="$auth.loggedIn" class="flex items-stretch norm">
         <!-- <a class="btn btn-ghost btn-sm rounded-btn normal-case">Likes</a> -->
 
         <div class="flex items-center">
@@ -15,13 +15,17 @@
               <img src="http://daisyui.com/tailwind-css-component-profile-1@40w.png">
             </div>
           </div>
-          <div class="text-sm font-semibold ml-2 max-w-xs truncate">Jane Doe</div>
+          <div class="text-sm font-semibold ml-2 max-w-xs truncate">{{ $auth.user.username }}</div>
         </div>
         <div class="tooltip tooltip-left ml-4" data-tip="Sign out">
-          <a class="btn btn-square btn-sm rounded-btn normal-case text-error bg-neutral-focus">
+          <button class="btn btn-square btn-sm rounded-btn normal-case text-error bg-neutral-focus" @click="$auth.logout('cookie')">
             <IconPower :stroke-width="3" :size="18"></IconPower>
-          </a>
+          </button>
         </div>
+      </div>
+      <div v-else class="flex items-stretch norm">
+        <nuxt-link to="/login" class="btn btn-ghost btn-sm rounded-btn normal-case">Login</nuxt-link>
+        <nuxt-link to="/login" class="btn btn-info btn-sm rounded-btn normal-case">Create an Account</nuxt-link>
       </div>
     </div>
     <div class="flex-none">
@@ -37,7 +41,7 @@
     <div class="drawer drawer-mobile h-full">
       <input id="main-drawer" type="checkbox" class="drawer-toggle">
 
-      <aside v-if="false" class="drawer-side scrollbar">
+      <aside v-if="true" class="drawer-side scrollbar">
         <label for="main-drawer" class="drawer-overlay z-10 lg:z-auto"></label>
         <ul class="w-24 bg-neutral text-neutral-content z-10 lg:z-auto">
           <li class="m-1 px-1 py-2 rounded hover:bg-neutral-focus">

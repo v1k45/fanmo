@@ -7,6 +7,7 @@ fontFamily.sans.unshift('Quicksand');
 const lightTheme = require('daisyui/colors/themes')['[data-theme=light]'];
 
 module.exports = {
+  mode: 'jit',
   important: '#app',
 
   corePlugins: {
