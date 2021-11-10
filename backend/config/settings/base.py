@@ -213,7 +213,7 @@ FIXTURE_DIRS = (str(APPS_DIR / "fixtures"),)
 # SECURITY
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#session-cookie-httponly
-SESSION_COOKIE_HTTPONLY = False
+SESSION_COOKIE_HTTPONLY = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-httponly
 CSRF_COOKIE_HTTPONLY = False
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-browser-xss-filter
@@ -301,7 +301,8 @@ REST_FRAMEWORK = {
 REST_AUTH_TOKEN_MODEL = "memberships.users.models.User"
 REST_AUTH_TOKEN_CREATOR = "memberships.utils.authentication.create_auth_token"
 REST_AUTH_SERIALIZERS = {
-    "TOKEN_SERIALIZER": "memberships.users.api.serializers.UserSerializer"
+    "TOKEN_SERIALIZER": "memberships.users.api.serializers.UserSerializer",
+    "USER_DETAILS_SERIALIZER": "memberships.users.api.serializers.UserSerializer",
 }
 
 SPECTACULAR_SETTINGS = {

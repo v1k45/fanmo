@@ -77,10 +77,6 @@ export default {
     },
     strategies: {
       cookie: {
-        cookie: {
-          // (optional) If set, we check this cookie existence for loggedIn check
-          name: 'sessionid'
-        },
         endpoints: {
           // (optional) If set, we send a get request to this endpoint before login
           login: { url: '/api/auth/login/', method: 'post' },
