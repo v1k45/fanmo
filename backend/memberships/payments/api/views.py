@@ -5,7 +5,7 @@ from memberships.payments.api.serializers import (
     PaymentSerializer,
     PayoutSerializer,
 )
-from memberships.payments.models import Payment
+from memberships.payments.models import Payment, Payout
 
 
 class PaymentViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
@@ -27,7 +27,7 @@ class PayoutViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return self.request.user.payouts.all()
+        return Payout.objects.filter(payment__seller_user=self.request.user).all()
 
 
 class BankAccountViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):

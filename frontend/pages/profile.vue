@@ -1,5 +1,5 @@
 <template>
-<div>
+<div v-if="user != null">
   <div class="aspect-w-16 aspect-h-3 relative bg-black">
     <img
       class="object-cover h-full w-full absolute"
@@ -24,6 +24,15 @@
   </div>
   <div class="container">
     <div class="row">
+      <div class="tabs mt-6">
+        <div class="tab tab-lg tab-lifted" :class="{ 'tab-active': activeTab === tabName.HOME }" @click="activeTab = tabName.HOME;">Home</div>
+        <div class="tab tab-lg tab-lifted" :class="{ 'tab-active': activeTab === tabName.TIERS }" @click="activeTab = tabName.TIERS;">Membership Tiers</div>
+        <div class="tab tab-lg tab-lifted" :class="{ 'tab-active': activeTab === tabName.POSTS }" @click="activeTab = tabName.POSTS;">Posts</div>
+        <div class="tab tab-lg tab-lifted" :class="{ 'tab-active': activeTab === tabName.DONATIONS }" @click="activeTab = tabName.DONATIONS;">Donations</div>
+        <div class="tab tab-lg tab-lifted flex-grow cursor-default"></div>
+      </div>
+    </div>
+    <div v-if="activeTab == tabName.TIERS" class="row">
       <tier
         v-for="tier in user.tiers"
         :key="tier.id"
@@ -40,9 +49,27 @@ export default {
   components: { tier },
   layout: 'default-no-container',
   props: {
-    user: {
-      type: Object
+    username: {
+      type: String,
+      default: null
     }
+  },
+  data() {
+    const tabName = {
+      HOME: 'home',
+      TIERS: 'tiers',
+      POSTS: 'posts',
+      DONATIONS: 'donations'
+    };
+    return {
+      user: null,
+      tabName,
+      activeTab: tabName.TIERS
+    };
+  },
+  async fetch() {
+    const username = this.username || this.$auth.user.username;
+    this.user = await this.$axios.$get(`/api/users/${username}/`);
   }
 };
 </script>

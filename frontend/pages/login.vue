@@ -24,7 +24,7 @@
             <label class="label label-text">Password</label>
             <input v-model="loginForm.password" type="password" class="input input-bordered" required>
             <div class="text-right mt-2">
-              <button class="text-sm text-primary">Forgot password?</button>
+              <nuxt-link to="/forgot-password" class="text-sm text-primary">Forgot password?</nuxt-link>
             </div>
           </div>
           <button class="btn btn-primary btn-block mt-4 normal-case">{{ modeText.title }}</button>
@@ -72,6 +72,7 @@ import errorAlert from '../components/ui/error-alert.vue';
 export default {
   components: { errorAlert },
   layout: 'empty',
+  auth: 'guest',
   data() {
     return {
       signin: true,

@@ -42,7 +42,7 @@
           </label>
         </div>
         <div class="justify-center card-actions">
-          <button class="btn btn-block" @click="subscribe">Pay</button>
+          <button class="btn btn-block">Pay</button>
         </div>
       </form>
     </div>

@@ -166,7 +166,6 @@ class SubscriptionCreateSerializer(serializers.ModelSerializer):
                     "already_subscribed",
                 )
         except Subscription.DoesNotExist:
-            print("new sub")
             pass
 
         # todo: prevent recent reordering?

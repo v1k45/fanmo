@@ -69,6 +69,9 @@
 
 <script>
 export default {
+  props: {
+    value: { type: Boolean, required: true }
+  },
   data() {
     return {
       form: {
@@ -81,9 +84,6 @@ export default {
       },
       errors: {}
     };
-  },
-  props: {
-    value: { type: Boolean, required: true }
   },
   computed: {
     valueLocal: {

@@ -78,6 +78,22 @@
           </li>
           <li class="m-1 px-1 py-2 rounded hover:bg-neutral-focus">
             <div>
+              <nuxt-link to="/payments" class="flex flex-col items-center text-center">
+                <icon-wallet :size="22"></icon-wallet>
+                <div class="text-2xs leading-normal">Payments</div>
+              </nuxt-link>
+            </div>
+          </li>
+          <li class="m-1 px-1 py-2 rounded hover:bg-neutral-focus">
+            <div>
+              <nuxt-link to="/payouts" class="flex flex-col items-center text-center">
+                <icon-indian-rupee :size="22"></icon-indian-rupee>
+                <div class="text-2xs leading-normal">Payouts</div>
+              </nuxt-link>
+            </div>
+          </li>
+          <li class="m-1 px-1 py-2 rounded hover:bg-neutral-focus">
+            <div>
               <nuxt-link to="/tiers" class="flex flex-col items-center text-center">
                 <IconListMinus :size="22"></IconListMinus>
                 <div class="text-2xs leading-normal">Manage tiers</div>

@@ -25,6 +25,11 @@ urlpatterns = [
     # User management
     path("users/", include("memberships.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
+    path(
+        "reset/confirm/<uidb36>/<token>/",
+        TemplateView.as_view(template_name="pages/home.html"),
+        name="password_reset_confirm",
+    ),
     # Your stuff: custom urls includes go here
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
