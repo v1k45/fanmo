@@ -24,7 +24,7 @@ class PaymentProcessingSerializer(serializers.ModelSerializer):
     )
     payload = RazorpayResponseSerializer(write_only=True)
 
-    seller = UserPreviewSerializer(read_only=True)
+    seller_user = UserPreviewSerializer(read_only=True)
     donation = DonationSerializer(read_only=True)
     subscription = SubscriptionSerializer(read_only=True)
 
@@ -33,7 +33,7 @@ class PaymentProcessingSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "amount",
-            "seller",
+            "seller_user",
             "subscription",
             "donation",
             "created_at",
@@ -43,7 +43,7 @@ class PaymentProcessingSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = [
             "id",
-            "seller",
+            "seller_user",
             "amount",
             "subscription",
             "donation",
@@ -57,7 +57,7 @@ class PaymentProcessingSerializer(serializers.ModelSerializer):
 
 
 class PaymentSerializer(serializers.ModelSerializer):
-    seller = UserPreviewSerializer()
+    seller_user = UserPreviewSerializer()
     donation = DonationSerializer()
     subscription = SubscriptionSerializer()
 
@@ -68,7 +68,7 @@ class PaymentSerializer(serializers.ModelSerializer):
             "type",
             "amount",
             "method",
-            "seller",
+            "seller_user",
             "subscription",
             "donation",
             "created_at",
@@ -76,11 +76,11 @@ class PaymentSerializer(serializers.ModelSerializer):
 
 
 class PaymentPreviewSerializer(serializers.ModelSerializer):
-    buyer = UserPreviewSerializer()
+    buyer_user = UserPreviewSerializer()
 
     class Meta:
         model = Payment
-        fields = ["id", "amount", "method", "type", "buyer", "created_at"]
+        fields = ["id", "amount", "method", "type", "buyer_user", "created_at"]
 
 
 class PayoutSerializer(serializers.ModelSerializer):
@@ -98,6 +98,7 @@ class BankAccountSerializer(serializers.ModelSerializer):
             "id",
             "status",
             "account_name",
+            "account_number",
             "mobile_number",
             "account_type",
             "beneficiary_name",

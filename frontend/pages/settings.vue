@@ -41,7 +41,9 @@
     </div>
   </form>
 
-  <form v-show="activeTab === tabName.PAYMENT" class="max-w-md mt-4" @submit.prevent>
+  <account-form v-show="activeTab == tabName.PAYMENT"></account-form>
+
+  <form v-show="activeTab === tabName.PAYMENT && false" class="max-w-md mt-4" @submit.prevent>
     <div class="alert alert-success shadow">
       <icon-check-circle class="mr-3"></icon-check-circle>
       Your bank details have been verified and you're all set to accept payments!
@@ -71,7 +73,9 @@
 </template>
 
 <script>
+import accountForm from '../components/account-form.vue';
 export default {
+  components: { accountForm },
   data() {
     const tabName = {
       ACCOUNT: 'account',

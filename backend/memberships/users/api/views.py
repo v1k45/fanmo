@@ -50,14 +50,14 @@ class OwnUserAPIView(RetrieveUpdateAPIView):
     def get_object(self):
         return self.request.user
 
-class RegisterView(BaseRegisterView):
 
+class RegisterView(BaseRegisterView):
     def get_response_data(self, user):
         return UserSerializer(user, context=self.get_serializer_context()).data
 
 
 class LoginView(BaseLoginView):
-    """Login using email/username and password""" 
- 
+    """Login using email/username and password"""
+
     def get_response_serializer(self):
         return UserSerializer

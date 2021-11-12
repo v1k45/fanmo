@@ -36,8 +36,13 @@ class DonationCreateSerializer(serializers.ModelSerializer):
     username = serializers.SlugRelatedField(
         slug_field="username",
         queryset=User.objects.filter(is_active=True),
-        source="receiver",
+        source="receiver_user",
         write_only=True,
+    )
+    amount = MoneyField(
+        max_digits=7,
+        decimal_places=2,
+        default_currency="INR",
     )
     payment_processor = serializers.CharField(read_only=True, default="razorpay")
     payment_payload = DonationPaymentSerializer(source="*", read_only=True)
@@ -56,14 +61,14 @@ class DonationCreateSerializer(serializers.ModelSerializer):
         ]
 
     def validate(self, attrs):
-        receiver = attrs["receiver"]
-        if not receiver.can_accept_payments():
+        receiver_user = attrs["receiver_user"]
+        if not receiver_user.can_accept_payments():
             raise serializers.ValidationError(
-                f"{receiver.name} is currently not accepting payments.",
+                f"{receiver_user.name} is currently not accepting payments.",
                 "cannot_accept_payments",
             )
 
-        min_amount = receiver.user_preferences.minimum_amount
+        min_amount = receiver_user.user_preferences.minimum_amount
         if min_amount > attrs["amount"]:
             raise serializers.ValidationError(
                 f"Amount cannot be lower than {min_amount.amount}",
@@ -72,20 +77,22 @@ class DonationCreateSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        validated_data["buyer"] = self.context["request"].user
+        user = self.context["request"].user
+        if user.is_authenticated:
+            validated_data["sender_user"] = user
         donation = super().create(validated_data)
         donation.create_external()
         return donation
 
 
 class DonationSerializer(serializers.ModelSerializer):
-    receiver = UserPreviewSerializer()
+    receiver_user = UserPreviewSerializer()
 
     class Meta:
         model = Donation
         fields = [
             "id",
-            "receiver",
+            "receiver_user",
             "name",
             "message",
             "is_anonymous",

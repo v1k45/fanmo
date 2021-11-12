@@ -54,12 +54,12 @@
       </tfoot>
     </table>
   </div>
-    <div v-else class="max-w-lg h-64 bg-gray-100 rounded-xl mx-auto mt-16 flex justify-center flex-col items-center">
-      <div class="opacity-40 text-center">
-        <icon-user-plus :size="64" class="mx-auto mb-3"></icon-user-plus>
-        <div>Subscriptions will appear here. <br> Explore <strong>Featured Creators</strong> to get started.</div>
-      </div>
+  <div v-else class="max-w-lg h-64 bg-gray-100 rounded-xl mx-auto mt-16 flex justify-center flex-col items-center">
+    <div class="opacity-40 text-center">
+      <icon-user-plus :size="64" class="mx-auto mb-3"></icon-user-plus>
+      <div>Subscriptions will appear here. <br> Explore <strong>Featured Creators</strong> to get started.</div>
     </div>
+  </div>
 </div>
 </template>
 

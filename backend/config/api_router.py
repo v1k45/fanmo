@@ -1,10 +1,19 @@
 from django.urls.conf import include, path
 from rest_framework.routers import SimpleRouter
 from memberships.donations.api.views import DonationViewSet
-from memberships.payments.api.views import PaymentViewSet, PayoutViewSet
+from memberships.payments.api.views import (
+    PaymentViewSet,
+    PayoutViewSet,
+    BankAccountViewSet,
+)
 from memberships.posts.api.views import PostViewSet
 
-from memberships.users.api.views import OwnUserAPIView, UserViewSet, RegisterView, LoginView
+from memberships.users.api.views import (
+    OwnUserAPIView,
+    UserViewSet,
+    RegisterView,
+    LoginView,
+)
 from memberships.subscriptions.api.views import (
     SubscriberViewSet,
     SubscriptionViewSet,
@@ -34,6 +43,7 @@ router.register("subscribers", SubscriberViewSet, basename="subscribers")
 router.register("donations", DonationViewSet, basename="donations")
 router.register("payments", PaymentViewSet, basename="payments")
 router.register("payouts", PayoutViewSet, basename="payouts")
+router.register("accounts", BankAccountViewSet, basename="bank_accounts")
 
 auth_patterns = [
     path("register/", RegisterView.as_view(), name="register"),

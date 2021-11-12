@@ -28,12 +28,12 @@ class Donation(BaseModel):
     status = FSMField(default=Status.PENDING, choices=Status.choices)
 
     amount = MoneyField(max_digits=7, decimal_places=2)
-    external_id = models.CharField(max_length=12)
+    external_id = models.CharField(max_length=255)
 
     def create_external(self):
-        external_data = razorpay_client.orders.create(
+        external_data = razorpay_client.order.create(
             {
-                "amount": self.amount.get_amount_in_subunit(),
+                "amount": self.amount.get_amount_in_sub_unit(),
                 "currency": self.amount.currency.code,
             }
         )

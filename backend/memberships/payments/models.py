@@ -112,17 +112,20 @@ class Payment(BaseModel):
             donation=donation,
             amount=donation.amount,
             external_id=payload["razorpay_payment_id"],
-            seller=donation.seller,
-            buyer=donation.buyer,
+            seller_user=donation.sender_user,
+            buyer_user=donation.receiver_user,
         )
 
-        razorpay_client.payments.capture(
+        razorpay_client.payment.capture(
             payment.external_id,
             payment.amount.get_amount_in_sub_unit(),
             {"currency": payment.amount.currency.code},
         )
 
-        donation.state = Donation.STATE.completed
+        payment.status = Payment.Status.CAPTURED
+        payment.save()
+
+        donation.status = Donation.Status.SUCCESSFUL
         donation.save()
 
         # in background?
@@ -149,25 +152,27 @@ class Payout(BaseModel):
     def for_payment(cls, payment):
         payout = cls.objects.create(
             payment=payment,
-            amount=deduct_platform_fee(payment.amount, payment.seller),
+            amount=deduct_platform_fee(payment.amount, payment.seller_user),
+            bank_account=payment.seller_user.bank_accounts.first(),
         )
         payout.create_external()
         return payout
 
     def create_external(self):
+        print(self.payment.external_id)
         external_data = razorpay_client.payment.transfer(
             self.payment.external_id,
             {
                 "transfers": [
                     {
-                        "account": self.recipient.bank_account.external_id,
+                        "account": self.bank_account.external_id,
                         "amount": self.amount.get_amount_in_sub_unit(),
                         "currency": self.amount.currency.code,
                     }
                 ],
             },
         )
-        self.external_id = external_data["id"]
+        self.external_id = external_data["items"][0]["id"]
         self.save()
 
 
@@ -200,4 +205,4 @@ class BankAccount(BaseModel):
 
     is_active = models.BooleanField(default=True)
 
-    external_id = models.CharField(max_length=12)
+    external_id = models.CharField(max_length=255)

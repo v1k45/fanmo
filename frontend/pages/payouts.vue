@@ -13,6 +13,7 @@
           <th>Supporter</th>
           <th align="center">Type</th>
           <th>Amount</th>
+          <th>Original Amount</th>
           <th>Paid on</th>
           <th align="center">Status</th>
         </tr>
@@ -33,9 +34,10 @@
             <div class="badge badge-info w-32">{{ payout.payment.type }}</div>
           </td>
           <td><money-display>{{ payout.amount }}</money-display></td>
+          <td><money-display>{{ payout.payment.amount }}</money-display></td>
           <td>{{ payout.created_at }}</td>
           <td align="center">
-            <div class="badge badge-success badge-lg w-24">{{ payment.status }}</div>
+            <div class="badge badge-success badge-lg w-24">{{ payout.status }}</div>
           </td>
         </tr>
       </tbody>
@@ -44,6 +46,7 @@
           <th>Supporter</th>
           <th align="center">Type</th>
           <th>Amount</th>
+          <th>Original Amount</th>
           <th>Paid on</th>
           <th align="center">Status</th>
         </tr>

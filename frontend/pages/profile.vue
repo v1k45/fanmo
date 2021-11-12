@@ -23,8 +23,8 @@
     </div>
   </div>
   <div class="container">
-    <div class="row">
-      <div class="tabs mt-6">
+    <div class="my-6">
+      <div class="tabs">
         <div class="tab tab-lg tab-lifted" :class="{ 'tab-active': activeTab === tabName.HOME }" @click="activeTab = tabName.HOME;">Home</div>
         <div class="tab tab-lg tab-lifted" :class="{ 'tab-active': activeTab === tabName.TIERS }" @click="activeTab = tabName.TIERS;">Membership Tiers</div>
         <div class="tab tab-lg tab-lifted" :class="{ 'tab-active': activeTab === tabName.POSTS }" @click="activeTab = tabName.POSTS;">Posts</div>
@@ -32,22 +32,27 @@
         <div class="tab tab-lg tab-lifted flex-grow cursor-default"></div>
       </div>
     </div>
-    <div v-if="activeTab == tabName.TIERS" class="row">
+    <div v-if="activeTab == tabName.TIERS" class="row justify-center">
       <tier
         v-for="tier in user.tiers"
         :key="tier.id"
         :user="user"
         :tier="tier"></tier>
     </div>
+    <div v-if="activeTab == tabName.DONATIONS" class="row justify-center">
+      <donation-form :user="user"></donation-form>
+    </div>
   </div>
 </div>
 </template>
 
 <script>
+import DonationForm from '../components/donation-form.vue';
 import tier from '../components/tier.vue';
 export default {
-  components: { tier },
-  layout: 'default-no-container',
+  components: { tier, DonationForm },
+  layout:
+    'default-no-container',
   props: {
     username: {
       type: String,
