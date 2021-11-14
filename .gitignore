@@ -280,3 +280,6 @@ memberships/media/
 .env
 .envs/*
 !.envs/.local/
+
+
+caddy/*

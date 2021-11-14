@@ -2,15 +2,15 @@
 <div class="max-w-md flex-grow card sm:bg-white sm:shadow-lg border">
   <div class="card-body">
     <h1 class="font-extrabold text-3xl">
-      Support {{ user.username }}
+      Support me!
     </h1>
     <div class="font-medium mt-3">
       Subtile
     </div>
-
-    <form class="mt-6" @submit.prevent="donate">
+    <form @submit.prevent="donate">
       <error-alert :errors="errors"></error-alert>
-      <div class="form-control">
+
+      <div v-if="step == 1" class="form-control">
         <label class="label label-text">Donate with any amount you like</label>
         <input
           v-model="form.amount"
@@ -25,8 +25,44 @@
           <span class="label-text-alt">{{ error.message }}</span>
         </label>
       </div>
+
+      <div v-if="step == 2 && !$auth.loggedIn" class="form-control mb-3">
+        <label class="label label-text">Name</label>
+        <input
+          v-model="form.name"
+          type="text"
+          class="input input-bordered"
+          :class="{ 'input-error': errors.name }"
+          placeholder="Anonymous">
+        <label
+          v-for="(error, index) in errors.name"
+          :key="index"
+          class="label">
+          <span class="label-text-alt">{{ error.message }}</span>
+        </label>
+      </div>
+
+      <!-- add email field to auto-register?  -->
+      <div v-if="step == 2" class="form-control">
+        <label class="label label-text">Message (optional)</label>
+        <textarea
+          v-model="form.message"
+          class="textarea textarea-bordered"
+          :class="{ 'textarea-error': errors.message }"
+          placeholder="Write something down..."
+          required>
+        </textarea>
+        <label
+          v-for="(error, index) in errors.message"
+          :key="index"
+          class="label">
+          <span class="label-text-alt">{{ error.message }}</span>
+        </label>
+      </div>
+
       <div class="justify-center card-actions">
-        <button class="btn btn-block">Pay</button>
+        <button v-if="step == 1" class="btn btn-block" @click.prevent="step = 2">Donate</button>
+        <button v-if="step == 2" class="btn btn-block">Pay <icon-indian-rupee></icon-indian-rupee> {{ form.amount }} </button>
       </div>
     </form>
   </div>
@@ -44,9 +80,13 @@ export default {
   },
   data() {
     return {
+      step: 1,
       form: {
         amount: this.user.user_preferences.minimum_amount,
-        username: this.user.username
+        username: this.user.username,
+        name: '',
+        message: '',
+        is_anonymous: !this.$auth.loggedIn
       },
       errors: {}
     };

@@ -44,3 +44,30 @@ services:
   redis:
     image: redis:6
     container_name: memberships_redis
+
+  caddy:
+    image: "caddy:2.1.1"
+    restart: unless-stopped
+    depends_on:
+      - django
+    env_file: ./.envs/.local/.caddy
+    container_name: memberships_caddy
+    volumes:
+      - ./Caddyfile.local:/etc/caddy/Caddyfile
+      - ./caddy/data:/data
+      - ./caddy/config:/config
+      - ./build:/var/www/html
+    ports:
+      - "7070:80"
+      - "7777:443"
+
+  nuxt:
+    build:
+      context: .
+      dockerfile: ./compose/local/nuxt/Dockerfile
+    image: memberships_local_nuxt
+    container_name: memberships_nuxt
+    volumes:
+      - ./frontend:/app:z
+    env_file:
+      - ./.envs/.local/.nuxt

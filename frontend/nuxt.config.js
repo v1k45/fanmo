@@ -85,7 +85,10 @@ export default {
   },
 
   proxy: {
-    '/api/': 'http://0.0.0.0:8801/'
+    '/api/': {
+      target: process.env.API_URL,
+      secure: process.env.ENV === 'production'
+    }
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build

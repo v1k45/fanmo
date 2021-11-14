@@ -4,11 +4,16 @@ from memberships.donations.api.serializers import (
     DonationCreateSerializer,
     DonationSerializer,
 )
+from memberships.donations.models import Donation
 
 # protect this view
 class DonationViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
-        return self.request.user.donations.all()
+        queryset = Donation.objects.filter(status=Donation.Status.SUCCESSFUL)
+        username = self.request.query_params.get('username')
+        if username:
+            return queryset.filter(receiver_user__username__iexact=username)
+        return queryset
 
     def get_serializer_class(self):
         if self.action == "create":

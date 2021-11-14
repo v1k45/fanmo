@@ -1,10 +1,11 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins, permissions
 
-from memberships.posts.api.serializers import PostSerializer
+from memberships.posts.api.serializers import PostCreateSerializer, PostSerializer
 from memberships.posts.models import Post
 
 
-class PostViewSet(viewsets.ModelViewSet):
+class PostViewSet(mixins.CreateModelMixin, mixins.DestroyModelMixin, viewsets.ReadOnlyModelViewSet):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = PostSerializer
     queryset = Post.objects.all()
 
@@ -30,4 +31,13 @@ class PostViewSet(viewsets.ModelViewSet):
             - qs.filter(author__subscribers=self.request.user)
             - qs.filter(author__subscribers__plan__amount__gte=F('minimum_tier_level__amount'))
         """
-        return super().get_queryset()
+        queryset = Post.objects.filter(is_published=True).select_related('minimum_tier')
+        username = self.request.query_params.get('username')
+        if username:
+            return queryset.filter(author_user__username=username)
+        return queryset.none()
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return PostCreateSerializer
+        return super().get_serializer_class()

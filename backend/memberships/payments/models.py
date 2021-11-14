@@ -112,8 +112,8 @@ class Payment(BaseModel):
             donation=donation,
             amount=donation.amount,
             external_id=payload["razorpay_payment_id"],
-            seller_user=donation.sender_user,
-            buyer_user=donation.receiver_user,
+            seller_user=donation.receiver_user,
+            buyer_user=donation.sender_user,
         )
 
         razorpay_client.payment.capture(

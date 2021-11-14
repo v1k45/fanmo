@@ -46,19 +46,23 @@ class DonationCreateSerializer(serializers.ModelSerializer):
     )
     payment_processor = serializers.CharField(read_only=True, default="razorpay")
     payment_payload = DonationPaymentSerializer(source="*", read_only=True)
+    sender_user = UserPreviewSerializer(read_only=True)
 
     class Meta:
         model = Donation
         fields = [
             "id",
             "username",
+            "sender_user",
             "amount",
             "name",
             "message",
             "is_anonymous",
             "payment_processor",
             "payment_payload",
+            "created_at",
         ]
+        read_only_fields = ["id", "sender_user", "created_at"]
 
     def validate(self, attrs):
         receiver_user = attrs["receiver_user"]
@@ -86,16 +90,22 @@ class DonationCreateSerializer(serializers.ModelSerializer):
 
 
 class DonationSerializer(serializers.ModelSerializer):
-    receiver_user = UserPreviewSerializer()
+    sender_user = serializers.SerializerMethodField()
 
     class Meta:
         model = Donation
         fields = [
             "id",
-            "receiver_user",
+            "sender_user",
             "name",
             "message",
+            "amount",
             "is_anonymous",
             "status",
             "created_at",
         ]
+
+    def get_sender_user(self, donation):
+        if donation.is_anonymous:
+            return None
+        return UserPreviewSerializer(donation.sender_user).data

@@ -12,6 +12,12 @@ class PaymentViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = PaymentSerializer
     permission_classes = [permissions.IsAuthenticated]
 
+    def get_permissions(self):
+        # accept payments anonymously
+        if self.action == "create":
+            return []
+        return super().get_permissions()
+
     def get_queryset(self):
         # include recently failed?
         return self.request.user.payments.filter(status=Payment.Status.CAPTURED)
