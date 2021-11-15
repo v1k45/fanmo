@@ -14,7 +14,7 @@ HASHID_FIELD_SALT = env(
     "HASHID_FIELD_SALT", default="946$pk^z&2ow-k2=sal&)f@p-0t0!_nz_js7*$xn$osnd3vids"
 )
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1", "django"]
+ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1", "django", "mem.vikasyadav.in"]
 
 # CACHES
 # ------------------------------------------------------------------------------
