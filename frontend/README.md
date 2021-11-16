@@ -1,4 +1,4 @@
-# patrkaar
+# Fanmo frontend
 
 ## Build Setup
 
