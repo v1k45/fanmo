@@ -68,8 +68,6 @@ services:
     image: memberships_local_nuxt
     container_name: memberships_nuxt
     volumes:
-      - ./frontend:/app
-      - /app/node_modules
-      - /app/dist
+      - ./frontend:/app:z
     env_file:
       - ./.envs/.local/.nuxt
