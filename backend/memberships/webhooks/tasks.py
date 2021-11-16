@@ -19,7 +19,7 @@ def process_razorpay_webhook(webhook_message_id):
         "subscription.halted": subscription_halted,
         "order.paid": order_paid,
     }
-    event_name = webhook_message["event"]
+    event_name = webhook_message.payload["event"]
     if event_name in handlers:
         handlers[event_name](webhook_message.payload)
 
