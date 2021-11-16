@@ -51,10 +51,11 @@ class PaymentProcessingSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
+        # save payment metadata
         if validated_data["type"] == Payment.Type.DONATION:
             payment = Payment.capture_donation(validated_data["payload"])
-        payment = Payment.authenticate_subscription(validated_data["payload"])
-
+        else:
+            payment = Payment.authenticate_subscription(validated_data["payload"])
         # force follow the seller
         if payment.buyer_user is not None:
             payment.seller_user.follow(payment.buyer_user)
@@ -72,6 +73,7 @@ class PaymentSerializer(serializers.ModelSerializer):
             "id",
             "type",
             "amount",
+            "status",
             "method",
             "seller_user",
             "subscription",
