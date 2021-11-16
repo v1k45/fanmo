@@ -31,8 +31,8 @@
             </div>
           </th>
           <td align="center">
-            <div v-if="subscription.tier" class="badge badge-info w-32">{{ subscription.tier.name }}</div>
-            <div v-else class="badge badge-info w-32">No Tier</div>
+            <div v-if="subscription.tier" class="badge badge-info badge-lg w-32">{{ subscription.tier.name }}</div>
+            <div v-else class="badge badge-ghost w-32">No Tier</div>
           </td>
           <td><money-display>{{ subscription.amount }}</money-display></td>
           <td>21st Aug, 2021</td>
@@ -64,9 +64,26 @@
 </template>
 
 <script>
+import faker from 'faker';
+
+const USE_FAKE = false;
+
 export default {
   async asyncData({ $axios }) {
     const subscriptions = await $axios.$get('/api/subscriptions/');
+    if (USE_FAKE) {
+      subscriptions.results = Array(50).fill(1).map(() => ({
+        seller_user: { username: faker.internet.userName() },
+        tier: faker.random.arrayElement([
+          { name: faker.random.arrayElement(['', 'Gold', 'Silver', 'Bronze', 'Premium', 'Diamond']) },
+          null
+        ]),
+        amount: faker.random.number([5, 20000]),
+        status: faker.random.arrayElement(['scheduled', 'paid', 'accepted', 'active', 'inactive'])
+      }));
+      subscriptions.count = subscriptions.results.length;
+    }
+
     return { subscriptions };
   },
   head: {
