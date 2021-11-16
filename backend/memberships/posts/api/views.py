@@ -37,6 +37,12 @@ class PostViewSet(
         username = self.request.query_params.get("username")
         if username:
             return queryset.filter(author_user__username=username)
+
+        if self.request.user.is_authenticated:
+            return queryset.filter(
+                author_user__followers__in=self.request.user.followings.all()
+            )
+
         return queryset.none()
 
     def get_serializer_class(self):

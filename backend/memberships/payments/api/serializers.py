@@ -52,8 +52,13 @@ class PaymentProcessingSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         if validated_data["type"] == Payment.Type.DONATION:
-            return Payment.capture_donation(validated_data["payload"])
-        return Payment.authenticate_subscription(validated_data["payload"])
+            payment = Payment.capture_donation(validated_data["payload"])
+        payment = Payment.authenticate_subscription(validated_data["payload"])
+
+        # force follow the seller
+        if payment.buyer_user is not None:
+            payment.seller_user.follow(payment.buyer_user)
+        return payment
 
 
 class PaymentSerializer(serializers.ModelSerializer):

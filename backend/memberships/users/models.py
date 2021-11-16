@@ -47,18 +47,22 @@ class User(BaseModel, AbstractUser):
             and self.user_preferences.minimum_amount <= amount
         )
 
-    def follow(self, user):
-        _, created = Following.objects.get_or_create(from_user=self, to_user=user)
+    def follow(self, follower_user):
+        _, created = Following.objects.get_or_create(
+            from_user=self, to_user=follower_user
+        )
         if created:
             self.follower_count = self.followers.count()
             self.save()
 
-    def unfollow(self, user):
-        following = Following.objects.filter(from_user=user, to_user=self).first()
+    def unfollow(self, follower_user):
+        following = Following.objects.filter(
+            from_user=self, to_user=follower_user
+        ).first()
         if following is not None:
             following.delete()
-            user.follower_count = user.followers.count()
-            user.save()
+            self.follower_count = self.followers.count()
+            self.save()
 
 
 class SocialLink(models.Model):
