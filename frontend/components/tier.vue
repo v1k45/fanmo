@@ -1,10 +1,11 @@
 <template>
-<div class="col-12 sm:col-6 md:col-6 lg:col-4 xl:col-3 gy-4">
-  <div class="card compact border shadow-lg">
-    <figure v-if="step == 1">
-      <img src="https://picsum.photos/200/100">
+<!-- TODO: move layout/column to the consumer content -->
+<div class="col-12 sm:col-6 md:col-6 lg:col-4 xl:col-3 self-stretch">
+  <div class="card compact border shadow-lg relative min-h-full">
+    <figure v-if="!isSubscribing" class="aspect-w-4 aspect-h-2 relative">
+      <img src="https://picsum.photos/200/100" class="absolute top-0 left-0 h-full w-full object-cover">
     </figure>
-    <div v-if="step == 1" class="card-body">
+    <div v-if="!isSubscribing" class="card-body">
       <h2 class="card-title text-center">
         <icon-indian-rupee class="inline h-6"></icon-indian-rupee>{{ tier.amount }}
         <div class="text-base truncate">{{ tier.name }}</div>
@@ -16,12 +17,12 @@
         </li>
       </ul>
       <div class="justify-center card-actions">
-        <button class="btn btn-block" @click="step = 2">Subscribe</button>
+        <button class="btn btn-block" @click="toggleIsSubscribing">Subscribe</button>
       </div>
     </div>
-    <div v-if="step == 2" class="card-body">
+    <div v-if="isSubscribing" class="card-body">
       <h2 class="card-title text-center">
-        <icon-indian-rupee class="inline h-6"></icon-indian-rupee>{{ tier.amount }}
+        <icon-indian-rupee class="inline h-4"></icon-indian-rupee>{{ tier.amount }}
         <div class="text-base truncate">{{ tier.name }}</div>
       </h2>
       <form class="mt-6" @submit.prevent="subscribe">
@@ -43,6 +44,7 @@
         </div>
         <div class="justify-center card-actions">
           <button class="btn btn-block">Pay</button>
+          <button class="btn btn-block btn-ghost" @click="toggleIsSubscribing">Cancel</button>
         </div>
       </form>
     </div>
@@ -64,7 +66,7 @@ export default {
   },
   data() {
     return {
-      step: 1,
+      isSubscribing: false,
       subscriptionForm: {
         username: this.user.username,
         amount: this.tier.amount
@@ -82,7 +84,7 @@ export default {
         );
       } catch (err) {
         this.subscriptionErrors = err.response.data;
-        console.log(err.response.data);
+        console.error(err.response.data);
         return;
       }
 
@@ -110,6 +112,10 @@ export default {
           }
         ];
       }
+    },
+    toggleIsSubscribing() {
+      this.isSubscribing = !this.isSubscribing;
+      if (!this.isSubscribing) this.subscriptionErrors = {};
     }
   }
 };
