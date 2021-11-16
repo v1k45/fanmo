@@ -3,12 +3,10 @@
 
   <div class="navbar text-neutral-content">
     <div class="flex-1 px-2 mx-2">
-      <span class="text-xl font-extrabold">fanmo</span>
+      <span class="text-2xl md:text-3xl font-extrabold">fanmo</span>
     </div>
     <div class="flex-none hidden px-2 mx-2 lg:flex">
       <div v-if="$auth.loggedIn" class="flex items-stretch norm">
-        <!-- <a class="btn btn-ghost btn-sm rounded-btn normal-case">Likes</a> -->
-
         <div class="flex items-center">
           <div class="avatar">
             <div class="rounded-full w-8 h-8">
@@ -17,22 +15,20 @@
           </div>
           <div class="text-sm font-semibold ml-2 max-w-xs truncate">{{ $auth.user.username }}</div>
         </div>
-        <div class="tooltip tooltip-left ml-4" data-tip="Sign out">
+        <div class="tooltip tooltip-left tooltip-primary ml-4" data-tip="Sign out">
           <button class="btn btn-square btn-sm rounded-btn normal-case text-error bg-neutral-focus" @click="$auth.logout('cookie')">
             <IconPower :stroke-width="3" :size="18"></IconPower>
           </button>
         </div>
       </div>
       <div v-else class="flex items-stretch norm">
-        <nuxt-link to="/login" class="btn btn-ghost btn-sm rounded-btn normal-case">Login</nuxt-link>
-        <nuxt-link to="/login" class="btn btn-info btn-sm rounded-btn normal-case">Create an Account</nuxt-link>
+        <nuxt-link to="/login" class="btn btn-ghost btn-sm rounded-btn normal-case mr-3">Sign in</nuxt-link>
+        <nuxt-link to="/signup" class="btn btn-info btn-sm rounded-btn normal-case">Create an Account</nuxt-link>
       </div>
     </div>
     <div class="flex-none">
       <label for="main-drawer" class="btn btn-square btn-ghost drawer-button lg:hidden">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="inline-block w-6 h-6 stroke-current">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
+        <icon-menu class="inline-block w-6 h-6 stroke-current"></icon-menu>
       </label>
     </div>
   </div>
@@ -41,7 +37,7 @@
     <div class="drawer drawer-mobile h-full">
       <input id="main-drawer" type="checkbox" class="drawer-toggle">
 
-      <aside v-if="true" class="drawer-side scrollbar">
+      <aside v-if="$auth.loggedIn" class="drawer-side scrollbar">
         <label for="main-drawer" class="drawer-overlay z-10 lg:z-auto"></label>
         <ul class="w-24 bg-neutral text-neutral-content z-10 lg:z-auto">
           <li class="m-1 px-1 py-2 rounded hover:bg-neutral-focus">
@@ -132,7 +128,3 @@ export default {
   }
 };
 </script>
-
-<style>
-
-</style>
