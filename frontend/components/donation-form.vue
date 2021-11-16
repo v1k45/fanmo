@@ -1,13 +1,10 @@
 <template>
-<div class="max-w-md flex-grow card sm:bg-white sm:shadow-lg border">
+<div class="max-w-md flex-grow card compact sm:bg-white sm:shadow-lg border">
   <div class="card-body">
     <h1 class="font-extrabold text-3xl">
       Support me!
     </h1>
-    <div class="font-medium mt-3">
-      Subtile
-    </div>
-    <form @submit.prevent="donate">
+    <form class="mt-4" @submit.prevent="donate">
       <error-alert :errors="errors"></error-alert>
 
       <div v-if="step == 1" class="form-control">
@@ -43,14 +40,13 @@
       </div>
 
       <!-- add email field to auto-register?  -->
-      <div v-if="step == 2" class="form-control">
-        <label class="label label-text">Message (optional)</label>
+      <div v-if="step === 2" class="form-control">
+        <label class="label label-text">Message to {{ user.username }} (optional)</label>
         <textarea
           v-model="form.message"
           class="textarea textarea-bordered"
           :class="{ 'textarea-error': errors.message }"
-          placeholder="Write something down..."
-          required>
+          placeholder="Write something down...">
         </textarea>
         <label
           v-for="(error, index) in errors.message"
@@ -60,9 +56,12 @@
         </label>
       </div>
 
-      <div class="justify-center card-actions">
-        <button v-if="step == 1" class="btn btn-block" @click.prevent="step = 2">Donate</button>
-        <button v-if="step == 2" class="btn btn-block">Pay <icon-indian-rupee></icon-indian-rupee> {{ form.amount }} </button>
+      <div class="card-actions">
+        <button v-if="step == 1" class="btn btn-block" type="button" @click.prevent="step = 2">Donate</button>
+        <template v-if="step == 2">
+          <button class="btn btn-ghost px-6 mr-3" type="button" @click="step = 1;">&larr; Back</button>
+          <button class="btn flex-grow" type="submit">Pay <icon-indian-rupee class="max-h-4"></icon-indian-rupee>{{ form.amount }} </button>
+        </template>
       </div>
     </form>
   </div>
