@@ -7,13 +7,12 @@
           Reset Password
         </h1>
         <div class="font-medium mt-3">
-          Remember Password?
-          <nuxt-link class="text-base font-medium text-primary ml-2" to="/login">Login</nuxt-link>
+          We'll send you password reset instructions on your registered email.
         </div>
-        <div v-if="sent">
-          Check your email for link to reset password.
+        <div v-if="sent" class="alert alert-success mt-5">
+          <icon-check-circle class="text-success mr-3"></icon-check-circle> Password reset instructions were sent to your email.
         </div>
-        <form v-else class="mt-6" @submit.prevent="resetPassword">
+        <form class="mt-6" @submit.prevent="resetPassword">
           <error-alert :errors="errors"></error-alert>
           <div class="form-control">
             <label class="label label-text">Email address</label>
@@ -22,7 +21,10 @@
               <span class="label-text-alt">{{ error.message }}</span>
             </label>
           </div>
-          <button class="btn btn-primary btn-block mt-4 normal-case">Reset Password</button>
+          <div class="flex mt-6">
+            <nuxt-link to="/login" class="btn btn-ghost normal-case px-8 mr-3">&larr; Sign in</nuxt-link>
+            <button type="submit" class="btn btn-primary flex-grow normal-case">Reset Password</button>
+          </div>
         </form>
       </div>
     </div>
@@ -53,6 +55,7 @@ export default {
       try {
         await this.$axios.$post('/api/auth/password/reset/', this.form);
         this.sent = true;
+        this.form.email = '';
       } catch (err) {
         this.errors = err.response.data;
       }
