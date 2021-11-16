@@ -32,37 +32,36 @@
         <div class="tab tab-lg tab-lifted flex-grow cursor-default"></div>
       </div>
     </div>
-    <div v-show="activeTab == tabName.TIERS" class="row justify-center">
+    <div v-show="activeTab == tabName.TIERS" class="row justify-center pb-10">
       <tier
         v-for="tier in user.tiers"
         :key="tier.id"
         :user="user"
         :tier="tier"></tier>
     </div>
-    <div v-show="activeTab == tabName.POSTS" class="row justify-center mb-10">
-
-      <div class="col-8 flex flex-wrap">
-        <div class="mr-auto">
-          <h1 class="text-2xl font-bold">Posts</h1>
+    <div v-show="activeTab == tabName.POSTS" class="pb-10">
+      <div class="max-w-3xl mx-auto">
+        <div class="flex flex-wrap">
+          <h1 class="text-2xl font-bold mr-auto">Posts</h1>
+          <button class="mt-4 sm:mt-0 btn btn-wide btn-black" @click="isAddPostVisible = true;">
+            <IconPlus class="mr-1" :size="16"></IconPlus>
+            Add a post
+          </button>
         </div>
-        <button class="mt-4 sm:mt-0 btn btn-wide btn-black" @click="isAddPostVisible = true;">
-          <IconPlus class="mr-1" :size="16"></IconPlus>
-          Add a post
-        </button>
-      </div>
-      <div v-if="posts.count" class="col-8">
-        <post v-for="post in posts.results" :key="post.id" :post="post"></post>
+        <div v-if="posts.count" class="mt-8">
+          <post v-for="post in posts.results" :key="post.id" :post="post" class="mb-6"></post>
+        </div>
       </div>
     </div>
     <add-post v-model="isAddPostVisible"></add-post>
-    <div v-show="activeTab == tabName.DONATIONS" class="row justify-center mb-10">
-      <div class="col-6">
-        <div v-if="donations.count" class="row justify-center">
+    <div v-show="activeTab == tabName.DONATIONS" class="row justify-end pb-10">
+      <div v-if="donations.count" class="col-12 md:col-6">
+        <div class="row justify-center">
           <donation v-for="donation in donations.results" :key="donation.id" :donation="donation">
           </donation>
         </div>
       </div>
-      <div class="col-6">
+      <div class="col-12 md:col-6">
         <div class="row justify-center">
           <donation-form :user="user"></donation-form>
         </div>
@@ -109,9 +108,9 @@ export default {
     this.user = await this.$axios.$get(`/api/users/${username}/`);
     this.donations = await this.$axios.$get(`/api/donations/?username=${username}`);
     this.posts = await this.$axios.$get(`/api/posts/?username=${username}`);
+  },
+  head: {
+    title: 'My profile'
   }
 };
 </script>
-
-<style>
-</style>
