@@ -40,6 +40,9 @@ export default {
     return {
       isAddTierVisible: false
     };
+  },
+  head: {
+    title: 'Manage tiers'
   }
 };
 </script>

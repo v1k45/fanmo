@@ -86,6 +86,9 @@ export default {
       tabName,
       activeTab: tabName.ACCOUNT
     };
+  },
+  head: {
+    title: 'Settings'
   }
 };
 </script>

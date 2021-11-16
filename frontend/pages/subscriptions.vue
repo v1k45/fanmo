@@ -68,6 +68,9 @@ export default {
   async asyncData({ $axios }) {
     const subscriptions = await $axios.$get('/api/subscriptions/');
     return { subscriptions };
+  },
+  head: {
+    title: 'Subscriptions'
   }
 };
 </script>

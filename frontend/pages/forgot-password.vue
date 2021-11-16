@@ -45,6 +45,9 @@ export default {
       errors: {}
     };
   },
+  head: {
+    title: 'Forgot password'
+  },
   methods: {
     async resetPassword() {
       try {

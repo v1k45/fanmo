@@ -68,6 +68,9 @@ export default {
   async asyncData({ $axios }) {
     const subscribers = await $axios.$get('/api/subscribers/');
     return { subscribers };
+  },
+  head: {
+    title: 'Subscribers'
   }
 };
 </script>
