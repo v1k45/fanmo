@@ -1,8 +1,5 @@
-from decimal import Decimal
-from django.conf import settings
-from django.core.exceptions import SuspiciousFileOperation
+from django.core.exceptions import ValidationError
 from django.db import models
-from django_extensions.db.fields import RandomCharField
 from django_fsm import FSMField
 from djmoney.models.fields import MoneyField
 
@@ -69,7 +66,7 @@ class Payment(BaseModel):
 
     @classmethod
     def authenticate_subscription(cls, payload):
-        # authenticate_subscription?
+        # only usable for "created" subscription
         payload.update(
             {
                 "razorpay_order_id": payload["razorpay_payment_id"],
@@ -78,27 +75,36 @@ class Payment(BaseModel):
         )
         razorpay_client.utility.verify_payment_signature(payload)
 
-        subscription = Subscription.objects.select_for_update().get(
-            external_id=payload["razorpay_subscription_id"]
-        )
+        # how to identify the payment for which the user is creating subscription?
+        # only possible if there is 1:1 reference between local and external subscription.
+        try:
+            subscription = (
+                Subscription.objects.filter(status=Subscription.Status.CREATED)
+                .select_for_update()
+                .get(external_id=payload["razorpay_subscription_id"])
+            )
+        except Subscription.DoesNotExist:
+            raise ValidationError(
+                "This subscription has been already processed.",
+                "payment_already_processed",
+            )
 
-        payment, _created = Payment.objects.get_or_create(
+        # if subscription is for future, schedule to activate instead of activating it right away.
+        subscription.authenticate()
+        subscription.activate()
+        subscription.save()
+
+        # make sure payment is not already processed?
+        # allow soft reprocessing if it is for real local subscription.
+        payment, _ = Payment.objects.get_or_create(
             type=Payment.Type.SUBSCRIPTION,
             subscription=subscription,
             amount=subscription.plan.amount,
             external_id=payload["razorpay_payment_id"],
             seller_user=subscription.seller_user,
             buyer_user=subscription.buyer_user,
-            defaults={"status": Payment.Status.AUTHORIZED},
+            defaults={"status": Payment.Status.CAPTURED},
         )
-
-        # fetch subscription?
-        if _created:
-            subscription.authenticate()
-            subscription.save()
-
-        # in background?
-        # Payout.for_payment(payment)
         return payment
 
     @classmethod
@@ -116,20 +122,17 @@ class Payment(BaseModel):
             buyer_user=donation.sender_user,
         )
 
+        # not needed?
         razorpay_client.payment.capture(
             payment.external_id,
             payment.amount.get_amount_in_sub_unit(),
             {"currency": payment.amount.currency.code},
         )
-
         payment.status = Payment.Status.CAPTURED
         payment.save()
 
         donation.status = Donation.Status.SUCCESSFUL
         donation.save()
-
-        # in background?
-        Payout.for_payment(payment)
         return payment
 
 
@@ -150,16 +153,16 @@ class Payout(BaseModel):
 
     @classmethod
     def for_payment(cls, payment):
-        payout = cls.objects.create(
+        payout, _created = cls.objects.get_or_create(
             payment=payment,
             amount=deduct_platform_fee(payment.amount, payment.seller_user),
             bank_account=payment.seller_user.bank_accounts.first(),
         )
-        payout.create_external()
+        if _created:
+            payout.create_external()
         return payout
 
     def create_external(self):
-        print(self.payment.external_id)
         external_data = razorpay_client.payment.transfer(
             self.payment.external_id,
             {

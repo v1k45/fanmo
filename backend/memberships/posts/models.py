@@ -43,7 +43,7 @@ class Post(BaseModel):
 
         # todo cache
         try:
-            active_subscription = Subscription.get_current(self.author_user, user)
+            active_subscription = Subscription.objects.active(self.author_user, user)
         except Subscription.DoesNotExist:
             return False
 
@@ -51,6 +51,7 @@ class Post(BaseModel):
             return True
 
         return active_subscription.plan.amount >= self.minimum_tier.amount
+
 
 class Content(BaseModel):
     class Type(models.TextChoices):

@@ -1,5 +1,6 @@
 from decimal import Decimal
 from django.db.transaction import atomic
+from django_fsm import can_proceed
 from moneyed import Money, get_currency
 from memberships.payments.models import Payment, Payout
 from memberships.subscriptions.models import Subscription
@@ -12,8 +13,10 @@ def process_razorpay_webhook(webhook_message_id):
     webhook_message = WebhookMessage.objects.get(pk=webhook_message_id)
 
     handlers = {
-        "subscription.authenticated": subscription_authenticated,
         "subscription.charged": subscription_charged,
+        "subscription.cancelled": subscription_cancelled,
+        "subscription.pending": subscription_pending,
+        "subscription.halted": subscription_halted,
         "order.paid": order_paid,
     }
     event_name = webhook_message["event"]
@@ -24,34 +27,74 @@ def process_razorpay_webhook(webhook_message_id):
     webhook_message.save()
 
 
-def subscription_authenticated(payload):
-    pass
-
-
 def subscription_charged(payload):
     """
     Update subscription expiration date, record payment, issue a payout.
     """
     # nowait and try later?
+    # it is possible that multiple exists.
+    subscription_payload = payload["payload"]["subscription"]["entity"]
     subscription = Subscription.objects.select_for_update().get(
-        external_id=payload["payload"]["subscription"]["entity"]["id"]
+        external_id=subscription_payload["id"],
+        plan__external_id=subscription_payload["plan_id"],
     )
+
+    # hard fail instead?
+    if can_proceed(subscription.activate):
+        subscription.activate()
+        subscription.save()
 
     payment_payload = payload["payload"]["payment"]["entity"]
     payment, _ = Payment.objects.get_or_create(
         type=Payment.Type.SUBSCRIPTION,
         subscription=subscription,
-        status=Payment.Status.CAPTURED,
+        # multiple?
+        # none?
+        # status=Payment.Status.AUTHORIZED,
         amount=get_money_from_subunit(
             payment_payload["amount"], payment_payload["currency"]
         ),
         external_id=payment_payload["id"],
-        seller=subscription.seller,
-        buyer=subscription.buyer,
+        seller_user=subscription.seller_user,
+        buyer_user=subscription.buyer_user,
+        defaults={"status": Payment.Status.AUTHORIZED},
     )
+
+    payment.status = Payment.Status.CAPTURED
+    payment.save()
 
     # send payout
     Payout.for_payment(payment)
+
+
+def subscription_cancelled(payload):
+    subscription_payload = payload["payload"]["subscription"]["entity"]
+    subscription = Subscription.objects.select_for_update().get(
+        external_id=subscription_payload["id"],
+        plan__external_id=subscription_payload["plan_id"],
+    )
+    subscription.status = Subscription.Status.CANCELLED
+    subscription.save()
+
+
+def subscription_halted(payload):
+    subscription_payload = payload["payload"]["subscription"]["entity"]
+    subscription = Subscription.objects.select_for_update().get(
+        external_id=subscription_payload["id"],
+        plan__external_id=subscription_payload["plan_id"],
+    )
+    subscription.status = Subscription.Status.HALTED
+    subscription.save()
+
+
+def subscription_pending(payload):
+    subscription_payload = payload["payload"]["subscription"]["entity"]
+    subscription = Subscription.objects.select_for_update().get(
+        external_id=subscription_payload["id"],
+        plan__external_id=subscription_payload["plan_id"],
+    )
+    subscription.status = Subscription.Status.PENDING
+    subscription.save()
 
 
 def order_paid(payload):
@@ -70,14 +113,20 @@ def order_paid(payload):
     payment, _ = Payment.objects.get_or_create(
         type=Payment.Type.DONATION,
         donation=donation,
-        status=Payment.Status.CAPTURED,
+        # multiple?
+        # none?
+        # status=Payment.Status.CAPTURED,
         amount=get_money_from_subunit(
             payment_payload["amount"], payment_payload["currency"]
         ),
         external_id=payment_payload["id"],
-        seller=donation.receiver_user,
-        buyer=donation.sender_user,
+        seller_user=donation.receiver_user,
+        buyer_user=donation.sender_user,
+        defaults={"status": Payment.Status.CAPTURED},
     )
+
+    payment.status = Payment.Status.CAPTURED
+    payment.save()
 
     # send payout
     Payout.for_payment(payment)

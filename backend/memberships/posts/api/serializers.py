@@ -11,9 +11,11 @@ class ContentSerializer(serializers.ModelSerializer):
         fields = ["type", "text", "image", "link", "link_og", "link_embed"]
         read_only_fields = ["link_og", "link_embed"]
 
+
 class PostSerializer(serializers.ModelSerializer):
     content = serializers.SerializerMethodField()
     author_user = UserPreviewSerializer(read_only=True)
+
     class Meta:
         model = Post
         fields = [
@@ -43,6 +45,6 @@ class PostCreateSerializer(PostSerializer):
         pass
 
     def create(self, validated_data):
-        validated_data["content"] = Content.objects.create(**validated_data['content'])
+        validated_data["content"] = Content.objects.create(**validated_data["content"])
         validated_data["author_user"] = self.context["request"].user
         return super().create(validated_data)

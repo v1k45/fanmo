@@ -88,7 +88,7 @@ class SubscriptionPaymentSerializer(serializers.ModelSerializer):
         return {"name": buyer.display_name, "email": buyer.email}
 
     def get_notes(self, subscription):
-        return {"external_id": subscription.id}
+        return {"subscription_id": subscription.id}
 
 
 class SubscriptionCreateSerializer(serializers.ModelSerializer):
@@ -157,7 +157,7 @@ class SubscriptionCreateSerializer(serializers.ModelSerializer):
             )
 
         try:
-            existing_subscription = Subscription.get_current(
+            existing_subscription = Subscription.objects.active(
                 seller_user, self.context["request"].user
             )
             if existing_subscription.plan.amount == amount:
@@ -168,7 +168,7 @@ class SubscriptionCreateSerializer(serializers.ModelSerializer):
         except Subscription.DoesNotExist:
             pass
 
-        # todo: prevent recent reordering?
+        # todo: prevent subscription if an update is scheduled for next cycle.
         return attrs
 
     def create(self, validated_data):

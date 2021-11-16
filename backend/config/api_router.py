@@ -19,6 +19,7 @@ from memberships.subscriptions.api.views import (
     SubscriptionViewSet,
     TierViewSet,
 )
+from memberships.webhooks.views import razorpay_webhook
 
 from dj_rest_auth.views import (
     LogoutView,
@@ -64,6 +65,7 @@ app_name = "api"
 urlpatterns = router.urls + [
     path("me/", OwnUserAPIView.as_view(), name="me"),
     path("auth/", include(auth_patterns)),
+    path("hooks/razorpay/", razorpay_webhook),
     # docs
     path("", SpectacularSwaggerView.as_view(url_name="api:schema"), name="docs"),
     path("schema/", SpectacularAPIView.as_view(), name="schema"),

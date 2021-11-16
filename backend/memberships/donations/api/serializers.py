@@ -29,7 +29,7 @@ class DonationPaymentSerializer(serializers.ModelSerializer):
         return dict()
 
     def get_notes(self, donation):
-        return {"external_id": donation.id}
+        return {"donation_id": donation.id}
 
 
 class DonationCreateSerializer(serializers.ModelSerializer):
@@ -68,7 +68,7 @@ class DonationCreateSerializer(serializers.ModelSerializer):
         receiver_user = attrs["receiver_user"]
         if not receiver_user.can_accept_payments():
             raise serializers.ValidationError(
-                f"{receiver_user.name} is currently not accepting payments.",
+                f"{receiver_user.display_name} is currently not accepting payments.",
                 "cannot_accept_payments",
             )
 

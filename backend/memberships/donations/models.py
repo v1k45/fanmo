@@ -1,11 +1,7 @@
 from django.db import models
-from django_extensions.db.fields import RandomCharField
 from djmoney.models.fields import MoneyField
 
-from model_utils import Choices
-
-from django_fsm import FSMField, transition
-from razorpay.errors import SignatureVerificationError
+from django_fsm import FSMField
 from memberships.utils.models import BaseModel
 from memberships.utils import razorpay_client
 
@@ -35,6 +31,7 @@ class Donation(BaseModel):
             {
                 "amount": self.amount.get_amount_in_sub_unit(),
                 "currency": self.amount.currency.code,
+                "notes": {"donation_id": self.pk},
             }
         )
         self.external_id = external_data["id"]

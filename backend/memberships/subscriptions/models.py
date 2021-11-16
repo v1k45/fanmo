@@ -1,13 +1,11 @@
-import copy
-from datetime import time
 from dateutil.relativedelta import relativedelta
 
 from django.db import models
 from django.contrib.postgres.fields import ArrayField
-from django.core.exceptions import ValidationError
 
 from django.utils import timezone
 from versatileimagefield.fields import VersatileImageField
+from memberships.subscriptions.querysets import SubscriptionQuerySet
 
 from memberships.utils import razorpay_client
 from djmoney.models.fields import MoneyField
@@ -83,7 +81,7 @@ class Plan(BaseModel):
     def subscribe(self):
         # update subscription if it already exists.
         try:
-            existing_subscription = Subscription.get_current(
+            existing_subscription = Subscription.objects.active(
                 self.seller_user, self.buyer_user
             )
             updated_subscription = existing_subscription.update(self)
@@ -123,14 +121,19 @@ class Plan(BaseModel):
 class Subscription(BaseModel):
     class Status(models.TextChoices):
         CREATED = "created"
-        # scheduled_to_activate?
+        # authorized by buyer
         AUTHENTICATED = "authenticated"
+        # charged successfully
         ACTIVE = "active"
+        # will be activated in next cycle
+        SCHEDULED_TO_ACTIVATE = "scheduled_to_activate"
+        # renewing at end of cycle
         PENDING = "pending"
         HALTED = "halted"
         # used when updating current subscription.
         SCHEDULED_TO_CANCEL = "scheduled_to_cancel"
         CANCELLED = "cancelled"
+        # final states
         PAUSED = "paused"
         EXPIRED = "expired"
         COMPLETED = "completed"
@@ -163,6 +166,8 @@ class Subscription(BaseModel):
     scheduled_to_cancel = models.BooleanField(default=False)
     scheduled_to_change = models.BooleanField(default=False)
 
+    objects = SubscriptionQuerySet.as_manager()
+
     def create_external(self):
         external_subscription = razorpay_client.subscription.create(
             {
@@ -182,7 +187,7 @@ class Subscription(BaseModel):
     def authenticate(self):
         # schedule current subscription to cancel
         try:
-            existing_subscription = Subscription.get_current(
+            existing_subscription = Subscription.objects.active(
                 self.seller_user, self.buyer_user
             )
             if existing_subscription.external_id != self.external_id:
@@ -240,8 +245,9 @@ class Subscription(BaseModel):
             )
 
             # treat current subscripton as cancelled after the update.
-            self.schedule_to_cancel()
+            self.status = self.Status.SCHEDULED_TO_CANCEL
             self.save()
+
             new_subscription = Subscription.objects.create(
                 plan=plan,
                 status=Subscription.Status.AUTHENTICATED,

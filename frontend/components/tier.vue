@@ -88,6 +88,12 @@ export default {
         return;
       }
 
+      // this is an update request.
+      if (!subscription.requires_payment) {
+        alert('Subscription updated. New plan will start after current one expires.');
+        return;
+      }
+
       const paymentOptions = subscription.payment_payload;
       paymentOptions.handler = (paymentResponse) => {
         this.processPayment(subscription, paymentResponse);

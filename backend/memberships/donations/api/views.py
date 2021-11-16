@@ -10,7 +10,7 @@ from memberships.donations.models import Donation
 class DonationViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
     def get_queryset(self):
         queryset = Donation.objects.filter(status=Donation.Status.SUCCESSFUL)
-        username = self.request.query_params.get('username')
+        username = self.request.query_params.get("username")
         if username:
             return queryset.filter(receiver_user__username__iexact=username)
         return queryset

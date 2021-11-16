@@ -7,28 +7,30 @@ import versatileimagefield.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('posts', '0002_auto_20211028_0636'),
+        ("posts", "0002_auto_20211028_0636"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='content',
-            name='image',
-            field=versatileimagefield.fields.VersatileImageField(blank=True, upload_to='uploads/content/'),
+            model_name="content",
+            name="image",
+            field=versatileimagefield.fields.VersatileImageField(
+                blank=True, upload_to="uploads/content/"
+            ),
         ),
         migrations.AlterField(
-            model_name='content',
-            name='link',
+            model_name="content",
+            name="link",
             field=models.URLField(blank=True),
         ),
         migrations.AlterField(
-            model_name='content',
-            name='link_embed',
+            model_name="content",
+            name="link_embed",
             field=models.JSONField(blank=True, default=None, null=True),
         ),
         migrations.AlterField(
-            model_name='content',
-            name='link_og',
+            model_name="content",
+            name="link_og",
             field=models.JSONField(blank=True, default=None, null=True),
         ),
     ]
