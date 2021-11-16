@@ -11,7 +11,7 @@
     </button>
   </div>
 
-  <div v-if="tiers.count" class="row">
+  <div v-if="tiers.count" class="row g-4 mt-4">
     <tier
       v-for="tier in tiers.results"
       :key="tier.id"
