@@ -18,9 +18,10 @@ from memberships.webhooks.tasks import process_razorpay_webhook
 @require_POST
 @non_atomic_requests
 def razorpay_webhook(request):
+    request_body = request.body.decode('utf-8')
     try:
         razorpay_client.utility.verify_webhook_signature(
-            request.body,
+            request_body,
             request.headers["X-Razorpay-Signature"],
             settings.RAZORPAY_WEBHOOK_SECRET,
         )
@@ -31,7 +32,7 @@ def razorpay_webhook(request):
     if WebhookMessage.objects.filter(external_id=event_id).exists():
         return HttpResponse("Already Received.", content_type="text/plain")
 
-    payload = json.loads(request.body)
+    payload = json.loads(request_body)
     webhook_message = WebhookMessage.objects.create(
         sender=WebhookMessage.Sender.RAZORPAY,
         external_id=event_id,

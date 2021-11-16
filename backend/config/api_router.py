@@ -65,7 +65,7 @@ app_name = "api"
 urlpatterns = router.urls + [
     path("me/", OwnUserAPIView.as_view(), name="me"),
     path("auth/", include(auth_patterns)),
-    path("hooks/razorpay/", razorpay_webhook),
+    path("webhooks/razorpay/", razorpay_webhook),
     # docs
     path("", SpectacularSwaggerView.as_view(url_name="api:schema"), name="docs"),
     path("schema/", SpectacularAPIView.as_view(), name="schema"),
