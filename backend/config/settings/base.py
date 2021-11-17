@@ -339,9 +339,13 @@ CORS_URLS_REGEX = r"^/api/.*$"
 VERSATILEIMAGEFIELD_RENDITION_KEY_SETS = {
     "user_avatar": [
         ("full", "url"),
+        ("small", "thumbnail__150x150"),
+        ("thumbnail", "thumbnail__50x50"),
     ],
     "user_cover": [
         ("full", "url"),
+        ("medium", "thumbnail__900x450"),
+        ("small", "thumbnail__300x150"),
     ],
     "tier_cover": [
         ("full", "url"),

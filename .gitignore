@@ -271,7 +271,7 @@ tags
 
 ### Project template
 
-memberships/media/
+backend/memberships/media/
 
 .pytest_cache/
 

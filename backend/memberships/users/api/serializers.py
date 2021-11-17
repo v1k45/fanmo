@@ -5,6 +5,7 @@ from memberships.subscriptions.models import Tier
 from memberships.users.models import SocialLink, User, UserPreference
 
 from versatileimagefield.serializers import VersatileImageFieldSerializer
+from drf_extra_fields.fields import Base64ImageField
 
 
 class UserTierSerializer(serializers.ModelSerializer):
@@ -38,7 +39,9 @@ class UserSerializer(serializers.ModelSerializer):
     social_links = SocialLinkSerializer()
     user_preferences = UserPreferenceSerializer()
     avatar = VersatileImageFieldSerializer("user_avatar")
+    avatar_base64 = Base64ImageField(write_only=True, source="avatar", required=False)
     cover = VersatileImageFieldSerializer("user_cover")
+    cover_base64 = Base64ImageField(write_only=True, source="cover", required=False)
 
     class Meta:
         model = User
@@ -47,7 +50,9 @@ class UserSerializer(serializers.ModelSerializer):
             "name",
             "about",
             "avatar",
+            "avatar_base64",
             "cover",
+            "cover_base64",
             "tiers",
             "social_links",
             "user_preferences",
