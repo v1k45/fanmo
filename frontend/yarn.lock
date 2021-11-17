@@ -3356,9 +3356,9 @@ cyclist@^1.0.1:
   integrity sha1-WW6WmP0MgOEgOMK4LW6xs1tiJNk=
 
 daisyui@^1.14.2:
-  version "1.14.2"
-  resolved "https://registry.yarnpkg.com/daisyui/-/daisyui-1.14.2.tgz#4f8569244b8798374d5717035f7017d5fc0c0621"
-  integrity sha512-ER4k58JMUYF4EUDg3GgpaWPdvq6FYnMfetV2JXOEWAPNQVWs4jHtdhehFUdg7M1Lae9GGobb0roW3LuEmD/PuA==
+  version "1.16.2"
+  resolved "https://registry.yarnpkg.com/daisyui/-/daisyui-1.16.2.tgz#3b3d62f393c293601efb744ce40d5916ec5b8d93"
+  integrity sha512-kHoTvq3/eU8tPbu3U3Nwq7yy0I5zauqAYRSvw1x+t8g9FBjFm3jNtUQO/vBjUZsU7ABIf5aaT58iBF2NeusCUA==
 
 de-indent@^1.0.2:
   version "1.0.2"

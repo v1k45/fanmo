@@ -2,10 +2,16 @@
 <div class="modal" :class="{ 'modal-open': valueLocal }">
   <div class="modal-box flex flex-col p-0" style="max-height: 90vh">
     <div class="p-4 border-b flex items-center">
-      <h2 class="text-xl font-semibold">Add a tier</h2>
+      <h2 class="text-xl font-semibold">{{ isEditing ? 'Edit tier' : 'Add a tier' }}</h2>
     </div>
     <div class="p-4 overflow-y-auto scrollbar flex-grow">
       <form @submit.prevent>
+        <div class="form-control flex-row items-center justify-end">
+          <label class="label label-text" :class="{ 'text-primary': !form.is_public }">Private</label>
+          <input v-model="form.is_public" type="checkbox" checked="checked" class="toggle toggle-primary mx-2">
+          <label class="label label-text" :class="{ 'text-primary': form.is_public }">Public</label>
+        </div>
+
         <div class="form-control">
           <label class="label label-text">Tier name</label>
           <input v-model="form.name" type="text" placeholder="Gold, Silver, Bronze, etc." class="input input-bordered" :class="{ 'input-error': errors.name }" required>
@@ -15,12 +21,10 @@
         </div>
         <div class="form-control mt-3">
           <label class="label label-text">Monthly price</label>
-          <div class="flex">
-            <div class="px-5 border flex items-center bg-gray-200 rounded-l-lg">
-              <icon-indian-rupee :size="16"></icon-indian-rupee>
-            </div>
+          <label class="input-group">
+            <span><icon-indian-rupee :size="16"></icon-indian-rupee></span>
             <input v-model="form.amount" type="number" class="input input-bordered flex-grow rounded-l-none" :class="{ 'input-error': errors.amount }" required>
-          </div>
+          </label>
           <label v-for="(error, index) in errors.amount" :key="index" class="label">
             <span class="label-text-alt">{{ error.message }}</span>
           </label>
@@ -43,45 +47,64 @@
           <label class="label label-text">Benefits</label>
           <ol class="list-decimal">
             <li v-for="(benefit, index) in form.benefits" :key="index" class="ml-5 mt-2">
-              <input v-model="form.benefits[index]" type="text" class="input input-bordered w-full">
+              <div class="flex items-center ml-2">
+                <input v-model="form.benefits[index]" type="text" class="input input-bordered flex-grow">
+                <button
+                  v-if="form.benefits.length > 1"
+                  type="button" class="btn btn-sm btn-ghost ml-2 px-1"
+                  title="Remove benefit" @click="form.benefits.splice(index, 1)">
+                  <icon-x></icon-x>
+                </button>
+              </div>
             </li>
           </ol>
+          <div class="text-right mt-3">
+            <button type="button" class="btn btn-sm btn-outline" @click="form.benefits.push('')">Add another</button>
+          </div>
           <label v-for="(error, index) in errors.benefits" :key="index" class="label">
             <span class="label-text-alt">{{ error.message }}</span>
           </label>
         </div>
-        <div class="form-control mt-3">
+        <!-- <div class="form-control mt-3">
           <label class="label">
             <span class="label-text">Image <span class="text-xs">(optional)</span></span>
           </label>
           <input type="file" class="input input-bordered">
-        </div>
+        </div> -->
       </form>
     </div>
 
     <div class="modal-action p-4 border-t">
-      <button class="btn" @click="valueLocal = false;">Cancel</button>
-      <button class="btn btn-primary" type="submit" @click="save">Create tier</button>
+      <button class="btn btn-ghost" @click="valueLocal = false;">Cancel</button>
+      <button class="btn btn-primary" type="submit" @click="save">
+        {{ isEditing ? 'Update tier' : 'Create tier' }}
+      </button>
     </div>
   </div>
 </div>
 </template>
 
 <script>
+import cloneDeep from 'lodash/cloneDeep';
+import pick from 'lodash/pick';
+
+const initialFormState = () => ({
+  name: '',
+  amount: '',
+  description: '',
+  welcome_message: '',
+  benefits: ['', '', ''],
+  is_public: true
+});
+
 export default {
   props: {
-    value: { type: Boolean, required: true }
+    value: { type: Boolean, required: true },
+    tierToUpdate: { type: Object, default: null }
   },
   data() {
     return {
-      form: {
-        name: '',
-        amount: '',
-        description: '',
-        welcome_message: '',
-        benefits: ['', '', ''],
-        is_public: true
-      },
+      form: initialFormState(),
       errors: {}
     };
   },
@@ -93,12 +116,31 @@ export default {
       set(val) {
         this.$emit('input', val);
       }
+    },
+    isEditing() {
+      return !!this.tierToUpdate;
+    }
+  },
+  watch: {
+    valueLocal(isVisible) {
+      if (!isVisible) {
+        this.form = initialFormState();
+        this.errors = {};
+      } else {
+        // eslint-disable-next-line no-lonely-if
+        if (this.tierToUpdate) this.form = pick(cloneDeep(this.tierToUpdate), Object.keys(initialFormState()));
+      }
     }
   },
   methods: {
     async save() {
       try {
-        await this.$axios.$post('/api/tiers/', this.form);
+        let createdOrUpdatedTier;
+        this.form.benefits = this.form.benefits.filter(benefit => !!benefit);
+        if (this.isEditing) createdOrUpdatedTier = await this.$axios.$put(`/api/tiers/${this.tierToUpdate.id}/`, this.form);
+        else createdOrUpdatedTier = await this.$axios.$post('/api/tiers/', this.form);
+
+        this.$emit('update', createdOrUpdatedTier);
         this.valueLocal = false;
       } catch (err) {
         this.errors = err.response.data;

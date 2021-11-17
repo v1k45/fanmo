@@ -1,31 +1,33 @@
 <template>
 <!-- TODO: move layout/column to the consumer content -->
-<div class="col-12 sm:col-6 md:col-6 lg:col-4 xl:col-3 self-stretch">
+<div class="col-12 sm:col-6 md:col-6 lg:col-4 xl:col-3 self-stretch" style="min-height: 350px;">
   <div class="card compact border shadow-lg relative min-h-full">
-    <figure v-if="!isSubscribing" class="aspect-w-4 aspect-h-2 relative">
+    <div v-if="tier.is_public === false" class="absolute top-0 right-1">
+      <span class="badge badge-warning">Private</span>
+    </div>
+    <!-- <figure class="aspect-w-4 aspect-h-2 relative">
       <img src="https://picsum.photos/200/100" class="absolute top-0 left-0 h-full w-full object-cover">
-    </figure>
-    <div v-if="!isSubscribing" class="card-body">
+    </figure> -->
+    <div class="card-body flex-grow-0">
       <h2 class="card-title text-center">
         <icon-indian-rupee class="inline h-6"></icon-indian-rupee>{{ tier.amount }}
         <div class="text-base truncate">{{ tier.name }}</div>
       </h2>
+    </div>
+    <div v-if="!isSubscribing" class="card-body pt-0 flex-grow justify-start">
       <p class="mt-2">{{ tier.description }}</p>
-      <ul class="list-disc list-inside text-left mt-3">
+      <ul class="list-disc list-inside text-left mt-3 mb-auto">
         <li v-for="(benefit, index) in tier.benefits" :key="index">
           {{ benefit }}
         </li>
       </ul>
       <div class="justify-center card-actions">
-        <button class="btn btn-block" @click="toggleIsSubscribing">Subscribe</button>
+        <button v-if="selfMode" class="btn btn-block btn-info" @click="$emit('edit', tier)">Edit</button>
+        <button v-else class="btn btn-block" @click="toggleIsSubscribing">Subscribe</button>
       </div>
     </div>
-    <div v-if="isSubscribing" class="card-body">
-      <h2 class="card-title text-center">
-        <icon-indian-rupee class="inline h-4"></icon-indian-rupee>{{ tier.amount }}
-        <div class="text-base truncate">{{ tier.name }}</div>
-      </h2>
-      <form class="mt-6" @submit.prevent="subscribe">
+    <div v-if="isSubscribing" class="card-body pt-0">
+      <form @submit.prevent="subscribe">
         <error-alert :errors="subscriptionErrors"></error-alert>
         <div class="form-control">
           <label class="label label-text">Subscribe with any amount you like</label>
@@ -57,6 +59,7 @@ import errorAlert from './ui/error-alert.vue';
 export default {
   components: { errorAlert },
   props: {
+    selfMode: { type: Boolean, default: false }, // shows the option to edit instead of subscribing
     user: {
       type: Object
     },
