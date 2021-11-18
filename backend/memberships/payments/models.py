@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.db import models
 from django_fsm import FSMField
@@ -89,9 +90,12 @@ class Payment(BaseModel):
                 "payment_already_processed",
             )
 
-        # if subscription is for future, schedule to activate instead of activating it right away.
         subscription.authenticate()
-        subscription.activate()
+
+        # if subscription is for future, schedule to activate instead of activating it right away.
+        if subscription.cycle_start_at >= timezone.now():
+            subscription.activate()
+
         subscription.save()
 
         # make sure payment is not already processed?
