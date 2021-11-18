@@ -42,6 +42,7 @@ def subscription_charged(payload):
     # hard fail instead?
     if can_proceed(subscription.activate):
         subscription.activate()
+        subscription.payment_method = subscription_payload["payment_method"]
         subscription.save()
 
     payment_payload = payload["payload"]["payment"]["entity"]
@@ -51,6 +52,7 @@ def subscription_charged(payload):
         # multiple?
         # none?
         # status=Payment.Status.AUTHORIZED,
+        method=payment_payload["method"],
         amount=get_money_from_subunit(
             payment_payload["amount"], payment_payload["currency"]
         ),
@@ -116,6 +118,7 @@ def order_paid(payload):
         # multiple?
         # none?
         # status=Payment.Status.CAPTURED,
+        method=payment_payload["method"],
         amount=get_money_from_subunit(
             payment_payload["amount"], payment_payload["currency"]
         ),
