@@ -100,7 +100,8 @@ class Payment(BaseModel):
             type=Payment.Type.SUBSCRIPTION,
             subscription=subscription,
             amount=subscription.plan.amount,
-            external_id=payload["razorpay_payment_id"],
+            # payment id is stored in order_id field of subscription
+            external_id=payload["razorpay_order_id"],
             seller_user=subscription.seller_user,
             buyer_user=subscription.buyer_user,
             defaults={"status": Payment.Status.CAPTURED},
