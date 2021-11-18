@@ -94,6 +94,8 @@ class Payment(BaseModel):
 
         # if subscription is for future, schedule to activate instead of activating it right away.
         if subscription.cycle_start_at >= timezone.now():
+            subscription.schedule_to_activate()
+        else:
             subscription.activate()
 
         subscription.save()
