@@ -1,4 +1,3 @@
-from djmoney.contrib.django_rest_framework.fields import MoneyField
 from rest_framework import serializers
 
 from memberships.subscriptions.models import Tier
@@ -42,6 +41,7 @@ class UserSerializer(serializers.ModelSerializer):
     avatar_base64 = Base64ImageField(write_only=True, source="avatar", required=False)
     cover = VersatileImageFieldSerializer("user_cover")
     cover_base64 = Base64ImageField(write_only=True, source="cover", required=False)
+    is_following = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -58,6 +58,7 @@ class UserSerializer(serializers.ModelSerializer):
             "user_preferences",
             "follower_count",
             "subscriber_count",
+            "is_following",
         ]
         read_only_fields = ["tiers", "follower_count", "subscriber_count"]
 
@@ -74,6 +75,10 @@ class UserSerializer(serializers.ModelSerializer):
         instance.social_links.save()
 
         return super().update(instance, validated_data)
+
+    def get_is_following(self, user):
+        request = self.context["request"]
+        return user.followers.all().filter(id=request.user.id).exists()
 
 
 class UserPreviewSerializer(serializers.ModelSerializer):

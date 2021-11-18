@@ -18,7 +18,7 @@ from memberships.webhooks.tasks import process_razorpay_webhook
 @require_POST
 @non_atomic_requests
 def razorpay_webhook(request):
-    request_body = request.body.decode('utf-8')
+    request_body = request.body.decode("utf-8")
     try:
         razorpay_client.utility.verify_webhook_signature(
             request_body,

@@ -21,7 +21,13 @@ class User(BaseModel, AbstractUser):
     cover = VersatileImageField(upload_to="profiles/covers/", blank=True)
     about = models.TextField(blank=True)
 
-    # followers and subscriber count?
+    followers = models.ManyToManyField(
+        "self",
+        through="users.Following",
+        through_fields=("from_user", "to_user"),
+        symmetrical=False,
+        related_name="followings",
+    )
     subscriber_count = models.PositiveSmallIntegerField(default=0)
     follower_count = models.PositiveSmallIntegerField(default=0)
 
@@ -48,21 +54,14 @@ class User(BaseModel, AbstractUser):
         )
 
     def follow(self, follower_user):
-        _, created = Following.objects.get_or_create(
-            from_user=self, to_user=follower_user
-        )
-        if created:
-            self.follower_count = self.followers.count()
-            self.save()
+        self.followers.add(follower_user)
+        self.follower_count = self.followers.count()
+        self.save()
 
     def unfollow(self, follower_user):
-        following = Following.objects.filter(
-            from_user=self, to_user=follower_user
-        ).first()
-        if following is not None:
-            following.delete()
-            self.follower_count = self.followers.count()
-            self.save()
+        self.followers.remove(follower_user)
+        self.follower_count = self.followers.count()
+        self.save()
 
 
 class SocialLink(models.Model):
@@ -79,10 +78,10 @@ class SocialLink(models.Model):
 
 class Following(BaseModel):
     from_user = models.ForeignKey(
-        "users.User", on_delete=models.CASCADE, related_name="followers"
+        "users.User", on_delete=models.CASCADE, related_name="from_followings"
     )
     to_user = models.ForeignKey(
-        "users.User", on_delete=models.CASCADE, related_name="followings"
+        "users.User", on_delete=models.CASCADE, related_name="to_followings"
     )
 
     class Meta:

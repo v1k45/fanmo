@@ -18,8 +18,11 @@
         <icon-heart
           class="mr-2 fill-current text-error"
           :size="16"></icon-heart>
-        136 subscribers..
+        {{ user.follower_count }} followers
       </div>
+      <button class="btn btn-black" @click="toggleFollow">
+        {{ user.is_following ? 'Unfollow' : 'Follow' }}
+      </button>
     </div>
   </div>
   <div class="container">
@@ -111,6 +114,12 @@ export default {
   },
   head: {
     title: 'My profile'
+  },
+  methods: {
+    async toggleFollow() {
+      const action = this.user.is_following ? 'unfollow' : 'follow';
+      this.user = await this.$axios.$post(`/api/users/${this.user.username}/${action}/`);
+    }
   }
 };
 </script>
