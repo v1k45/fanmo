@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.http.response import Http404
 from rest_framework import exceptions
 from rest_framework.views import set_rollback
@@ -10,6 +11,8 @@ def handle_drf_exception(exc, context):
         exc = exceptions.NotFound()
     elif isinstance(exc, (exceptions.PermissionDenied, TransitionNotAllowed)):
         exc = exceptions.PermissionDenied()
+    elif isinstance(exc, ValidationError):
+        exc = exceptions.ValidationError(detail=exc.message, code=exc.code)
 
     if isinstance(exc, exceptions.APIException):
         headers = {}
