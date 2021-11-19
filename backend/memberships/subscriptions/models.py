@@ -174,6 +174,7 @@ class Subscription(BaseModel):
                 "plan_id": self.plan.external_id,
                 "total_count": 12,
                 "notes": {"external_id": self.id},
+                "start_at": self.cycle_start_at.timestamp()
             }
         )
         self.external_id = external_subscription["id"]
