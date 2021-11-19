@@ -14,7 +14,6 @@ from dj_rest_auth.views import LoginView as BaseLoginView
 
 class UserViewSet(ReadOnlyModelViewSet):
     serializer_class = UserSerializer
-    # only show active?
     queryset = User.objects.filter(is_active=True)
     lookup_field = "username"
 
@@ -23,6 +22,8 @@ class UserViewSet(ReadOnlyModelViewSet):
         following_username = self.request.query_params.get("following_username")
         if following_username:
             return base_qs.filter(followings__username=following_username)
+        if self.request.query_params.get('creator'):
+            return base_qs.filter(user_preferences__is_accepting_payments=True).order_by('-follower_count')
         return base_qs
 
     @extend_schema(request=None)

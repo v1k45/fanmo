@@ -43,8 +43,9 @@ class User(BaseModel, AbstractUser):
 
     def can_accept_payments(self):
         return (
+            self.user_preferences.is_accepting_payments
+            and
             self.bank_accounts.filter(status=BankAccount.Status.LINKED).exists()
-            and self.user_preferences.is_accepting_payments
         )
 
     def will_accept(self, amount):

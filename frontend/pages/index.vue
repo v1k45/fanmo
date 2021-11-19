@@ -56,12 +56,31 @@
     </div>
     <nuxt-link to="/signup" class="btn px-10 animate-bounce">Sign up</nuxt-link>
   </div>
+  <div>
+    <h1 class="text-2xl font-bold mr-auto">Featured Creators</h1>
+    <div class="row">
+      <div v-for="user in creators.results" :key="user.id" class="flex items-center card shadow-md col-3">
+        <div class="avatar rounded-full p-1 bg-white">
+          <div class="w-32 h-32 rounded-full">
+            <img src="https://picsum.photos/100/100">
+          </div>
+        </div>
+        <div class="card-body">
+          <nuxt-link :to="`/${user.username}`" class="card-title">{{ user.username }}</nuxt-link>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 </template>
 
 <script>
 export default {
   auth: false,
+  async asyncData({ $axios }) {
+    const creators = await $axios.$get('/api/users/?creator=true');
+    return { creators };
+  },
   head: {
     title: 'Home'
   }
