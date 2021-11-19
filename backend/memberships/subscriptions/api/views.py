@@ -37,7 +37,7 @@ class SubscriptionViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet
     @action(methods=["POST"], detail=True)
     def cancel(self, request, *args, **kwargs):
         subscription = self.get_object()
-        subscription.cancel()
+        subscription.schedule_to_cancel()
         subscription.save()
         return self.retrieve(request, *args, **kwargs)
 

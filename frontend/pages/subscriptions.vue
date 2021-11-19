@@ -13,9 +13,9 @@
           <th>Creator</th>
           <th align="center">Tier</th>
           <th>Amount</th>
-          <th>Last paid on</th>
-          <th>Lifetime paid</th>
+          <th>Cycle End</th>
           <th align="center">Status</th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
@@ -35,21 +35,30 @@
             <div v-else class="badge badge-ghost w-32">No Tier</div>
           </td>
           <td><money-display>{{ subscription.amount }}</money-display></td>
-          <td>21st Aug, 2021</td>
-          <td><money-display>{{ subscription.amount }}</money-display></td>
+          <td>{{ subscription.cycle_end_at }}</td>
           <td align="center">
             <div class="badge badge-success badge-lg w-24">{{ subscription.status }}</div>
+          </td>
+          <td>
+            <div class="dropdown dropdown-end ml-auto">
+              <button class="m-1 btn btn-sm btn-ghost">
+                <icon-more-horizontal></icon-more-horizontal>
+              </button>
+              <ul tabindex="0" class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-52">
+                <li class="text-error"><a @click="cancel(subscription.id)">Cancel</a></li>
+              </ul>
+            </div>
           </td>
         </tr>
       </tbody>
       <tfoot>
         <tr>
-          <th>Subscriber name</th>
+          <th>Creator</th>
           <th align="center">Tier</th>
-          <th>Last paid</th>
-          <th>Last paid on</th>
-          <th>Lifetime paid</th>
+          <th>Amount</th>
+          <th>Cycle End</th>
           <th align="center">Status</th>
+          <th></th>
         </tr>
       </tfoot>
     </table>
@@ -88,6 +97,16 @@ export default {
   },
   head: {
     title: 'Subscriptions'
+  },
+  methods: {
+    async cancel(subscriptionId) {
+      try {
+        await this.$axios.$post(`/api/subscriptions/${subscriptionId}/cancel/`);
+        alert('Cancelled');
+      } catch (error) {
+        alert('Error');
+      }
+    }
   }
 };
 </script>
