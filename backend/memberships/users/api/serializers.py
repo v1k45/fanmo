@@ -86,4 +86,4 @@ class UserPreviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["username", "name", "avatar"]
+        fields = ["display_name", "username", "name", "avatar"]

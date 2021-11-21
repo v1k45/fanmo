@@ -21,14 +21,7 @@
       <tbody>
         <tr v-for="subscription in subscriptions.results" :key="subscription.id">
           <th scope="row">
-            <div class="flex items-center space-x-3">
-              <div class="avatar">
-                <div class="w-12 h-12 mask mask-circle">
-                  <img :src="subscription.seller_user.avatar.small" alt="Avatar Tailwind CSS Component">
-                </div>
-              </div>
-              <div class="font-bold">{{ subscription.seller_user.username }}</div>
-            </div>
+            <user-inline :user="subscription.seller_user"></user-inline>
           </th>
           <td align="center">
             <div v-if="subscription.tier" class="badge badge-info badge-lg w-32">{{ subscription.tier.name }}</div>
@@ -74,10 +67,12 @@
 
 <script>
 import faker from 'faker';
+import userInline from '../components/user-inline.vue';
 
 const USE_FAKE = false;
 
 export default {
+  components: { userInline },
   async asyncData({ $axios }) {
     const subscriptions = await $axios.$get('/api/subscriptions/');
     if (USE_FAKE) {

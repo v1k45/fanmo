@@ -20,14 +20,7 @@
       <tbody>
         <tr v-for="payment in payments.results" :key="payment.id">
           <th scope="row">
-            <div class="flex items-center space-x-3">
-              <div class="avatar">
-                <div class="w-12 h-12 mask mask-circle">
-                  <img :src="payment.seller_user.avatar.small" alt="Avatar Tailwind CSS Component">
-                </div>
-              </div>
-              <div class="font-bold">{{ payment.seller_user.username }}</div>
-            </div>
+            <user-inline :user="payment.seller_user"></user-inline>
           </th>
           <td align="center">
             <div class="badge badge-info w-32">{{ payment.type }}</div>

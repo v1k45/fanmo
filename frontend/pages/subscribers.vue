@@ -21,14 +21,7 @@
       <tbody>
         <tr v-for="subscriber in subscribers.results" :key="subscriber.id">
           <th scope="row">
-            <div class="flex items-center space-x-3">
-              <div class="avatar">
-                <div class="w-12 h-12 mask mask-circle">
-                  <img :src="subscriber.buyer_user.avatar.small" alt="Avatar Tailwind CSS Component">
-                </div>
-              </div>
-              <div class="font-bold">{{ subscriber.buyer_user.username }}</div>
-            </div>
+            <user-inline :user="subscriber.buyer_user"></user-inline>
           </th>
           <td align="center">
             <div v-if="subscriber.tier" class="badge badge-info w-32">{{ subscriber.tier.name }}</div>
