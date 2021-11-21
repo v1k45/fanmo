@@ -9,7 +9,7 @@ class PostViewSet(
 ):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = PostSerializer
-    queryset = Post.objects.all()
+    queryset = Post.objects.filter(is_published=True)
 
     def get_queryset(self):
         """
@@ -33,7 +33,8 @@ class PostViewSet(
             - qs.filter(author__subscribers=self.request.user)
             - qs.filter(author__subscribers__plan__amount__gte=F('minimum_tier_level__amount'))
         """
-        queryset = Post.objects.filter(is_published=True).select_related("minimum_tier")
+        queryset = super().get_queryset()
+        queryset = queryset.select_related("minimum_tier")
         username = self.request.query_params.get("username")
         if username:
             return queryset.filter(author_user__username=username)
@@ -49,3 +50,7 @@ class PostViewSet(
         if self.action == "create":
             return PostCreateSerializer
         return super().get_serializer_class()
+
+    def perform_destroy(self, instance):
+        instance.is_published = False
+        instance.save()

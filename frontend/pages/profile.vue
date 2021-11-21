@@ -46,7 +46,7 @@
       <div class="max-w-3xl mx-auto">
         <div class="flex flex-wrap">
           <h1 class="text-2xl font-bold mr-auto">Posts</h1>
-          <button class="mt-4 sm:mt-0 btn btn-wide btn-black" @click="isAddPostVisible = true;">
+          <button v-if="$auth.loggedIn && user.username == $auth.user.username" class="mt-4 sm:mt-0 btn btn-wide btn-black" @click="isAddPostVisible = true;">
             <IconPlus class="mr-1" :size="16"></IconPlus>
             Add a post
           </button>

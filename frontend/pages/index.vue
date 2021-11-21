@@ -1,6 +1,6 @@
 <template>
 <div>
-  <div v-if="$auth.loggedIn" class="row row-cols-5 g-4">
+  <div v-if="false" class="row row-cols-5 g-4">
     <div>
       <nuxt-link to="/" class="flex flex-col border items-center shadow-md bg-white rounded-lg p-8 hover:scale-105 transition-transform transform">
         <IconHome :size="36"></IconHome>
@@ -50,32 +50,31 @@
       </nuxt-link>
     </div>
   </div>
-  <div v-else class="text-center pt-16">
+
+  <div v-if="false" class="text-center pt-16">
     <div class="mb-6">
       Sign up by clicking on the button below to get started!
     </div>
     <nuxt-link to="/signup" class="btn px-10 animate-bounce">Sign up</nuxt-link>
   </div>
-  <div class="mt-8">
-    <h1 class="text-2xl font-bold mr-auto">Featured Creators</h1>
-    <div class="row mt-4">
-      <div v-for="user in creators.results" :key="user.id" class="flex items-center card shadow-md col-3">
-        <div class="avatar rounded-full p-1 bg-white">
-          <div class="w-32 h-32 rounded-full">
+
+  <h1 class="text-2xl font-bold my-4">Featured Creators</h1>
+  <div class="row row-cols-5 g-4">
+    <div v-for="user in creators.results" :key="user.id">
+      <nuxt-link :to="`/${user.username}`" class="flex flex-col border items-center shadow-md bg-white rounded-lg p-8 hover:scale-105 transition-transform transform">
+        <div class="avatar">
+          <div class="w-24 h-24 border rounded-full">
             <img :src="user.avatar.medium">
           </div>
         </div>
-        <div class="card-body">
-          <nuxt-link :to="`/${user.username}`" class="card-title">{{ user.username }}</nuxt-link>
-        </div>
-      </div>
+        <div class="mt-2">{{ user.username }}</div>
+      </nuxt-link>
     </div>
   </div>
-  <div class="mt-8">
-    <h1 class="text-2xl font-bold mr-auto">Posts</h1>
-    <div v-if="posts.count" class="mt-8 max-w-lg">
-      <post v-for="post in posts.results" :key="post.id" :post="post" class="mb-6"></post>
-    </div>
+
+  <h1 class="text-2xl font-bold my-8">Posts</h1>
+  <div v-if="posts.count" class="mt-8 max-w-lg">
+    <post v-for="post in posts.results" :key="post.id" :post="post" class="mb-6"></post>
   </div>
 </div>
 </template>
