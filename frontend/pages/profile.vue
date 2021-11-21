@@ -3,13 +3,13 @@
   <div class="aspect-w-16 aspect-h-3 relative bg-black">
     <img
       class="object-cover h-full w-full absolute"
-      src="https://picsum.photos/1200/600"
+      :src="user.cover.medium"
       alt="Cover photo">
   </div>
   <div class="-mt-6 container flex items-center">
     <div class="avatar rounded-full p-1 bg-white">
       <div class="w-32 h-32 rounded-full">
-        <img src="https://picsum.photos/100/100">
+        <img :src="user.avatar.medium">
       </div>
     </div>
     <div class="ml-3">
