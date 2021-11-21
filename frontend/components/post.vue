@@ -9,7 +9,7 @@
       </div>
       <div class="ml-3">
         <div class="text-lg font-bold">{{ post.title }}</div>
-        <div class="text-xs text-base-content text-opacity-40">{{ post.author_user.username }} - {{ post.created_at }}</div>
+        <div class="text-xs text-base-content text-opacity-40">@{{ post.author_user.username }} - {{ post.created_at }}</div>
       </div>
     </div>
     <div v-if="!isDeleted && $auth.loggedIn && post.author_user.username == $auth.user.username" class="dropdown dropdown-end ml-auto">
@@ -18,11 +18,12 @@
       </button>
       <ul tabindex="0" class="p-2 shadow menu dropdown-content bg-base-100 rounded-box w-52">
         <!-- implement reporting later -->
+        <!-- share button? -->
         <li class="text-error"><a @click="deletePost(post.id)">Delete</a></li>
       </ul>
     </div>
   </div>
-  <div class="card-body text-base pb-6">
+  <div class="card-body text-base pb-6 whitespace-pre-wrap">
     <template v-if="isDeleted">[deleted]</template>
     <template v-else-if="post.content">{{ post.content.text }}</template>
     <template v-else>Locked! {{ post.visibility }}</template>

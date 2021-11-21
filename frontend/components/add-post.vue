@@ -125,9 +125,9 @@ export default {
   methods: {
     async save() {
       try {
-        await this.$axios.$post('/api/posts/', this.form);
-        alert('Created Post');
+        const post = await this.$axios.$post('/api/posts/', this.form);
         this.valueLocal = false;
+        this.$emit('created', post);
       } catch (err) {
         this.errors = err.response.data;
       }

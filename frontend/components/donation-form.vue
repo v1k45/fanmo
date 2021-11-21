@@ -64,6 +64,9 @@
         </template>
       </div>
     </form>
+    <div v-if="step == 3">
+      Thank You for donating.
+    </div>
   </div>
 </div>
 </template>
@@ -100,7 +103,6 @@ export default {
         );
       } catch (err) {
         this.errors = err.response.data;
-        console.log(err.response.data);
         return;
       }
 
@@ -119,8 +121,9 @@ export default {
           type: 'donation',
           payload: paymentResponse
         });
+        this.step = 3;
+        this.$emit('donated', donation);
       } catch (err) {
-        console.error(err.response.data);
         this.errors.non_field_errors = [
           {
             message:

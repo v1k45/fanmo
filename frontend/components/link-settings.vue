@@ -92,11 +92,11 @@ export default {
   data() {
     return {
       form: {
-        website_url: this.$auth.social_links.website_url,
-        youtube_url: this.$auth.social_links.youtube_url,
-        facebook_url: this.$auth.social_links.facebook_url,
-        instagram_url: this.$auth.social_links.instagram_url,
-        twitter_url: this.$auth.social_links.twitter_url
+        website_url: this.$auth.user.social_links.website_url,
+        youtube_url: this.$auth.user.social_links.youtube_url,
+        facebook_url: this.$auth.user.social_links.facebook_url,
+        instagram_url: this.$auth.user.social_links.instagram_url,
+        twitter_url: this.$auth.user.social_links.twitter_url
       },
       errors: {}
     };

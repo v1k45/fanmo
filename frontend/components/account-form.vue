@@ -1,6 +1,6 @@
 <template>
 <div class="max-w-md mt-4">
-  <form @submit.prevent="donate">
+  <form @submit.prevent="saveAccount">
 
     <div v-if="bank_account && bank_account.status == 'linked'" class="alert alert-success shadow my-4">
       <icon-check-circle class="mr-3"></icon-check-circle>
@@ -20,7 +20,7 @@
         type="text"
         class="input input-bordered"
         :class="{ 'input-error': errors.account_name }"
-        :disabled="bank_account != null"
+        :readonly="bank_account != null"
         required>
       <label
         v-for="(error, index) in errors.account_name"
@@ -37,7 +37,7 @@
         type="text"
         class="input input-bordered"
         :class="{ 'input-error': errors.account_number }"
-        :disabled="bank_account != null"
+        :readonly="bank_account != null"
         required>
       <label
         v-for="(error, index) in errors.account_number"
@@ -54,7 +54,7 @@
         type="text"
         class="input input-bordered"
         :class="{ 'input-error': errors.ifsc }"
-        :disabled="bank_account != null"
+        :readonly="bank_account != null"
         required>
       <label
         v-for="(error, index) in errors.ifsc"
@@ -71,7 +71,7 @@
         type="text"
         class="input input-bordered"
         :class="{ 'input-error': errors.beneficiary_name }"
-        :disabled="bank_account != null"
+        :readonly="bank_account != null"
         required>
       <label
         v-for="(error, index) in errors.beneficiary_name"
@@ -88,9 +88,9 @@
         type="text"
         class="select select-bordered"
         :class="{ 'input-error': errors.account_type }"
-        :disabled="bank_account != null"
+        :readonly="bank_account != null"
         required>
-        <option disabled value="">Please select one</option>
+        <option readonly value="">Please select one</option>
         <option>Individual</option>
         <option>Private Limited</option>
         <option>LLP</option>
@@ -112,7 +112,7 @@
         type="text"
         class="input input-bordered"
         :class="{ 'input-error': errors.mobile_number }"
-        :disabled="bank_account != null"
+        :readonly="bank_account != null"
         required>
       <label
         v-for="(error, index) in errors.mobile_number"
@@ -149,48 +149,16 @@ export default {
   async fetch() {
     const bankAccounts = await this.$axios.$get('/api/accounts/');
     if (bankAccounts.count) {
-      this.canEdit = true;
       this.bank_account = bankAccounts.results[0];
       this.form = this.bank_account;
     }
   },
   methods: {
-    async donate() {
-      let donation;
+    async saveAccount() {
       try {
-        donation = await this.$axios.$post(
-          '/api/donations/',
-          this.form
-        );
+        this.bank_account = await this.$axios.$post('/api/accounts/', this.form);
       } catch (err) {
         this.errors = err.response.data;
-        console.log(err.response.data);
-        return;
-      }
-
-      const paymentOptions = donation.payment_payload;
-      paymentOptions.handler = (paymentResponse) => {
-        this.processPayment(donation, paymentResponse);
-      };
-
-      const rzp1 = new Razorpay(paymentOptions); // eslint-disable-line
-      rzp1.open();
-    },
-    async processPayment(donation, paymentResponse) {
-      try {
-        await this.$axios.$post('/api/payments/', {
-          processor: 'razorpay',
-          type: 'donation',
-          payload: paymentResponse
-        });
-      } catch (err) {
-        console.error(err.response.data);
-        this.errors.non_field_errors = [
-          {
-            message:
-              'There was an error while processing the payment. If money was deducted from your account, it will be automatically refunded in 2 days. Feel free to contact us if you have any questions.'
-          }
-        ];
       }
     }
   }

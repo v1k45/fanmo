@@ -28,9 +28,7 @@
         </div>
       </div>
     </div>
-    <div v-if="donation.message" class="card-body">
-      {{ donation.message }}
-    </div>
+    <div v-if="donation.message" class="card-body whitespace-pre-wrap">{{ donation.message }}</div>
   </div>
 </div>
 </template>

@@ -29,12 +29,57 @@
     <div class="my-6">
       <div class="tabs">
         <div class="tab tab-lg tab-lifted" :class="{ 'tab-active': activeTab === tabName.HOME }" @click="activeTab = tabName.HOME;">Home</div>
-        <div class="tab tab-lg tab-lifted" :class="{ 'tab-active': activeTab === tabName.TIERS }" @click="activeTab = tabName.TIERS;">Membership Tiers</div>
-        <div class="tab tab-lg tab-lifted" :class="{ 'tab-active': activeTab === tabName.POSTS }" @click="activeTab = tabName.POSTS;">Posts</div>
-        <div class="tab tab-lg tab-lifted" :class="{ 'tab-active': activeTab === tabName.DONATIONS }" @click="activeTab = tabName.DONATIONS;">Donations</div>
+        <div v-if="user.tiers.length" class="tab tab-lg tab-lifted" :class="{ 'tab-active': activeTab === tabName.TIERS }" @click="activeTab = tabName.TIERS;">Membership Tiers</div>
+        <div v-if="user.user_preferences.is_accepting_payments" class="tab tab-lg tab-lifted" :class="{ 'tab-active': activeTab === tabName.DONATIONS }" @click="activeTab = tabName.DONATIONS;">Donations</div>
         <div class="tab tab-lg tab-lifted flex-grow cursor-default"></div>
       </div>
     </div>
+    <div v-show="activeTab == tabName.HOME" class="row pb-10">
+      <div class="col-7">
+        <div class="flex flex-wrap items-center">
+          <h1 class="text-2xl font-bold mr-auto">Posts</h1>
+          <button v-if="$auth.loggedIn && user.username == $auth.user.username" class="mt-4 sm:mt-0 btn btn-wide btn-black" @click="isAddPostVisible = true;">
+            <IconPlus class="mr-1" :size="16"></IconPlus>
+            Add a post
+          </button>
+        </div>
+        <div v-if="posts.count" class="mt-8 max-w-lg">
+          <post v-for="post in posts.results" :key="post.id" :post="post" class="mb-6"></post>
+        </div>
+      </div>
+      <div class="col"></div>
+      <div class="col-4">
+        <h1 class="text-2xl font-bold mr-auto">About</h1>
+        <div class="card shadow my-8">
+          <div class="card-body">
+            <p>{{ user.about || 'Nothing to see here' }}</p>
+            <div class="card-actions">
+              <a v-if="user.social_links.website_url" :href="user.social_links.website_url">
+                <icon-globe class="mr-1" :size="20"></icon-globe>
+              </a>
+              <a v-if="user.social_links.youtube_url" :href="user.social_links.youtube_url">
+                <icon-youtube class="mr-1" :size="20"></icon-youtube>
+              </a>
+              <a v-if="user.social_links.facebook_url" :href="user.social_links.facebook_url">
+                <icon-facebook class="mr-1" :size="20"></icon-facebook>
+              </a>
+              <a v-if="user.social_links.instagram_url" :href="user.social_links.instagram_url">
+                <icon-instagram class="mr-1" :size="20"></icon-instagram>
+              </a>
+              <a v-if="user.social_links.twitter_url" :href="user.social_links.twitter_url">
+                <icon-twitter class="mr-1" :size="20"></icon-twitter>
+              </a>
+            </div>
+          </div>
+        </div>
+        <h1 class="text-2xl font-bold mr-auto">Recent Donations</h1>
+        <div class="row">
+          <donation v-for="donation in donations.results" :key="donation.id" :donation="donation">
+          </donation>
+        </div>
+      </div>
+    </div>
+    <add-post v-model="isAddPostVisible" @created="prependPost"></add-post>
     <div v-show="activeTab == tabName.TIERS" class="row justify-center pb-10">
       <tier
         v-for="tier in user.tiers"
@@ -42,21 +87,6 @@
         :user="user"
         :tier="tier"></tier>
     </div>
-    <div v-show="activeTab == tabName.POSTS" class="pb-10">
-      <div class="max-w-3xl mx-auto">
-        <div class="flex flex-wrap">
-          <h1 class="text-2xl font-bold mr-auto">Posts</h1>
-          <button v-if="$auth.loggedIn && user.username == $auth.user.username" class="mt-4 sm:mt-0 btn btn-wide btn-black" @click="isAddPostVisible = true;">
-            <IconPlus class="mr-1" :size="16"></IconPlus>
-            Add a post
-          </button>
-        </div>
-        <div v-if="posts.count" class="mt-8">
-          <post v-for="post in posts.results" :key="post.id" :post="post" class="mb-6"></post>
-        </div>
-      </div>
-    </div>
-    <add-post v-model="isAddPostVisible"></add-post>
     <div v-show="activeTab == tabName.DONATIONS" class="row justify-end pb-10">
       <div v-if="donations.count" class="col-12 md:col-6">
         <div class="row justify-center">
@@ -66,7 +96,7 @@
       </div>
       <div class="col-12 md:col-6">
         <div class="row justify-center">
-          <donation-form :user="user"></donation-form>
+          <donation-form :user="user" @donated="prependDonation"></donation-form>
         </div>
       </div>
     </div>
@@ -75,13 +105,7 @@
 </template>
 
 <script>
-import AddPost from '../components/add-post.vue';
-import DonationForm from '../components/donation-form.vue';
-import donation from '../components/donation.vue';
-import post from '../components/post.vue';
-import tier from '../components/tier.vue';
 export default {
-  components: { tier, DonationForm, donation, post, AddPost },
   layout:
     'default-no-container',
   props: {
@@ -94,7 +118,6 @@ export default {
     const tabName = {
       HOME: 'home',
       TIERS: 'tiers',
-      POSTS: 'posts',
       DONATIONS: 'donations'
     };
     return {
@@ -102,15 +125,15 @@ export default {
       posts: {},
       user: null,
       tabName,
-      activeTab: tabName.TIERS,
+      activeTab: tabName.HOME,
       isAddPostVisible: false
     };
   },
   async fetch() {
     const username = this.username || this.$auth.user.username;
     this.user = await this.$axios.$get(`/api/users/${username}/`);
-    this.donations = await this.$axios.$get(`/api/donations/?username=${username}`);
     this.posts = await this.$axios.$get(`/api/posts/?username=${username}`);
+    this.donations = await this.$axios.$get(`/api/donations/?username=${username}`);
   },
   head: {
     title: 'My profile'
@@ -119,6 +142,12 @@ export default {
     async toggleFollow() {
       const action = this.user.is_following ? 'unfollow' : 'follow';
       this.user = await this.$axios.$post(`/api/users/${this.user.username}/${action}/`);
+    },
+    prependPost(post) {
+      this.posts.results.unshift(post);
+    },
+    prependDonation(donation) {
+      this.donations.results.unshift(donation);
     }
   }
 };
