@@ -8,6 +8,7 @@ import environ
 ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 # memberships/
 APPS_DIR = ROOT_DIR / "memberships"
+PLACEHOLDERS_DIR = APPS_DIR / "static" / "images" / "placeholders"
 env = environ.Env()
 
 READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
@@ -337,17 +338,21 @@ MINIMUM_PAYMENT_AMOUNT = 10.00
 CORS_URLS_REGEX = r"^/api/.*$"
 
 # django-versatileimagefield - https://github.com/respondcreate/django-versatileimagefield
+VERSATILEIMAGEFIELD_SETTINGS = {
+    'jpeg_resize_quality': 90
+}
 VERSATILEIMAGEFIELD_RENDITION_KEY_SETS = {
     "user_avatar": [
         ("full", "url"),
-        ("medium", "thumbnail__3000x300"),
-        ("small", "thumbnail__150x150"),
-        ("thumbnail", "thumbnail__50x50"),
+        ("medium", "crop__300x300"),
+        ("small", "crop__150x150"),
+        ("thumbnail", "crop__50x50"),
     ],
     "user_cover": [
         ("full", "url"),
-        ("medium", "thumbnail__900x450"),
-        ("small", "thumbnail__300x150"),
+        ("big", "crop__1800x400"),
+        ("medium", "crop__900x200"),
+        ("small", "crop__300x70"),
     ],
     "tier_cover": [
         ("full", "url"),

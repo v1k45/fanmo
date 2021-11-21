@@ -24,7 +24,7 @@
             <div class="flex items-center space-x-3">
               <div class="avatar">
                 <div class="w-12 h-12 mask mask-circle">
-                  <img src="http://daisyui.com/tailwind-css-component-profile-2@56w.png" alt="Avatar Tailwind CSS Component">
+                  <img :src="subscription.seller_user.avatar.small" alt="Avatar Tailwind CSS Component">
                 </div>
               </div>
               <div class="font-bold">{{ subscription.seller_user.username }}</div>

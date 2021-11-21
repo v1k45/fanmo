@@ -10,7 +10,7 @@
         <div class="flex items-center">
           <div class="avatar">
             <div class="rounded-full w-8 h-8">
-              <img src="http://daisyui.com/tailwind-css-component-profile-1@40w.png">
+              <img :src="$auth.user.avatar.small">
             </div>
           </div>
           <div class="text-sm font-semibold ml-2 max-w-xs truncate">{{ $auth.user.username }}</div>

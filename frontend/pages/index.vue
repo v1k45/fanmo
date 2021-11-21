@@ -62,7 +62,7 @@
       <div v-for="user in creators.results" :key="user.id" class="flex items-center card shadow-md col-3">
         <div class="avatar rounded-full p-1 bg-white">
           <div class="w-32 h-32 rounded-full">
-            <img src="https://picsum.photos/100/100">
+            <img :src="user.avatar.medium">
           </div>
         </div>
         <div class="card-body">

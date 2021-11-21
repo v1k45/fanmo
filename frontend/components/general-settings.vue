@@ -38,14 +38,9 @@
 
     <div class="form-control mt-3">
       <label class="label label-text">Avatar</label>
-      <div v-if="avatarUrl" class="avatar">
+      <div class="avatar">
         <div class="w-32 h-32 rounded-full">
           <img :src="avatarUrl">
-        </div>
-      </div>
-      <div v-else class="avatar placeholder">
-        <div class="w-32 h-32 rounded-full bg-neutral-focus text-neutral-content">
-          <span class="text-3xl">{{ $auth.user.username[0] }}</span>
         </div>
       </div>
       <input

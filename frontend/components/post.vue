@@ -4,7 +4,7 @@
     <div class="flex items-center">
       <div class="avatar">
         <div class="w-11 h-11 border rounded-full">
-          <img src="https://picsum.photos/100/100">
+          <img :src="post.author_user.avatar.small">
         </div>
       </div>
       <div class="ml-3">

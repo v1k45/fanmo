@@ -9,6 +9,8 @@ from memberships.payments.models import BankAccount
 
 from memberships.utils.models import BaseModel
 from versatileimagefield.fields import VersatileImageField
+from versatileimagefield.placeholder import OnDiscPlaceholderImage
+
 
 
 class User(BaseModel, AbstractUser):
@@ -17,8 +19,18 @@ class User(BaseModel, AbstractUser):
     first_name = None
     last_name = None
 
-    avatar = VersatileImageField(upload_to="profiles/avatars/", blank=True)
-    cover = VersatileImageField(upload_to="profiles/covers/", blank=True)
+    avatar = VersatileImageField(
+        upload_to="profiles/avatars/", blank=True,
+        placeholder_image=OnDiscPlaceholderImage(
+            path=settings.PLACEHOLDERS_DIR / "avatar.jpg"
+        )
+    )
+    cover = VersatileImageField(
+        upload_to="profiles/covers/", blank=True,
+        placeholder_image=OnDiscPlaceholderImage(
+            path=settings.PLACEHOLDERS_DIR / "cover.jpg"
+        )
+    )
     about = models.TextField(blank=True)
 
     followers = models.ManyToManyField(

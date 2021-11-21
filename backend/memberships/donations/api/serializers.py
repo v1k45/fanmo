@@ -106,6 +106,6 @@ class DonationSerializer(serializers.ModelSerializer):
         ]
 
     def get_sender_user(self, donation):
-        if donation.is_anonymous:
+        if donation.is_anonymous or donation.sender_user_id is None:
             return None
-        return UserPreviewSerializer(donation.sender_user).data
+        return UserPreviewSerializer(donation.sender_user, context=self.context).data

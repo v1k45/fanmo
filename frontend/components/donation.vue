@@ -3,15 +3,20 @@
   <div class="card compact border shadow-lg">
     <div class="flex justify-between items-center p-4">
       <div class="flex items-center">
-        <div class="avatar">
+        <div v-if="donation.sender_user" class="avatar">
           <div class="w-11 h-11 border rounded-full">
-            <img src="https://picsum.photos/100/100">
+            <img :src="donation.sender_user.avatar.small">
+          </div>
+        </div>
+        <div v-else class="avatar placeholder">
+          <div class="w-11 h-11 rounded-full bg-neutral-focus text-neutral-content">
+            <span class="text-3xl">?</span>
           </div>
         </div>
         <div class="ml-3">
-          <div v-if="donation.is_anonymous" class="text-xl font-bold">{{ donation.name }}</div>
+          <div v-if="donation.is_anonymous || donation.sender_user == null" class="text-xl font-bold">{{ donation.name }}</div>
           <div v-else class="text-xl font-bold">{{ donation.sender_user.username }}</div>
-          <div class="text-xs text-base-content text-opacity-40">10 Jul, 2012 9PM</div>
+          <div class="text-xs text-base-content text-opacity-40">{{ donation.created_at }}</div>
         </div>
       </div>
       <div class="ml-3">

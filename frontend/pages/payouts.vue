@@ -22,12 +22,18 @@
         <tr v-for="payout in payouts.results" :key="payout.id">
           <th scope="row">
             <div class="flex items-center space-x-3">
-              <div class="avatar">
+              <div v-if="payout.payment.buyer_user" class="avatar">
                 <div class="w-12 h-12 mask mask-circle">
-                  <img src="http://daisyui.com/tailwind-css-component-profile-2@56w.png" alt="Avatar Tailwind CSS Component">
+                  <img :src="payout.payment.buyer_user.avatar.small" alt="Avatar Tailwind CSS Component">
+                </div>
+              </div>
+              <div v-else class="avatar placeholder">
+                <div class="w-12 h-12 rounded-full bg-neutral-focus text-neutral-content">
+                  <span class="text-3xl">?</span>
                 </div>
               </div>
               <div v-if="payout.payment.buyer_user" class="font-bold">{{ payout.payment.buyer_user.username }}</div>
+              <div v-else class="font-bold">Anonymous</div>
             </div>
           </th>
           <td align="center">

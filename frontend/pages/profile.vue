@@ -3,7 +3,7 @@
   <div class="aspect-w-16 aspect-h-3 relative bg-black">
     <img
       class="object-cover h-full w-full absolute"
-      :src="user.cover.medium"
+      :src="user.cover.big"
       alt="Cover photo">
   </div>
   <div class="-mt-6 container flex items-center">
@@ -13,17 +13,17 @@
       </div>
     </div>
     <div class="ml-3">
-      <div class="text-2xl font-bold">{{ user.username }}</div>
+      <div class="text-2xl font-bold">{{ user.name || user.username }}</div>
       <div class="flex items-center">
         <icon-heart
           class="mr-2 fill-current text-error"
           :size="16"></icon-heart>
         {{ user.follower_count }} followers
       </div>
-      <button class="btn btn-black" @click="toggleFollow">
-        {{ user.is_following ? 'Unfollow' : 'Follow' }}
-      </button>
     </div>
+    <button class="btn btn-black ml-auto" @click="toggleFollow">
+      {{ user.is_following ? 'Unfollow' : 'Follow' }}
+    </button>
   </div>
   <div class="container">
     <div class="my-6">
