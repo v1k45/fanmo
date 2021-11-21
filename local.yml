@@ -70,6 +70,5 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
-      - /app/dist
     env_file:
       - ./.envs/.local/.nuxt

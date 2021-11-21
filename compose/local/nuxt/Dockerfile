@@ -8,6 +8,5 @@ RUN yarn install
 ENV PATH /app/node_modules/.bin:$PATH
 COPY ./frontend/ .
 RUN yarn generate
-COPY ./frontend/ .
 
 CMD [ "yarn", "start" ]
