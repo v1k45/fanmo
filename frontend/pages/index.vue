@@ -56,9 +56,9 @@
     </div>
     <nuxt-link to="/signup" class="btn px-10 animate-bounce">Sign up</nuxt-link>
   </div>
-  <div>
+  <div class="mt-8">
     <h1 class="text-2xl font-bold mr-auto">Featured Creators</h1>
-    <div class="row">
+    <div class="row mt-4">
       <div v-for="user in creators.results" :key="user.id" class="flex items-center card shadow-md col-3">
         <div class="avatar rounded-full p-1 bg-white">
           <div class="w-32 h-32 rounded-full">
@@ -71,6 +71,12 @@
       </div>
     </div>
   </div>
+  <div class="mt-8">
+    <h1 class="text-2xl font-bold mr-auto">Posts</h1>
+    <div v-if="posts.count" class="mt-8 max-w-lg">
+      <post v-for="post in posts.results" :key="post.id" :post="post" class="mb-6"></post>
+    </div>
+  </div>
 </div>
 </template>
 
@@ -79,7 +85,8 @@ export default {
   auth: false,
   async asyncData({ $axios }) {
     const creators = await $axios.$get('/api/users/?creator=true');
-    return { creators };
+    const posts = await $axios.$get('/api/posts/');
+    return { creators, posts };
   },
   head: {
     title: 'Home'

@@ -43,7 +43,7 @@ class PostViewSet(
                 author_user__followers__in=self.request.user.followings.all()
             )
 
-        return queryset.none()
+        return queryset
 
     def get_serializer_class(self):
         if self.action == "create":

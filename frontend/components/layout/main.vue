@@ -50,7 +50,7 @@
           </li>
           <li class="m-1 px-1 py-2 rounded hover:bg-neutral-focus">
             <div>
-              <nuxt-link to="/profile" class="flex flex-col items-center">
+              <nuxt-link :to="`/${$auth.user.username}`" class="flex flex-col items-center">
                 <icon-layout :size="22"></icon-layout>
                 <div class="text-2xs">Profile</div>
               </nuxt-link>
