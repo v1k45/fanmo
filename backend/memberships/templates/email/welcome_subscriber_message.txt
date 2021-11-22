@@ -1,0 +1,8 @@
+Hi {{ subscription.buyer_user.display_name }},
+
+You've successfully subscribed {{ subscription.plan.amount }} per month to {{ subscription.seller_user.display_name }}.
+
+{% if subscription.tier %}You've been added to {{ subscription.tier.name }} tier.{% endif %}
+
+{% if subscription.tier.welcome_message %}{{ subscription.seller_user.display_name }} sent you a message:
+{{ subscription.tier.welcome_message }}{% endif %}

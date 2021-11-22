@@ -1,0 +1,3 @@
+{{ post.title }}
+
+Click this link below to view it: {{ post.url }}

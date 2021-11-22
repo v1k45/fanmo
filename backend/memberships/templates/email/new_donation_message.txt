@@ -1,0 +1,5 @@
+Hi {{ donation.receiver_user.display_name }},
+
+{% if donation.is_anonymous %}{{ donation.sender_name }} donated {{ donation.amount }}.{% endif %}
+
+{% if donation.message %}Message: {{ donation.message }}.{% endif %}
