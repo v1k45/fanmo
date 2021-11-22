@@ -88,7 +88,10 @@ export default {
   proxy: {
     '/api/': {
       target: process.env.API_URL,
-      secure: process.env.ENV === 'production'
+      secure: process.env.ENV === 'production',
+      headers: {
+        referer: process.env.API_URL
+      }
     }
   },
 
