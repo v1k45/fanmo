@@ -3,7 +3,7 @@
 
   <div class="navbar text-neutral-content">
     <div class="flex-1 px-2 mx-2">
-      <span class="text-2xl md:text-3xl font-extrabold">fanmo</span>
+      <nuxt-link to="/" class="text-2xl md:text-3xl font-extrabold">fanmo</nuxt-link>
     </div>
     <div class="flex-none hidden px-2 mx-2 lg:flex">
       <div v-if="$auth.loggedIn" class="flex items-stretch norm">

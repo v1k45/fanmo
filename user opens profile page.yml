@@ -53,3 +53,10 @@ subscriber welcome
 new subscriber
 donation received
 new subscribed post
+
+
+---
+
+validation
+
+username - urlsafe
