@@ -12,6 +12,16 @@ urlpatterns = [
     path(settings.ADMIN_URL, admin.site.urls),
     # User management
     path(
+        "login/",
+        TemplateView.as_view(template_name="pages/home.html"),
+        name="account_login",
+    ),
+    path(
+        "signup/",
+        TemplateView.as_view(template_name="pages/home.html"),
+        name="account_signup",
+    ),
+    path(
         "reset/confirm/<uidb36>/<token>/",
         TemplateView.as_view(template_name="pages/home.html"),
         name="password_reset_confirm",
