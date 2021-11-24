@@ -18,6 +18,7 @@ def process_razorpay_webhook(webhook_message_id):
         "subscription.pending": subscription_pending,
         "subscription.halted": subscription_halted,
         "order.paid": order_paid,
+        "transfer.processed": transfer_processed,
     }
     event_name = webhook_message.payload["event"]
     if event_name in handlers:
@@ -133,6 +134,11 @@ def order_paid(payload):
 
     # send payout
     Payout.for_payment(payment)
+
+
+def transfer_processed(payload):
+    transfer_id = payload["payload"]["transfer"]["entity"]["id"]
+    Payout.objects.filter(external_id=transfer_id, status=Payout.Status.SCHEDULED).update(status=Payout.Status.PROCESSED)
 
 
 def get_money_from_subunit(amount, currency_code):
