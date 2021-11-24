@@ -1,1 +1,1 @@
-{{ post.author_user }} added a new post
+{{ post.author_user }} added a new post!

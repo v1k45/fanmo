@@ -1,0 +1,5 @@
+Hi {{ subscription.buyer_user.display_name }},
+
+Your subscription to {{ subscription.seller_user.display_name }} has been cancelled.
+
+If you have any questions, feel free to contact us on https://fanmo.in/help

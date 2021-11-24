@@ -1,1 +1,1 @@
-{{ subscription.buyer_user.display_user }} has subscribed you!
+{{ subscription.buyer_user.display_user }} subscribed you!

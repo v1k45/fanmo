@@ -3,3 +3,5 @@ Hi {{ subscription.seller_user.display_name }},
 {{ subscription.buyer_user.display_name }} subscribed {{ subscription.plan.amount }} per month.
 
 {% if subscription.tier %}{{ subscription.buyer_user.display_name }} has been added to {{ subscription.tier.name }} tier.{% endif %}
+
+If you wish to contact them directly, you can email them on {{ subscription.buyer_user.email }}.

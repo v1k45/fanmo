@@ -1,0 +1,1 @@
+Your subscription to {{ subscription.seller_user.display_user }} is failing!
