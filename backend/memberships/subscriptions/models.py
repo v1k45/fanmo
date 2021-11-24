@@ -169,14 +169,15 @@ class Subscription(BaseModel):
     objects = SubscriptionQuerySet.as_manager()
 
     def create_external(self):
-        external_subscription = razorpay_client.subscription.create(
-            {
-                "plan_id": self.plan.external_id,
-                "total_count": 12,
-                "notes": {"external_id": self.id},
-                "start_at": self.cycle_start_at.timestamp()
-            }
-        )
+        subscription_data = {
+            "plan_id": self.plan.external_id,
+            "total_count": 12,
+            "notes": {"external_id": self.id},
+        }
+        if self.cycle_start_at > timezone.now():
+            subscription_data["start_at"] = self.cycle_start_at.timestamp()
+
+        external_subscription = razorpay_client.subscription.create(subscription_data)
         self.external_id = external_subscription["id"]
         self.save()
 
