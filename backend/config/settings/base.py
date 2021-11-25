@@ -76,6 +76,7 @@ THIRD_PARTY_APPS = [
     "drf_spectacular",
     "djmoney",
     "versatileimagefield",
+    "django_q",
 ]
 
 LOCAL_APPS = [
