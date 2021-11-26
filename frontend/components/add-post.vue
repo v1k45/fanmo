@@ -24,6 +24,27 @@
         </div>
 
         <div class="form-control">
+          <label class="label label-text">Type</label>
+          <select
+            v-model="form.content.type"
+            type="text"
+            class="select select-bordered"
+            :class="{ 'input-error': (errors.content && errors.content.type ) }"
+            required>
+            <option disabled value="">Please select one</option>
+            <option value="text">Text</option>
+            <option value="link">Link</option>
+            <option value="image">Image</option>
+          </select>
+          <label
+            v-for="(error, index) in (errors.content && errors.content.type)"
+            :key="index"
+            class="label">
+            <span class="label-text-alt">{{ error.message }}</span>
+          </label>
+        </div>
+
+        <div v-if="form.content.type == 'text'" class="form-control mt-3">
           <label class="label label-text">Post</label>
           <textarea
             v-model="form.content.text"
@@ -34,6 +55,43 @@
         </textarea>
           <label
             v-for="(error, index) in (errors.content && errors.content.text)"
+            :key="index"
+            class="label">
+            <span class="label-text-alt">{{ error.message }}</span>
+          </label>
+        </div>
+
+        <div v-if="form.content.type == 'link'" class="form-control">
+          <label class="label label-text">Link</label>
+          <input
+            v-model="form.content.link"
+            type="text"
+            class="input input-bordered"
+            :class="{ 'input-error': (errors.content && errors.content.link) }"
+            required>
+          <label
+            v-for="(error, index) in (errors.content && errors.content.link)"
+            :key="index"
+            class="label">
+            <span class="label-text-alt">{{ error.message }}</span>
+          </label>
+        </div>
+
+        <div v-if="form.content.type == 'image'" class="form-control mt-3">
+          <label class="label label-text">Image</label>
+          <div v-if="form.content.image_base64" class="aspect-w-16 aspect-h-9 relative bg-black">
+            <img
+              class="object-cover h-full w-full absolute"
+              :src="form.content.image_base64"
+              alt="Post Image">
+          </div>
+          <input
+            type="file"
+            class="input input-bordered mt-3"
+            :class="{ 'input-error': (errors.content && errors.content.image_base64) }"
+            @change="loadImage">
+          <label
+            v-for="(error, index) in (errors.content && errors.content.image_base64)"
             :key="index"
             class="label">
             <span class="label-text-alt">{{ error.message }}</span>
@@ -104,7 +162,9 @@ export default {
         title: '',
         content: {
           type: 'text',
-          text: ''
+          text: '',
+          link: '',
+          image_base64: ''
         },
         visibility: 'public',
         minimum_tier: ''
@@ -131,6 +191,14 @@ export default {
       } catch (err) {
         this.errors = err.response.data;
       }
+    },
+    loadImage(event) {
+      const image = event.target.files[0];
+      const reader = new FileReader();
+      reader.readAsDataURL(image);
+      reader.onload = loadEvent => {
+        this.form.content.image_base64 = loadEvent.target.result;
+      };
     }
   }
 };

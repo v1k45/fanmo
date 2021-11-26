@@ -218,7 +218,9 @@ FIXTURE_DIRS = (str(APPS_DIR / "fixtures"),)
 SESSION_COOKIE_HTTPONLY = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-httponly
 CSRF_COOKIE_HTTPONLY = False
-CSRF_TRUSTED_ORIGINS = ["localhost", ]
+CSRF_TRUSTED_ORIGINS = [
+    "localhost",
+]
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-browser-xss-filter
 SECURE_BROWSER_XSS_FILTER = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#x-frame-options
@@ -339,9 +341,7 @@ MINIMUM_PAYMENT_AMOUNT = 10.00
 CORS_URLS_REGEX = r"^/api/.*$"
 
 # django-versatileimagefield - https://github.com/respondcreate/django-versatileimagefield
-VERSATILEIMAGEFIELD_SETTINGS = {
-    'jpeg_resize_quality': 90
-}
+VERSATILEIMAGEFIELD_SETTINGS = {"jpeg_resize_quality": 90}
 VERSATILEIMAGEFIELD_RENDITION_KEY_SETS = {
     "user_avatar": [
         ("full", "url"),
@@ -358,5 +358,8 @@ VERSATILEIMAGEFIELD_RENDITION_KEY_SETS = {
     "tier_cover": [
         ("full", "url"),
     ],
+    "post_image": [
+        ("full", "url"),
+    ],
 }
-SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

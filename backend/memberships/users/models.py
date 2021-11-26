@@ -12,7 +12,6 @@ from versatileimagefield.fields import VersatileImageField
 from versatileimagefield.placeholder import OnDiscPlaceholderImage
 
 
-
 class User(BaseModel, AbstractUser):
     # First and last name do not cover name patterns around the globe
     name = CharField(_("Name of User"), blank=True, max_length=255)
@@ -20,16 +19,18 @@ class User(BaseModel, AbstractUser):
     last_name = None
 
     avatar = VersatileImageField(
-        upload_to="profiles/avatars/", blank=True,
+        upload_to="profiles/avatars/",
+        blank=True,
         placeholder_image=OnDiscPlaceholderImage(
             path=settings.PLACEHOLDERS_DIR / "avatar.jpg"
-        )
+        ),
     )
     cover = VersatileImageField(
-        upload_to="profiles/covers/", blank=True,
+        upload_to="profiles/covers/",
+        blank=True,
         placeholder_image=OnDiscPlaceholderImage(
             path=settings.PLACEHOLDERS_DIR / "cover.jpg"
-        )
+        ),
     )
     about = models.TextField(blank=True)
 
@@ -56,8 +57,7 @@ class User(BaseModel, AbstractUser):
     def can_accept_payments(self):
         return (
             self.user_preferences.is_accepting_payments
-            and
-            self.bank_accounts.filter(status=BankAccount.Status.LINKED).exists()
+            and self.bank_accounts.filter(status=BankAccount.Status.LINKED).exists()
         )
 
     def will_accept(self, amount):

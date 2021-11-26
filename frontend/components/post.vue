@@ -25,7 +25,21 @@
   </div>
   <div class="card-body text-base pb-6 whitespace-pre-wrap">
     <template v-if="isDeleted">[deleted]</template>
-    <template v-else-if="post.content">{{ post.content.text }}</template>
+    <template v-else-if="post.content">
+      <div v-if="post.content.type == 'text'">{{ post.content.text }}</div>
+
+      <div v-if="post.content.type == 'link' && post.content.link_embed" class="aspect-w-16 aspect-h-9" v-html="post.content.link_embed.html"></div>
+      <div v-else-if="post.content.type == 'link'">
+        <a :href="post.content.link" rel="nofollow" target="_blank">{{ post.content.link }}</a>
+      </div>
+
+      <div v-if="post.content.type == 'image'">
+        <img
+          class="object-cover h-full w-full"
+          :src="post.content.image.full"
+          alt="Post Image">
+      </div>
+    </template>
     <template v-else>Locked! {{ post.visibility }}</template>
   </div>
 </div>

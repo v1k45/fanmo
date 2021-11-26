@@ -1,11 +1,12 @@
-from collections import defaultdict
 from django.db import models
-from django.db.models.fields import NullBooleanField
+from micawber.exceptions import ProviderException
 from versatileimagefield.fields import VersatileImageField
 
 from memberships.utils.models import BaseModel
 from memberships.subscriptions.models import Subscription
 from django_extensions.db.fields import AutoSlugField
+from memberships.posts.integrations import oembed_providers
+import metadata_parser
 
 
 class Post(BaseModel):
@@ -63,8 +64,33 @@ class Content(BaseModel):
     text = models.TextField(blank=True)
     image = VersatileImageField(upload_to="uploads/content/", blank=True)
     link = models.URLField(blank=True)
+
+    # todo: single link_metadata field?
     link_og = models.JSONField(default=None, null=True, blank=True)
     link_embed = models.JSONField(blank=True, null=True, default=None)
+
+    def update_link_metadata(self):
+        if self.type != self.Type.LINK:
+            return
+
+        try:
+            self.link_embed = oembed_providers.request(self.link)
+        except ProviderException:
+            pass
+
+        try:
+            self.link_og = {"og": None, "page": None}
+            metadata = metadata_parser.MetadataParser(
+                url=self.link, support_malformed=True, search_head_only=False
+            ).metadata
+            if metadata.get("og"):
+                self.link_og["og"] = metadata["og"]
+            if metadata.get("page"):
+                self.link_og["page"] = metadata["page"]
+        except metadata_parser.NotParsable:
+            pass
+
+        self.save()
 
 
 class Comment(BaseModel):

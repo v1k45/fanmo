@@ -22,8 +22,10 @@ class UserViewSet(ReadOnlyModelViewSet):
         following_username = self.request.query_params.get("following_username")
         if following_username:
             return base_qs.filter(followings__username=following_username)
-        if self.request.query_params.get('creator'):
-            return base_qs.filter(user_preferences__is_accepting_payments=True).order_by('-follower_count')
+        if self.request.query_params.get("creator"):
+            return base_qs.filter(
+                user_preferences__is_accepting_payments=True
+            ).order_by("-follower_count")
         return base_qs
 
     @extend_schema(request=None)

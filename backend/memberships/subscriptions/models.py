@@ -200,7 +200,12 @@ class Subscription(BaseModel):
 
     @transition(
         field=status,
-        source=[Status.AUTHENTICATED, Status.SCHEDULED_TO_ACTIVATE, Status.PENDING, Status.HALTED],
+        source=[
+            Status.AUTHENTICATED,
+            Status.SCHEDULED_TO_ACTIVATE,
+            Status.PENDING,
+            Status.HALTED,
+        ],
         target=Status.ACTIVE,
     )
     def activate(self):
@@ -213,7 +218,6 @@ class Subscription(BaseModel):
     )
     def schedule_to_activate(self):
         pass
-
 
     @transition(field=status, source="*", target=Status.SCHEDULED_TO_CANCEL)
     def schedule_to_cancel(self):

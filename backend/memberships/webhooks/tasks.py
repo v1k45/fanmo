@@ -138,7 +138,9 @@ def order_paid(payload):
 
 def transfer_processed(payload):
     transfer_id = payload["payload"]["transfer"]["entity"]["id"]
-    Payout.objects.filter(external_id=transfer_id, status=Payout.Status.SCHEDULED).update(status=Payout.Status.PROCESSED)
+    Payout.objects.filter(
+        external_id=transfer_id, status=Payout.Status.SCHEDULED
+    ).update(status=Payout.Status.PROCESSED)
 
 
 def get_money_from_subunit(amount, currency_code):
