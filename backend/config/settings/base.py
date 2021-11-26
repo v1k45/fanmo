@@ -90,6 +90,7 @@ LOCAL_APPS = [
     "memberships.payments",
     "memberships.donations",
     "memberships.webhooks",
+    "memberships.integrations",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -287,6 +288,14 @@ ACCOUNT_ADAPTER = "memberships.users.adapters.AccountAdapter"
 SOCIALACCOUNT_ADAPTER = "memberships.users.adapters.SocialAccountAdapter"
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
 OLD_PASSWORD_FIELD_ENABLED = True
+SOCIALACCOUNT_PROVIDERS = {
+    'discord_user': {
+        'SCOPE': ['email', 'identity'],
+    },
+    'discord_server': {
+        'SCOPE': ['email', 'identity', 'guids', 'guilds.join'],
+    },
+}
 
 # django-rest-framework
 # -------------------------------------------------------------------------------
