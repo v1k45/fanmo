@@ -1,12 +1,12 @@
 from django.urls.conf import include, path
-from rest_framework.routers import SimpleRouter
+from rest_framework_extensions.routers import ExtendedSimpleRouter
 from memberships.donations.api.views import DonationViewSet
 from memberships.payments.api.views import (
     PaymentViewSet,
     PayoutViewSet,
     BankAccountViewSet,
 )
-from memberships.posts.api.views import PostViewSet
+from memberships.posts.api.views import PostViewSet, CommentViewSet
 
 from memberships.users.api.views import (
     OwnUserAPIView,
@@ -35,10 +35,11 @@ from dj_rest_auth.registration.views import (
 from drf_spectacular.views import SpectacularSwaggerView, SpectacularAPIView
 
 
-router = SimpleRouter()
+router = ExtendedSimpleRouter()
 router.register("users", UserViewSet, basename="users")
 router.register("tiers", TierViewSet, basename="tiers")
 router.register("posts", PostViewSet, basename="posts")
+router.register("comments", CommentViewSet, basename="comments")
 router.register("subscriptions", SubscriptionViewSet, basename="subscriptions")
 router.register("subscribers", SubscriberViewSet, basename="subscribers")
 router.register("donations", DonationViewSet, basename="donations")

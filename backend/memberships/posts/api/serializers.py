@@ -3,7 +3,7 @@ from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from versatileimagefield.serializers import VersatileImageFieldSerializer
 
-from memberships.posts.models import Content, Post, Reaction
+from memberships.posts.models import Comment, Content, Post, Reaction
 from memberships.users.api.serializers import UserPreviewSerializer
 
 from drf_spectacular.utils import extend_schema_field
@@ -111,5 +111,25 @@ class PostCreateSerializer(PostSerializer):
         content.update_link_metadata()
 
         validated_data["content"] = content
+        validated_data["author_user"] = self.context["request"].user
+        return super().create(validated_data)
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    post_id = serializers.PrimaryKeyRelatedField(
+        source="post", queryset=Post.objects.all(), write_only=True
+    )
+    author_user = UserPreviewSerializer(read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = ["id", "post_id", "body", "author_user"]
+
+    def validate_post(self, post):
+        if post.is_locked(self.context["request"].user):
+            raise serializers.ValidationError("Only members can comment on this post.")
+        return post
+
+    def create(self, validated_data):
         validated_data["author_user"] = self.context["request"].user
         return super().create(validated_data)
