@@ -30,6 +30,7 @@ class Post(BaseModel):
 
     is_published = models.BooleanField(default=True)
 
+    # lru cache?
     def is_locked(self, user):
         # author gets to see their own posts
         if user.pk == self.author_user_id:
@@ -99,3 +100,13 @@ class Comment(BaseModel):
     author_user = models.ForeignKey("users.User", on_delete=models.CASCADE)
 
     is_published = models.BooleanField(default=True)
+
+
+class Reaction(BaseModel):
+    class Emoji(models.TextChoices):
+        HEART = "heart"
+
+    emoji = models.CharField(max_length=16, choices=Emoji.choices)
+    # support comments in future?
+    post = models.ForeignKey("posts.Post", on_delete=models.CASCADE)
+    author_user = models.ForeignKey("users.User", on_delete=models.CASCADE)
