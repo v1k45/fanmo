@@ -51,7 +51,7 @@ class PostViewSet(
             return queryset.filter(author_user__username=username)
 
         if self.request.user.is_authenticated:
-            return queryset.filter(author_user__followings=self.request.user)
+            return queryset.filter(author_user__followers=self.request.user)
 
         return queryset
 
