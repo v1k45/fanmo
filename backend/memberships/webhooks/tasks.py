@@ -47,20 +47,16 @@ def subscription_charged(payload):
         subscription.save()
 
     payment_payload = payload["payload"]["payment"]["entity"]
-    payment, _ = Payment.objects.get_or_create(
+    payment, _ = Payment.objects.update_or_create(
         type=Payment.Type.SUBSCRIPTION,
         subscription=subscription,
-        # multiple?
-        # none?
-        # status=Payment.Status.AUTHORIZED,
-        method=payment_payload["method"],
         amount=get_money_from_subunit(
             payment_payload["amount"], payment_payload["currency"]
         ),
         external_id=payment_payload["id"],
         seller_user=subscription.seller_user,
         buyer_user=subscription.buyer_user,
-        defaults={"status": Payment.Status.AUTHORIZED},
+        defaults={"status": Payment.Status.AUTHORIZED, "method": payment_payload["method"]},
     )
 
     payment.status = Payment.Status.CAPTURED
@@ -113,20 +109,16 @@ def order_paid(payload):
     donation = Donation.objects.select_for_update().get(external_id=order_id)
 
     payment_payload = payload["payload"]["payment"]["entity"]
-    payment, _ = Payment.objects.get_or_create(
+    payment, _ = Payment.objects.update_or_create(
         type=Payment.Type.DONATION,
         donation=donation,
-        # multiple?
-        # none?
-        # status=Payment.Status.CAPTURED,
-        method=payment_payload["method"],
         amount=get_money_from_subunit(
             payment_payload["amount"], payment_payload["currency"]
         ),
         external_id=payment_payload["id"],
         seller_user=donation.receiver_user,
         buyer_user=donation.sender_user,
-        defaults={"status": Payment.Status.CAPTURED},
+        defaults={"status": Payment.Status.CAPTURED, "method": payment_payload["method"]},
     )
 
     payment.status = Payment.Status.CAPTURED
