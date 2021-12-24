@@ -7,8 +7,15 @@ fontFamily.sans.unshift('Quicksand');
 const lightTheme = require('daisyui/colors/themes')['[data-theme=light]'];
 
 module.exports = {
-  mode: 'jit',
   important: '#app',
+
+  content: [
+    './components/**/*.{js,vue,ts}',
+    './layouts/**/*.vue',
+    './pages/**/*.vue',
+    './plugins/**/*.{js,ts}',
+    './nuxt.config.{js,ts}'
+  ],
 
   corePlugins: {
     container: false

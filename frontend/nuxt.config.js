@@ -52,7 +52,7 @@ export default {
     // https://go.nuxtjs.dev/eslint
     '@nuxtjs/eslint-module',
     // https://go.nuxtjs.dev/tailwindcss
-    '@nuxtjs/tailwindcss',
+    '@nuxt/postcss8',
     'lucide-vue/nuxt'
   ],
 
@@ -102,5 +102,14 @@ export default {
 
   router: {
     middleware: ['auth']
+  },
+
+  build: {
+    postcss: {
+      plugins: {
+        tailwindcss: {},
+        autoprefixer: {}
+      }
+    }
   }
 };
