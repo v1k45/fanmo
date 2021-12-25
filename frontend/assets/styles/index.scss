@@ -3,7 +3,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@mixin scrollbars($color: $primary-opacity) {
+@mixin scrollbar($color: $primary-opacity) {
   /* Works on Firefox */
   scrollbar-width: thin;
   scrollbar-color: transparent transparent;
@@ -34,5 +34,5 @@
 }
 
 .scrollbar {
-  @include scrollbars(#aaa);
+  @include scrollbar(#aaa);
 }
