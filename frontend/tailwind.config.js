@@ -50,7 +50,7 @@ module.exports = {
     styled: true,
     themes: [
       {
-        mod: {
+        brand: {
           ...lightTheme,
           primary: '#06f',
           'primary-focus': '#0052cc'

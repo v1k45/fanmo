@@ -14,7 +14,7 @@ export default {
     titleTemplate: titleChunk => titleChunk ? `${titleChunk} | fanmo` : 'fanmo',
     htmlAttrs: {
       lang: 'en',
-      'data-theme': 'mod'
+      'data-theme': 'brand'
     },
     bodyAttrs: {
       id: 'app'
