@@ -8,4 +8,3 @@ class DiscordUserOAuth2Adapter(DiscordOAuth2Adapter):
 
 class DiscordServerOAuth2Adapter(DiscordOAuth2Adapter):
     provider_id = DiscordServerProvider.id
-

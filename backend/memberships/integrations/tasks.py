@@ -2,11 +2,15 @@ from memberships.integrations.models import DiscordServer, DiscordUser
 
 
 def add_buyer_to_discord_server(subscription):
-    buyer_discord_user = DiscordUser.objects.filter(social_account__user=subscription.buyer_user)
+    buyer_discord_user = DiscordUser.objects.filter(
+        social_account__user=subscription.buyer_user
+    )
     if buyer_discord_user is None:
         return
 
-    seller_discord_server = DiscordServer.objects.filter(social_account__user=subscription.seller_user)
+    seller_discord_server = DiscordServer.objects.filter(
+        social_account__user=subscription.seller_user
+    )
     if seller_discord_server is None:
         return
 
@@ -20,11 +24,15 @@ def add_buyer_to_discord_server(subscription):
 
 
 def remove_buyer_from_discord_server(subscription):
-    buyer_discord_user = DiscordUser.objects.filter(social_account__user=subscription.buyer_user)
+    buyer_discord_user = DiscordUser.objects.filter(
+        social_account__user=subscription.buyer_user
+    )
     if buyer_discord_user is None:
         return
 
-    seller_discord_server = DiscordServer.objects.filter(social_account__user=subscription.seller_user)
+    seller_discord_server = DiscordServer.objects.filter(
+        social_account__user=subscription.seller_user
+    )
     if seller_discord_server is None:
         return
 

@@ -23,6 +23,14 @@ from .serializers import (
     VerifyEmailSerializer,
 )
 
+from dj_rest_auth.registration.views import SocialLoginView
+
+from allauth.socialaccount.providers.twitter.views import TwitterOAuthAdapter
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
+from dj_rest_auth.social_serializers import TwitterLoginSerializer
+
 
 class UserViewSet(ReadOnlyModelViewSet):
     serializer_class = UserSerializer
@@ -68,9 +76,7 @@ class RegisterView(BaseRegisterView):
         return UserSerializer(user, context=self.get_serializer_context()).data
 
 
-class LoginView(BaseLoginView):
-    """Login using email/username and password"""
-
+class LoginViewMixin:
     def get_response_serializer(self):
         return UserSerializer
 
@@ -130,3 +136,25 @@ class TOTPDeviceViewSet(viewsets.ModelViewSet):
         response = HttpResponse(content_type="image/svg+xml")
         svg_image.save(response)
         return response
+class LoginView(LoginViewMixin, BaseLoginView):
+    """Login using email/username and password"""
+
+
+class GoogleLoginView(LoginViewMixin, SocialLoginView):
+    """Login using google"""
+
+    adapter_class = GoogleOAuth2Adapter
+    client_class = OAuth2Client
+
+
+class FacebookLoginView(LoginViewMixin, SocialLoginView):
+    """Login using facebook"""
+
+    adapter_class = FacebookOAuth2Adapter
+
+
+class TwitterLoginView(LoginViewMixin, SocialLoginView):
+    """Login using twitter"""
+
+    serializer_class = TwitterLoginSerializer
+    adapter_class = TwitterOAuthAdapter

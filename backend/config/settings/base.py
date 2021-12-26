@@ -289,11 +289,11 @@ SOCIALACCOUNT_ADAPTER = "memberships.users.adapters.SocialAccountAdapter"
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
 OLD_PASSWORD_FIELD_ENABLED = True
 SOCIALACCOUNT_PROVIDERS = {
-    'discord_user': {
-        'SCOPE': ['email', 'identity'],
+    "discord_user": {
+        "SCOPE": ["email", "identity"],
     },
-    'discord_server': {
-        'SCOPE': ['email', 'identity', 'guids', 'guilds.join'],
+    "discord_server": {
+        "SCOPE": ["email", "identity", "guids", "guilds.join"],
     },
 }
 

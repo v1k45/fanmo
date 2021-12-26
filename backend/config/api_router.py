@@ -9,11 +9,26 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework_extensions.routers import ExtendedSimpleRouter
 
 from memberships.donations.api.views import DonationViewSet
-from memberships.integrations.api.views import DiscordServerConnectView, DiscordUserConnectView
+from memberships.integrations.api.views import (
+    IntegrationView,
+    DiscordServerConnectView,
+    DiscordUserConnectView,
+)
 from memberships.payments.api.views import (
     BankAccountViewSet,
     PaymentViewSet,
     PayoutViewSet,
+    BankAccountViewSet,
+)
+
+from memberships.users.api.views import (
+    FacebookLoginView,
+    GoogleLoginView,
+    OwnUserAPIView,
+    TwitterLoginView,
+    UserViewSet,
+    RegisterView,
+    LoginView,
 )
 from memberships.posts.api.views import CommentViewSet, PostViewSet
 from memberships.subscriptions.api.views import (
@@ -48,8 +63,9 @@ router.register("auth/mfa", TOTPDeviceViewSet, basename="mfa")
 auth_patterns = [
     path("register/", RegisterView.as_view(), name="register"),
     path("login/", LoginView.as_view(), name="login"),
-    path("connect/discord/server/", DiscordServerConnectView.as_view(), name="connect_discord_server"),
-    path("connect/discord/user/", DiscordUserConnectView.as_view(), name="connect_discord_user"),
+    path("login/google/", GoogleLoginView.as_view(), name="google_login"),
+    path("login/facebook/", FacebookLoginView.as_view(), name="facebook_login"),
+    path("login/twitter/", TwitterLoginView.as_view(), name="twitter_login"),
     path("logout/", LogoutView.as_view(), name="logout"),
     path("email/verify/", RequestEmailVerificationView.as_view(), name="email_verify"),
     path(
@@ -64,10 +80,17 @@ auth_patterns = [
     ),
 ]
 
+integration_patterns = [
+    path("", IntegrationView.as_view()),
+    path("discord_server/", DiscordServerConnectView.as_view()),
+    path("discord_user/", DiscordUserConnectView.as_view()),
+]
+
 app_name = "api"
 urlpatterns = router.urls + [
     path("me/", OwnUserAPIView.as_view(), name="me"),
     path("auth/", include(auth_patterns)),
+    path("integrations/", include(integration_patterns)),
     path("webhooks/razorpay/", razorpay_webhook),
     # docs
     path("", SpectacularSwaggerView.as_view(url_name="api:schema"), name="docs"),
