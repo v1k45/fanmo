@@ -18,7 +18,6 @@ urlpatterns = [
     path("signup/", index_view, name="account_signup"),
     path("login/facebook/", index_view, name="facebook_callback"),
     path("login/google/", index_view, name="google_callback"),
-    path("login/twitter/", index_view, name="google_callback"),
     path("reset/confirm/<uidb36>/<token>/", index_view, name="password_reset_confirm"),
     path("confirm/<key>/", index_view, name="account_confirm_email"),
     # Your stuff: custom urls includes go here

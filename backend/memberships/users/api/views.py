@@ -151,10 +151,3 @@ class FacebookLoginView(LoginViewMixin, SocialLoginView):
     """Login using facebook"""
 
     adapter_class = FacebookOAuth2Adapter
-
-
-class TwitterLoginView(LoginViewMixin, SocialLoginView):
-    """Login using twitter"""
-
-    serializer_class = TwitterLoginSerializer
-    adapter_class = TwitterOAuthAdapter
