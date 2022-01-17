@@ -1,39 +1,35 @@
-from django.urls.conf import include, path
-from rest_framework_extensions.routers import ExtendedSimpleRouter
-from memberships.donations.api.views import DonationViewSet
-from memberships.payments.api.views import (
-    PaymentViewSet,
-    PayoutViewSet,
-    BankAccountViewSet,
-)
-from memberships.posts.api.views import PostViewSet, CommentViewSet
-
-from memberships.users.api.views import (
-    OwnUserAPIView,
-    UserViewSet,
-    RegisterView,
-    LoginView,
-)
-from memberships.subscriptions.api.views import (
-    SubscriberViewSet,
-    SubscriptionViewSet,
-    TierViewSet,
-)
-from memberships.webhooks.views import razorpay_webhook
-
 from dj_rest_auth.views import (
     LogoutView,
     PasswordChangeView,
     PasswordResetConfirmView,
     PasswordResetView,
 )
-from dj_rest_auth.registration.views import (
-    VerifyEmailView,
-    ResendEmailVerificationView,
+from django.urls.conf import include, path
+from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+from rest_framework_extensions.routers import ExtendedSimpleRouter
+
+from memberships.donations.api.views import DonationViewSet
+from memberships.payments.api.views import (
+    BankAccountViewSet,
+    PaymentViewSet,
+    PayoutViewSet,
 )
-
-from drf_spectacular.views import SpectacularSwaggerView, SpectacularAPIView
-
+from memberships.posts.api.views import CommentViewSet, PostViewSet
+from memberships.subscriptions.api.views import (
+    SubscriberViewSet,
+    SubscriptionViewSet,
+    TierViewSet,
+)
+from memberships.users.api.views import (
+    LoginView,
+    OwnUserAPIView,
+    RegisterView,
+    RequestEmailVerificationView,
+    TOTPDeviceViewSet,
+    UserViewSet,
+    VerifyEmailView,
+)
+from memberships.webhooks.views import razorpay_webhook
 
 router = ExtendedSimpleRouter()
 router.register("users", UserViewSet, basename="users")
@@ -46,13 +42,16 @@ router.register("donations", DonationViewSet, basename="donations")
 router.register("payments", PaymentViewSet, basename="payments")
 router.register("payouts", PayoutViewSet, basename="payouts")
 router.register("accounts", BankAccountViewSet, basename="bank_accounts")
+router.register("auth/mfa", TOTPDeviceViewSet, basename="mfa")
 
 auth_patterns = [
     path("register/", RegisterView.as_view(), name="register"),
-    path("verify_email/", VerifyEmailView.as_view(), name="verify_email"),
-    path("resend_email/", ResendEmailVerificationView.as_view(), name="resend_email"),
     path("login/", LoginView.as_view(), name="login"),
     path("logout/", LogoutView.as_view(), name="logout"),
+    path("email/verify/", RequestEmailVerificationView.as_view(), name="email_verify"),
+    path(
+        "email/verify/confirm/", VerifyEmailView.as_view(), name="email_verify_confirm"
+    ),
     path("password/change/", PasswordChangeView.as_view(), name="password_change"),
     path("password/reset/", PasswordResetView.as_view(), name="password_reset"),
     path(

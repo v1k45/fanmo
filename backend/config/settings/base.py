@@ -70,6 +70,10 @@ THIRD_PARTY_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
+    "django_otp",
+    "django_otp.plugins.otp_totp",
+    "django_otp.plugins.otp_hotp",
+    "django_otp.plugins.otp_email",
     "rest_framework",
     "dj_rest_auth",
     "corsheaders",
@@ -143,6 +147,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django_otp.middleware.OTPMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.common.BrokenLinkEmailsMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -281,6 +286,7 @@ ACCOUNT_EMAIL_VERIFICATION = "optional"
 ACCOUNT_ADAPTER = "memberships.users.adapters.AccountAdapter"
 SOCIALACCOUNT_ADAPTER = "memberships.users.adapters.SocialAccountAdapter"
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
+OLD_PASSWORD_FIELD_ENABLED = True
 
 # django-rest-framework
 # -------------------------------------------------------------------------------
@@ -308,6 +314,8 @@ REST_AUTH_TOKEN_CREATOR = "memberships.utils.authentication.create_auth_token"
 REST_AUTH_SERIALIZERS = {
     "TOKEN_SERIALIZER": "memberships.users.api.serializers.UserSerializer",
     "USER_DETAILS_SERIALIZER": "memberships.users.api.serializers.UserSerializer",
+    "PASSWORD_RESET_SERIALIZER": "memberships.users.api.serializers.PasswordResetSerializer",
+    "PASSWORD_RESET_CONFIRM_SERIALIZER": "memberships.users.api.serializers.PasswordResetConfirmSerializer",
 }
 
 SPECTACULAR_SETTINGS = {
