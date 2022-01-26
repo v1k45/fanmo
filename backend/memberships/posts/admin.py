@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
 
-from .models import Post, Content, Comment, Reaction
+from .models import Comment, Content, Post, Reaction
 
 
 @admin.register(Post)

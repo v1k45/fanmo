@@ -1,6 +1,7 @@
 from drf_spectacular.utils import extend_schema
-from rest_framework import viewsets, permissions, mixins
+from rest_framework import mixins, permissions, viewsets
 from rest_framework.decorators import action
+
 from memberships.subscriptions.api.serializers import (
     SubscriberSerializer,
     SubscriptionCreateSerializer,

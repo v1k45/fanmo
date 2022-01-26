@@ -1,5 +1,6 @@
-from moneyed import get_currency, Money
 from decimal import Decimal
+
+from moneyed import Money, get_currency
 
 
 def money_from_sub_unit(amount, currency_code):

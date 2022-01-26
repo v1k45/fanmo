@@ -1,10 +1,11 @@
-from rest_framework import viewsets, mixins
+from rest_framework import mixins, viewsets
 
 from memberships.donations.api.serializers import (
     DonationCreateSerializer,
     DonationSerializer,
 )
 from memberships.donations.models import Donation
+
 
 # protect this view
 class DonationViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):

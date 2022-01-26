@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from memberships.donations.api.serializers import DonationSerializer
 
-from memberships.payments.models import Payment, Payout, BankAccount
+from memberships.donations.api.serializers import DonationSerializer
+from memberships.payments.models import BankAccount, Payment, Payout
 from memberships.subscriptions.api.serializers import SubscriptionSerializer
 from memberships.users.api.serializers import UserPreviewSerializer
 

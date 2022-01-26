@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
 
-from .models import Tier, Plan, Subscription
+from .models import Plan, Subscription, Tier
 
 
 @admin.register(Tier)

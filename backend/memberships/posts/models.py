@@ -1,12 +1,12 @@
+import metadata_parser
 from django.db import models
+from django_extensions.db.fields import AutoSlugField
 from micawber.exceptions import ProviderException
 from versatileimagefield.fields import VersatileImageField
 
-from memberships.utils.models import BaseModel
-from memberships.subscriptions.models import Subscription
-from django_extensions.db.fields import AutoSlugField
 from memberships.posts.integrations import oembed_providers
-import metadata_parser
+from memberships.subscriptions.models import Subscription
+from memberships.utils.models import BaseModel
 
 
 class Post(BaseModel):

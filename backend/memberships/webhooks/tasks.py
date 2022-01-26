@@ -1,11 +1,13 @@
 from decimal import Decimal
+
 from django.db.transaction import atomic
 from django_fsm import can_proceed
 from moneyed import Money, get_currency
+
+from memberships.donations.models import Donation
 from memberships.payments.models import Payment, Payout
 from memberships.subscriptions.models import Subscription
 from memberships.webhooks.models import WebhookMessage
-from memberships.donations.models import Donation
 
 
 @atomic
@@ -56,7 +58,10 @@ def subscription_charged(payload):
         external_id=payment_payload["id"],
         seller_user=subscription.seller_user,
         buyer_user=subscription.buyer_user,
-        defaults={"status": Payment.Status.AUTHORIZED, "method": payment_payload["method"]},
+        defaults={
+            "status": Payment.Status.AUTHORIZED,
+            "method": payment_payload["method"],
+        },
     )
 
     payment.status = Payment.Status.CAPTURED
@@ -118,7 +123,10 @@ def order_paid(payload):
         external_id=payment_payload["id"],
         seller_user=donation.receiver_user,
         buyer_user=donation.sender_user,
-        defaults={"status": Payment.Status.CAPTURED, "method": payment_payload["method"]},
+        defaults={
+            "status": Payment.Status.CAPTURED,
+            "method": payment_payload["method"],
+        },
     )
 
     payment.status = Payment.Status.CAPTURED

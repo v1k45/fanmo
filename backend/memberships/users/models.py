@@ -5,11 +5,11 @@ from django.db.models import CharField
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
-from memberships.payments.models import BankAccount
-
-from memberships.utils.models import BaseModel
 from versatileimagefield.fields import VersatileImageField
 from versatileimagefield.placeholder import OnDiscPlaceholderImage
+
+from memberships.payments.models import BankAccount
+from memberships.utils.models import BaseModel
 
 
 class User(BaseModel, AbstractUser):

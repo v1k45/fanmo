@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
 
-from .models import Payment, Payout, BankAccount
+from .models import BankAccount, Payment, Payout
 
 
 @admin.register(Payment)

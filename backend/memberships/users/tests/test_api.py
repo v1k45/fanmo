@@ -3,7 +3,6 @@ import pytest
 from memberships.users.api.serializers import UserSerializer
 from memberships.users.models import User
 
-
 pytestmark = pytest.mark.django_db
 
 

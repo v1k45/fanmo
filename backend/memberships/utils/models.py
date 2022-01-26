@@ -1,5 +1,5 @@
 from django.db import models
-from inflection import underscore, pluralize
+from inflection import pluralize, underscore
 
 
 class BaseModelMeta(models.base.ModelBase):

@@ -1,11 +1,11 @@
+import pytest
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
-import pytest
 
-from memberships.users.tests.factories import UserFactory
-from memberships.subscriptions.models import Plan, Subscription
-from memberships.payments.tests.factories import BankAccountFactory
 from memberships.payments.models import BankAccount
+from memberships.payments.tests.factories import BankAccountFactory
+from memberships.subscriptions.models import Plan, Subscription
+from memberships.users.tests.factories import UserFactory
 
 pytestmark = pytest.mark.django_db
 

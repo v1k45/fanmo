@@ -1,5 +1,5 @@
-from model_utils.fields import StatusField as ModelUtilsStatusField
 from django_fsm import FSMFieldMixin
+from model_utils.fields import StatusField as ModelUtilsStatusField
 
 
 class StateField(FSMFieldMixin, ModelUtilsStatusField):
