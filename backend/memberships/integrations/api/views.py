@@ -1,7 +1,7 @@
+from django.shortcuts import get_object_or_404
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialConnectView
-from rest_framework import generics, status, views
-from rest_framework.response import Response
+from rest_framework import generics
 from memberships.integrations.api.serializers import (
     DiscordServerSerializer,
     DiscordUserSerializer,
@@ -45,9 +45,10 @@ class DiscordUserConnectView(
         return super().get_serializer_class()
 
     def get_object(self):
-        return DiscordUser.objects.get(social_account__user=self.request.user)
+        return get_object_or_404(DiscordUser, social_account__user=self.request.user)
 
     def perform_destroy(self, instance):
+        # todo: remove user from all servers
         instance.social_account.delete()
 
 
@@ -63,7 +64,7 @@ class DiscordServerConnectView(
         return DiscordServerSerializer
 
     def get_object(self):
-        return DiscordServer.objects.get(social_account__user=self.request.user)
+        return get_object_or_404(DiscordServer, social_account__user=self.request.user)
 
     def get_serializer_class(self):
         if self.request.method == "GET":
@@ -71,4 +72,5 @@ class DiscordServerConnectView(
         return super().get_serializer_class()
 
     def perform_destroy(self, instance):
+        # todo: remove all users from the server
         instance.social_account.delete()

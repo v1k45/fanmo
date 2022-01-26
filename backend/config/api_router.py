@@ -25,7 +25,6 @@ from memberships.users.api.views import (
     FacebookLoginView,
     GoogleLoginView,
     OwnUserAPIView,
-    TwitterLoginView,
     UserViewSet,
     RegisterView,
     LoginView,
@@ -65,7 +64,6 @@ auth_patterns = [
     path("login/", LoginView.as_view(), name="login"),
     path("login/google/", GoogleLoginView.as_view(), name="google_login"),
     path("login/facebook/", FacebookLoginView.as_view(), name="facebook_login"),
-    path("login/twitter/", TwitterLoginView.as_view(), name="twitter_login"),
     path("logout/", LogoutView.as_view(), name="logout"),
     path("email/verify/", RequestEmailVerificationView.as_view(), name="email_verify"),
     path(
