@@ -1,3 +1,4 @@
+// TODO: remove
 @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap');
 @tailwind base;
 @tailwind components;
@@ -35,4 +36,14 @@
 
 .scrollbar {
   @include scrollbar(#aaa);
+}
+
+
+@layer base {
+  body {
+    @apply font-body text-body;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-title;
+  }
 }
