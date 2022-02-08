@@ -1,3 +1,4 @@
+const colors = require('tailwindcss/colors');
 const defaultTheme = require('tailwindcss/defaultTheme');
 
 const fontFamily = { ...defaultTheme.fontFamily };
@@ -7,8 +8,6 @@ fontFamily.sans.unshift('Quicksand');
 const lightTheme = require('daisyui/colors/themes')['[data-theme=light]'];
 
 module.exports = {
-  important: '#app',
-
   content: [
     './components/**/*.{js,vue,ts}',
     './layouts/**/*.vue',
@@ -39,8 +38,24 @@ module.exports = {
   theme: {
     fontFamily,
     extend: {
+      spacing: {
+        em: '1em'
+      },
+      textColor: {
+        title: colors.black,
+        body: colors.gray['700']
+      },
       colors: {
-        inherit: 'inherit'
+        inherit: 'inherit',
+        'fm-primary': { DEFAULT: colors.indigo['500'], ...colors.indigo },
+        'fm-success': { DEFAULT: colors.lime['500'], ...colors.lime },
+        'fm-info': { DEFAULT: colors.blue['500'], ...colors.blue },
+        'fm-warning': { DEFAULT: colors.yellow['500'], ...colors.yellow },
+        'fm-error': { DEFAULT: colors.rose['500'], ...colors.rose }
+      },
+      fontFamily: {
+        title: ['Yrsa', 'serif'],
+        body: ['"Work Sans"', 'sans-serif']
       }
     }
   },

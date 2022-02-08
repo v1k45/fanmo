@@ -43,5 +43,13 @@ module.exports = {
     }],
     'vue/singleline-html-element-content-newline': ['off'],
     'vue/html-self-closing': ['error', { html: { component: 'never', normal: 'never' } }]
-  }
+  },
+  overrides: [
+    {
+      files: ['*.html'],
+      rules: {
+        'vue/comment-directive': 'off'
+      }
+    }
+  ]
 };
