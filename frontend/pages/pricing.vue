@@ -170,7 +170,7 @@
   <!-- faq start -->
   <div id="faq" class="py-24 bg-fm-primary-50">
     <div class="container">
-      <h2 class="text-center mb-8 md:mb-16 text-2xl leading-snug sm:text-3xl lg:text-4xl font-titl font-bold">
+      <h2 class="text-center mb-8 md:mb-16 text-2xl leading-snug sm:text-3xl lg:text-4xl font-bold">
         Frequently asked questions
         <div aria-hidden="true" class="mx-auto w-16 mt-2 border-b-2 md:border-b-4 border-fm-primary"></div>
       </h2>
