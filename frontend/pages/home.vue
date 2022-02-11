@@ -2,7 +2,7 @@
 <main>
 
   <!-- hero start -->
-  <section class="relative flex flex-wrap py-8 lg:py-24 xl:py-36 items-center min-h-[550px]">
+  <section class="relative flex flex-wrap py-8 lg:py-24 xl:py-36 items-center min-h-[550px] 2xl:max-w-7xl mx-auto">
     <img src="~/assets/marketing/bg.png" :class="{
       'w-auto mx-auto max-h-72': true,
       'md:max-h-80': true,
@@ -51,7 +51,7 @@
   <section class="pb-24">
     <div class="container">
       <div class="row items-center justify-center">
-        <div class="col-12 md:col-8 xl:col-6 order-2 md:order-1 text-center md:text-left">
+        <div class="col-12 md:col-8 xl:col-7 order-2 md:order-1 text-center md:text-left">
           <header>
             <h2 class="inline-block md:block font-title text-gray-500 text-2xl lg:text-3xl">Memberships <div aria-hidden="true" class="w-8 border-b-2 md:border-b-4 -mt-1 border-fm-primary"></div></h2>
             <h3 class="font-bold mt-8 text-2xl sm:text-3xl lg:text-4xl">Make your fans feel special 🌟</h3>
@@ -76,7 +76,7 @@
         <div class="col-8 sm:col-6 md:col-4" aria-hidden="true">
           <img src="~/assets/marketing/money.png" alt="" class="mx-auto">
         </div>
-        <div class="col-12 md:col-8 xl:col-6 xl:offset-1 text-center md:text-left">
+        <div class="col-12 md:col-8 xl:col-7 xl:offset-1 text-center md:text-left">
           <header>
             <h2 class="inline-block md:block font-title text-gray-500 text-2xl lg:text-3xl">Donations <div aria-hidden="true" class="w-8 border-b-2 md:border-b-4 -mt-1 border-fm-primary"></div></h2>
             <h3 class="font-bold mt-8 text-2xl sm:text-3xl lg:text-4xl">Accept Donations 💸</h3>
