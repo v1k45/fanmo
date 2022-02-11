@@ -2,7 +2,7 @@
 <main>
 
   <!-- hero start -->
-  <section class="relative flex flex-wrap py-8 lg:py-24 xl:py-36 items-center min-h-[550px]">
+  <section class="relative flex flex-wrap py-8 lg:py-24 xl:py-36 items-center min-h-[550px] 2xl:max-w-7xl mx-auto">
     <img src="~/assets/marketing/bg.png" :class="{
       'w-auto mx-auto max-h-72': true,
       'md:max-h-80': true,
@@ -51,10 +51,13 @@
   <section class="pb-24">
     <div class="container">
       <div class="row items-center justify-center">
-        <div class="col-12 md:col-8 xl:col-6 order-2 md:order-1 text-center md:text-left">
+        <div class="col-12 md:col-8 xl:col-7 order-2 md:order-1 text-center md:text-left">
           <header>
-            <h2 class="inline-block md:block font-title text-gray-500 text-2xl lg:text-3xl">Memberships <div aria-hidden="true" class="w-8 border-b-2 md:border-b-4 -mt-1 border-fm-primary"></div></h2>
-            <h3 class="font-bold mt-8 text-2xl sm:text-3xl lg:text-4xl">Make your fans feel special 🌟</h3>
+            <h2 class="font-bold mt-6 text-2xl leading-snug sm:text-3xl sm:leading-snug lg:text-4xl lg:leading-relaxed">
+              Make your fans feel special with
+              <span class="inline-block text-white px-3 rounded bg-fm-primary leading-snug">tiered memberships</span>
+              🌟
+            </h2>
           </header>
           <p class="text-base lg:text-xl mt-8">
             Offer monthly memberships for different pricing tiers. Make a steady monthly income while offering exclusive content and experience based on
@@ -76,10 +79,13 @@
         <div class="col-8 sm:col-6 md:col-4" aria-hidden="true">
           <img src="~/assets/marketing/money.png" alt="" class="mx-auto">
         </div>
-        <div class="col-12 md:col-8 xl:col-6 xl:offset-1 text-center md:text-left">
+        <div class="col-12 md:col-8 xl:col-7 xl:offset-1 text-center md:text-left">
           <header>
-            <h2 class="inline-block md:block font-title text-gray-500 text-2xl lg:text-3xl">Donations <div aria-hidden="true" class="w-8 border-b-2 md:border-b-4 -mt-1 border-fm-primary"></div></h2>
-            <h3 class="font-bold mt-8 text-2xl sm:text-3xl lg:text-4xl">Accept Donations 💸</h3>
+            <h2 class="font-bold mt-6 text-2xl leading-snug sm:text-3xl sm:leading-snug lg:text-4xl lg:leading-relaxed">
+              Let your fans support you in more ways with
+              <span class="inline-block text-white px-4 leading-snug rounded bg-fm-success-700">donations</span>
+              💸
+            </h2>
           </header>
           <p class="text-base lg:text-xl mt-8">
             Let your fans show you some love by donating whatever amount they like. Showcase your fan donations and messages.
@@ -91,20 +97,26 @@
   <!-- feature: donations end -->
 
   <!-- feature: posts & comments start -->
-  <section class="pb-24">
+  <section class="pb-48">
     <div class="container">
       <div class="row items-center justify-center">
-        <div class="col-12 md:col-8 xl:col-6 order-2 md:order-1 text-center md:text-left">
+        <div class="col-12 md:col-8 xl:col-7 order-2 md:order-1 text-center md:text-left">
           <header>
-            <h2 class="inline-block md:block font-title text-gray-500 text-2xl lg:text-3xl">Publish exclusive content <div aria-hidden="true" class="w-8 border-b-2 md:border-b-4 -mt-1 border-fm-primary"></div></h2>
-            <h3 class="font-bold mt-8 text-2xl sm:text-3xl lg:text-4xl">Engage with fans 🎙️</h3>
+
+            <h2 class="font-bold mt-6 text-2xl leading-snug sm:text-3xl sm:leading-snug lg:text-4xl lg:leading-relaxed">
+              Engage with your fans through
+              <span class="inline-block text-white px-4 leading-snug rounded bg-fm-error-400">
+                exclusive content
+              </span>
+              🎙️
+            </h2>
           </header>
           <p class="text-base lg:text-xl mt-8">
-            Post exclusive and private content for your fans and keep in touch by interacting with them using comments.
+            Post exclusive and private content of any type for your fans and keep in touch by interacting with them using comments.
           </p>
         </div>
         <div class="mb-8 md:mb-0 col-6 md:col-4 xl:offset-1 order-1 md:order-2" aria-hidden="true">
-          <img src="~/assets/marketing/posts.png" class="mx-auto">
+          <img src="~/assets/marketing/posts.png" class="mx-auto max-h-48 lg:max-h-full">
         </div>
       </div>
     </div>

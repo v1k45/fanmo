@@ -170,7 +170,7 @@
   <!-- faq start -->
   <div id="faq" class="py-24 bg-fm-primary-50">
     <div class="container">
-      <h2 class="text-center mb-8 md:mb-16 text-2xl leading-snug sm:text-3xl lg:text-4xl font-titl font-bold">
+      <h2 class="text-center mb-8 md:mb-16 text-2xl leading-snug sm:text-3xl lg:text-4xl font-bold">
         Frequently asked questions
         <div aria-hidden="true" class="mx-auto w-16 mt-2 border-b-2 md:border-b-4 border-fm-primary"></div>
       </h2>
@@ -186,14 +186,11 @@
             <icon-chevron-down class="transform transition-transform" :class="{ 'rotate-180': idx === faqExpandedIdx }"></icon-chevron-down>
           </div>
         </button>
-
-        <transition
-          enter-class="opacity-0"
-          enter-active-class="transition-opacity duration-300 ease-in-out"
-          leave-class="opacity-0"
-          leave-active-class="transition-opacity duration-300 ease-in-out">
-          <p v-show="faqExpandedIdx === idx" class="text-sm md:text-base px-5 pb-5" v-html="faq.answer"></p>
-        </transition>
+        <div
+          class="transition-[max-height] duration-300 overflow-hidden"
+          :class="faqExpandedIdx === idx ? 'max-h-52' : 'max-h-0'">
+          <p class="text-sm md:text-base px-5 pb-5" v-html="faq.answer"></p>
+        </div>
       </article>
       <!-- questions end -->
 
