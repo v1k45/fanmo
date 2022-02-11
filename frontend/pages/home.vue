@@ -91,7 +91,7 @@
   <!-- feature: donations end -->
 
   <!-- feature: posts & comments start -->
-  <section class="pb-24">
+  <section class="pb-48">
     <div class="container">
       <div class="row items-center justify-center">
         <div class="col-12 md:col-8 xl:col-6 order-2 md:order-1 text-center md:text-left">
@@ -104,7 +104,7 @@
           </p>
         </div>
         <div class="mb-8 md:mb-0 col-6 md:col-4 xl:offset-1 order-1 md:order-2" aria-hidden="true">
-          <img src="~/assets/marketing/posts.png" class="mx-auto">
+          <img src="~/assets/marketing/posts.png" class="mx-auto max-h-48 lg:max-h-full">
         </div>
       </div>
     </div>
