@@ -186,14 +186,11 @@
             <icon-chevron-down class="transform transition-transform" :class="{ 'rotate-180': idx === faqExpandedIdx }"></icon-chevron-down>
           </div>
         </button>
-
-        <transition
-          enter-class="opacity-0"
-          enter-active-class="transition-opacity duration-300 ease-in-out"
-          leave-class="opacity-0"
-          leave-active-class="transition-opacity duration-300 ease-in-out">
-          <p v-show="faqExpandedIdx === idx" class="text-sm md:text-base px-5 pb-5" v-html="faq.answer"></p>
-        </transition>
+        <div
+          class="transition-[max-height] duration-300 overflow-hidden"
+          :class="faqExpandedIdx === idx ? 'max-h-52' : 'max-h-0'">
+          <p class="text-sm md:text-base px-5 pb-5" v-html="faq.answer"></p>
+        </div>
       </article>
       <!-- questions end -->
 
