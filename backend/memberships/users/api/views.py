@@ -3,7 +3,7 @@ import qrcode.image.svg
 from dj_rest_auth.registration.views import RegisterView as BaseRegisterView
 from dj_rest_auth.views import LoginView as BaseLoginView
 from django.http.response import HttpResponse
-from django.urls.conf import path
+from django.conf import settings
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics, mixins, status, viewsets
@@ -78,6 +78,20 @@ class RegisterView(BaseRegisterView):
 
 
 class LoginViewMixin:
+    # nuxt-auth sends oauth2 token request as form data
+    parser_classes = [JSONParser, FormParser]
+
+    def get_serializer(self, *args, **kwargs):
+        self.set_callback_url()
+        return super().get_serializer(*args, **kwargs)
+
+    def set_callback_url(self):
+        """allow social auth to be used from wildcard origins in dev mode"""
+        if settings.DEBUG and 'redirect_uri' in self.request.data:
+            self.callback_url = self.request.data.get('redirect_uri')
+        else:
+            self.callback_url = f"https://{settings.DOMAIN_NAME}/login"
+
     def get_response_serializer(self):
         return UserSerializer
 
@@ -144,12 +158,8 @@ class LoginView(LoginViewMixin, BaseLoginView):
 class GoogleLoginView(LoginViewMixin, SocialLoginView):
     """Login using google"""
 
-    # nuxt-auth sends oauth2 token request as form data
-    parser_classes = [JSONParser, FormParser]
     adapter_class = GoogleOAuth2Adapter
     client_class = OAuth2Client
-    # determine a way to set callback url dynamically to support mult-env setup.
-    callback_url = "http://localhost:3000/login"
 
 
 class FacebookLoginView(LoginViewMixin, SocialLoginView):

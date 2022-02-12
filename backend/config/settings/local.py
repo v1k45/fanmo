@@ -15,6 +15,7 @@ HASHID_FIELD_SALT = env(
 )
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1", "django", env("DOMAIN_NAME")]
+DOMAIN_NAME = env("DOMAIN_NAME")
 
 # CACHES
 # ------------------------------------------------------------------------------

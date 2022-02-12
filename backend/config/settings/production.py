@@ -17,6 +17,7 @@ HASHID_FIELD_SALT = env("HASHID_FIELD_SALT")
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["example.com"])
+DOMAIN_NAME = env("DOMAIN_NAME")
 
 # DATABASES
 # ------------------------------------------------------------------------------
