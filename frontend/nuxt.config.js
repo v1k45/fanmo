@@ -81,6 +81,22 @@ export default {
         user: {
           property: false
         }
+      },
+      google: {
+        clientId: process.env.GOOGLE_OAUTH2_CLIENT_ID,
+        responseType: 'code',
+        grantType: 'authorization_code',
+        codeChallengeMethod: '',
+        endpoints: {
+          token: '/api/auth/login/google/',
+          userInfo: '/api/me/',
+          logout: ''
+        },
+        // hack to make cookie auth look like jwt auth
+        // makes nuxt-auth include Authorization: <type> <username> header instead of failing.
+        // fuck nuxt-auth
+        token: { property: 'username', type: 'google' },
+        user: { property: false }
       }
     }
   },

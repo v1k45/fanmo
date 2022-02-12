@@ -4,6 +4,21 @@ USE_DOCKER=yes
 IPYTHONDIR=/app/.ipython
 DOMAIN_NAME=localhost
 
+# Third party
+# ------------------------------------------------------------------------------
+GOOGLE_OAUTH2_CLIENT_ID=FANMO_SECRET_CHANGE_ME
+GOOGLE_OAUTH2_SECRET=FANMO_SECRET_CHANGE_ME
+
+FACEBOOK_OAUTH2_CLIENT_ID=change-this
+FACEBOOK_OAUTH2_SECRET=change-this-to-secret
+
+DISCORD_OAUTH2_CLIENT_ID=change-this
+DISCORD_OAUTH2_SECRET=change-this-to-secret
+
+RAZORPAY_KEY=FANMO_SECRET_CHANGE_ME
+RAZORPAY_SECRET=FANMO_SECRET_CHANGE_ME
+RAZORPAY_WEBHOOK_SECRET=FANMO_SECRET_CHANGE_ME
+
 # Redis
 # ------------------------------------------------------------------------------
 REDIS_URL=redis://redis:6379/0

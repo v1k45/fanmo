@@ -70,6 +70,8 @@ THIRD_PARTY_APPS = [
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+    "allauth.socialaccount.providers.facebook",
     "django_otp",
     "django_otp.plugins.otp_totp",
     "django_otp.plugins.otp_hotp",
@@ -289,11 +291,33 @@ SOCIALACCOUNT_ADAPTER = "memberships.users.adapters.SocialAccountAdapter"
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
 OLD_PASSWORD_FIELD_ENABLED = True
 SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "SCOPE": ["email", "profile"],
+        "APP": {
+            "client_id": env("GOOGLE_OAUTH2_CLIENT_ID"),
+            "secret": env("GOOGLE_OAUTH2_SECRET"),
+        }
+    },
+    "facebook": {
+        "SCOPE": ["email", "public_profile"],
+        "APP": {
+            "client_id": env("FACEBOOK_OAUTH2_CLIENT_ID"),
+            "secret": env("FACEBOOK_OAUTH2_SECRET"),
+        }
+    },
     "discord_user": {
         "SCOPE": ["email", "identity"],
+        "APP": {
+            "client_id": env("DISCORD_OAUTH2_CLIENT_ID"),
+            "secret": env("DISCORD_OAUTH2_SECRET"),
+        }
     },
     "discord_server": {
         "SCOPE": ["email", "identity", "guids", "guilds.join"],
+        "APP": {
+            "client_id": env("DISCORD_OAUTH2_CLIENT_ID"),
+            "secret": env("DISCORD_OAUTH2_SECRET"),
+        }
     },
 }
 

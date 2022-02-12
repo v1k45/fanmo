@@ -13,6 +13,7 @@ from rest_framework.generics import GenericAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet, ReadOnlyModelViewSet
+from rest_framework.parsers import JSONParser, FormParser
 
 from memberships.users.models import User
 
@@ -143,8 +144,12 @@ class LoginView(LoginViewMixin, BaseLoginView):
 class GoogleLoginView(LoginViewMixin, SocialLoginView):
     """Login using google"""
 
+    # nuxt-auth sends oauth2 token request as form data
+    parser_classes = [JSONParser, FormParser]
     adapter_class = GoogleOAuth2Adapter
     client_class = OAuth2Client
+    # determine a way to set callback url dynamically to support mult-env setup.
+    callback_url = "http://localhost:3000/login"
 
 
 class FacebookLoginView(LoginViewMixin, SocialLoginView):

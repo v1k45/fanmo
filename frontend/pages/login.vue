@@ -11,6 +11,9 @@
           <nuxt-link to="/signup" class="text-base font-medium text-primary ml-2">Sign up</nuxt-link>
         </div>
 
+        <button class="btn btn-primary btn-block my-4 normal-case" @click="socialLogin">Sign in with Google</button>
+        <hr>
+
         <form class="mt-6" @submit.prevent="userLogin">
           <error-alert :errors="loginErrors"></error-alert>
           <div class="form-control">
@@ -61,6 +64,10 @@ export default {
       } catch (err) {
         this.loginErrors = err.response.data;
       }
+    },
+    async socialLogin() {
+      // todo: test if we need to switch back to cookie
+      await this.$auth.loginWith('google');
     }
   }
 };
