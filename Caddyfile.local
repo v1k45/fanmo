@@ -2,7 +2,7 @@
   request_header +X-Forwarded-Proto https
   request_header +X-Forwarded-For {http.request.remote}
   # only needed for development
-  request_header Referer http://localhost:3000 https://localhost
+  request_header Referer http://localhost:3000 https://{env.DOMAIN_NAME}
   header {
     -server
 

@@ -1,0 +1,74 @@
+version: '3'
+
+volumes:
+  local_postgres_data: {}
+  local_postgres_data_backups: {}
+
+services:
+  django: &django
+    build:
+      context: .
+      dockerfile: ./compose/local/django/Dockerfile
+    image: memberships_local_django
+    container_name: memberships_django
+    depends_on:
+      - postgres
+      - mailhog
+    volumes:
+      - ./backend:/app:z
+    env_file:
+      - ./.envs/.dev/.django
+      - ./.envs/.dev/.postgres
+    ports:
+      - "8801:8000"
+    command: /start
+
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/production/postgres/Dockerfile
+    image: memberships_production_postgres
+    container_name: memberships_postgres
+    volumes:
+      - local_postgres_data:/var/lib/postgresql/data:Z
+      - local_postgres_data_backups:/backups:z
+    env_file:
+      - ./.envs/.dev/.postgres
+
+  mailhog:
+    image: mailhog/mailhog:v1.0.0
+    container_name: memberships_mailhog
+    ports:
+      - "8025:8025"
+
+  redis:
+    image: redis:6
+    container_name: memberships_redis
+
+  caddy:
+    image: "caddy:2.1.1"
+    restart: unless-stopped
+    depends_on:
+      - django
+    env_file: ./.envs/.dev/.caddy
+    container_name: memberships_caddy
+    volumes:
+      - ./Caddyfile.local:/etc/caddy/Caddyfile
+      - ./caddy/data:/data
+      - ./caddy/config:/config
+      - ./build:/var/www/html
+    ports:
+      - "7070:80"
+      - "7777:443"
+
+  nuxt:
+    build:
+      context: .
+      dockerfile: ./compose/local/nuxt/Dockerfile
+    image: memberships_local_nuxt
+    container_name: memberships_nuxt
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    env_file:
+      - ./.envs/.dev/.nuxt
