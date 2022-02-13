@@ -32,6 +32,11 @@ class AccountAdapter(DefaultAccountAdapter):
             },
         )
 
+    def confirm_email(self, request, email_address):
+        super().confirm_email(request, email_address)
+        email_address.user.email_verified = True
+        email_address.user.save()
+
     def send_password_reset_mail(self, request, email_device):
         if email_device.valid_until < timezone.now():
             email_device.generate_token()

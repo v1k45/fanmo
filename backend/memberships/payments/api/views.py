@@ -38,6 +38,8 @@ class PayoutViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class BankAccountViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
+    # todo: don't allow more than one account
+    # todo: don't allow updating account
     serializer_class = BankAccountSerializer
     permission_classes = [permissions.IsAuthenticated]
 

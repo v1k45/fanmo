@@ -34,6 +34,9 @@ class User(BaseModel, AbstractUser):
     )
     about = models.TextField(blank=True)
 
+    email_verified = models.BooleanField(default=False)
+    is_creator = models.BooleanField(null=True)
+
     followers = models.ManyToManyField(
         "self",
         through="users.Following",
@@ -116,3 +119,29 @@ class UserPreference(BaseModel):
     platform_fee_percent = models.DecimalField(
         decimal_places=2, max_digits=3, default=settings.DEFAULT_PLATFORM_FEE_PERCENT
     )
+
+
+class UserOnboarding(BaseModel):
+
+    class Status(models.TextChoices):
+        IN_PROGRESS = "in_progress"
+        SUBMITTED = "submitted"
+        ON_HOLD = "on_hold"
+        COMPLETED = "completed"
+
+    user = models.OneToOneField("users.User", on_delete=models.CASCADE)
+    full_name = models.CharField(max_length=255, blank=True)
+    introduction = models.TextField(blank=True)
+    mobile = models.CharField(max_length=10, blank=True)
+    status = models.CharField(max_length=30, choices=Status.choices, default=Status.IN_PROGRESS)
+    is_bank_account_added = models.BooleanField(default=False)
+    is_creator_approved = models.BooleanField(default=False)
+    notes = models.TextField(blank=True)
+
+    def get_checklist(self):
+        return {
+            "type_selection": self.user.is_creator is not None,
+            "email_verification": self.user.email_verified,
+            "introduction": bool(self.full_name and self.introduction),
+            "payment_setup": bool(self.is_bank_account_added),
+        }
