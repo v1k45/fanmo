@@ -176,7 +176,9 @@ export default {
       else if (!Number.isInteger(val)) this.subscriberCount = Math.round(val);
     },
     subscriptionPrice(val) {
-      if (val < 10 || val > 5000) this.subscriberCount = 150;
+      if ([null, ''].includes(val)) return;
+      if (val < 10 || val > 5000) this.subscriptionPrice = 150;
+      else if (!Number.isInteger(val)) this.subscriptionPrice = round(val);
     }
   }
 };
