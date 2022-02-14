@@ -259,15 +259,21 @@ export default {
         {
           question: 'Why is it so cheap? What\'s the catch?',
           answer: `
-            Our pricing is based on our optimized technology and the support we provide. We charge just enough to keep the lights on.
+            Our pricing is driven by our optimized technology. We charge enough to keep the lights on and deliver features that add value.
+            We don't believe in gouging creators to line our pockets.
             <br><br>
-            There's no catch! We believe creators should not lose a large chunk of their hard earned money just to communicate with their fans.'
+            So rest assured, there's no catch! We believe creators should not lose a large chunk of their hard earned money just to communicate with their fans.
           `
         },
 
         {
           question: 'Will you increase your platform fee in the future?',
-          answer: 'No. We don\'t foresee that happening anytime soon. Even if we do end up increasing it, our existing creators will continue with the old fee forever without losing any features.'
+          answer: `
+            No. We don't foresee the need to increase our fee in the near future.
+            We will continue to evaluate our offering and make sure we offer the best value to creators.
+            <br><br>
+            Rest assured, if we do end up increasing it, our existing creators will continue with the old fee forever without losing any features.
+          `
         },
         {
           question: 'Will you help my fans with their questions and issues?',
