@@ -1,5 +1,5 @@
 <template>
-<div id="dev">
+<div>
   <div class="relative flex flex-wrap lg:flex-nowrap space-y-2 lg:space-y-0 lg:space-x-12 items-center">
 
     <div class="w-full lg:w-7/12 xl:w-7/12 pb-8">
@@ -178,9 +178,6 @@ export default {
     subscriptionPrice(val) {
       if (val < 10 || val > 5000) this.subscriberCount = 150;
     }
-  },
-  mounted() {
-    window.dev.scrollIntoView();
   }
 };
 </script>
