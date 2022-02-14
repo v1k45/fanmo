@@ -169,9 +169,9 @@
   <!-- why fanmo start -->
   <section class="py-24 bg-fm-primary-50">
     <div class="container">
-      <h2 class="mb-6 text-4xl leading-tight font-title text-center lg:text-left sm:text-5xl lg:text-7xl">Why Fanmo?</h2>
+      <h2 class="mb-6 text-3xl leading-tight font-title text-center lg:text-left sm:text-4xl md:text-5xl lg:text-6xl">Why Fanmo?</h2>
 
-      <ul class="text-base lg:text-2xl py-4 lg:py-8 space-y-4 lg:space-y-8">
+      <ul class="text-base md:text-lg lg:text-xl py-4 lg:py-8 space-y-4 lg:space-y-8">
         <li class="flex items-center">
           <icon-verified class="w-8 h-8 lg:w-12 lg:h-12 flex-shrink-0 inline-block mr-4 fill-current text-fm-success-600 stroke-white"></icon-verified>
           <span>
