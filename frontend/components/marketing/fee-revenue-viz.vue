@@ -64,7 +64,7 @@
             min="1" max="1000">
         </div>
         <input
-          id="subscribers-slider" v-model="subscriberCount"
+          id="subscribers-slider" v-model.number="subscriberCount"
           type="range" name="subscribers-slider" class="slider"
           min="1" max="1000">
       </div>
@@ -81,7 +81,7 @@
           </div>
         </div>
         <input
-          id="price-slider" v-model="subscriptionPrice"
+          id="price-slider" v-model.number="subscriptionPrice"
           type="range" name="price-slider" class="slider"
           min="10" max="2000">
       </div>
