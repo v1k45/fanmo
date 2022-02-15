@@ -190,10 +190,12 @@ export default {
 
   &::-webkit-slider-thumb {
     @apply appearance-none w-4 h-8 md:w-5 md:h-10 cursor-grab rounded-xl bg-fm-info;
+    @apply active:cursor-grabbing;
   }
 
   &::-moz-range-thumb {
-    @apply appearance-none w-4 h-8 md:w-5 md:h-10 cursor-grab rounded-xl -top-2 bg-fm-info;
+    @apply appearance-none w-4 h-8 md:w-5 md:h-10 cursor-grab rounded-xl -top-2 bg-fm-info border-0;
+    @apply active:cursor-grabbing;
   }
 }
 </style>
