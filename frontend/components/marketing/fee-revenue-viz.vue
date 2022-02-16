@@ -87,7 +87,7 @@
       </div>
     </div>
   </div>
-  <div class="text-xs text-gray-400">* USD based flat fee calculation for Patreon assumes 1 USD ≈ 75 INR conversion value.</div>
+  <div class="text-xs text-gray-400">* USD based flat fee calculation for Patreon assumes 1 USD ≈ 75 INR conversion rate.</div>
 </div>
 </template>
 
