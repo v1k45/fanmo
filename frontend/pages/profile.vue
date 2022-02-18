@@ -30,7 +30,7 @@
       <div class="tabs">
         <div class="tab tab-lg tab-lifted" :class="{ 'tab-active': activeTab === tabName.HOME }" @click="activeTab = tabName.HOME;">Home</div>
         <div v-if="user.tiers.length" class="tab tab-lg tab-lifted" :class="{ 'tab-active': activeTab === tabName.TIERS }" @click="activeTab = tabName.TIERS;">Membership Tiers</div>
-        <div v-if="user.user_preferences.is_accepting_payments" class="tab tab-lg tab-lifted" :class="{ 'tab-active': activeTab === tabName.DONATIONS }" @click="activeTab = tabName.DONATIONS;">Donations</div>
+        <div v-if="user.preferences.is_accepting_payments" class="tab tab-lg tab-lifted" :class="{ 'tab-active': activeTab === tabName.DONATIONS }" @click="activeTab = tabName.DONATIONS;">Donations</div>
         <div class="tab tab-lg tab-lifted flex-grow cursor-default"></div>
       </div>
     </div>

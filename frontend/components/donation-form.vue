@@ -84,7 +84,7 @@ export default {
     return {
       step: 1,
       form: {
-        amount: this.user.user_preferences.minimum_amount,
+        amount: this.user.preferences.minimum_amount,
         username: this.user.username,
         name: '',
         message: '',
