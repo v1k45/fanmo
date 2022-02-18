@@ -8,39 +8,66 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('users', '0005_auto_20211118_0535'),
+        ("users", "0005_auto_20211118_0535"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='user',
-            name='email_verified',
+            model_name="user",
+            name="email_verified",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name='user',
-            name='is_creator',
+            model_name="user",
+            name="is_creator",
             field=models.BooleanField(null=True),
         ),
         migrations.CreateModel(
-            name='UserOnboarding',
+            name="UserOnboarding",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('full_name', models.CharField(blank=True, max_length=255)),
-                ('introduction', models.TextField(blank=True)),
-                ('mobile', models.CharField(blank=True, max_length=10)),
-                ('status', models.CharField(choices=[('in_progress', 'In Progress'), ('submitted', 'Submitted'), ('on_hold', 'On Hold'), ('completed', 'Completed')], default='in_progress', max_length=30)),
-                ('is_bank_account_added', models.BooleanField(default=False)),
-                ('is_creator_approved', models.BooleanField(default=False)),
-                ('notes', models.TextField(blank=True)),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='user_onboardings', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("full_name", models.CharField(blank=True, max_length=255)),
+                ("introduction", models.TextField(blank=True)),
+                ("mobile", models.CharField(blank=True, max_length=10)),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("in_progress", "In Progress"),
+                            ("submitted", "Submitted"),
+                            ("on_hold", "On Hold"),
+                            ("completed", "Completed"),
+                        ],
+                        default="in_progress",
+                        max_length=30,
+                    ),
+                ),
+                ("is_bank_account_added", models.BooleanField(default=False)),
+                ("is_creator_approved", models.BooleanField(default=False)),
+                ("notes", models.TextField(blank=True)),
+                (
+                    "user",
+                    models.OneToOneField(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="user_onboardings",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'db_table': 'user_onboardings',
-                'ordering': ('-created_at',),
-                'default_related_name': 'user_onboardings',
+                "db_table": "user_onboardings",
+                "ordering": ("-created_at",),
+                "default_related_name": "user_onboardings",
             },
         ),
     ]

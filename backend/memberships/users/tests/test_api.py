@@ -177,7 +177,7 @@ class TestAuthenticationFlow:
         }
 
     def test_email_verification(self, user, api_client, mocker):
-        mocker.patch('django_otp.models.random_number_token', return_value='12345')
+        mocker.patch("django_otp.models.random_number_token", return_value="12345")
         api_client.force_authenticate(user)
         assert user.email_verified is False
 
@@ -185,14 +185,18 @@ class TestAuthenticationFlow:
         assert response.status_code == 204
 
         # test with incorrect otp
-        response = api_client.post("/api/auth/email/verify/confirm/", {"code": "00000"}, format="json")
+        response = api_client.post(
+            "/api/auth/email/verify/confirm/", {"code": "00000"}, format="json"
+        )
         assert response.status_code == 400
         assert response.json()["code"][0]["code"] == "invalid_otp"
         user.refresh_from_db()
         assert user.email_verified is False
 
         # test with correct otp
-        response = api_client.post("/api/auth/email/verify/confirm/", {"code": "12345"}, format="json")
+        response = api_client.post(
+            "/api/auth/email/verify/confirm/", {"code": "12345"}, format="json"
+        )
         assert response.status_code == 204
         user.refresh_from_db()
         assert user.email_verified is True
@@ -240,6 +244,7 @@ class TestAuthenticationFlow:
             "subscriber_count": 0,
             "tiers": [],
         }
+
 
 class TestOnboardingFlow:
     def test_select_user_type(self, user, api_client):

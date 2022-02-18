@@ -122,18 +122,21 @@ class UserPreference(BaseModel):
 
 
 class UserOnboarding(BaseModel):
-
     class Status(models.TextChoices):
         IN_PROGRESS = "in_progress"
         SUBMITTED = "submitted"
         ON_HOLD = "on_hold"
         COMPLETED = "completed"
 
-    user = models.OneToOneField("users.User", on_delete=models.CASCADE, related_name="user_onboarding")
+    user = models.OneToOneField(
+        "users.User", on_delete=models.CASCADE, related_name="user_onboarding"
+    )
     full_name = models.CharField(max_length=255, blank=True)
     introduction = models.TextField(blank=True)
     mobile = models.CharField(max_length=10, blank=True)
-    status = models.CharField(max_length=30, choices=Status.choices, default=Status.IN_PROGRESS)
+    status = models.CharField(
+        max_length=30, choices=Status.choices, default=Status.IN_PROGRESS
+    )
     is_bank_account_added = models.BooleanField(default=False)
     is_creator_approved = models.BooleanField(default=False)
     notes = models.TextField(blank=True)

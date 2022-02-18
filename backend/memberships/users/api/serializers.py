@@ -10,11 +10,12 @@ from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.exceptions import ErrorDetail
 from versatileimagefield.serializers import VersatileImageFieldSerializer
-from dj_rest_auth.registration.serializers import RegisterSerializer as BaseRegisterSerializer
+from dj_rest_auth.registration.serializers import (
+    RegisterSerializer as BaseRegisterSerializer,
+)
 
 from memberships.subscriptions.models import Tier
 from memberships.users.models import SocialLink, User, UserOnboarding, UserPreference
-
 
 
 class RegisterSerializer(BaseRegisterSerializer):
@@ -27,6 +28,7 @@ class RegisterSerializer(BaseRegisterSerializer):
             "name": self.validated_data.get("name", ""),
             **super().get_cleaned_data(),
         }
+
 
 class UserTierSerializer(serializers.ModelSerializer):
     # amount = MoneyField(max_digits=7, decimal_places=2, source="plan.amount")
@@ -67,7 +69,14 @@ class UserOnboardingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserOnboarding
-        fields = ["full_name", "introduction", "mobile", "status", "submit_for_review", "checklist"]
+        fields = [
+            "full_name",
+            "introduction",
+            "mobile",
+            "status",
+            "submit_for_review",
+            "checklist",
+        ]
         read_only_fields = ["status", "submit_for_review", "checklist"]
 
     def __init__(self, *args, **kwargs):
@@ -81,19 +90,30 @@ class UserOnboardingSerializer(serializers.ModelSerializer):
             return submit_for_review
 
         if not self.instance.user.is_creator:
-            raise ValidationError("You need to be a creator to submit your page.", "creator_type_required")
+            raise ValidationError(
+                "You need to be a creator to submit your page.", "creator_type_required"
+            )
 
         if not self.instance.user.email_verified:
-            raise ValidationError("Please verify your e-mail address before submitting your page.", "email_verification_required")
+            raise ValidationError(
+                "Please verify your e-mail address before submitting your page.",
+                "email_verification_required",
+            )
 
         # validate that a bank account has been added
         if not self.instance.is_bank_account_added:
-            raise ValidationError("Please add a bank account before submmiting your page.", "payment_setup_required")
+            raise ValidationError(
+                "Please add a bank account before submmiting your page.",
+                "payment_setup_required",
+            )
 
         if self.instance.status != UserOnboarding.Status.IN_PROGRESS:
-            raise ValidationError("You have already submitted your page for review.", "already_submitted")
+            raise ValidationError(
+                "You have already submitted your page for review.", "already_submitted"
+            )
 
         return submit_for_review
+
 
 class UserSerializer(serializers.ModelSerializer):
     tiers = UserTierSerializer(many=True, read_only=True, source="public_tiers")
@@ -126,7 +146,12 @@ class UserSerializer(serializers.ModelSerializer):
             "is_creator",
             "is_following",
         ]
-        read_only_fields = ["tiers", "follower_count", "subscriber_count", "preferences"]
+        read_only_fields = [
+            "tiers",
+            "follower_count",
+            "subscriber_count",
+            "preferences",
+        ]
 
     def validate_is_creator(self, is_creator):
         if self.instance.is_creator and not is_creator:
@@ -134,11 +159,14 @@ class UserSerializer(serializers.ModelSerializer):
             if self.instance.user_onboarding.is_creator_approved:
                 # TODO: Handle this automatically and contact the creator to get clarity.
                 raise serializers.ValidationError(
-                    "Please contact support to unpublish your page.", "manual_intervention_needed"
+                    "Please contact support to unpublish your page.",
+                    "manual_intervention_needed",
                 )
 
         if is_creator is None:
-            raise serializers.ValidationError("Please select either creator or supporter.")
+            raise serializers.ValidationError(
+                "Please select either creator or supporter."
+            )
         return is_creator
 
     def update(self, instance, validated_data):
@@ -179,7 +207,9 @@ class RequestEmailVerificationSerializer(serializers.Serializer):
     def validate(self, attrs):
         # get or create is used so that the endpoint handles users created through system
         email, _ = EmailAddress.objects.get_or_create(
-            user=self.instance, email=self.instance.email, defaults={"verified": False, "primary": True}
+            user=self.instance,
+            email=self.instance.email,
+            defaults={"verified": False, "primary": True},
         )
         if email.verified:
             raise serializers.ValidationError(
@@ -199,7 +229,9 @@ class VerifyEmailSerializer(serializers.Serializer):
     def validate(self, attrs):
         # get or create is used so that the endpoint handles users created through system
         email, _ = EmailAddress.objects.get_or_create(
-            user=self.instance, email=self.instance.email, defaults={"verified": False, "primary": True}
+            user=self.instance,
+            email=self.instance.email,
+            defaults={"verified": False, "primary": True},
         )
         if email.verified:
             raise serializers.ValidationError(

@@ -87,8 +87,8 @@ class LoginViewMixin:
 
     def set_callback_url(self):
         """allow social auth to be used from wildcard origins in dev mode"""
-        if settings.DEBUG and 'redirect_uri' in self.request.data:
-            self.callback_url = self.request.data.get('redirect_uri')
+        if settings.DEBUG and "redirect_uri" in self.request.data:
+            self.callback_url = self.request.data.get("redirect_uri")
         else:
             self.callback_url = f"https://{settings.DOMAIN_NAME}/login"
 
@@ -151,6 +151,8 @@ class TOTPDeviceViewSet(viewsets.ModelViewSet):
         response = HttpResponse(content_type="image/svg+xml")
         svg_image.save(response)
         return response
+
+
 class LoginView(LoginViewMixin, BaseLoginView):
     """Login using email/username and password"""
 

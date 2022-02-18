@@ -297,28 +297,28 @@ SOCIALACCOUNT_PROVIDERS = {
         "APP": {
             "client_id": env("GOOGLE_OAUTH2_CLIENT_ID"),
             "secret": env("GOOGLE_OAUTH2_SECRET"),
-        }
+        },
     },
     "facebook": {
         "SCOPE": ["email", "public_profile"],
         "APP": {
             "client_id": env("FACEBOOK_OAUTH2_CLIENT_ID"),
             "secret": env("FACEBOOK_OAUTH2_SECRET"),
-        }
+        },
     },
     "discord_user": {
         "SCOPE": ["email", "identity"],
         "APP": {
             "client_id": env("DISCORD_OAUTH2_CLIENT_ID"),
             "secret": env("DISCORD_OAUTH2_SECRET"),
-        }
+        },
     },
     "discord_server": {
         "SCOPE": ["email", "identity", "guids", "guilds.join"],
         "APP": {
             "client_id": env("DISCORD_OAUTH2_CLIENT_ID"),
             "secret": env("DISCORD_OAUTH2_SECRET"),
-        }
+        },
     },
 }
 
