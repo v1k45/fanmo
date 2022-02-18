@@ -40,5 +40,9 @@ TEMPLATES[-1]["OPTIONS"]["loaders"] = [  # type: ignore[index] # noqa F405
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
+VERSATILEIMAGEFIELD_SETTINGS = {
+    "create_images_on_demand": False
+}
+
 # Your stuff...
 # ------------------------------------------------------------------------------

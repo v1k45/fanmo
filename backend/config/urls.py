@@ -14,7 +14,9 @@ urlpatterns = [
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
     # Dummy routes.
+    path("", index_view, name="home"),
     path("login/", index_view, name="account_login"),
+    path("logout/", index_view, name="account_logout"),
     path("signup/", index_view, name="account_signup"),
     path("login/facebook/", index_view, name="facebook_callback"),
     path("login/google/", index_view, name="google_callback"),

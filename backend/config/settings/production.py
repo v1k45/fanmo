@@ -16,8 +16,7 @@ SECRET_KEY = env("DJANGO_SECRET_KEY")
 HASHID_FIELD_SALT = env("HASHID_FIELD_SALT")
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
-ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=["example.com"])
-DOMAIN_NAME = env("DOMAIN_NAME")
+ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=[DOMAIN_NAME])
 
 # DATABASES
 # ------------------------------------------------------------------------------

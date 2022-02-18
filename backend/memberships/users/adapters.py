@@ -12,6 +12,10 @@ class AccountAdapter(DefaultAccountAdapter):
     def is_open_for_signup(self, request: HttpRequest):
         return getattr(settings, "ACCOUNT_ALLOW_REGISTRATION", True)
 
+    def save_user(self, request, user, form, commit=True):
+        user.name = form.cleaned_data.get("name", "")
+        return super().save_user(request, user, form, commit)
+
     def send_confirmation_mail(self, request, email_device, signup):
         # do not send confirmation email immediately on signup
         if signup:

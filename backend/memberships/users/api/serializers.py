@@ -10,10 +10,23 @@ from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.exceptions import ErrorDetail
 from versatileimagefield.serializers import VersatileImageFieldSerializer
+from dj_rest_auth.registration.serializers import RegisterSerializer as BaseRegisterSerializer
 
 from memberships.subscriptions.models import Tier
 from memberships.users.models import SocialLink, User, UserOnboarding, UserPreference
 
+
+
+class RegisterSerializer(BaseRegisterSerializer):
+    # TODO: Remove `allow_blank` and `not required` after updating UI
+    name = serializers.CharField(max_length=255, required=False, allow_blank=True)
+    username = None
+
+    def get_cleaned_data(self):
+        return {
+            "name": self.validated_data.get("name", ""),
+            **super().get_cleaned_data(),
+        }
 
 class UserTierSerializer(serializers.ModelSerializer):
     # amount = MoneyField(max_digits=7, decimal_places=2, source="plan.amount")
@@ -57,6 +70,12 @@ class UserOnboardingSerializer(serializers.ModelSerializer):
         fields = ["full_name", "introduction", "mobile", "status", "submit_for_review", "checklist"]
         read_only_fields = ["status", "submit_for_review", "checklist"]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["full_name"].allow_blank = False
+        self.fields["introduction"].allow_blank = False
+        self.fields["mobile"].allow_blank = False
+
     def validate_submit_for_review(self, submit_for_review):
         if not submit_for_review:
             return submit_for_review
@@ -75,16 +94,6 @@ class UserOnboardingSerializer(serializers.ModelSerializer):
             raise ValidationError("You have already submitted your page for review.", "already_submitted")
 
         return submit_for_review
-
-    def validate_full_name(self, full_name):
-        if not full_name:
-            raise ValidationError("This field is required.", "required")
-        return full_name
-
-    def validate_introduction(self, introduction):
-        if not introduction:
-            raise ValidationError("This field is required.", "required")
-        return introduction
 
 class UserSerializer(serializers.ModelSerializer):
     tiers = UserTierSerializer(many=True, read_only=True, source="public_tiers")
@@ -127,6 +136,9 @@ class UserSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     "Please contact support to unpublish your page.", "manual_intervention_needed"
                 )
+
+        if is_creator is None:
+            raise serializers.ValidationError("Please select either creator or supporter.")
         return is_creator
 
     def update(self, instance, validated_data):
@@ -142,7 +154,7 @@ class UserSerializer(serializers.ModelSerializer):
             setattr(instance.social_links, field_name, value)
         instance.social_links.save()
 
-        if user_onboarding.pop("submit_for_review"):
+        if user_onboarding.pop("submit_for_review", None):
             instance.user_onboarding.status = UserOnboarding.Status.SUBMITTED
         for field_name, value in user_onboarding.items():
             setattr(instance.user_onboarding, field_name, value)
@@ -165,7 +177,10 @@ class UserPreviewSerializer(serializers.ModelSerializer):
 
 class RequestEmailVerificationSerializer(serializers.Serializer):
     def validate(self, attrs):
-        email = EmailAddress.objects.get(user=self.instance)
+        # get or create is used so that the endpoint handles users created through system
+        email, _ = EmailAddress.objects.get_or_create(
+            user=self.instance, email=self.instance.email, defaults={"verified": False, "primary": True}
+        )
         if email.verified:
             raise serializers.ValidationError(
                 "This e-mail has been already verified.", "already_verified"
@@ -182,7 +197,10 @@ class VerifyEmailSerializer(serializers.Serializer):
     code = serializers.CharField()
 
     def validate(self, attrs):
-        email = EmailAddress.objects.get(user=self.instance)
+        # get or create is used so that the endpoint handles users created through system
+        email, _ = EmailAddress.objects.get_or_create(
+            user=self.instance, email=self.instance.email, defaults={"verified": False, "primary": True}
+        )
         if email.verified:
             raise serializers.ValidationError(
                 "This e-mail has already been verified.", "already_verified"

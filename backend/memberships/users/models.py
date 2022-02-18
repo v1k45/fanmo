@@ -129,7 +129,7 @@ class UserOnboarding(BaseModel):
         ON_HOLD = "on_hold"
         COMPLETED = "completed"
 
-    user = models.OneToOneField("users.User", on_delete=models.CASCADE)
+    user = models.OneToOneField("users.User", on_delete=models.CASCADE, related_name="user_onboarding")
     full_name = models.CharField(max_length=255, blank=True)
     introduction = models.TextField(blank=True)
     mobile = models.CharField(max_length=10, blank=True)

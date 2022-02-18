@@ -38,6 +38,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#locale-paths
 LOCALE_PATHS = [str(ROOT_DIR / "locale")]
 
+DOMAIN_NAME = env("DOMAIN_NAME")
 # DATABASES
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
@@ -349,6 +350,9 @@ REST_AUTH_SERIALIZERS = {
     "USER_DETAILS_SERIALIZER": "memberships.users.api.serializers.UserSerializer",
     "PASSWORD_RESET_SERIALIZER": "memberships.users.api.serializers.PasswordResetSerializer",
     "PASSWORD_RESET_CONFIRM_SERIALIZER": "memberships.users.api.serializers.PasswordResetConfirmSerializer",
+}
+REST_AUTH_REGISTER_SERIALIZERS = {
+    "REGISTER_SERIALIZER": "memberships.users.api.serializers.RegisterSerializer",
 }
 
 SPECTACULAR_SETTINGS = {
