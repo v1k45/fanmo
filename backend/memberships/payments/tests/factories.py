@@ -8,9 +8,8 @@ from memberships.payments.models import BankAccount
 class BankAccountFactory(DjangoModelFactory):
     account_name = Faker("user_name")
     account_number = Faker("iban")
-    beneficiary_name = Faker("user_name")
     ifsc = Faker("swift")
-    status = BankAccount.Status.LINKED
+    status = BankAccount.Status.CREATED
 
     class Meta:
         model = BankAccount

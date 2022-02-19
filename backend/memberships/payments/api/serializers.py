@@ -106,13 +106,25 @@ class BankAccountSerializer(serializers.ModelSerializer):
             "status",
             "account_name",
             "account_number",
-            "mobile_number",
             "account_type",
-            "beneficiary_name",
             "ifsc",
-            "created_at",
         ]
-        read_only_fields = ["status", "created_at"]
+        read_only_fields = ["status"]
+
+    def validate(self, attrs):
+        if self.instance and self.instance.status != BankAccount.Status.CREATED:
+            raise serializers.ValidationError(
+                "You cannot make changes to a linked account. Please contact support.",
+                "permission_denied",
+            )
+
+        if not self.instance and self.context["request"].user.bank_accounts.exists():
+            raise serializers.ValidationError(
+                "Multiple bank accounts are not supported. Please contact support.",
+                "permission_denied",
+            )
+
+        return attrs
 
     def create(self, validated_data):
         validated_data["beneficiary_user"] = self.context["request"].user

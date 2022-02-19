@@ -37,7 +37,9 @@ class PayoutViewSet(viewsets.ReadOnlyModelViewSet):
         return Payout.objects.filter(payment__seller_user=self.request.user).all()
 
 
-class BankAccountViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
+class BankAccountViewSet(
+    mixins.CreateModelMixin, mixins.UpdateModelMixin, viewsets.ReadOnlyModelViewSet
+):
     # todo: don't allow more than one account
     # todo: don't allow updating account
     serializer_class = BankAccountSerializer

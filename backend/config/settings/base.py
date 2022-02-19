@@ -90,7 +90,7 @@ LOCAL_APPS = [
     "memberships.users.apps.UsersConfig",
     "memberships.subscriptions.apps.SubscriptionsConfig",
     "memberships.posts.apps.PostsConfig",
-    "memberships.payments",
+    "memberships.payments.apps.PaymentsConfig",
     "memberships.donations",
     "memberships.webhooks",
     "memberships.integrations",

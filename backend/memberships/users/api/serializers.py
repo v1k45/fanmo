@@ -107,11 +107,6 @@ class UserOnboardingSerializer(serializers.ModelSerializer):
                 "payment_setup_required",
             )
 
-        if self.instance.status != UserOnboarding.Status.IN_PROGRESS:
-            raise ValidationError(
-                "You have already submitted your page for review.", "already_submitted"
-            )
-
         return submit_for_review
 
 
@@ -152,6 +147,17 @@ class UserSerializer(serializers.ModelSerializer):
             "subscriber_count",
             "preferences",
         ]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance is not None:
+            self.fields["onboarding"].instance = self.instance.user_onboarding
+            # Set onboarding to read-only once it is submitted.
+            if (
+                self.instance.user_onboarding.status
+                != UserOnboarding.Status.IN_PROGRESS
+            ):
+                self.fields["onboarding"].read_only = True
 
     def validate_is_creator(self, is_creator):
         if self.instance.is_creator and not is_creator:

@@ -384,3 +384,73 @@ class TestOnboardingFlow:
         assert response.status_code == 200
         response_data = response.json()
         assert response_data["onboarding"]["checklist"]["payment_setup"] is True
+
+    def test_submit_for_review(self, user, api_client):
+        api_client.force_authenticate(user)
+
+        # onboarding in progress
+        response = api_client.get("/api/me/")
+        assert response.status_code == 200
+        assert response.json()["onboarding"]["status"] == "in_progress"
+
+        # attempt without creator type selected
+        response = api_client.patch(
+            "/api/me/", {"onboarding": {"submit_for_review": True}}
+        )
+        assert response.status_code == 400
+        assert (
+            response.json()["onboarding"]["submit_for_review"][0]["code"]
+            == "creator_type_required"
+        )
+
+        user.is_creator = True
+        user.save()
+
+        # attempt without email verification
+        response = api_client.patch(
+            "/api/me/", {"onboarding": {"submit_for_review": True}}
+        )
+        assert response.status_code == 400
+        assert (
+            response.json()["onboarding"]["submit_for_review"][0]["code"]
+            == "email_verification_required"
+        )
+
+        user.email_verified = True
+        user.save()
+
+        # attempt without payment setup
+        response = api_client.patch(
+            "/api/me/", {"onboarding": {"submit_for_review": True}}
+        )
+        assert response.status_code == 400
+        assert (
+            response.json()["onboarding"]["submit_for_review"][0]["code"]
+            == "payment_setup_required"
+        )
+
+        user.user_onboarding.is_bank_account_added = True
+        user.user_onboarding.save()
+
+        # attempt with all checks completed
+        response = api_client.patch(
+            "/api/me/", {"onboarding": {"submit_for_review": True}}
+        )
+        assert response.status_code == 200
+        assert response.json()["onboarding"]["status"] == "submitted"
+
+    def test_onboarding_details_becomes_read_only_once_submitted(
+        self, user, api_client
+    ):
+        api_client.force_authenticate(user)
+
+        user.user_onboarding.full_name = "Ashok Kumar"
+        user.user_onboarding.status = "submitted"
+        user.user_onboarding.save()
+
+        # full name is not updated
+        response = api_client.patch(
+            "/api/me/", {"onboarding": {"full_name": "Anjali Mishra"}}
+        )
+        assert response.status_code == 200
+        assert response.json()["onboarding"]["full_name"] == "Ashok Kumar"

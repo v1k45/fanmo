@@ -194,24 +194,22 @@ class BankAccount(BaseModel):
         LLP = "LLP"
 
     class Status(models.TextChoices):
+        CREATED = "created"
         PROCESSING = "processing"
         LINKED = "linked"
 
     beneficiary_user = models.ForeignKey("users.User", on_delete=models.CASCADE)
     status = models.CharField(
-        max_length=16, choices=Status.choices, default=Status.PROCESSING
+        max_length=16, choices=Status.choices, default=Status.CREATED
     )
 
     account_name = models.CharField(max_length=255)
-    mobile_number = models.CharField(max_length=10)
 
     account_number = models.CharField(max_length=255)
     account_type = models.CharField(
         max_length=32, choices=AccountType.choices, default=AccountType.INDIVIDUAL
     )
-    beneficiary_name = models.CharField(max_length=255)
     ifsc = models.CharField(max_length=16)
 
     is_active = models.BooleanField(default=True)
-
     external_id = models.CharField(max_length=255)
