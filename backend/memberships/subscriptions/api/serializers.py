@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.http.request import validate_host
 from djmoney.contrib.django_rest_framework import MoneyField
 from rest_framework import serializers
 
@@ -7,8 +6,14 @@ from memberships.subscriptions.models import Plan, Subscription, Tier
 from memberships.users.api.serializers import UserPreviewSerializer
 from memberships.users.models import User
 
+from drf_extra_fields.fields import Base64ImageField
+from versatileimagefield.serializers import VersatileImageFieldSerializer
+
 
 class TierSerializer(serializers.ModelSerializer):
+    cover = VersatileImageFieldSerializer("user_cover", read_only=True)
+    cover_base64 = Base64ImageField(write_only=True, source="cover", required=False)
+
     class Meta:
         model = Tier
         fields = [
@@ -17,11 +22,11 @@ class TierSerializer(serializers.ModelSerializer):
             "amount",
             "description",
             "cover",
+            "cover_base64",
             "welcome_message",
             "benefits",
             "is_public",
         ]
-        extra_kwargs = {"cover": {"required": False}}
 
     def validate(self, attrs):
         attrs["seller_user"] = self.context["request"].user
