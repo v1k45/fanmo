@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
 from memberships.users.forms import UserChangeForm, UserCreationForm
+from memberships.users.models import UserOnboarding
 
 User = get_user_model()
 
@@ -32,3 +33,12 @@ class UserAdmin(auth_admin.UserAdmin):
     )
     list_display = ["username", "name", "is_superuser"]
     search_fields = ["name"]
+    date_hierarchy = "created_at"
+
+
+@admin.register(UserOnboarding)
+class UserOnboardingAdmin(admin.ModelAdmin):
+    list_display = ["user", "full_name", "status", "updated_at", "created_at"]
+    list_filter = ["status", "user__is_creator"]
+    search_fields = ["user__name", "user__username", "user__email", "full_name", "introduction", "mobile"]
+    date_hierarchy = "created_at"
