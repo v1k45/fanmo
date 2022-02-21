@@ -64,7 +64,7 @@
             <tr>
               <th></th>
               <th>
-                <img src="~/assets/marketing/fanmo.svg" class="h-em mx-auto" alt="Fanmo logo">
+                <logo class="h-em mx-auto"></logo>
               </th>
               <th>Patreon</th>
               <th>YouTube</th>
