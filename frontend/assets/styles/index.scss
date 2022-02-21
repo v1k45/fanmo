@@ -41,7 +41,7 @@
 
 @layer base {
   body {
-    @apply font-body text-body;
+    @apply font-body text-body underline-offset-4;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply text-title;
