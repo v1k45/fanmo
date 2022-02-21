@@ -14,7 +14,7 @@
       </div>
 
       <a href="/" class="mr-auto">
-        <img src="~/assets/marketing/fanmo.svg" class="h-7" alt="Fanmo logo">
+        <img src="~/assets/logo.png" class="h-7" alt="Fanmo logo">
       </a>
 
       <nav>
