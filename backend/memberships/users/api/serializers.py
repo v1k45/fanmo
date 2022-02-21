@@ -150,7 +150,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if self.instance is not None:
+        if isinstance(self.instance, User) and self.instance.user_onboarding:
             self.fields["onboarding"].instance = self.instance.user_onboarding
             # Set onboarding to read-only once it is submitted.
             if (
@@ -206,7 +206,7 @@ class UserPreviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["display_name", "username", "name", "avatar"]
+        fields = ["display_name", "username", "name", "avatar", "is_creator"]
 
 
 class RequestEmailVerificationSerializer(serializers.Serializer):
