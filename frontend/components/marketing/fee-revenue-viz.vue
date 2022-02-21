@@ -23,7 +23,7 @@
               <template v-if="platform.width < 20 || platform.id === 'fanmo'">
                 <span>&nbsp;</span> <!-- to maintain equal height -->
                 <div
-                  class="absolute left-full ml-4"
+                  class="absolute left-full ml-4 whitespace-nowrap"
                   :class="{
                     'text-fm-success-600 font-bold md:text-lg': platform.id === 'fanmo',
                     'text-black': platform.id !== 'fanmo'
@@ -165,6 +165,7 @@ export default {
       maxFee += (maxFee * 0.05); // add 5% buffer
       computed.forEach(platform => {
         platform.width = round((platform.fee / (maxFee || 1)) * 100);
+        platform.actualPercent = round((platform.fee / (total || 1)) * 100); // not using for now
       });
       return computed;
     }
