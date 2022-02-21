@@ -1,3 +1,3 @@
 <template>
-<layout-main></layout-main>
+<layout-main-old></layout-main-old>
 </template>
