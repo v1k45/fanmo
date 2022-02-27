@@ -127,6 +127,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = [
             "username",
             "name",
+            "email",
             "about",
             "avatar",
             "avatar_base64",
