@@ -14,6 +14,7 @@ from memberships.utils.money import deduct_platform_fee, money_from_sub_unit
 class Payment(BaseModel):
     class Type(models.TextChoices):
         DONATION = "donation"
+        # todo: rename to membership
         SUBSCRIPTION = "subscription"
 
     class Status(models.TextChoices):
@@ -78,7 +79,7 @@ class Payment(BaseModel):
         # how to identify the payment for which the user is creating subscription?
         # only possible if there is 1:1 reference between local and external subscription.
         try:
-            subscription = (
+            subscription: Subscription = (
                 Subscription.objects.filter(status=Subscription.Status.CREATED)
                 .select_for_update()
                 .get(external_id=payload["razorpay_subscription_id"])

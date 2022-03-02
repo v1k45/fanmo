@@ -286,6 +286,7 @@ LOGGING = {
 ACCOUNT_ALLOW_REGISTRATION = env.bool("DJANGO_ACCOUNT_ALLOW_REGISTRATION", True)
 ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = "optional"
 ACCOUNT_ADAPTER = "memberships.users.adapters.AccountAdapter"
 SOCIALACCOUNT_ADAPTER = "memberships.users.adapters.SocialAccountAdapter"
@@ -380,6 +381,7 @@ RAZORPAY_WEBHOOK_SECRET = "FANMO_SECRET_CHANGE_ME"
 # business logic
 DEFAULT_PLATFORM_FEE_PERCENT = 5.00
 MINIMUM_PAYMENT_AMOUNT = 10.00
+SUBSCRIPTION_GRACE_PERIOD_DAYS = 3
 
 
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup

@@ -29,7 +29,71 @@ class Tier(BaseModel):
         return self.name
 
 
+class Membership(BaseModel):
+    tier = models.ForeignKey("subscriptions.Tier", on_delete=models.SET_NULL, null=True)
+    creator_user = models.ForeignKey(
+        "users.User", related_name="members", on_delete=models.CASCADE
+    )
+    fan_user = models.ForeignKey(
+        "users.User", related_name="memberships", on_delete=models.CASCADE
+    )
+
+    active_subscription = models.OneToOneField(
+        "subscriptions.Subscription",
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+    )
+    scheduled_subscription = models.OneToOneField(
+        "subscriptions.Subscription",
+        null=True,
+        on_delete=models.SET_NULL,
+        related_name="+",
+    )
+
+    is_active = models.BooleanField(default=None, null=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["creator_user", "fan_user"], name="unique_membership"
+            )
+        ]
+
+    def __str__(self):
+        return f"{self.fan_user} -> {self.creator_user} ({self.tier})"
+
+    def start(self, tier):
+        plan = Plan.objects.create(
+            name=f"{tier.name} - {self.creator_user.name}",
+            tier=tier,
+            # todo: guess amount based on currency.
+            amount=tier.amount,
+            seller_user=self.creator_user,
+            buyer_user=self.fan_user,
+        )
+        plan.create_external()
+
+        subscription = Subscription.objects.create(
+            plan=plan,
+            membership=self,
+            status=Subscription.Status.CREATED,
+            seller_user=self.creator_user,
+            buyer_user=self.fan_user,
+            cycle_start_at=timezone.now(),
+            cycle_end_at=timezone.now() + relativedelta(months=1),
+        )
+        subscription.create_external()
+
+        self.scheduled_subscription = subscription
+        self.save()
+
+
 class Plan(BaseModel):
+    """
+    Subscription plan, similar to a tier, but private.
+    """
+
     name = models.CharField(max_length=255)
     tier = models.ForeignKey("subscriptions.Tier", on_delete=models.CASCADE, null=True)
 
@@ -154,6 +218,11 @@ class Subscription(BaseModel):
 
     is_active = models.BooleanField(default=False)
 
+    membership = models.ForeignKey(
+        "subscriptions.Membership", on_delete=models.CASCADE, null=True
+    )
+
+    # TODO: Deprecate this _user fields in favor of
     seller_user = models.ForeignKey(
         "users.User", on_delete=models.CASCADE, related_name="subscribers"
     )
@@ -184,15 +253,10 @@ class Subscription(BaseModel):
     )
     def authenticate(self):
         # schedule current subscription to cancel
-        try:
-            existing_subscription = Subscription.objects.active(
-                self.seller_user, self.buyer_user
-            )
-            if existing_subscription.external_id != self.external_id:
-                existing_subscription.schedule_to_cancel()
-                existing_subscription.save()
-        except Subscription.DoesNotExist:
-            pass
+        active_subscription = self.membership.active_subscription
+        if active_subscription and active_subscription.external_id != self.external_id:
+            active_subscription.schedule_to_cancel()
+            active_subscription.save()
 
     @transition(
         field=status,
@@ -206,6 +270,12 @@ class Subscription(BaseModel):
     )
     def activate(self):
         self.is_active = True
+        # todo: move this to a task queue.
+        self.membership.is_active = True
+        self.membership.tier = self.plan.tier
+        self.membership.active_subscription = self.membership.scheduled_subscription
+        self.membership.scheduled_subscription = None
+        self.membership.save()
 
     @transition(
         field=status,
@@ -297,7 +367,8 @@ class Subscription(BaseModel):
         field=status, source=[Status.PENDING, Status.ACTIVE], target=Status.HALTED
     )
     def halt(self):
-        pass
+        self.membership.is_active = False
+        self.membership.save()
 
     @classmethod
     def get_current(cls, seller_user, buyer_user):

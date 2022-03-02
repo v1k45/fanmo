@@ -3,7 +3,11 @@ from rest_framework import serializers
 from memberships.donations.api.serializers import DonationSerializer
 from memberships.payments.models import BankAccount, Payment, Payout
 from memberships.subscriptions.api.serializers import SubscriptionSerializer
+from memberships.subscriptions.models import Subscription
 from memberships.users.api.serializers import UserPreviewSerializer
+
+from memberships.utils import razorpay_client
+from razorpay.errors import SignatureVerificationError
 
 
 class RazorpayResponseSerializer(serializers.Serializer):
@@ -24,6 +28,12 @@ class PaymentProcessingSerializer(serializers.ModelSerializer):
     )
     payload = RazorpayResponseSerializer(write_only=True)
 
+    subscription_id = serializers.PrimaryKeyRelatedField(
+        source="subscription",
+        write_only=True,
+        required=False,
+        queryset=Subscription.objects.all(),
+    )
     seller_user = UserPreviewSerializer(read_only=True)
     donation = DonationSerializer(read_only=True)
     subscription = SubscriptionSerializer(read_only=True)
@@ -35,6 +45,7 @@ class PaymentProcessingSerializer(serializers.ModelSerializer):
             "amount",
             "seller_user",
             "subscription",
+            "subscription_id",
             "donation",
             "created_at",
             "processor",
@@ -49,6 +60,50 @@ class PaymentProcessingSerializer(serializers.ModelSerializer):
             "donation",
             "created_at",
         ]
+
+    def validate(self, attrs):
+        if attrs["type"] == Payment.Type.DONATION:
+            raise serializers.ValidationError("NOT IMPLEMENTED>")
+        elif attrs["type"] == Payment.Type.SUBSCRIPTION:
+            attrs = self._validate_subscription_payload(attrs)
+        return attrs
+
+    def _validate_subscription_payload(self, attrs):
+        subscription = attrs.get("subscription")
+        if not subscription:
+            raise serializers.ValidationError(
+                "subscription_id field is required.", "required"
+            )
+
+        if subscription.external_id != attrs["payload"]["razorpay_subscription_id"]:
+            raise serializers.ValidationError(
+                "Incorrect payload for given subscription.", "subscription_mismatch"
+            )
+
+        if subscription.status != Subscription.Status.CREATED:
+            raise serializers.ValidationError(
+                "Payment for this subscription has already been processed.",
+                "payment_already_processed",
+            )
+
+        # Mould the payload to work with razorpay's signature verifier.
+        payload = attrs["payload"]
+        payload.update(
+            {
+                "razorpay_order_id": payload["razorpay_payment_id"],
+                "razorpay_payment_id": payload["razorpay_subscription_id"],
+                "rzp_payment_id": payload["razorpay_payment_id"],
+            }
+        )
+        try:
+            razorpay_client.utility.verify_payment_signature(payload)
+        except SignatureVerificationError:
+            raise serializers.ValidationError(
+                "Invalid payload signature", "signature_mismatch"
+            )
+
+        attrs["payload"] = payload
+        return attrs
 
     def create(self, validated_data):
         # save payment metadata

@@ -3,12 +3,14 @@ from rest_framework import mixins, permissions, viewsets
 from rest_framework.decorators import action
 
 from memberships.subscriptions.api.serializers import (
+    MemberSerializer,
+    MembershipSerializer,
     SubscriberSerializer,
     SubscriptionCreateSerializer,
     SubscriptionSerializer,
     TierSerializer,
 )
-from memberships.subscriptions.models import Subscription
+from memberships.subscriptions.models import Membership, Subscription
 
 
 class TierViewSet(
@@ -19,6 +21,30 @@ class TierViewSet(
 
     def get_queryset(self):
         return self.request.user.tiers.all()
+
+
+class MembersViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = MemberSerializer
+
+    def get_queryset(self):
+        return self.request.user.members.exclude(is_active__isnull=True)
+
+
+class MembershipViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
+    serializer_class = MembershipSerializer
+
+    def get_queryset(self):
+        if self.request.user.is_anonymous:
+            return Membership.objects.none()
+        queryset = self.request.user.memberships.all().exclude(is_active__isnull=True)
+        return queryset.select_related(
+            "fan_user",
+            "creator_user",
+            "tier",
+            "active_subscription",
+            "scheduled_subscription",
+        )
 
 
 class SubscriptionViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):

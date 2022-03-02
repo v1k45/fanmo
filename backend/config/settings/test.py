@@ -42,5 +42,11 @@ EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
 VERSATILEIMAGEFIELD_SETTINGS = {"create_images_on_demand": False}
 
+# Razorpay
+# ------------------------------------------------------------------------------
+RAZORPAY_KEY = "rzp_test_key"
+RAZORPAY_SECRET = "rzp_secret"
+RAZORPAY_WEBHOOK_SECRET = "rzp_webook_secret"
+
 # Your stuff...
 # ------------------------------------------------------------------------------

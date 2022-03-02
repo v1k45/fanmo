@@ -1,5 +1,7 @@
+from collections import namedtuple
 from typing import Any
 
+from allauth.account.utils import setup_user_email
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from django.conf import settings
@@ -14,6 +16,7 @@ class AccountAdapter(DefaultAccountAdapter):
 
     def save_user(self, request, user, form, commit=True):
         user.name = form.cleaned_data.get("name", "")
+        user.is_creator = form.cleaned_data.get("is_creator", None)
         return super().save_user(request, user, form, commit)
 
     def send_confirmation_mail(self, request, email_device, signup):
@@ -55,6 +58,16 @@ class AccountAdapter(DefaultAccountAdapter):
                 "current_site": get_current_site(request),
             },
         )
+
+    def invite(self, request, email):
+        form = namedtuple("Form", ["cleaned_data"])(
+            cleaned_data={"email": email, "is_creator": False}
+        )
+        user = self.new_user(request)
+        user = self.save_user(request, user, form)
+        setup_user_email(request, user, [])
+        # todo: send welcome email
+        return user
 
 
 class SocialAccountAdapter(DefaultSocialAccountAdapter):

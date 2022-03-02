@@ -72,6 +72,9 @@ def subscription_charged(payload):
 
 
 def subscription_cancelled(payload):
+    """
+    Subscription is cancelled. This could happen both, internally and externally.
+    """
     subscription_payload = payload["payload"]["subscription"]["entity"]
     subscription = Subscription.objects.select_for_update().get(
         external_id=subscription_payload["id"],
@@ -82,6 +85,10 @@ def subscription_cancelled(payload):
 
 
 def subscription_halted(payload):
+    """
+    There were repeated payment failures while renewing.
+    Manual intervention is needed from the user.
+    """
     subscription_payload = payload["payload"]["subscription"]["entity"]
     subscription = Subscription.objects.select_for_update().get(
         external_id=subscription_payload["id"],
@@ -92,6 +99,10 @@ def subscription_halted(payload):
 
 
 def subscription_pending(payload):
+    """
+    There was a payment failure while renewing a subscription.
+    Subscription is scheduled to retry.
+    """
     subscription_payload = payload["payload"]["subscription"]["entity"]
     subscription = Subscription.objects.select_for_update().get(
         external_id=subscription_payload["id"],

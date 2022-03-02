@@ -2,7 +2,8 @@ from django.conf import settings
 from djmoney.contrib.django_rest_framework import MoneyField
 from rest_framework import serializers
 
-from memberships.subscriptions.models import Plan, Subscription, Tier
+from allauth.account.adapter import get_adapter
+from memberships.subscriptions.models import Membership, Plan, Subscription, Tier
 from memberships.users.api.serializers import UserPreviewSerializer
 from memberships.users.models import User
 
@@ -36,25 +37,7 @@ class TierSerializer(serializers.ModelSerializer):
 class TierPreviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tier
-        fields = ["id", "name", "amount"]
-
-
-class SubscriptionSerializer(serializers.ModelSerializer):
-    seller_user = UserPreviewSerializer()
-    amount = MoneyField(max_digits=7, decimal_places=2, source="plan.amount")
-    tier = TierPreviewSerializer(source="plan.tier")
-
-    class Meta:
-        model = Subscription
-        fields = [
-            "id",
-            "seller_user",
-            "amount",
-            "tier",
-            "status",
-            "cycle_end_at",
-            "is_active",
-        ]
+        fields = ["id", "name", "amount", "amount_currency"]
 
 
 class SubscriberSerializer(serializers.ModelSerializer):
@@ -75,7 +58,7 @@ class SubscriberSerializer(serializers.ModelSerializer):
         ]
 
 
-class SubscriptionPaymentSerializer(serializers.ModelSerializer):
+class RazorpayPayloadSerializer(serializers.ModelSerializer):
     key = serializers.SerializerMethodField()
     subscription_id = serializers.CharField(source="external_id")
     name = serializers.CharField(source="plan.name")
@@ -89,12 +72,45 @@ class SubscriptionPaymentSerializer(serializers.ModelSerializer):
     def get_key(self, _):
         return settings.RAZORPAY_KEY
 
-    def get_prefill(self, _):
-        buyer = self.context["request"].user
-        return {"name": buyer.display_name, "email": buyer.email}
+    def get_prefill(self, subscription):
+        buyer_user = subscription.buyer_user
+        return {"name": buyer_user.display_name, "email": buyer_user.email}
 
     def get_notes(self, subscription):
         return {"subscription_id": subscription.id}
+
+
+class SubscriptionPaymentSerializer(serializers.ModelSerializer):
+    payment_processor = serializers.CharField(read_only=True, default="razorpay")
+    payment_payload = RazorpayPayloadSerializer(source="*", read_only=True)
+    requires_payment = serializers.SerializerMethodField()
+
+    def get_requires_payment(self, subscription):
+        return subscription.status == Subscription.Status.CREATED
+
+    class Meta:
+        model = Subscription
+        fields = ["payment_processor", "payment_payload", "requires_payment"]
+
+
+class SubscriptionSerializer(serializers.ModelSerializer):
+    seller_user = UserPreviewSerializer()
+    amount = MoneyField(max_digits=7, decimal_places=2, source="plan.amount")
+    tier = TierPreviewSerializer(source="plan.tier")
+    payment = SubscriptionPaymentSerializer(source="*")
+
+    class Meta:
+        model = Subscription
+        fields = [
+            "id",
+            "seller_user",
+            "amount",
+            "tier",
+            "payment",
+            "status",
+            "cycle_end_at",
+            "is_active",
+        ]
 
 
 class SubscriptionCreateSerializer(serializers.ModelSerializer):
@@ -115,7 +131,7 @@ class SubscriptionCreateSerializer(serializers.ModelSerializer):
     tier = TierPreviewSerializer(source="plan.tier", read_only=True)
 
     payment_processor = serializers.CharField(read_only=True, default="razorpay")
-    payment_payload = SubscriptionPaymentSerializer(source="*", read_only=True)
+    payment_payload = RazorpayPayloadSerializer(source="*", read_only=True)
 
     requires_payment = serializers.SerializerMethodField()
 
@@ -186,3 +202,122 @@ class SubscriptionCreateSerializer(serializers.ModelSerializer):
         )
         # upgrade to another active plan?
         return payment_plan.subscribe()
+
+
+class MembershipPaymentSerializer(serializers.ModelSerializer):
+    # input fields
+    tier_id = serializers.PrimaryKeyRelatedField(
+        queryset=Tier.objects.filter(is_active=True, seller_user__is_creator=True),
+        source="tier",
+        write_only=True,
+    )
+    creator_username = serializers.SlugRelatedField(
+        slug_field="username",
+        queryset=User.objects.filter(is_active=True, is_creator=True),
+        source="creator_user",
+        write_only=True,
+    )
+    email = serializers.EmailField(required=False, write_only=True)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.context["request"].user.is_authenticated:
+            self.fields["email"].required = True
+
+    def validate_email(self, email):
+        user = self.context["request"].user
+        if user.is_authenticated:
+            raise serializers.ValidationError(
+                "Setting e-mail is not allowed for logged in users."
+            )
+
+        # TODO: Figure out guest checkout flow for memberships and donations.
+        # For now, allow emails of users who haven't logged in.
+        user = User.objects.filter(email=email).first()
+        if user and user.last_login:
+            raise serializers.ValidationError(
+                "An account with this email already exists. Please login to continue.",
+                "user_exists",
+            )
+        return email
+
+    def validate_creator_user(self, creator_user):
+        if self.instance and self.instance.creator_user != creator_user:
+            raise serializers.ValidationError(
+                "Creator cannot be changed. Please create a separate membership.",
+            )
+        return creator_user
+
+    def get_fan_user(self, email=None):
+        request = self.context["request"]
+        if request.user.is_authenticated:
+            return request.user
+
+        existing_user = User.objects.filter(email=email).first()
+        if existing_user:
+            return existing_user
+
+        adapter = get_adapter(request)
+        return adapter.invite(request._request, email)
+
+
+class MembershipSerializer(MembershipPaymentSerializer):
+    tier = TierPreviewSerializer(read_only=True)
+    creator_user = UserPreviewSerializer(read_only=True)
+    active_subscription = SubscriptionSerializer(read_only=True)
+    scheduled_subscription = SubscriptionSerializer(read_only=True)
+
+    class Meta:
+        model = Membership
+        fields = [
+            "id",
+            "tier",
+            "creator_user",
+            "tier_id",
+            "creator_username",
+            "active_subscription",
+            "scheduled_subscription",
+            "email",
+            "is_active",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = ["tier", "creator_user", "is_active"]
+
+    def validate(self, attrs):
+        fan_user = self.get_fan_user(attrs.pop("email", None))
+        creator_user = attrs["creator_user"]
+
+        existing_membership = Membership.objects.filter(
+            creator_user=creator_user, fan_user=fan_user
+        ).first()
+        if not self.instance and existing_membership:
+            self.instance = existing_membership
+
+        if self.instance and self.instance.is_active is not None:
+            raise serializers.ValidationError(
+                f"You already have a membership with {creator_user.username}.",
+                "membership_exists",
+            )
+
+        attrs["fan_user"] = fan_user
+        return attrs
+
+    def create(self, validated_data):
+        tier = validated_data.pop("tier")
+        membership = super().create(validated_data)
+        membership.start(tier)
+        return membership
+
+    def update(self, instance, validated_data):
+        # TODO: IMPLEMENT UPDATE
+        return instance
+
+
+class MemberSerializer(serializers.ModelSerializer):
+    tier = TierPreviewSerializer()
+    fan_user = UserPreviewSerializer()
+
+    class Meta:
+        model = Membership
+        fields = ["id", "tier", "fan_user", "is_active", "created_at", "updated_at"]

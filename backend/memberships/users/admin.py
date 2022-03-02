@@ -40,5 +40,12 @@ class UserAdmin(auth_admin.UserAdmin):
 class UserOnboardingAdmin(admin.ModelAdmin):
     list_display = ["user", "full_name", "status", "updated_at", "created_at"]
     list_filter = ["status", "user__is_creator"]
-    search_fields = ["user__name", "user__username", "user__email", "full_name", "introduction", "mobile"]
+    search_fields = [
+        "user__name",
+        "user__username",
+        "user__email",
+        "full_name",
+        "introduction",
+        "mobile",
+    ]
     date_hierarchy = "created_at"
