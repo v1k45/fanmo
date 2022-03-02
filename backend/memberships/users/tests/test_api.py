@@ -12,8 +12,7 @@ class TestAuthenticationFlow:
             {
                 "name": "Ashok",
                 "email": "ashok@gmail.com",
-                "password1": "s3cr3tP@55w0rd",
-                "password2": "s3cr3tP@55w0rd",
+                "password": "s3cr3tP@55w0rd",
             },
             format="json",
         )
@@ -22,6 +21,7 @@ class TestAuthenticationFlow:
             "username": "ashok",
             "name": "Ashok",
             "about": "",
+            "email": "ashok@gmail.com",
             "avatar": {
                 "small": "http://testserver/media/__sized__/__placeholder__/avatar-crop-c0-5__0-5-150x150-70.jpg",
                 "full": "http://testserver/media/__placeholder__/avatar.jpg",
@@ -90,6 +90,7 @@ class TestAuthenticationFlow:
             "username": user.username,
             "name": user.name,
             "about": "",
+            "email": user.email,
             "avatar": {
                 "small": "http://testserver/media/__sized__/__placeholder__/avatar-crop-c0-5__0-5-150x150-70.jpg",
                 "full": "http://testserver/media/__placeholder__/avatar.jpg",
@@ -137,6 +138,7 @@ class TestAuthenticationFlow:
             "username": user.username,
             "name": user.name,
             "about": "",
+            "email": user.email,
             "avatar": {
                 "small": "http://testserver/media/__sized__/__placeholder__/avatar-crop-c0-5__0-5-150x150-70.jpg",
                 "thumbnail": "http://testserver/media/__sized__/__placeholder__/avatar-crop-c0-5__0-5-50x50-70.jpg",
@@ -227,6 +229,7 @@ class TestAuthenticationFlow:
             "username": user.username,
             "name": user.name,
             "about": "Hello world! this is me!",
+            "email": user.email,
             "avatar": {},
             "cover": {},
             "social_links": {

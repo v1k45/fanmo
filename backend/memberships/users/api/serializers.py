@@ -19,9 +19,17 @@ from memberships.users.models import SocialLink, User, UserOnboarding, UserPrefe
 
 
 class RegisterSerializer(BaseRegisterSerializer):
-    # TODO: Remove `allow_blank` and `not required` after updating UI
-    name = serializers.CharField(max_length=255, required=False, allow_blank=True)
+    name = serializers.CharField(max_length=255, required=False)
+    password = serializers.CharField(write_only=True, source="password1")
+
+    # remove the originally defined defineds in the serializer
     username = None
+    password1 = None
+    password2 = None
+
+    def validate(self, data):
+        """Override default serializer validation to disable password comparison"""
+        return data
 
     def get_cleaned_data(self):
         return {
@@ -143,6 +151,7 @@ class UserSerializer(serializers.ModelSerializer):
             "is_following",
         ]
         read_only_fields = [
+            "email",
             "tiers",
             "follower_count",
             "subscriber_count",
