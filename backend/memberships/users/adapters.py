@@ -1,7 +1,7 @@
 from collections import namedtuple
 from typing import Any
 
-from allauth.account.utils import setup_user_email
+from allauth.account.utils import setup_user_email, user_username
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from django.conf import settings
@@ -13,6 +13,12 @@ from django.utils import timezone
 class AccountAdapter(DefaultAccountAdapter):
     def is_open_for_signup(self, request: HttpRequest):
         return getattr(settings, "ACCOUNT_ALLOW_REGISTRATION", True)
+
+    def populate_username(self, request, user):
+        username = user.username or self.generate_unique_username(
+            [user.name, user.email, user.username, "user"]
+        )
+        user_username(user, username)
 
     def save_user(self, request, user, form, commit=True):
         user.name = form.cleaned_data.get("name", "")

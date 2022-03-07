@@ -22,7 +22,7 @@ class RegisterSerializer(BaseRegisterSerializer):
     name = serializers.CharField(max_length=255, required=False)
     password = serializers.CharField(write_only=True, source="password1")
 
-    # remove the originally defined defineds in the serializer
+    # remove the originally defined fields in the serializer
     username = None
     password1 = None
     password2 = None
