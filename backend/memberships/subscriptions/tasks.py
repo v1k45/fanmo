@@ -21,9 +21,9 @@ def refresh_membership(membership_id: int):
     now = timezone.now()
 
     # Set a grace period?
-    membership: Membership = Membership.objects.select_related(
-        "tier", "active_subscription", "scheduled_subscription"
-    ).get(id=membership_id)
+    membership: Membership = Membership.objects.select_for_update().get(
+        id=membership_id
+    )
     active_subscription: Subscription = membership.active_subscription
     if not membership.is_active:
         return
@@ -31,6 +31,10 @@ def refresh_membership(membership_id: int):
     expiration_date = active_subscription.cycle_end_at + relativedelta(
         days=settings.SUBSCRIPTION_GRACE_PERIOD_DAYS
     )
+
+    # if subscription is scheduled to cancel, cancel immediately.
+    # if there is a scheduled subscription, activate it.
+
     # TODO: Move conditions to FSM?
     if expiration_date < now and can_proceed(active_subscription.halt):
         active_subscription.halt()

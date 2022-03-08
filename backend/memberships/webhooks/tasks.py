@@ -7,6 +7,7 @@ from moneyed import Money, get_currency
 from memberships.donations.models import Donation
 from memberships.payments.models import Payment, Payout
 from memberships.subscriptions.models import Subscription
+from memberships.subscriptions.tasks import refresh_membership
 from memberships.webhooks.models import WebhookMessage
 
 
@@ -94,8 +95,7 @@ def subscription_halted(payload):
         external_id=subscription_payload["id"],
         plan__external_id=subscription_payload["plan_id"],
     )
-    subscription.status = Subscription.Status.HALTED
-    subscription.save()
+    refresh_membership(subscription.membership_id)
 
 
 def subscription_pending(payload):
@@ -104,12 +104,11 @@ def subscription_pending(payload):
     Subscription is scheduled to retry.
     """
     subscription_payload = payload["payload"]["subscription"]["entity"]
-    subscription = Subscription.objects.select_for_update().get(
+    subscription = Subscription.objects.get(
         external_id=subscription_payload["id"],
         plan__external_id=subscription_payload["plan_id"],
     )
-    subscription.status = Subscription.Status.PENDING
-    subscription.save()
+    refresh_membership(subscription.membership_id)
 
 
 def order_paid(payload):

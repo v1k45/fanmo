@@ -14,12 +14,15 @@ from memberships.subscriptions.tests.factories import (
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 
-from memberships.webhooks.tasks import subscription_cancelled
-
 
 @pytest.fixture(autouse=True)
 def media_storage(settings, tmpdir):
     settings.MEDIA_ROOT = tmpdir.strpath
+
+
+@pytest.fixture(autouse=True)
+def bootstrap_oembed(mocker):
+    mocker.patch("memberships.posts.integrations.micawber.bootstrap_oembed")
 
 
 @pytest.fixture

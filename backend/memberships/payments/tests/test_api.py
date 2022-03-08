@@ -2,7 +2,7 @@ import pytest
 from razorpay.errors import SignatureVerificationError
 from memberships.conftest import membership
 
-from memberships.payments.models import BankAccount
+from memberships.payments.models import BankAccount, Payment
 from memberships.payments.tests.factories import BankAccountFactory
 from memberships.subscriptions.tests.factories import (
     MembershipFactory,
@@ -146,6 +146,8 @@ class TestPaymentProcessingFlow:
         assert membership.is_active
         assert membership.active_subscription == subscription
         assert membership.scheduled_subscription is None
+        payment = subscription.payments.all().get()
+        assert payment.external_id == "pay_123"
 
     def test_invalid_subscription_id(self, membership, api_client, mocker):
         mocker.patch(
@@ -169,6 +171,7 @@ class TestPaymentProcessingFlow:
         )
         assert response.status_code == 400
         assert response.json()["non_field_errors"][0]["code"] == "subscription_mismatch"
+        assert not subscription.payments.exists()
 
     def test_subscription_cannot_be_reprocessed(self, membership, api_client, mocker):
         mocker.patch(
@@ -189,6 +192,8 @@ class TestPaymentProcessingFlow:
         }
         response = api_client.post("/api/payments/", payload)
         assert response.status_code == 201
+        payment = subscription.payments.all().get()
+        assert payment.external_id == "pay_123"
 
         # replay the same request again.
         response = api_client.post("/api/payments/", payload)
@@ -197,6 +202,8 @@ class TestPaymentProcessingFlow:
             response.json()["non_field_errors"][0]["code"]
             == "payment_already_processed"
         )
+        payment = subscription.payments.all().get()
+        assert payment.external_id == "pay_123"
 
     def test_invalid_subscription_signature(self, membership, api_client, mocker):
         mocker.patch(
@@ -220,3 +227,4 @@ class TestPaymentProcessingFlow:
         )
         assert response.status_code == 400
         assert response.json()["non_field_errors"][0]["code"] == "signature_mismatch"
+        assert not subscription.payments.exists()

@@ -68,12 +68,6 @@ class Payment(BaseModel):
     @classmethod
     def authenticate_subscription(cls, payload):
         # only usable for "created" subscription
-        payload.update(
-            {
-                "razorpay_order_id": payload["razorpay_payment_id"],
-                "razorpay_payment_id": payload["razorpay_subscription_id"],
-            }
-        )
         razorpay_client.utility.verify_payment_signature(payload)
 
         # how to identify the payment for which the user is creating subscription?
