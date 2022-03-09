@@ -118,6 +118,35 @@ class UserOnboardingSerializer(serializers.ModelSerializer):
         return submit_for_review
 
 
+class PublicUserSerializer(serializers.ModelSerializer):
+    tiers = UserTierSerializer(many=True, read_only=True, source="public_tiers")
+    avatar = VersatileImageFieldSerializer("user_avatar")
+    cover = VersatileImageFieldSerializer("user_cover")
+    social_links = SocialLinkSerializer(read_only=True)
+    preferences = UserPreferenceSerializer(source="user_preferences", read_only=True)
+    is_following = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = [
+            "username",
+            "name",
+            "about",
+            "avatar",
+            "cover",
+            "tiers",
+            "social_links",
+            # TODO: REMOVE PREFERENCES!
+            "preferences",
+            "is_creator",
+            "is_following",
+        ]
+
+    def get_is_following(self, user):
+        request = self.context["request"]
+        return user.followers.all().filter(id=request.user.id).exists()
+
+
 class UserSerializer(serializers.ModelSerializer):
     tiers = UserTierSerializer(many=True, read_only=True, source="public_tiers")
     social_links = SocialLinkSerializer()

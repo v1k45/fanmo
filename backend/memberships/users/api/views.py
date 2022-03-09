@@ -12,7 +12,7 @@ from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import GenericAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.viewsets import GenericViewSet, ReadOnlyModelViewSet
+from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.parsers import JSONParser, FormParser
 
 from memberships.users.models import User
@@ -21,20 +21,24 @@ from .serializers import (
     RequestEmailVerificationSerializer,
     TOTPDeviceSerializer,
     UserSerializer,
+    PublicUserSerializer,
     VerifyEmailSerializer,
 )
 
 from dj_rest_auth.registration.views import SocialLoginView
 
-from allauth.socialaccount.providers.twitter.views import TwitterOAuthAdapter
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
-from dj_rest_auth.social_serializers import TwitterLoginSerializer
 
 
 class UserViewSet(ReadOnlyModelViewSet):
-    serializer_class = UserSerializer
+    """
+    TODO: Remove list API?
+    TODO: Add is_creator and is_following filter?
+    """
+
+    serializer_class = PublicUserSerializer
     queryset = User.objects.filter(is_active=True)
     lookup_field = "username"
 
@@ -52,14 +56,14 @@ class UserViewSet(ReadOnlyModelViewSet):
     @extend_schema(request=None)
     @action(detail=True, methods=["POST"], permission_classes=[IsAuthenticated])
     def follow(self, request, *args, **kwargs):
-        user = self.get_object()
+        user: User = self.get_object()
         user.follow(self.request.user)
         return self.retrieve(request, *args, **kwargs)
 
     @extend_schema(request=None)
     @action(detail=True, methods=["POST"], permission_classes=[IsAuthenticated])
     def unfollow(self, request, *args, **kwargs):
-        user = self.get_object()
+        user: User = self.get_object()
         user.unfollow(self.request.user)
         return self.retrieve(request, *args, **kwargs)
 

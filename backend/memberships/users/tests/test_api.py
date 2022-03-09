@@ -457,3 +457,59 @@ class TestOnboardingFlow:
         )
         assert response.status_code == 200
         assert response.json()["onboarding"]["full_name"] == "Ashok Kumar"
+
+
+class TestUserAPI:
+    def test_retrieve(self, api_client, creator_user):
+        tier = creator_user.tiers.first()
+        response = api_client.get(f"/api/users/{creator_user.username}/")
+        assert response.status_code == 200
+        assert response.json() == {
+            "username": creator_user.username,
+            "name": creator_user.name,
+            "about": "",
+            "avatar": {
+                "thumbnail": "http://testserver/media/__sized__/__placeholder__/avatar-crop-c0-5__0-5-50x50-70.jpg",
+                "medium": "http://testserver/media/__sized__/__placeholder__/avatar-crop-c0-5__0-5-300x300-70.jpg",
+                "full": "http://testserver/media/__placeholder__/avatar.jpg",
+                "small": "http://testserver/media/__sized__/__placeholder__/avatar-crop-c0-5__0-5-150x150-70.jpg",
+            },
+            "cover": {
+                "small": "http://testserver/media/__sized__/__placeholder__/cover-crop-c0-5__0-5-300x70-70.jpg",
+                "big": "http://testserver/media/__sized__/__placeholder__/cover-crop-c0-5__0-5-1800x400-70.jpg",
+                "medium": "http://testserver/media/__sized__/__placeholder__/cover-crop-c0-5__0-5-900x200-70.jpg",
+                "full": "http://testserver/media/__placeholder__/cover.jpg",
+            },
+            "tiers": [
+                {
+                    "id": tier.id,
+                    "name": tier.name,
+                    "description": "",
+                    "amount": "100.00",
+                    "cover": None,
+                    "benefits": ["Membership!"],
+                }
+            ],
+            "social_links": {
+                "website_url": "",
+                "youtube_url": "",
+                "facebook_url": "",
+                "instagram_url": "",
+                "twitter_url": "",
+            },
+            "preferences": {"is_accepting_payments": True, "minimum_amount": "10.00"},
+            "is_creator": True,
+            "is_following": False,
+        }
+
+    def test_follow(self, api_client, creator_user, user):
+        api_client.force_authenticate(user)
+        response = api_client.post(f"/api/users/{creator_user.username}/follow/")
+        assert response.status_code == 200
+        assert response.json()["is_following"]
+
+    def test_unfollow(self, api_client, creator_user, user):
+        api_client.force_authenticate(user)
+        response = api_client.post(f"/api/users/{creator_user.username}/unfollow/")
+        assert response.status_code == 200
+        assert not response.json()["is_following"]
