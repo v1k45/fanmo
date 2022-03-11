@@ -72,3 +72,5 @@ More information about the usage of this directory in [the documentation](https:
 ### TODO
 
 - [ ] Drop IE support
+- [ ] Toast fix width on phone
+- [ ] Sane width presets for dialog
