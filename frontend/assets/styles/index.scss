@@ -47,3 +47,7 @@
     @apply text-title;
   }
 }
+
+a:not(.unstyled) {
+  @apply text-fm-primary hover:text-fm-primary-600;
+}
