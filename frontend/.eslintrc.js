@@ -17,6 +17,7 @@ module.exports = {
 
   rules: {
     semi: ['error', 'always'],
+    'no-unused-vars': ['warn'],
     'no-multiple-empty-lines': ['warn', { max: 3 }],
     'space-before-function-paren': ['warn', {
       anonymous: 'never',
