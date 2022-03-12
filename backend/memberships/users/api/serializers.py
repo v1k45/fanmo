@@ -39,11 +39,17 @@ class RegisterSerializer(BaseRegisterSerializer):
 
 
 class UserTierSerializer(serializers.ModelSerializer):
-    # amount = MoneyField(max_digits=7, decimal_places=2, source="plan.amount")
-
     class Meta:
         model = Tier
-        fields = ["id", "name", "description", "amount", "cover", "benefits"]
+        fields = [
+            "id",
+            "name",
+            "description",
+            "amount",
+            "cover",
+            "benefits",
+            "is_recommended",
+        ]
 
 
 class SocialLinkSerializer(serializers.ModelSerializer):

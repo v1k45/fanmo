@@ -11,13 +11,14 @@ from memberships.subscriptions.api.serializers import (
     TierSerializer,
 )
 from memberships.subscriptions.models import Membership, Subscription
+from memberships.users.api.permissions import IsCreator
 
 
 class TierViewSet(
     mixins.CreateModelMixin, mixins.UpdateModelMixin, viewsets.ReadOnlyModelViewSet
 ):
     serializer_class = TierSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated, IsCreator]
 
     def get_queryset(self):
         return self.request.user.tiers.all()

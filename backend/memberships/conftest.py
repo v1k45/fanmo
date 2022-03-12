@@ -33,7 +33,7 @@ def user() -> User:
 @pytest.fixture
 def creator_user() -> User:
     user = UserFactory(is_creator=True)
-    TierFactory(seller_user=user)
+    TierFactory(creator_user=user)
     return user
 
 

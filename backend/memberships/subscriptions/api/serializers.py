@@ -27,10 +27,27 @@ class TierSerializer(serializers.ModelSerializer):
             "welcome_message",
             "benefits",
             "is_public",
+            "is_recommended",
         ]
 
+    def validate_is_recommended(self, is_recommended):
+        if not is_recommended:
+            return is_recommended
+
+        recommended_tiers = (
+            self.context["request"].user.public_tiers().filter(is_recommended=True)
+        )
+        if self.instance:
+            recommended_tiers = recommended_tiers.exclude(id=self.instance.id)
+        if recommended_tier := recommended_tiers.first():
+            raise serializers.ValidationError(
+                f'Only one tier can be recommended at a time. Update "{recommended_tier.name}" and try again.',
+                "recommended_tier_exists",
+            )
+        return is_recommended
+
     def validate(self, attrs):
-        attrs["seller_user"] = self.context["request"].user
+        attrs["creator_user"] = self.context["request"].user
         return super().validate(attrs)
 
 
@@ -207,7 +224,7 @@ class SubscriptionCreateSerializer(serializers.ModelSerializer):
 class MembershipPaymentSerializer(serializers.ModelSerializer):
     # input fields
     tier_id = serializers.PrimaryKeyRelatedField(
-        queryset=Tier.objects.filter(is_active=True, seller_user__is_creator=True),
+        queryset=Tier.objects.filter(is_active=True, creator_user__is_creator=True),
         source="tier",
         write_only=True,
     )
@@ -305,7 +322,7 @@ class MembershipSerializer(MembershipPaymentSerializer):
 
     def create(self, validated_data):
         tier = validated_data.pop("tier")
-        membership = super().create(validated_data)
+        membership: Membership = super().create(validated_data)
         membership.start(tier)
         return membership
 

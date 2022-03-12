@@ -22,8 +22,9 @@ class Tier(BaseModel):
 
     is_active = models.BooleanField(default=True)
     is_public = models.BooleanField(default=True)
+    is_recommended = models.BooleanField(default=False)
 
-    seller_user = models.ForeignKey("users.User", on_delete=models.CASCADE)
+    creator_user = models.ForeignKey("users.User", on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name

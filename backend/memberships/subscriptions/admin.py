@@ -8,25 +8,20 @@ from .models import Plan, Subscription, Tier
 class TierAdmin(admin.ModelAdmin):
     list_display = (
         "id",
-        "created_at",
-        "updated_at",
         "name",
         "description",
-        "cover",
-        "welcome_message",
-        "benefits",
-        "amount_currency",
         "amount",
         "is_active",
         "is_public",
-        "seller_user",
+        "creator_user",
+        "created_at",
+        "updated_at",
     )
     list_filter = (
         "created_at",
         "updated_at",
         "is_active",
         "is_public",
-        "seller_user",
     )
     search_fields = ("name",)
     date_hierarchy = "created_at"

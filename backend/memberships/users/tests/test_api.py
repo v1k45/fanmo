@@ -488,6 +488,7 @@ class TestUserAPI:
                     "amount": "100.00",
                     "cover": None,
                     "benefits": ["Membership!"],
+                    "is_recommended": False,
                 }
             ],
             "social_links": {

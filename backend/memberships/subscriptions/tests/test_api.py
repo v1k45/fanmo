@@ -1,23 +1,24 @@
+from decimal import Decimal
 import pytest
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 
-from memberships.payments.models import BankAccount
 from memberships.users.models import User
 from memberships.payments.tests.factories import BankAccountFactory
 from memberships.subscriptions.models import Membership, Plan, Subscription
 from memberships.users.tests.factories import UserFactory
+from memberships.subscriptions.tests.factories import TierFactory
+
 
 pytestmark = pytest.mark.django_db
 
 
 class TestTierAPI:
-    def test_create_tier(self, api_client, user):
-        api_client.force_authenticate(user)
+    def test_create_tier(self, api_client, creator_user):
+        api_client.force_authenticate(creator_user)
 
-        assert api_client.get("/api/tiers/").data["count"] == 0
+        assert api_client.get("/api/tiers/").data["count"] == 1
 
-        # create tier
         response = api_client.post(
             "/api/tiers/",
             {
@@ -31,10 +32,58 @@ class TestTierAPI:
             format="json",
         )
 
-        # tier create success
         assert response.status_code == 201
 
-        assert api_client.get("/api/tiers/").data["count"] == 1
+        assert api_client.get("/api/tiers/").data["count"] == 2
+
+    def test_update_tier(self, api_client, creator_user):
+        api_client.force_authenticate(creator_user)
+        tier = creator_user.tiers.all().get()
+
+        response = api_client.patch(
+            f"/api/tiers/{tier.id}/",
+            {
+                "name": "Standard",
+                "amount": 120,
+            },
+        )
+        tier.refresh_from_db()
+
+        assert response.status_code == 200
+        response_data = response.json()
+        assert response_data["name"] == tier.name == "Standard"
+        assert Decimal(response_data["amount"]) == tier.amount.amount == Decimal("120")
+
+    def test_recommend_tier(self, api_client, creator_user):
+        api_client.force_authenticate(creator_user)
+        tier = creator_user.tiers.all().get()
+        tier.is_recommended = True
+        tier.save()
+
+        response = api_client.post(
+            "/api/tiers/",
+            {
+                "name": "Standard",
+                "amount": 100,
+                "benefits": ["Private Posts", "Discord", "Private Streams"],
+                "is_recommended": True,
+            },
+        )
+        assert response.status_code == 400
+        assert response.json()["is_recommended"][0]["code"] == "recommended_tier_exists"
+
+        another_tier = TierFactory(creator_user=creator_user)
+        response = api_client.patch(
+            f"/api/tiers/{another_tier.id}/",
+            {
+                "name": "Standard",
+                "amount": 120,
+                "is_recommended": True,
+            },
+        )
+
+        assert response.status_code == 400
+        assert response.json()["is_recommended"][0]["code"] == "recommended_tier_exists"
 
 
 @pytest.mark.xfail
@@ -63,7 +112,6 @@ class TestSubscriptionFlow:
             },
         )
 
-        print(response.json())
         assert response.status_code == 201
         response_data = response.json()
 
