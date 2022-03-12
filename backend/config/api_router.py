@@ -61,7 +61,7 @@ router.register("donations", DonationViewSet, basename="donations")
 router.register("payments", PaymentViewSet, basename="payments")
 router.register("payouts", PayoutViewSet, basename="payouts")
 router.register("accounts", BankAccountViewSet, basename="bank_accounts")
-router.register("auth/mfa", TOTPDeviceViewSet, basename="mfa")
+router.register("mfa", TOTPDeviceViewSet, basename="mfa")
 
 auth_patterns = [
     path("register/", RegisterView.as_view(), name="register"),
