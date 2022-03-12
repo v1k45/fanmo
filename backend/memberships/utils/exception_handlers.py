@@ -1,7 +1,7 @@
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.http.response import Http404
 from django_fsm import TransitionNotAllowed
-from rest_framework import exceptions
+from rest_framework import exceptions, serializers
 from rest_framework.response import Response
 from rest_framework.views import set_rollback
 
@@ -12,7 +12,7 @@ def handle_drf_exception(exc, context):
     elif isinstance(exc, (PermissionDenied, TransitionNotAllowed)):
         exc = exceptions.PermissionDenied()
     elif isinstance(exc, ValidationError):
-        exc = exceptions.ValidationError(detail=exc.message, code=exc.code)
+        exc = exceptions.ValidationError(detail=serializers.as_serializer_error(exc))
 
     if isinstance(exc, exceptions.APIException):
         headers = {}

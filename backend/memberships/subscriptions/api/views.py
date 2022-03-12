@@ -47,6 +47,13 @@ class MembershipViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
             "scheduled_subscription",
         )
 
+    @extend_schema(request=None)
+    @action(detail=True, methods=["post"])
+    def cancel(self, *args, **kwargs):
+        membership = self.get_object()
+        membership.cancel()
+        return self.retrieve(*args, **kwargs)
+
 
 class SubscriptionViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]

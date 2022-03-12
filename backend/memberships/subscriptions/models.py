@@ -1,7 +1,9 @@
+from ast import Sub
 from dateutil.relativedelta import relativedelta
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.utils import timezone
+from django.core.exceptions import ValidationError
 from django_fsm import FSMField, transition
 from djmoney.models.fields import MoneyField
 from versatileimagefield.fields import VersatileImageField
@@ -88,6 +90,28 @@ class Membership(BaseModel):
 
         self.scheduled_subscription = subscription
         self.save()
+
+    def cancel(self):
+        active_subscription = self.active_subscription
+        if not active_subscription:
+            raise ValidationError(
+                "This membership does not have an active subscription.",
+                "no_active_membership",
+            )
+
+        if active_subscription.status == Subscription.Status.SCHEDULED_TO_CANCEL:
+            raise ValidationError(
+                f"This membership is already scheduled to cancel on {active_subscription.cycle_end_at}.",
+                "already_cancelled",
+            )
+
+        if active_subscription.status == Subscription.Status.CANCELLED:
+            raise ValidationError(
+                "This membership is already cancelled.", "already_cancelled"
+            )
+
+        active_subscription.schedule_to_cancel()
+        active_subscription.save()
 
 
 class Plan(BaseModel):

@@ -424,6 +424,7 @@ class TestMembershipFlow:
                 "creator_username": creator_user.username,
             },
         )
+        print(response.json())
         assert response.status_code == 201
         response_data = response.json()
 
@@ -470,3 +471,53 @@ class TestMembershipFlow:
                 "notes": {"external_id": response_data["scheduled_subscription"]["id"]},
             }
         )
+
+    def test_cancel(self, api_client, active_membership, user, mocker):
+        rzp_cancel_mock = mocker.patch(
+            "memberships.subscriptions.models.razorpay_client.subscription.cancel",
+        )
+
+        api_client.force_authenticate(user)
+
+        assert active_membership.is_active
+        assert (
+            active_membership.active_subscription.status == Subscription.Status.ACTIVE
+        )
+
+        response = api_client.post(f"/api/memberships/{active_membership.id}/cancel/")
+        assert response.status_code == 200
+
+        assert (
+            response.json()["active_subscription"]["status"]
+            == Subscription.Status.SCHEDULED_TO_CANCEL
+        )
+        rzp_cancel_mock.assert_called_once_with(
+            active_membership.active_subscription.external_id,
+            {"cancel_at_cycle_end": 1},
+        )
+        active_membership.refresh_from_db()
+        assert active_membership.is_active
+        assert (
+            active_membership.active_subscription.status
+            == Subscription.Status.SCHEDULED_TO_CANCEL
+        )
+
+    def test_cancel_errors(self, api_client, active_membership, user, mocker):
+        api_client.force_authenticate(user)
+        mocker.patch(
+            "memberships.subscriptions.models.razorpay_client.subscription.cancel",
+        )
+
+        active_membership.active_subscription.schedule_to_cancel()
+        active_membership.active_subscription.save()
+
+        response = api_client.post(f"/api/memberships/{active_membership.id}/cancel/")
+        assert response.status_code == 400
+        assert response.json()["non_field_errors"][0]["code"] == "already_cancelled"
+
+        active_membership.active_subscription.cancel()
+        active_membership.active_subscription.save()
+
+        response = api_client.post(f"/api/memberships/{active_membership.id}/cancel/")
+        assert response.status_code == 400
+        assert response.json()["non_field_errors"][0]["code"] == "already_cancelled"

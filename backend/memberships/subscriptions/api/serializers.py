@@ -221,7 +221,12 @@ class SubscriptionCreateSerializer(serializers.ModelSerializer):
         return payment_plan.subscribe()
 
 
-class MembershipPaymentSerializer(serializers.ModelSerializer):
+class MembershipSerializer(serializers.ModelSerializer):
+    tier = TierPreviewSerializer(read_only=True)
+    creator_user = UserPreviewSerializer(read_only=True)
+    active_subscription = SubscriptionSerializer(read_only=True)
+    scheduled_subscription = SubscriptionSerializer(read_only=True)
+
     # input fields
     tier_id = serializers.PrimaryKeyRelatedField(
         queryset=Tier.objects.filter(is_active=True, creator_user__is_creator=True),
@@ -238,51 +243,9 @@ class MembershipPaymentSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if not self.context["request"].user.is_authenticated:
+        request = self.context.get("request")
+        if request and not request.user.is_authenticated:
             self.fields["email"].required = True
-
-    def validate_email(self, email):
-        user = self.context["request"].user
-        if user.is_authenticated:
-            raise serializers.ValidationError(
-                "Setting e-mail is not allowed for logged in users."
-            )
-
-        # TODO: Figure out guest checkout flow for memberships and donations.
-        # For now, allow emails of users who haven't logged in.
-        user = User.objects.filter(email=email).first()
-        if user and user.last_login:
-            raise serializers.ValidationError(
-                "An account with this email already exists. Please login to continue.",
-                "user_exists",
-            )
-        return email
-
-    def validate_creator_user(self, creator_user):
-        if self.instance and self.instance.creator_user != creator_user:
-            raise serializers.ValidationError(
-                "Creator cannot be changed. Please create a separate membership.",
-            )
-        return creator_user
-
-    def get_fan_user(self, email=None):
-        request = self.context["request"]
-        if request.user.is_authenticated:
-            return request.user
-
-        existing_user = User.objects.filter(email=email).first()
-        if existing_user:
-            return existing_user
-
-        adapter = get_adapter(request)
-        return adapter.invite(request._request, email)
-
-
-class MembershipSerializer(MembershipPaymentSerializer):
-    tier = TierPreviewSerializer(read_only=True)
-    creator_user = UserPreviewSerializer(read_only=True)
-    active_subscription = SubscriptionSerializer(read_only=True)
-    scheduled_subscription = SubscriptionSerializer(read_only=True)
 
     class Meta:
         model = Membership
@@ -319,6 +282,42 @@ class MembershipSerializer(MembershipPaymentSerializer):
 
         attrs["fan_user"] = fan_user
         return attrs
+
+    def validate_email(self, email):
+        user = self.context["request"].user
+        if user.is_authenticated:
+            raise serializers.ValidationError(
+                "Setting e-mail is not allowed for logged in users."
+            )
+
+        # TODO: Figure out guest checkout flow for memberships and donations.
+        # For now, allow emails of users who haven't logged in.
+        user = User.objects.filter(email=email).first()
+        if user and user.last_login:
+            raise serializers.ValidationError(
+                "An account with this email already exists. Please login to continue.",
+                "user_exists",
+            )
+        return email
+
+    def validate_creator_user(self, creator_user):
+        if self.instance and self.instance.creator_user != creator_user:
+            raise serializers.ValidationError(
+                "Creator cannot be changed. Please create a separate membership.",
+            )
+        return creator_user
+
+    def get_fan_user(self, email=None):
+        request = self.context["request"]
+        if request.user.is_authenticated:
+            return request.user
+
+        existing_user = User.objects.filter(email=email).first()
+        if existing_user:
+            return existing_user
+
+        adapter = get_adapter(request)
+        return adapter.invite(request._request, email)
 
     def create(self, validated_data):
         tier = validated_data.pop("tier")
