@@ -1,9 +1,10 @@
+from datetime import timedelta
 import pytest
 from razorpay.errors import SignatureVerificationError
-from memberships.conftest import membership
 
 from memberships.payments.models import BankAccount, Payment
 from memberships.payments.tests.factories import BankAccountFactory
+from memberships.subscriptions.models import Subscription
 from memberships.subscriptions.tests.factories import (
     MembershipFactory,
     PlanFactory,
@@ -148,6 +149,56 @@ class TestPaymentProcessingFlow:
         assert membership.scheduled_subscription is None
         payment = subscription.payments.all().get()
         assert payment.external_id == "pay_123"
+
+    def test_process_future_subscription(
+        self, membership_with_scheduled_change, api_client, mocker
+    ):
+        rzp_verify_mock = mocker.patch(
+            "memberships.payments.models.razorpay_client.utility.verify_payment_signature",
+            return_value=True,
+        )
+        rzp_cancel_mock = mocker.patch(
+            "memberships.subscriptions.models.razorpay_client.subscription.cancel",
+        )
+
+        subscription = membership_with_scheduled_change.scheduled_subscription
+        response = api_client.post(
+            "/api/payments/",
+            {
+                "type": "subscription",
+                "subscription_id": subscription.id,
+                "processor": "razorpay",
+                "payload": {
+                    "razorpay_subscription_id": subscription.external_id,
+                    "razorpay_payment_id": "pay_123",
+                    "razorpay_signature": "sign123",
+                },
+            },
+        )
+
+        assert response.status_code == 201
+        assert rzp_verify_mock.called
+
+        membership = membership_with_scheduled_change
+        membership.refresh_from_db()
+        assert membership.is_active
+        assert (
+            membership.active_subscription.status
+            == Subscription.Status.SCHEDULED_TO_CANCEL
+        )
+        assert (
+            membership.scheduled_subscription.status
+            == Subscription.Status.SCHEDULED_TO_ACTIVATE
+        )
+
+        payment = subscription.payments.all().get()
+        # should payment be even recorded?
+        assert payment.external_id == "pay_123"
+
+        rzp_cancel_mock.assert_called_once_with(
+            membership.active_subscription.external_id,
+            {"cancel_at_cycle_end": 1},
+        )
 
     def test_invalid_subscription_id(self, membership, api_client, mocker):
         mocker.patch(

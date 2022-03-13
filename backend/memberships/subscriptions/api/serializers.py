@@ -266,15 +266,22 @@ class MembershipSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         fan_user = self.get_fan_user(attrs.pop("email", None))
-        creator_user = attrs["creator_user"]
+
+        if self.instance:
+            creator_user = self.instance.creator_user
+        else:
+            creator_user = attrs["creator_user"]
 
         existing_membership = Membership.objects.filter(
             creator_user=creator_user, fan_user=fan_user
         ).first()
-        if not self.instance and existing_membership:
-            self.instance = existing_membership
 
-        if self.instance and self.instance.is_active is not None:
+        # do not allow creating a new membership if one already exists.
+        if (
+            not self.instance
+            and existing_membership
+            and existing_membership.is_active is not None
+        ):
             raise serializers.ValidationError(
                 f"You already have a membership with {creator_user.username}.",
                 "membership_exists",
@@ -321,12 +328,14 @@ class MembershipSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         tier = validated_data.pop("tier")
-        membership: Membership = super().create(validated_data)
+        membership, _ = Membership.objects.get_or_create(**validated_data)
         membership.start(tier)
         return membership
 
-    def update(self, instance, validated_data):
-        # TODO: IMPLEMENT UPDATE
+    def update(self, instance: Membership, validated_data):
+        tier = validated_data.pop("tier")
+        if tier != instance.tier:
+            instance.update(tier)
         return instance
 
 

@@ -2,6 +2,7 @@ from decimal import Decimal
 import pytest
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
+from moneyed import Money, INR
 
 from memberships.users.models import User
 from memberships.payments.tests.factories import BankAccountFactory
@@ -424,7 +425,6 @@ class TestMembershipFlow:
                 "creator_username": creator_user.username,
             },
         )
-        print(response.json())
         assert response.status_code == 201
         response_data = response.json()
 
@@ -521,3 +521,181 @@ class TestMembershipFlow:
         response = api_client.post(f"/api/memberships/{active_membership.id}/cancel/")
         assert response.status_code == 400
         assert response.json()["non_field_errors"][0]["code"] == "already_cancelled"
+
+    def test_update(self, api_client, active_membership, mocker):
+        rzp_plan_mock = mocker.patch(
+            "memberships.subscriptions.models.razorpay_client.plan.create",
+            return_value={"id": "plan_456"},
+        )
+        rzp_sub_mock = mocker.patch(
+            "memberships.subscriptions.models.razorpay_client.subscription.patch_url",
+            return_value={"id": "sub_456"},
+        )
+
+        api_client.force_authenticate(active_membership.fan_user)
+
+        new_tier = TierFactory(
+            name="Gold Members",
+            creator_user=active_membership.creator_user,
+            amount=Money(Decimal("500"), INR),
+        )
+
+        response = api_client.patch(
+            f"/api/memberships/{active_membership.id}/", {"tier_id": new_tier.id}
+        )
+        assert response.status_code == 200
+        response_data = response.json()
+
+        assert response_data["is_active"]
+        assert response_data["tier"]["id"] == active_membership.tier.id
+
+        active_subscription = response_data["active_subscription"]
+        assert active_subscription["status"] == Subscription.Status.SCHEDULED_TO_CANCEL
+        assert active_subscription["tier"]["id"] == active_membership.tier.id
+
+        scheduled_subscription = response_data["scheduled_subscription"]
+        assert (
+            scheduled_subscription["status"]
+            == Subscription.Status.SCHEDULED_TO_ACTIVATE
+        )
+        assert scheduled_subscription["tier"]["id"] == new_tier.id
+        assert not scheduled_subscription["payment"]["requires_payment"]
+
+        created_plan = Plan.objects.get(external_id="plan_456")
+        rzp_plan_mock.assert_called_once_with(
+            {
+                "period": "monthly",
+                "interval": 1,
+                "item": {
+                    "name": f"{new_tier.name} - {new_tier.creator_user.name}",
+                    "amount": 500_00,
+                    "currency": "INR",
+                },
+                "notes": {
+                    "external_id": created_plan.id,
+                },
+            }
+        )
+
+        # subscription is created in rzp
+        rzp_sub_mock.assert_called_once_with(
+            f"/subscriptions/{active_membership.active_subscription.external_id}",
+            {"plan_id": "plan_456", "schedule_change_at": "cycle_end"},
+        )
+
+    def test_update_after_scheduling_an_update(
+        self, api_client, active_membership, mocker
+    ):
+        mocker.patch(
+            "memberships.subscriptions.models.razorpay_client.plan.create",
+            return_value={"id": "plan_456"},
+        )
+        mocker.patch(
+            "memberships.subscriptions.models.razorpay_client.subscription.patch_url",
+            return_value={"id": "sub_456"},
+        )
+
+        api_client.force_authenticate(active_membership.fan_user)
+
+        new_tier = TierFactory(
+            name="Gold Members",
+            creator_user=active_membership.creator_user,
+            amount=Money(Decimal("500"), INR),
+        )
+
+        response = api_client.patch(
+            f"/api/memberships/{active_membership.id}/", {"tier_id": new_tier.id}
+        )
+        assert response.status_code == 200
+        response_data = response.json()
+
+        scheduled_subscription = response_data["scheduled_subscription"]
+        assert (
+            scheduled_subscription["status"]
+            == Subscription.Status.SCHEDULED_TO_ACTIVATE
+        )
+        assert scheduled_subscription["tier"]["id"] == new_tier.id
+
+        # change the tier again.
+        diamond_tier = TierFactory(
+            name="Diamond Members",
+            creator_user=active_membership.creator_user,
+            amount=Money(Decimal("700"), INR),
+        )
+
+        response = api_client.patch(
+            f"/api/memberships/{active_membership.id}/", {"tier_id": diamond_tier.id}
+        )
+        assert response.status_code == 400
+        assert response.json()["non_field_errors"][0]["code"] == "already_scheduled"
+
+    def test_update_upi_membership(self, api_client, active_membership, mocker):
+        rzp_plan_mock = mocker.patch(
+            "memberships.subscriptions.models.razorpay_client.plan.create",
+            return_value={"id": "plan_456"},
+        )
+        rzp_sub_mock = mocker.patch(
+            "memberships.subscriptions.models.razorpay_client.subscription.create",
+            return_value={"id": "sub_456"},
+        )
+
+        # mock active subscription as UPI
+        active_membership.active_subscription.payment_method = (
+            Subscription.PaymentMethod.UPI
+        )
+        active_membership.active_subscription.save()
+
+        api_client.force_authenticate(active_membership.fan_user)
+
+        new_tier = TierFactory(
+            name="Gold Members",
+            creator_user=active_membership.creator_user,
+            amount=Money(Decimal("500"), INR),
+        )
+
+        response = api_client.patch(
+            f"/api/memberships/{active_membership.id}/", {"tier_id": new_tier.id}
+        )
+        assert response.status_code == 200
+        response_data = response.json()
+        active_membership.refresh_from_db()
+
+        assert response_data["is_active"]
+        assert response_data["tier"]["id"] == active_membership.tier.id
+
+        # active subscription is not transitioned to "scheduled_to_cancel"
+        # because the change subscription is not authenticated yet.
+        active_subscription = response_data["active_subscription"]
+        assert active_subscription["status"] == Subscription.Status.ACTIVE
+        assert active_subscription["tier"]["id"] == active_membership.tier.id
+
+        scheduled_subscription = response_data["scheduled_subscription"]
+        assert scheduled_subscription["status"] == Subscription.Status.CREATED
+        assert scheduled_subscription["tier"]["id"] == new_tier.id
+        assert scheduled_subscription["payment"]["requires_payment"]
+
+        created_plan = Plan.objects.get(external_id="plan_456")
+        rzp_plan_mock.assert_called_once_with(
+            {
+                "period": "monthly",
+                "interval": 1,
+                "item": {
+                    "name": f"{new_tier.name} - {new_tier.creator_user.name}",
+                    "amount": 500_00,
+                    "currency": "INR",
+                },
+                "notes": {
+                    "external_id": created_plan.id,
+                },
+            }
+        )
+
+        # subscription is created in rzp
+        rzp_sub_mock.assert_called_once_with(
+            {
+                "plan_id": "plan_456",
+                "total_count": 12,
+                "start_at": active_membership.scheduled_subscription.cycle_start_at.timestamp(),
+                "notes": {"external_id": response_data["scheduled_subscription"]["id"]},
+            }
+        )

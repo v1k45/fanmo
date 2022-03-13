@@ -91,6 +91,40 @@ class Membership(BaseModel):
         self.scheduled_subscription = subscription
         self.save()
 
+    def update(self, tier):
+        """Update membership with active subscription to a new tier"""
+        active_subscription = self.active_subscription
+        if not active_subscription:
+            raise ValidationError(
+                "This membership does not have an active subscription.",
+                "no_active_membership",
+            )
+
+        # scheduled subscription already exists.
+        # make sure we don't remove a subscription that is paid-for
+        # TODO: cancel schedule update and create a new update
+        scheduled_subscription = self.scheduled_subscription
+        if (
+            scheduled_subscription
+            and scheduled_subscription.status != Subscription.Status.CREATED
+        ):
+            raise ValidationError(
+                f"This membership is already scheduled to update on {scheduled_subscription.cycle_start_at}.",
+                "already_scheduled",
+            )
+
+        plan = Plan.objects.create(
+            name=f"{tier.name} - {self.creator_user.name}",
+            tier=tier,
+            # todo: guess amount based on currency.
+            amount=tier.amount,
+            seller_user=self.creator_user,
+            buyer_user=self.fan_user,
+        )
+        plan.create_external()
+        self.scheduled_subscription = active_subscription.update(plan)
+        self.save()
+
     def cancel(self):
         active_subscription = self.active_subscription
         if not active_subscription:
@@ -329,6 +363,7 @@ class Subscription(BaseModel):
         # and schedule current one for cancellation only after new one is authorized.
         if self.payment_method == self.PaymentMethod.UPI:
             new_subscription = Subscription.objects.create(
+                membership=self.membership,
                 plan=plan,
                 status=Subscription.Status.CREATED,
                 # pad time to day end?
@@ -355,8 +390,9 @@ class Subscription(BaseModel):
             self.save()
 
             new_subscription = Subscription.objects.create(
+                membership=self.membership,
                 plan=plan,
-                status=Subscription.Status.AUTHENTICATED,
+                status=Subscription.Status.SCHEDULED_TO_ACTIVATE,
                 # pad time to day end?
                 cycle_start_at=self.cycle_end_at,
                 cycle_end_at=self.cycle_end_at + relativedelta(months=1),

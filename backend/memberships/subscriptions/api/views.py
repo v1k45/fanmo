@@ -32,7 +32,9 @@ class MembersViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
         return self.request.user.members.exclude(is_active__isnull=True)
 
 
-class MembershipViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
+class MembershipViewSet(
+    mixins.CreateModelMixin, mixins.UpdateModelMixin, viewsets.ReadOnlyModelViewSet
+):
     serializer_class = MembershipSerializer
 
     def get_queryset(self):
