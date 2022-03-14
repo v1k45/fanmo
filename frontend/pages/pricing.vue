@@ -44,7 +44,7 @@
             </li>
           </ul>
 
-          <a href="#" class="flex justify-center items-center mt-8 px-10 py-4 mx-auto lg:text-lg text-fm-primary rounded-full lg:mx-0 bg-white transform transition-transform hover:scale-105">
+          <a href="#" class="unstyled flex justify-center items-center mt-8 px-10 py-4 mx-auto lg:text-lg text-fm-primary rounded-full lg:mx-0 bg-white transform transition-transform hover:scale-105">
             Register Now <icon-arrow-right class="inline-block ml-3"></icon-arrow-right>
           </a>
         </div>
@@ -146,7 +146,7 @@
             <tr class="hidden lg:table-row">
               <th></th>
               <td>
-                <a href="#" class="inline-flex items-center px-10 py-4 my-6 text-lg mx-auto text-white transition-colors rounded-full bg-fm-primary hover:bg-fm-primary-600">
+                <a href="#" class="unstyled inline-flex items-center px-10 py-4 my-6 text-lg mx-auto text-white transition-colors rounded-full bg-fm-primary hover:bg-fm-primary-600">
                   Register Now <icon-arrow-right class="inline-block ml-3"></icon-arrow-right>
                 </a>
               </td>
@@ -158,7 +158,7 @@
       </div>
 
       <div class="text-center lg:hidden">
-        <a href="#" class="inline-flex items-center px-10 py-3 my-6 text-sm text-white transition-colors rounded-full lg:mx-0 bg-fm-primary hover:bg-fm-primary-600">
+        <a href="#" class="unstyled inline-flex items-center px-10 py-3 my-6 text-sm text-white transition-colors rounded-full lg:mx-0 bg-fm-primary hover:bg-fm-primary-600">
           Register Now
         </a>
       </div>
@@ -206,7 +206,7 @@
       </h2>
       <p class="mb-12 text-lg">It's free to sign up and takes less than 5 minutes to get started.</p>
 
-      <a href="#" class="inline-flex justify-center items-center px-10 py-4 mx-auto lg:text-lg text-fm-primary rounded-full lg:mx-0 bg-white transform transition-transform hover:scale-105">
+      <a href="#" class="unstyled inline-flex justify-center items-center px-10 py-4 mx-auto lg:text-lg text-fm-primary rounded-full lg:mx-0 bg-white transform transition-transform hover:scale-105">
         Register for free <icon-arrow-right class="inline-block ml-3"></icon-arrow-right>
       </a>
     </div>

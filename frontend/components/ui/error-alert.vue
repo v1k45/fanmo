@@ -1,14 +1,7 @@
 <template>
-<div
-  v-if="allErrors.length"
-  class="alert alert-error">
-  <div class="flex-1">
-    <icon-slash class="w-6 h-6 mx-2 stroke-current"></icon-slash>
-    <label
-      v-for="(error, index) in allErrors"
-      :key="index">{{ error.message }}</label>
-  </div>
-</div>
+<fm-alert v-if="allErrors.length" type="error" class="mb-6">
+  <div v-for="(error, index) in allErrors" :key="index">{{ error.message }}</div>
+</fm-alert>
 </template>
 
 <script>

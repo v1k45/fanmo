@@ -1,52 +1,47 @@
 <template>
-<main class="min-h-screen flex bg-gray-50">
-  <div class="flex flex-grow justify-center items-center sm:p-4 md:p-8">
-    <div class="max-w-md flex-grow card sm:bg-white sm:shadow-lg border">
-      <div class="card-body">
-        <h1 class="font-extrabold text-3xl">
-          Sign in to fanmo
-        </h1>
-        <div class="font-medium mt-3">
-          Don't have an account?
-          <nuxt-link to="/signup" class="text-base font-medium text-primary ml-2">Sign up</nuxt-link>
-        </div>
+<div>
+  <h1 class="font-title font-bold text-4xl text-center">Sign in to <logo class="h-7 inline-block ml-2"></logo></h1>
 
-        <button class="btn btn-primary btn-block my-4 normal-case" @click="socialLogin">Sign in with Google</button>
-        <hr>
+  <div class="max-w-sm mx-auto mt-8">
+    <fm-form :errors="loginErrors" @submit.prevent="userLogin">
 
-        <form class="mt-6" @submit.prevent="userLogin">
-          <error-alert :errors="loginErrors"></error-alert>
-          <div class="form-control">
-            <label class="label label-text">Email address</label>
-            <input v-model="loginForm.email" type="email" class="input input-bordered" :class="{ 'input-error': loginErrors.email }" required>
-            <label v-for="(error, index) in loginErrors.email" :key="index" class="label">
-              <span class="label-text-alt">{{ error.message }}</span>
-            </label>
-          </div>
-          <div class="form-control mt-3">
-            <label class="label label-text">Password</label>
-            <input v-model="loginForm.password" type="password" class="input input-bordered" required>
-            <div class="text-right mt-2">
-              <nuxt-link to="/forgot-password" class="text-sm text-primary">Forgot password?</nuxt-link>
-            </div>
-          </div>
-          <button class="btn btn-primary btn-block mt-4 normal-case">Sign in</button>
-        </form>
+      <fm-input v-model="loginForm.email" uid="email" label="Email" type="email" required autofocus></fm-input>
+
+      <fm-input v-model="loginForm.password" uid="password" label="Password" type="password" required></fm-input>
+
+      <div class="text-right mt-4">
+        <nuxt-link to="/forgot-password" class="text-fm-primary">Forgot password?</nuxt-link>
+      </div>
+
+      <fm-button native-type="submit" type="primary" size="lg" class="mt-6" block>Sign in</fm-button>
+    </fm-form>
+
+    <div class="mt-6">
+      <div class="font-bold text-black uppercase text-sm text-center">or sign in with</div>
+
+      <div class="flex space-x-4">
+        <fm-button size="lg" class="mt-6 flex items-center justify-center" block @click="socialLogin">
+          <img src="~/assets/marketing/google.svg" class="h-6 inline-block mr-2" alt="Google G logo"> Google
+        </fm-button>
+        <fm-button size="lg" class="mt-6 flex items-center justify-center" block>
+          <img src="~/assets/marketing/facebook.svg" class="h-6 inline-block mr-2" alt="Facebook F logo"> Facebook
+        </fm-button>
       </div>
     </div>
+
+    <div class="mt-10 text-center">
+      Don't have an account? <nuxt-link to="/register" class="text-fm-primary">Register here</nuxt-link>.
+    </div>
   </div>
-</main>
+</div>
 </template>
 
 <script>
-import errorAlert from '../components/ui/error-alert.vue';
 export default {
-  components: { errorAlert },
-  layout: 'empty',
+  layout: 'auth',
   auth: 'guest',
   data() {
     return {
-      signin: true,
       loginForm: {
         email: '',
         password: ''
@@ -55,18 +50,19 @@ export default {
     };
   },
   head: {
-    title: 'Sign in'
+    title: 'Sign in to Fanmo'
   },
   methods: {
     async userLogin() {
       try {
         await this.$auth.loginWith('cookie', { data: this.loginForm });
+        this.loginErrors = {};
       } catch (err) {
         this.loginErrors = err.response.data;
       }
     },
     async socialLogin() {
-      // todo: test if we need to switch back to cookie
+      // TODO: test if we need to switch back to cookie
       await this.$auth.loginWith('google');
     }
   }

@@ -14,7 +14,7 @@
 
         <p class="mb-8 leading-relaxed sm:text-lg">Simplest way to offer memberships, accept donations and post member-exclusive content.</p>
 
-        <a href="#" class="inline-flex items-center px-10 py-4 mx-auto text-lg text-white transition-colors rounded-full lg:mx-0 bg-fm-primary hover:bg-fm-primary-600">
+        <a href="#" class="unstyled inline-flex items-center px-10 py-4 mx-auto text-lg text-white transition-colors rounded-full lg:mx-0 bg-fm-primary hover:bg-fm-primary-600">
           Register Now <icon-arrow-right class="inline-block ml-3"></icon-arrow-right>
         </a>
       </div>
@@ -105,7 +105,7 @@
 
             <h2 class="font-bold mt-6 text-2xl leading-snug sm:text-3xl sm:leading-snug lg:text-4xl lg:leading-relaxed">
               Engage with your fans through
-              <span class="inline-block text-white px-4 leading-snug rounded bg-fm-error-400">
+              <span class="inline-block text-white px-4 leading-snug rounded bg-fm-error">
                 exclusive content
               </span>
               🎙️
@@ -180,7 +180,7 @@
       </ul>
 
       <div class="text-center lg:text-left">
-        <a class="inline-flex items-center mt-8 px-10 py-4 mx-auto lg:text-lg text-white transition-colors rounded-full lg:mx-0 bg-fm-primary hover:bg-fm-primary-600">
+        <a class="unstyled inline-flex items-center mt-8 px-10 py-4 mx-auto lg:text-lg text-white transition-colors rounded-full lg:mx-0 bg-fm-primary hover:bg-fm-primary-600">
           Register Now <icon-arrow-right class="inline-block ml-3"></icon-arrow-right>
         </a>
       </div>

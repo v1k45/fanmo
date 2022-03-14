@@ -23,7 +23,7 @@
       </div>
       <div v-else class="flex items-stretch norm">
         <nuxt-link to="/login" class="btn btn-ghost btn-sm rounded-btn normal-case mr-3">Sign in</nuxt-link>
-        <nuxt-link to="/signup" class="btn btn-info btn-sm rounded-btn normal-case">Create an Account</nuxt-link>
+        <nuxt-link to="/register" class="btn btn-info btn-sm rounded-btn normal-case">Create an Account</nuxt-link>
       </div>
     </div>
     <div class="flex-none">

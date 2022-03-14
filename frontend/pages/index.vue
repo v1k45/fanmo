@@ -55,7 +55,7 @@
     <div class="mb-6">
       Sign up by clicking on the button below to get started!
     </div>
-    <nuxt-link to="/signup" class="btn px-10 animate-bounce">Sign up</nuxt-link>
+    <nuxt-link to="/register" class="btn px-10 animate-bounce">Sign up</nuxt-link>
   </div>
 
   <h1 class="text-2xl font-bold my-4">Featured Creators</h1>

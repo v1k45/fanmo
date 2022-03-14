@@ -40,6 +40,7 @@ export default {
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
   plugins: [
+    '~/components/fm/init.js',
     '~/plugins/axios',
     '~/plugins/directives.client.js'
   ],
@@ -117,7 +118,10 @@ export default {
   },
 
   router: {
-    middleware: ['auth']
+    middleware: [
+      'auth',
+      'router'
+    ]
   },
 
   build: {
