@@ -118,7 +118,10 @@ export default {
   },
 
   router: {
-    middleware: ['auth']
+    middleware: [
+      'auth',
+      'router'
+    ]
   },
 
   build: {
