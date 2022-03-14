@@ -1,3 +1,3 @@
 <template>
-<layout-main-old no-container></layout-main-old>
+<layout-main :container="false"></layout-main>
 </template>
