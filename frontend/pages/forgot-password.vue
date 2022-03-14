@@ -1,51 +1,43 @@
 <template>
-<main class="min-h-screen flex bg-gray-50">
-  <div class="flex flex-grow justify-center items-center sm:p-4 md:p-8">
-    <div class="max-w-md flex-grow card sm:bg-white sm:shadow-lg border">
-      <div class="card-body">
-        <h1 class="font-extrabold text-3xl">
-          Reset Password
-        </h1>
-        <div class="font-medium mt-3">
-          We'll send you password reset instructions on your registered email.
-        </div>
-        <div v-if="sent" class="alert alert-success mt-5">
-          <icon-check-circle class="text-success mr-3"></icon-check-circle> Password reset instructions were sent to your email.
-        </div>
-        <form class="mt-6" @submit.prevent="resetPassword">
-          <error-alert :errors="errors"></error-alert>
-          <div class="form-control">
-            <label class="label label-text">Email address</label>
-            <input v-model="form.email" type="email" class="input input-bordered" :class="{ 'input-error': errors.email }" required>
-            <label v-for="(error, index) in errors.email" :key="index" class="label">
-              <span class="label-text-alt">{{ error.message }}</span>
-            </label>
-          </div>
-          <div class="flex mt-6">
-            <nuxt-link to="/login" class="btn btn-ghost normal-case px-8 mr-3">&larr; Sign in</nuxt-link>
-            <button type="submit" class="btn btn-primary flex-grow normal-case">Reset Password</button>
-          </div>
-        </form>
-      </div>
+<div>
+  <h1 class="font-title font-bold text-4xl text-center">Reset password</h1>
+
+
+  <div class="mt-3 text-center">We'll send password reset instructions to your registered email address.</div>
+
+  <div class="max-w-sm mx-auto">
+
+    <fm-alert v-if="sent" type="success" class="mt-4">Password reset instructions were sent to your email.</fm-alert>
+
+    <fm-form :errors="errors" class="mt-8" @submit.prevent="resetPassword">
+
+      <fm-input v-model="form.email" uid="email" type="email" placeholder="Email address" required autofocus></fm-input>
+
+      <fm-button native-type="submit" type="primary" size="lg" class="mt-8" block>Reset password</fm-button>
+
+    </fm-form>
+
+    <div class="mt-6 text-center">
+      <nuxt-link to="/login" class="text-fm-primary">&larr; Back to sign in</nuxt-link>.
     </div>
   </div>
-</main>
+
+</div>
 </template>
 
 <script>
-import errorAlert from '../components/ui/error-alert.vue';
+const initialState = () => ({
+  sent: false,
+  form: {
+    email: ''
+  },
+  errors: {}
+});
 export default {
-  components: { errorAlert },
-  layout: 'empty',
+  layout: 'auth',
   auth: 'guest',
   data() {
-    return {
-      sent: false,
-      form: {
-        email: ''
-      },
-      errors: {}
-    };
+    return initialState();
   },
   head: {
     title: 'Forgot password'
@@ -54,8 +46,13 @@ export default {
     async resetPassword() {
       try {
         await this.$axios.$post('/api/auth/password/reset/', this.form);
+        const email = this.form.email;
         this.sent = true;
         this.form.email = '';
+        this.errors = {};
+        setTimeout(() => {
+          this.$router.push({ name: 'set-password', query: { email } });
+        }, 3000);
       } catch (err) {
         this.errors = err.response.data;
       }
