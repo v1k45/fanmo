@@ -60,7 +60,7 @@
           <label for="subscribers-slider" class="block mr-auto">Total subscribers</label>
           <input
             v-model.number="subscriberCount" type="number"
-            class="w-20 h-10 border-2 rounded-lg text-center font-bold text-fm-info"
+            class="w-20 h-10 border-gray-200 border-2 rounded-lg text-xl text-center font-bold text-fm-info"
             min="1" max="1000">
         </div>
         <input
@@ -76,7 +76,7 @@
             <icon-indian-rupee class="h-full mr-1"></icon-indian-rupee>
             <input
               v-model.number="subscriptionPrice" type="number"
-              class="w-20 h-10 border-2 rounded-lg text-center font-bold text-fm-success-600"
+              class="w-20 h-10 border-gray-200 border-2 rounded-lg text-center font-bold text-xl text-fm-success-600"
               min="10" max="2000">
           </div>
         </div>
