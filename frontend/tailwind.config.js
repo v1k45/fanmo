@@ -22,6 +22,8 @@ module.exports = {
   plugins: [
     require('daisyui'),
     require('@tailwindcss/aspect-ratio'),
+    require('@tailwindcss/forms'),
+    require('tailwind-animatecss'),
     require('tailwind-bootstrap-grid')({
       gridGutters: {
         0: 0,
