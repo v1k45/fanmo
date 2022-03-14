@@ -1,5 +1,5 @@
 <template>
-<div class="fm-input" :class="{ 'fm-input--error': !!computedError, 'fm-input--vertical': !horizontal, 'fm-input--horizontal': horizontal,  }">
+<div class="fm-input" :class="{ 'fm-input--error': !!computedError, 'fm-input--vertical': !horizontal, 'fm-input--horizontal': horizontal }">
   <!-- label start -->
   <label v-if="label || $slots.label" class="fm-input__label">
     <slot v-if="$slots.label" name="label"></slot>
