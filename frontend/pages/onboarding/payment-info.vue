@@ -21,7 +21,7 @@
 
         <fm-input v-model="form.account_name" uid="account_name" type="text" required autofocus>
           <template #label>
-            Name <span class="text-xs">(as it appears on the back account)</span>
+            Name <span class="text-xs">(as it appears on the bank account)</span>
           </template>
         </fm-input>
 
@@ -88,7 +88,7 @@ import pick from 'lodash/pick';
 import { CheckSquare as IconCheckSquare } from 'lucide-vue';
 import { skipOnboarding } from '~/utils';
 
-const ACCOUNT_TYPES = ['Private Limited', 'Partnership', 'Proprietorship', 'Individual', 'LLP'];
+const ACCOUNT_TYPES = ['Individual', 'Private Limited', 'Partnership', 'Proprietorship', 'LLP'];
 
 const initialState = () => {
   return {

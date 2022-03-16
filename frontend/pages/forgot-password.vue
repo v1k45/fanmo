@@ -11,7 +11,7 @@
 
     <fm-form :errors="errors" class="mt-8" @submit.prevent="resetPassword">
 
-      <fm-input v-model="form.email" uid="email" type="email" placeholder="Email address" required autofocus></fm-input>
+      <fm-input v-show="false" v-model="form.email" uid="email" type="email" placeholder="Email address" required autofocus></fm-input>
 
       <fm-button native-type="submit" type="primary" size="lg" class="mt-8" block>Reset password</fm-button>
 

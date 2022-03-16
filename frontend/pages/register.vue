@@ -19,7 +19,7 @@
     </fm-form>
 
     <div class="mt-6">
-      <div class="font-bold text-black uppercase text-sm text-center">or register with</div>
+      <div class="font-bold text-black uppercase text-sm text-center">or continue with</div>
 
       <div class="flex space-x-4">
         <fm-button size="lg" class="mt-6 flex items-center justify-center" block @click="socialLogin">
