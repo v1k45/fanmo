@@ -15,7 +15,7 @@
         <nuxt-link to="/forgot-password" class="mr-auto">Get a password reset code</nuxt-link>.
       </div>
 
-      <fm-input v-model="form.email" uid="email" label="Email" type="email" required></fm-input>
+      <fm-input v-show="false" v-model="form.email" uid="email" label="Email" type="email" required></fm-input>
       <fm-input v-model="form.new_password" uid="new_password" label="New password" type="password" required></fm-input>
 
       <fm-button native-type="submit" type="primary" size="lg" class="mt-6" block>Set password</fm-button>
