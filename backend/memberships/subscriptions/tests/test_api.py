@@ -502,7 +502,9 @@ class TestMembershipFlow:
             == Subscription.Status.SCHEDULED_TO_CANCEL
         )
 
-    def test_cancel_errors(self, api_client, active_membership, user, mocker):
+    def test_cancel_errors(
+        self, api_client, active_membership, user, mocker, time_machine
+    ):
         api_client.force_authenticate(user)
         mocker.patch(
             "memberships.subscriptions.models.razorpay_client.subscription.cancel",
@@ -515,6 +517,9 @@ class TestMembershipFlow:
         assert response.status_code == 400
         assert response.json()["non_field_errors"][0]["code"] == "already_cancelled"
 
+        time_machine.move_to(
+            active_membership.active_subscription.cycle_end_at + relativedelta(days=1)
+        )
         active_membership.active_subscription.cancel()
         active_membership.active_subscription.save()
 

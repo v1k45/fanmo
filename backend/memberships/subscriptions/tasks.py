@@ -1,9 +1,4 @@
 from django_fsm import can_proceed
-
-from django.conf import settings
-from django.utils import timezone
-
-from dateutil.relativedelta import relativedelta
 from memberships.subscriptions.models import Membership, Subscription
 
 
@@ -18,29 +13,29 @@ def refresh_membership(membership_id: int):
     How does the refresh process work?
     1. Check if the currently active subscription has expired.
     """
-    now = timezone.now()
-
+    # TODO: Record an activity?
     # Set a grace period?
     membership: Membership = Membership.objects.select_for_update().get(
         id=membership_id
     )
-    active_subscription: Subscription = membership.active_subscription
     if not membership.is_active:
         return
 
-    expiration_date = active_subscription.cycle_end_at + relativedelta(
-        days=settings.SUBSCRIPTION_GRACE_PERIOD_DAYS
-    )
+    active_subscription: Subscription = membership.active_subscription
+    scheduled_subscription: Subscription = membership.scheduled_subscription
 
-    # if subscription is scheduled to cancel, cancel immediately.
-    # if there is a scheduled subscription, activate it.
-
-    # TODO: Move conditions to FSM?
-    if expiration_date < now and can_proceed(active_subscription.halt):
+    if can_proceed(active_subscription.halt):
         active_subscription.halt()
         active_subscription.save()
-    elif active_subscription.cycle_end_at < now and can_proceed(
-        active_subscription.start_renewal
-    ):
+
+    elif can_proceed(active_subscription.cancel):
+        active_subscription.cancel()
+        active_subscription.save()
+
+        if scheduled_subscription and can_proceed(scheduled_subscription.activate):
+            scheduled_subscription.activate()
+            scheduled_subscription.save()
+
+    elif can_proceed(active_subscription.start_renewal):
         active_subscription.start_renewal()
         active_subscription.save()

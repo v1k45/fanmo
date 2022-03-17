@@ -80,7 +80,7 @@ def membership_with_scheduled_change(
         buyer_user=user,
         tier=tier,
     )
-    scheduled_subscription = SubscriptionFactory(
+    scheduled_subscription: Subscription = SubscriptionFactory(
         plan=plan,
         membership=membership,
         seller_user=creator_user,
@@ -90,6 +90,7 @@ def membership_with_scheduled_change(
     )
     membership.scheduled_subscription = scheduled_subscription
     membership.save()
+    membership.refresh_from_db()
     return membership
 
 

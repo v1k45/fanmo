@@ -94,6 +94,7 @@ class Payment(BaseModel):
 
         subscription.save()
 
+        # TODO: figure out what to with authentication payments.
         # make sure payment is not already processed?
         # allow soft reprocessing if it is for real local subscription.
         payment, _ = Payment.objects.get_or_create(

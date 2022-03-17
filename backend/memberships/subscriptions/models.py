@@ -1,9 +1,9 @@
-from ast import Sub
 from dateutil.relativedelta import relativedelta
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+from django.conf import settings
 from django_fsm import FSMField, transition
 from djmoney.models.fields import MoneyField
 from versatileimagefield.fields import VersatileImageField
@@ -317,15 +317,17 @@ class Subscription(BaseModel):
             active_subscription.schedule_to_cancel()
             active_subscription.save()
 
+    def can_activate(self):
+        return self.cycle_start_at < timezone.now()
+
     @transition(
         field=status,
         source=[
             Status.AUTHENTICATED,
             Status.SCHEDULED_TO_ACTIVATE,
-            Status.PENDING,
-            Status.HALTED,
         ],
         target=Status.ACTIVE,
+        conditions=[can_activate],
     )
     def activate(self):
         self.is_active = True
@@ -350,8 +352,14 @@ class Subscription(BaseModel):
             self.external_id, {"cancel_at_cycle_end": 1}
         )
 
+    def can_cancel(self):
+        return self.cycle_end_at < timezone.now()
+
     @transition(
-        field=status, source=Status.SCHEDULED_TO_CANCEL, target=Status.CANCELLED
+        field=status,
+        source=Status.SCHEDULED_TO_CANCEL,
+        target=Status.CANCELLED,
+        conditions=[can_cancel],
     )
     def cancel(self):
         # hard cancel when the subscription is future not charged yet.
@@ -402,12 +410,16 @@ class Subscription(BaseModel):
             )
         return new_subscription
 
+    def can_renew(self):
+        return self.cycle_end_at < timezone.now()
+
     @transition(
         field=status,
         source=[
             Status.ACTIVE,
         ],
         target=Status.PENDING,
+        conditions=[can_renew],
     )
     def start_renewal(self):
         """
@@ -420,12 +432,20 @@ class Subscription(BaseModel):
     )
     def renew(self):
         """Subscription was renewned"""
-        self.cycle_start_at = timezone.now()
         self.cycle_end_at = relativedelta(self.cycle_start_at, months=1)
         self.save()
 
+    def can_halt(self):
+        halt_date = self.cycle_end_at + relativedelta(
+            days=settings.SUBSCRIPTION_GRACE_PERIOD_DAYS
+        )
+        return halt_date < timezone.now()
+
     @transition(
-        field=status, source=[Status.PENDING, Status.ACTIVE], target=Status.HALTED
+        field=status,
+        source=[Status.PENDING, Status.ACTIVE],
+        target=Status.HALTED,
+        conditions=[can_halt],
     )
     def halt(self):
         self.membership.is_active = False
