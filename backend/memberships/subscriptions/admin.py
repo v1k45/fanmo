@@ -38,16 +38,12 @@ class PlanAdmin(admin.ModelAdmin):
         "amount_currency",
         "amount",
         "external_id",
-        "seller_user",
-        "buyer_user",
         "is_active",
     )
     list_filter = (
         "created_at",
         "updated_at",
         "tier",
-        "seller_user",
-        "buyer_user",
         "is_active",
     )
     search_fields = ("name",)
@@ -66,8 +62,8 @@ class SubscriptionAdmin(admin.ModelAdmin):
         "cycle_start_at",
         "cycle_end_at",
         "is_active",
-        "seller_user",
-        "buyer_user",
+        "creator_user",
+        "fan_user",
         "scheduled_to_cancel",
         "scheduled_to_change",
     )
@@ -78,8 +74,8 @@ class SubscriptionAdmin(admin.ModelAdmin):
         "cycle_start_at",
         "cycle_end_at",
         "is_active",
-        "seller_user",
-        "buyer_user",
+        "creator_user",
+        "fan_user",
         "scheduled_to_cancel",
         "scheduled_to_change",
     )

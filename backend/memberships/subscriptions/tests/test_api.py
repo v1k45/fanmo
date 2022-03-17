@@ -237,8 +237,8 @@ class TestSubscriptionFlow:
         subscription = Subscription.objects.get(
             id=subscription_id,
             external_id="sub_123",
-            seller_user=user,
-            buyer_user=ramesh,
+            creator_user=user,
+            fan_user=ramesh,
         )
         subscription.authenticate()
         subscription.activate()
@@ -259,7 +259,7 @@ class TestSubscriptionFlow:
         assert response.status_code == 200
         response_data = response.json()
         assert response_data["id"] == subscription_id
-        assert response_data["seller_user"]["username"] == user.username
+        assert response_data["creator_user"]["username"] == user.username
         assert response_data["tier"]["name"] == "Standard"
 
         # check creator subscription data
@@ -275,7 +275,7 @@ class TestSubscriptionFlow:
         response_data = response.json()
         assert response_data["count"] == 1
         assert response_data["results"][0]["id"] == subscription_id
-        assert response_data["results"][0]["buyer_user"]["username"] == ramesh.username
+        assert response_data["results"][0]["fan_user"]["username"] == ramesh.username
         assert response_data["results"][0]["tier"]["name"] == "Standard"
 
         # few days pass?

@@ -72,8 +72,6 @@ class Membership(BaseModel):
             tier=tier,
             # todo: guess amount based on currency.
             amount=tier.amount,
-            seller_user=self.creator_user,
-            buyer_user=self.fan_user,
         )
         plan.create_external()
 
@@ -81,8 +79,8 @@ class Membership(BaseModel):
             plan=plan,
             membership=self,
             status=Subscription.Status.CREATED,
-            seller_user=self.creator_user,
-            buyer_user=self.fan_user,
+            creator_user=self.creator_user,
+            fan_user=self.fan_user,
             cycle_start_at=timezone.now(),
             cycle_end_at=timezone.now() + relativedelta(months=1),
         )
@@ -118,8 +116,6 @@ class Membership(BaseModel):
             tier=tier,
             # todo: guess amount based on currency.
             amount=tier.amount,
-            seller_user=self.creator_user,
-            buyer_user=self.fan_user,
         )
         plan.create_external()
         self.scheduled_subscription = active_subscription.update(plan)
@@ -163,33 +159,26 @@ class Plan(BaseModel):
     amount = MoneyField(max_digits=7, decimal_places=2)
     external_id = models.CharField(max_length=255)
 
-    seller_user = models.ForeignKey("users.User", on_delete=models.CASCADE)
-    buyer_user = models.ForeignKey(
-        "users.User", on_delete=models.CASCADE, related_name="custom_plans", null=True
-    )
-
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.name
 
     @classmethod
-    def for_subscription(cls, amount, seller, buyer):
+    def for_subscription(cls, amount, creator_user):
         tier = (
-            Tier.objects.filter(amount__lte=amount, seller_user=seller)
+            Tier.objects.filter(amount__lte=amount, creator_user=creator_user)
             .order_by("-amount")
             .first()
         )
 
         tier_name = tier.name if tier else "Custom"
-        default_name = f"{tier_name} ({amount}) - {seller.name}"
+        default_name = f"{tier_name} ({amount}) - {creator_user.name}"
 
         # todo - cleanup orpahed plans?
         plan, created = cls.objects.get_or_create(
             amount=amount,
             tier=tier,
-            seller_user=seller,
-            buyer_user=buyer,
             defaults={"name": default_name},
         )
         if created:
@@ -197,11 +186,11 @@ class Plan(BaseModel):
 
         return plan
 
-    def subscribe(self):
+    def subscribe(self, fan_user):
         # update subscription if it already exists.
         try:
             existing_subscription = Subscription.objects.active(
-                self.seller_user, self.buyer_user
+                self.creator_user, self.fan_user
             )
             updated_subscription = existing_subscription.update(self)
             existing_subscription.save()
@@ -212,8 +201,8 @@ class Plan(BaseModel):
         subscription = Subscription.objects.create(
             plan=self,
             status=Subscription.Status.CREATED,
-            seller_user=self.seller_user,
-            buyer_user=self.buyer_user,
+            creator_user=self.tier.creator_user,
+            fan_user=fan_user,
             cycle_start_at=timezone.now(),
             cycle_end_at=timezone.now() + relativedelta(months=1),
         )
@@ -240,7 +229,7 @@ class Plan(BaseModel):
 class Subscription(BaseModel):
     class Status(models.TextChoices):
         CREATED = "created"
-        # authorized by buyer
+        # authorized by fan
         AUTHENTICATED = "authenticated"
         # charged successfully
         ACTIVE = "active"
@@ -281,11 +270,10 @@ class Subscription(BaseModel):
         "subscriptions.Membership", on_delete=models.CASCADE, null=True
     )
 
-    # TODO: Deprecate this _user fields in favor of
-    seller_user = models.ForeignKey(
+    creator_user = models.ForeignKey(
         "users.User", on_delete=models.CASCADE, related_name="subscribers"
     )
-    buyer_user = models.ForeignKey("users.User", on_delete=models.CASCADE)
+    fan_user = models.ForeignKey("users.User", on_delete=models.CASCADE)
 
     scheduled_to_cancel = models.BooleanField(default=False)
     scheduled_to_change = models.BooleanField(default=False)
@@ -377,8 +365,8 @@ class Subscription(BaseModel):
                 # pad time to day end?
                 cycle_start_at=self.cycle_end_at,
                 cycle_end_at=self.cycle_end_at + relativedelta(months=1),
-                buyer_user=self.buyer_user,
-                seller_user=self.seller_user,
+                fan_user=self.fan_user,
+                creator_user=self.creator_user,
             )
             new_subscription.create_external()
         else:
@@ -404,8 +392,8 @@ class Subscription(BaseModel):
                 # pad time to day end?
                 cycle_start_at=self.cycle_end_at,
                 cycle_end_at=self.cycle_end_at + relativedelta(months=1),
-                buyer_user=self.buyer_user,
-                seller_user=self.seller_user,
+                fan_user=self.fan_user,
+                creator_user=self.creator_user,
                 external_id=self.external_id,
             )
         return new_subscription
@@ -450,13 +438,3 @@ class Subscription(BaseModel):
     def halt(self):
         self.membership.is_active = False
         self.membership.save()
-
-    @classmethod
-    def get_current(cls, seller_user, buyer_user):
-        return cls.objects.get(
-            seller_user=seller_user,
-            buyer_user=buyer_user,
-            cycle_start_at__lte=timezone.now(),
-            cycle_end_at__gte=timezone.now(),
-            status__in=[Subscription.Status.ACTIVE, Subscription.Status.AUTHENTICATED],
-        )

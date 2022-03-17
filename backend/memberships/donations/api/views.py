@@ -13,7 +13,7 @@ class DonationViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
         queryset = Donation.objects.filter(status=Donation.Status.SUCCESSFUL)
         username = self.request.query_params.get("username")
         if username:
-            return queryset.filter(receiver_user__username__iexact=username)
+            return queryset.filter(creator_user__username__iexact=username)
         return queryset
 
     def get_serializer_class(self):

@@ -1,3 +1,3 @@
-Hi {{ subscription.buyer_user.display_name }},
+Hi {{ subscription.fan_user.display_name }},
 
-Your subscription to {{ subscription.seller_user.display_name }} has been successfully renewed! You were charged {{ subscription.plan.amount }} as per your plan.
+Your subscription to {{ subscription.creator_user.display_name }} has been successfully renewed! You were charged {{ subscription.plan.amount }} as per your plan.

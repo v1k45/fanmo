@@ -34,7 +34,7 @@ class PaymentProcessingSerializer(serializers.ModelSerializer):
         required=False,
         queryset=Subscription.objects.all(),
     )
-    seller_user = UserPreviewSerializer(read_only=True)
+    creator_user = UserPreviewSerializer(read_only=True)
     donation = DonationSerializer(read_only=True)
     subscription = SubscriptionSerializer(read_only=True)
 
@@ -43,7 +43,7 @@ class PaymentProcessingSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "amount",
-            "seller_user",
+            "creator_user",
             "subscription",
             "subscription_id",
             "donation",
@@ -54,7 +54,7 @@ class PaymentProcessingSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = [
             "id",
-            "seller_user",
+            "creator_user",
             "amount",
             "subscription",
             "donation",
@@ -111,14 +111,14 @@ class PaymentProcessingSerializer(serializers.ModelSerializer):
             payment = Payment.capture_donation(validated_data["payload"])
         else:
             payment = Payment.authenticate_subscription(validated_data["payload"])
-        # force follow the seller
-        if payment.buyer_user is not None:
-            payment.seller_user.follow(payment.buyer_user)
+        # force follow the creator
+        if payment.fan_user is not None:
+            payment.creator_user.follow(payment.fan_user)
         return payment
 
 
 class PaymentSerializer(serializers.ModelSerializer):
-    seller_user = UserPreviewSerializer()
+    creator_user = UserPreviewSerializer()
     donation = DonationSerializer()
     subscription = SubscriptionSerializer()
 
@@ -130,7 +130,7 @@ class PaymentSerializer(serializers.ModelSerializer):
             "amount",
             "status",
             "method",
-            "seller_user",
+            "creator_user",
             "subscription",
             "donation",
             "created_at",
@@ -138,11 +138,11 @@ class PaymentSerializer(serializers.ModelSerializer):
 
 
 class PaymentPreviewSerializer(serializers.ModelSerializer):
-    buyer_user = UserPreviewSerializer()
+    fan_user = UserPreviewSerializer()
 
     class Meta:
         model = Payment
-        fields = ["id", "amount", "method", "type", "buyer_user", "created_at"]
+        fields = ["id", "amount", "method", "type", "fan_user", "created_at"]
 
 
 class PayoutSerializer(serializers.ModelSerializer):

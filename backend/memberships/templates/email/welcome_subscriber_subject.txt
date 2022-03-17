@@ -1,1 +1,1 @@
-You have subscribed to {{ subscription.seller_user.display_user }}!
+You have subscribed to {{ subscription.creator_user.display_user }}!

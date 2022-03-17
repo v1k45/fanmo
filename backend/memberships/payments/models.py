@@ -37,10 +37,10 @@ class Payment(BaseModel):
         "donations.Donation", on_delete=models.CASCADE, null=True, blank=True
     )
 
-    seller_user = models.ForeignKey(
+    creator_user = models.ForeignKey(
         "users.User", on_delete=models.CASCADE, related_name="received_payments"
     )
-    buyer_user = models.ForeignKey(
+    fan_user = models.ForeignKey(
         "users.User", on_delete=models.CASCADE, null=True, blank=True
     )
 
@@ -59,8 +59,8 @@ class Payment(BaseModel):
             status=Payment.Status.CAPTURED,
             amount=money_from_sub_unit(payload["amount"], payload["currency"]),
             external_id=payload["id"],
-            seller=subscription.seller,
-            buyer=subscription.buyer,
+            creator_user=subscription.creator_user,
+            fan_user=subscription.fan_user,
         )
         Payout.for_payment(payment)
         return payment
@@ -103,8 +103,8 @@ class Payment(BaseModel):
             amount=subscription.plan.amount,
             # payment id is stored in order_id field of subscription
             external_id=payload["razorpay_order_id"],
-            seller_user=subscription.seller_user,
-            buyer_user=subscription.buyer_user,
+            creator_user=subscription.creator_user,
+            fan_user=subscription.fan_user,
             defaults={"status": Payment.Status.CAPTURED},
         )
         return payment
@@ -120,8 +120,8 @@ class Payment(BaseModel):
             donation=donation,
             amount=donation.amount,
             external_id=payload["razorpay_payment_id"],
-            seller_user=donation.receiver_user,
-            buyer_user=donation.sender_user,
+            creator_user=donation.creator_user,
+            fan_user=donation.fan_user,
         )
 
         # not needed?
@@ -157,8 +157,8 @@ class Payout(BaseModel):
     def for_payment(cls, payment):
         payout, _created = cls.objects.get_or_create(
             payment=payment,
-            amount=deduct_platform_fee(payment.amount, payment.seller_user),
-            bank_account=payment.seller_user.bank_accounts.first(),
+            amount=deduct_platform_fee(payment.amount, payment.creator_user),
+            bank_account=payment.creator_user.bank_accounts.first(),
         )
         if _created:
             payout.create_external()

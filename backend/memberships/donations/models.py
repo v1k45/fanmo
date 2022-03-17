@@ -12,8 +12,8 @@ class Donation(BaseModel):
         FAILED = "failed"
         SUCCESSFUL = "successful"
 
-    sender_user = models.ForeignKey("users.User", on_delete=models.SET_NULL, null=True)
-    receiver_user = models.ForeignKey(
+    fan_user = models.ForeignKey("users.User", on_delete=models.SET_NULL, null=True)
+    creator_user = models.ForeignKey(
         "users.User", on_delete=models.CASCADE, related_name="received_donations"
     )
 

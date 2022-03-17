@@ -10,8 +10,8 @@ class DonationAdmin(admin.ModelAdmin):
         "id",
         "created_at",
         "updated_at",
-        "sender_user",
-        "receiver_user",
+        "creator_user",
+        "fan_user",
         "name",
         "is_anonymous",
         "status",
@@ -20,8 +20,8 @@ class DonationAdmin(admin.ModelAdmin):
     list_filter = (
         "created_at",
         "updated_at",
-        "sender_user",
-        "receiver_user",
+        "fan_user",
+        "creator_user",
         "is_anonymous",
     )
     search_fields = ("name",)

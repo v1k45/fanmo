@@ -1,6 +1,6 @@
-Hi {{ subscription.buyer_user.display_name }},
+Hi {{ subscription.fan_user.display_name }},
 
-Your subscription to {{ subscription.seller_user.display_name }} failed to automatically renew because of a payment issue.
+Your subscription to {{ subscription.creator_user.display_name }} failed to automatically renew because of a payment issue.
 
 We'll retry renewing it again over the next few days. If it continues to fail, your subscription will be cancelled.
 

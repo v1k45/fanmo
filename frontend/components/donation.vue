@@ -3,9 +3,9 @@
   <div class="card compact border shadow-lg">
     <div class="flex justify-between items-center p-4">
       <div class="flex items-center">
-        <div v-if="donation.sender_user" class="avatar">
+        <div v-if="donation.fan_user" class="avatar">
           <div class="w-11 h-11 border rounded-full">
-            <img :src="donation.sender_user.avatar.small">
+            <img :src="donation.fan_user.avatar.small">
           </div>
         </div>
         <div v-else class="avatar placeholder">
@@ -14,8 +14,8 @@
           </div>
         </div>
         <div class="ml-3">
-          <div v-if="donation.is_anonymous || donation.sender_user == null" class="text-xl font-bold">{{ donation.name }}</div>
-          <div v-else class="text-xl font-bold">{{ donation.sender_user.username }}</div>
+          <div v-if="donation.is_anonymous || donation.fan_user == null" class="text-xl font-bold">{{ donation.name }}</div>
+          <div v-else class="text-xl font-bold">{{ donation.fan_user.username }}</div>
           <div class="text-xs text-base-content text-opacity-40">{{ donation.created_at }}</div>
         </div>
       </div>

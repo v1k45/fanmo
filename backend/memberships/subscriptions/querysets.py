@@ -3,10 +3,10 @@ from django.utils import timezone
 
 
 class SubscriptionQuerySet(models.QuerySet):
-    def active(self, seller, buyer):
+    def active(self, creator_user, fan_user):
         return self.current_cycle().get(
-            buyer_user=buyer,
-            seller_user=seller,
+            fan_user=fan_user,
+            creator_user=creator_user,
             status__in=[
                 self.model.Status.ACTIVE,
                 self.model.Status.SCHEDULED_TO_CANCEL,

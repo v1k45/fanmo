@@ -57,8 +57,8 @@ def subscription_charged(payload):
             payment_payload["amount"], payment_payload["currency"]
         ),
         external_id=payment_payload["id"],
-        seller_user=subscription.seller_user,
-        buyer_user=subscription.buyer_user,
+        creator_user=subscription.creator_user,
+        fan_user=subscription.fan_user,
         defaults={
             "status": Payment.Status.AUTHORIZED,
             "method": payment_payload["method"],
@@ -131,8 +131,8 @@ def order_paid(payload):
             payment_payload["amount"], payment_payload["currency"]
         ),
         external_id=payment_payload["id"],
-        seller_user=donation.receiver_user,
-        buyer_user=donation.sender_user,
+        creator_user=donation.creator_user,
+        fan_user=donation.fan_user,
         defaults={
             "status": Payment.Status.CAPTURED,
             "method": payment_payload["method"],

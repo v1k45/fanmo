@@ -42,14 +42,12 @@ def creator_user() -> User:
 def membership(creator_user, user) -> Membership:
     # create a draft membership
     membership = MembershipFactory(creator_user=creator_user, fan_user=user)
-    plan = PlanFactory(
-        seller_user=creator_user, buyer_user=user, tier=creator_user.tiers.get()
-    )
+    plan = PlanFactory(tier=creator_user.tiers.get())
     subscription = SubscriptionFactory(
         plan=plan,
         membership=membership,
-        seller_user=creator_user,
-        buyer_user=user,
+        creator_user=creator_user,
+        fan_user=user,
         cycle_start_at=timezone.now(),
         cycle_end_at=timezone.now() + relativedelta(months=1),
     )
@@ -76,15 +74,13 @@ def membership_with_scheduled_change(
     # another subscription which is in scheduled state
     tier = TierFactory(creator_user=creator_user, amount=Money("200", INR))
     plan = PlanFactory(
-        seller_user=creator_user,
-        buyer_user=user,
         tier=tier,
     )
     scheduled_subscription: Subscription = SubscriptionFactory(
         plan=plan,
         membership=membership,
-        seller_user=creator_user,
-        buyer_user=user,
+        creator_user=creator_user,
+        fan_user=user,
         cycle_start_at=timezone.now() + relativedelta(months=1),
         cycle_end_at=timezone.now() + relativedelta(months=2),
     )

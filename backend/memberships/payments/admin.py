@@ -12,8 +12,8 @@ class PaymentAdmin(admin.ModelAdmin):
         "updated_at",
         "subscription",
         "donation",
-        "seller_user",
-        "buyer_user",
+        "creator_user",
+        "fan_user",
         "status",
         "type",
         "amount_currency",
@@ -25,8 +25,8 @@ class PaymentAdmin(admin.ModelAdmin):
         "updated_at",
         "subscription",
         "donation",
-        "seller_user",
-        "buyer_user",
+        "creator_user",
+        "fan_user",
     )
     date_hierarchy = "created_at"
 

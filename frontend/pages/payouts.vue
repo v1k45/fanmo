@@ -21,7 +21,7 @@
       <tbody>
         <tr v-for="payout in payouts.results" :key="payout.id">
           <th scope="row">
-            <user-inline :user="payout.payment.buyer_user"></user-inline>
+            <user-inline :user="payout.payment.fan_user"></user-inline>
           </th>
           <td align="center">
             <div class="badge badge-info w-32">{{ payout.payment.type }}</div>

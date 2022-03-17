@@ -34,7 +34,7 @@ class PayoutViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Payout.objects.filter(payment__seller_user=self.request.user).all()
+        return Payout.objects.filter(payment__creator_user=self.request.user).all()
 
 
 class BankAccountViewSet(

@@ -20,7 +20,7 @@
       <tbody>
         <tr v-for="payment in payments.results" :key="payment.id">
           <th scope="row">
-            <user-inline :user="payment.seller_user"></user-inline>
+            <user-inline :user="payment.creator_user"></user-inline>
           </th>
           <td align="center">
             <div class="badge badge-info w-32">{{ payment.type }}</div>

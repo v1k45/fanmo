@@ -58,7 +58,7 @@ class TierPreviewSerializer(serializers.ModelSerializer):
 
 
 class SubscriberSerializer(serializers.ModelSerializer):
-    buyer_user = UserPreviewSerializer()
+    fan_user = UserPreviewSerializer()
     amount = MoneyField(max_digits=7, decimal_places=2, source="plan.amount")
     tier = TierPreviewSerializer(source="plan.tier")
 
@@ -66,7 +66,7 @@ class SubscriberSerializer(serializers.ModelSerializer):
         model = Subscription
         fields = [
             "id",
-            "buyer_user",
+            "fan_user",
             "amount",
             "tier",
             "status",
@@ -90,8 +90,8 @@ class RazorpayPayloadSerializer(serializers.ModelSerializer):
         return settings.RAZORPAY_KEY
 
     def get_prefill(self, subscription):
-        buyer_user = subscription.buyer_user
-        return {"name": buyer_user.display_name, "email": buyer_user.email}
+        fan_user = subscription.fan_user
+        return {"name": fan_user.display_name, "email": fan_user.email}
 
     def get_notes(self, subscription):
         return {"subscription_id": subscription.id}
@@ -111,7 +111,7 @@ class SubscriptionPaymentSerializer(serializers.ModelSerializer):
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
-    seller_user = UserPreviewSerializer()
+    creator_user = UserPreviewSerializer()
     amount = MoneyField(max_digits=7, decimal_places=2, source="plan.amount")
     tier = TierPreviewSerializer(source="plan.tier")
     payment = SubscriptionPaymentSerializer(source="*")
@@ -120,7 +120,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         model = Subscription
         fields = [
             "id",
-            "seller_user",
+            "creator_user",
             "amount",
             "tier",
             "payment",
@@ -134,7 +134,7 @@ class SubscriptionCreateSerializer(serializers.ModelSerializer):
     username = serializers.SlugRelatedField(
         slug_field="username",
         queryset=User.objects.filter(is_active=True),
-        source="seller_user",
+        source="creator_user",
         write_only=True,
     )
     amount = MoneyField(
@@ -144,7 +144,7 @@ class SubscriptionCreateSerializer(serializers.ModelSerializer):
         default_currency="INR",
     )
 
-    seller_user = UserPreviewSerializer(read_only=True)
+    creator_user = UserPreviewSerializer(read_only=True)
     tier = TierPreviewSerializer(source="plan.tier", read_only=True)
 
     payment_processor = serializers.CharField(read_only=True, default="razorpay")
@@ -159,7 +159,7 @@ class SubscriptionCreateSerializer(serializers.ModelSerializer):
             "username",
             "amount",
             "status",
-            "seller_user",
+            "creator_user",
             "tier",
             "payment_processor",
             "payment_payload",
@@ -168,7 +168,7 @@ class SubscriptionCreateSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = [
             "status",
-            "seller_user",
+            "creator_user",
             "tier",
             "payment_processor",
             "payment_payload",
@@ -180,15 +180,15 @@ class SubscriptionCreateSerializer(serializers.ModelSerializer):
         return subscription.status == Subscription.Status.CREATED
 
     def validate(self, attrs):
-        seller_user = attrs["seller_user"]
-        if not seller_user.can_accept_payments():
+        creator_user = attrs["creator_user"]
+        if not creator_user.can_accept_payments():
             raise serializers.ValidationError(
-                f"{seller_user.display_name} is currently not accepting payments.",
+                f"{creator_user.display_name} is currently not accepting payments.",
                 "cannot_accept_payments",
             )
 
         amount = attrs["plan"]["amount"]
-        min_amount = seller_user.user_preferences.minimum_amount
+        min_amount = creator_user.user_preferences.minimum_amount
         if amount < min_amount:
             raise serializers.ValidationError(
                 f"Amount cannot be lower than {min_amount.amount}",
@@ -197,11 +197,11 @@ class SubscriptionCreateSerializer(serializers.ModelSerializer):
 
         try:
             existing_subscription = Subscription.objects.active(
-                seller_user, self.context["request"].user
+                creator_user, self.context["request"].user
             )
             if existing_subscription.plan.amount == amount:
                 raise serializers.ValidationError(
-                    f"You are already subscribed to {seller_user.display_name} using this amount.",
+                    f"You are already subscribed to {creator_user.display_name} using this amount.",
                     "already_subscribed",
                 )
         except Subscription.DoesNotExist:
@@ -211,14 +211,14 @@ class SubscriptionCreateSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
-        buyer = self.context["request"].user
+        fan_user = self.context["request"].user
         payment_plan = Plan.for_subscription(
             validated_data["plan"]["amount"],
-            validated_data["seller_user"],
-            buyer,
+            validated_data["creator_user"],
+            fan_user,
         )
         # upgrade to another active plan?
-        return payment_plan.subscribe()
+        return payment_plan.subscribe(fan_user)
 
 
 class MembershipSerializer(serializers.ModelSerializer):

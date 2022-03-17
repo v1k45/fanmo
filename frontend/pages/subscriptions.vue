@@ -21,7 +21,7 @@
       <tbody>
         <tr v-for="subscription in subscriptions.results" :key="subscription.id">
           <th scope="row">
-            <user-inline :user="subscription.seller_user"></user-inline>
+            <user-inline :user="subscription.creator_user"></user-inline>
           </th>
           <td align="center">
             <div v-if="subscription.tier" class="badge badge-info badge-lg w-32">{{ subscription.tier.name }}</div>
@@ -77,7 +77,7 @@ export default {
     const subscriptions = await $axios.$get('/api/subscriptions/');
     if (USE_FAKE) {
       subscriptions.results = Array(50).fill(1).map(() => ({
-        seller_user: { username: faker.internet.userName() },
+        creator_user: { username: faker.internet.userName() },
         tier: faker.random.arrayElement([
           { name: faker.random.arrayElement(['', 'Gold', 'Silver', 'Bronze', 'Premium', 'Diamond']) },
           null

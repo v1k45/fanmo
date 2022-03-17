@@ -21,7 +21,7 @@
       <tbody>
         <tr v-for="subscriber in subscribers.results" :key="subscriber.id">
           <th scope="row">
-            <user-inline :user="subscriber.buyer_user"></user-inline>
+            <user-inline :user="subscriber.fan_user"></user-inline>
           </th>
           <td align="center">
             <div v-if="subscriber.tier" class="badge badge-info w-32">{{ subscriber.tier.name }}</div>
