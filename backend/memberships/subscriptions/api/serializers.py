@@ -25,7 +25,6 @@ class TierSerializer(serializers.ModelSerializer):
             "cover",
             "cover_base64",
             "welcome_message",
-            "benefits",
             "is_public",
             "is_recommended",
         ]

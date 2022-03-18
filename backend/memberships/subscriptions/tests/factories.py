@@ -10,7 +10,6 @@ from moneyed import Money
 class TierFactory(DjangoModelFactory):
     name = Faker("name")
     amount = Money(amount=Decimal(100), currency="INR")
-    benefits = ["Membership!"]
 
     class Meta:
         model = Tier
