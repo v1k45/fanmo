@@ -1,6 +1,9 @@
 <template>
 <div>
   <h1 class="font-title font-bold text-4xl text-center">Sign in to <logo class="h-7 inline-block ml-2"></logo></h1>
+  <div class="mt-10 text-center">
+    Don't have an account? <nuxt-link to="/register" class="text-fm-primary">Register here</nuxt-link>.
+  </div>
 
   <div class="max-w-sm mx-auto mt-8">
     <fm-form :errors="loginErrors" @submit.prevent="userLogin">
@@ -29,9 +32,6 @@
       </div>
     </div>
 
-    <div class="mt-10 text-center">
-      Don't have an account? <nuxt-link to="/register" class="text-fm-primary">Register here</nuxt-link>.
-    </div>
   </div>
 </div>
 </template>

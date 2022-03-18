@@ -2,6 +2,10 @@
 <div>
   <h1 class="font-title font-bold text-4xl text-center">Sign up for <logo class="h-7 inline-block ml-2"></logo></h1>
 
+  <div class="mt-10 text-center">
+    Already have an account? <nuxt-link to="/login" class="text-fm-primary">Sign in here</nuxt-link>.
+  </div>
+
   <div class="max-w-sm mx-auto mt-8">
     <fm-form :errors="signupErrors" @submit.prevent="register">
       <fm-input v-model="signupForm.name" uid="name" placeholder="Display name" autofocus required></fm-input>
@@ -31,9 +35,6 @@
       </div>
     </div>
 
-    <div class="mt-10 text-center">
-      Already have an account? <nuxt-link to="/login" class="text-fm-primary">Sign in here</nuxt-link>.
-    </div>
   </div>
 </div>
 </template>
