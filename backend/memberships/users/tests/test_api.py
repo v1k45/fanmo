@@ -20,6 +20,7 @@ class TestAuthenticationFlow:
         assert response.json() == {
             "username": "ashok",
             "name": "Ashok",
+            "one_liner": "",
             "about": "",
             "email": "ashok@gmail.com",
             "avatar": {
@@ -89,6 +90,7 @@ class TestAuthenticationFlow:
         assert response.json() == {
             "username": user.username,
             "name": user.name,
+            "one_liner": "",
             "about": "",
             "email": user.email,
             "avatar": {
@@ -102,54 +104,6 @@ class TestAuthenticationFlow:
                 "medium": "http://testserver/media/__sized__/__placeholder__/cover-crop-c0-5__0-5-900x200-70.jpg",
                 "full": "http://testserver/media/__placeholder__/cover.jpg",
                 "big": "http://testserver/media/__sized__/__placeholder__/cover-crop-c0-5__0-5-1800x400-70.jpg",
-            },
-            "tiers": [],
-            "social_links": {
-                "website_url": "",
-                "youtube_url": "",
-                "facebook_url": "",
-                "instagram_url": "",
-                "twitter_url": "",
-            },
-            "preferences": {"is_accepting_payments": True, "minimum_amount": "10.00"},
-            "onboarding": {
-                "full_name": "",
-                "introduction": "",
-                "mobile": "",
-                "status": "in_progress",
-                "checklist": {
-                    "type_selection": False,
-                    "email_verification": False,
-                    "introduction": False,
-                    "payment_setup": False,
-                },
-            },
-            "follower_count": 0,
-            "subscriber_count": 0,
-            "is_creator": None,
-            "is_following": False,
-        }
-
-    def test_me(self, user, api_client):
-        api_client.force_authenticate(user)
-        response = api_client.get("/api/me/")
-        assert response.status_code == 200
-        assert response.json() == {
-            "username": user.username,
-            "name": user.name,
-            "about": "",
-            "email": user.email,
-            "avatar": {
-                "small": "http://testserver/media/__sized__/__placeholder__/avatar-crop-c0-5__0-5-150x150-70.jpg",
-                "thumbnail": "http://testserver/media/__sized__/__placeholder__/avatar-crop-c0-5__0-5-50x50-70.jpg",
-                "medium": "http://testserver/media/__sized__/__placeholder__/avatar-crop-c0-5__0-5-300x300-70.jpg",
-                "full": "http://testserver/media/__placeholder__/avatar.jpg",
-            },
-            "cover": {
-                "small": "http://testserver/media/__sized__/__placeholder__/cover-crop-c0-5__0-5-300x70-70.jpg",
-                "full": "http://testserver/media/__placeholder__/cover.jpg",
-                "big": "http://testserver/media/__sized__/__placeholder__/cover-crop-c0-5__0-5-1800x400-70.jpg",
-                "medium": "http://testserver/media/__sized__/__placeholder__/cover-crop-c0-5__0-5-900x200-70.jpg",
             },
             "tiers": [],
             "social_links": {
@@ -203,12 +157,63 @@ class TestAuthenticationFlow:
         user.refresh_from_db()
         assert user.email_verified is True
 
-    @pytest.mark.xfail()
+
+class TestMeAPI:
+    def test_me(self, user, api_client):
+        api_client.force_authenticate(user)
+        response = api_client.get("/api/me/")
+        assert response.status_code == 200
+        assert response.json() == {
+            "username": user.username,
+            "name": user.name,
+            "one_liner": "",
+            "about": "",
+            "email": user.email,
+            "avatar": {
+                "small": "http://testserver/media/__sized__/__placeholder__/avatar-crop-c0-5__0-5-150x150-70.jpg",
+                "thumbnail": "http://testserver/media/__sized__/__placeholder__/avatar-crop-c0-5__0-5-50x50-70.jpg",
+                "medium": "http://testserver/media/__sized__/__placeholder__/avatar-crop-c0-5__0-5-300x300-70.jpg",
+                "full": "http://testserver/media/__placeholder__/avatar.jpg",
+            },
+            "cover": {
+                "small": "http://testserver/media/__sized__/__placeholder__/cover-crop-c0-5__0-5-300x70-70.jpg",
+                "full": "http://testserver/media/__placeholder__/cover.jpg",
+                "big": "http://testserver/media/__sized__/__placeholder__/cover-crop-c0-5__0-5-1800x400-70.jpg",
+                "medium": "http://testserver/media/__sized__/__placeholder__/cover-crop-c0-5__0-5-900x200-70.jpg",
+            },
+            "tiers": [],
+            "social_links": {
+                "website_url": "",
+                "youtube_url": "",
+                "facebook_url": "",
+                "instagram_url": "",
+                "twitter_url": "",
+            },
+            "preferences": {"is_accepting_payments": True, "minimum_amount": "10.00"},
+            "onboarding": {
+                "full_name": "",
+                "introduction": "",
+                "mobile": "",
+                "status": "in_progress",
+                "checklist": {
+                    "type_selection": False,
+                    "email_verification": False,
+                    "introduction": False,
+                    "payment_setup": False,
+                },
+            },
+            "follower_count": 0,
+            "subscriber_count": 0,
+            "is_creator": None,
+            "is_following": False,
+        }
+
     def test_update(self, user, api_client):
         api_client.force_authenticate(user)
         response = api_client.patch(
             "/api/me/",
             {
+                "one_liner": "is creating podcast",
                 "about": "Hello world! this is me!",
                 "social_links": {
                     "website_url": "https://google.com",
@@ -225,27 +230,19 @@ class TestAuthenticationFlow:
             format="json",
         )
         assert response.status_code == 200
-        assert response.json() == {
-            "username": user.username,
-            "name": user.name,
-            "about": "Hello world! this is me!",
-            "email": user.email,
-            "avatar": {},
-            "cover": {},
-            "social_links": {
-                "website_url": "https://google.com",
-                "youtube_url": "https://youtube.com",
-                "facebook_url": "https://fb.com",
-                "instagram_url": "https://instagram.com",
-                "twitter_url": "https://twitter.com/google",
-            },
-            "user_preferences": {
-                "is_accepting_payments": True,
-                "minimum_amount": "100.00",
-            },
-            "follower_count": 0,
-            "subscriber_count": 0,
-            "tiers": [],
+        response_data = response.json()
+        assert response_data["one_liner"] == "is creating podcast"
+        assert response_data["about"] == "Hello world! this is me!"
+        assert response_data["social_links"] == {
+            "website_url": "https://google.com",
+            "youtube_url": "https://youtube.com",
+            "facebook_url": "https://fb.com",
+            "instagram_url": "https://instagram.com",
+            "twitter_url": "https://twitter.com/google",
+        }
+        assert response_data["preferences"] == {
+            "is_accepting_payments": True,
+            "minimum_amount": "100.00",
         }
 
 
@@ -467,6 +464,7 @@ class TestUserAPI:
         assert response.json() == {
             "username": creator_user.username,
             "name": creator_user.name,
+            "one_liner": "",
             "about": "",
             "avatar": {
                 "thumbnail": "http://testserver/media/__sized__/__placeholder__/avatar-crop-c0-5__0-5-50x50-70.jpg",
@@ -499,6 +497,7 @@ class TestUserAPI:
             },
             "preferences": {"is_accepting_payments": True, "minimum_amount": "10.00"},
             "is_creator": True,
+            "follower_count": 0,
             "is_following": False,
         }
 

@@ -1,8 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from django.db.models import CharField
-from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
 from versatileimagefield.fields import VersatileImageField
@@ -14,7 +12,8 @@ from memberships.utils.models import BaseModel
 
 class User(BaseModel, AbstractUser):
     # First and last name do not cover name patterns around the globe
-    name = CharField(_("Name of User"), blank=True, max_length=255)
+    name = models.CharField(_("Name of User"), blank=True, max_length=255)
+    one_liner = models.CharField(max_length=150, blank=True)
     first_name = None
     last_name = None
 

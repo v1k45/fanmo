@@ -136,11 +136,13 @@ class PublicUserSerializer(serializers.ModelSerializer):
         fields = [
             "username",
             "name",
+            "one_liner",
             "about",
             "avatar",
             "cover",
             "tiers",
             "social_links",
+            "follower_count",
             # TODO: REMOVE PREFERENCES!
             "preferences",
             "is_creator",
@@ -169,6 +171,7 @@ class UserSerializer(serializers.ModelSerializer):
         fields = [
             "username",
             "name",
+            "one_liner",
             "email",
             "about",
             "avatar",
