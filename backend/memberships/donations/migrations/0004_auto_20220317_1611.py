@@ -6,18 +6,18 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('donations', '0003_alter_donation_external_id'),
+        ("donations", "0003_alter_donation_external_id"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='donation',
-            old_name='receiver_user',
-            new_name='creator_user',
+            model_name="donation",
+            old_name="receiver_user",
+            new_name="creator_user",
         ),
         migrations.RenameField(
-            model_name='donation',
-            old_name='sender_user',
-            new_name='fan_user',
+            model_name="donation",
+            old_name="sender_user",
+            new_name="fan_user",
         ),
     ]

@@ -6,26 +6,26 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('subscriptions', '0007_auto_20220309_1628'),
+        ("subscriptions", "0007_auto_20220309_1628"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='subscription',
-            old_name='seller_user',
-            new_name='creator_user',
+            model_name="subscription",
+            old_name="seller_user",
+            new_name="creator_user",
         ),
         migrations.RenameField(
-            model_name='subscription',
-            old_name='buyer_user',
-            new_name='fan_user',
+            model_name="subscription",
+            old_name="buyer_user",
+            new_name="fan_user",
         ),
         migrations.RemoveField(
-            model_name='plan',
-            name='buyer_user',
+            model_name="plan",
+            name="buyer_user",
         ),
         migrations.RemoveField(
-            model_name='plan',
-            name='seller_user',
+            model_name="plan",
+            name="seller_user",
         ),
     ]

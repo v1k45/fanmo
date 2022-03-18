@@ -78,13 +78,21 @@ class SubscriberSerializer(serializers.ModelSerializer):
 class RazorpayPayloadSerializer(serializers.ModelSerializer):
     key = serializers.SerializerMethodField()
     subscription_id = serializers.CharField(source="external_id")
+    subscription_card_change = serializers.SerializerMethodField()
     name = serializers.CharField(source="plan.name")
     prefill = serializers.SerializerMethodField()
     notes = serializers.SerializerMethodField()
 
     class Meta:
         model = Subscription
-        fields = ["key", "subscription_id", "name", "prefill", "notes"]
+        fields = [
+            "key",
+            "subscription_id",
+            "subscription_card_change",
+            "name",
+            "prefill",
+            "notes",
+        ]
 
     def get_key(self, _):
         return settings.RAZORPAY_KEY
@@ -95,6 +103,9 @@ class RazorpayPayloadSerializer(serializers.ModelSerializer):
 
     def get_notes(self, subscription):
         return {"subscription_id": subscription.id}
+
+    def get_subscription_card_change(self, subscription):
+        return 1 if subscription.status == Subscription.Status.HALTED else 0
 
 
 class SubscriptionPaymentSerializer(serializers.ModelSerializer):

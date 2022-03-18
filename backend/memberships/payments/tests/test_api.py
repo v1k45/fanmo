@@ -1,3 +1,5 @@
+from decimal import Decimal
+from moneyed import Money, INR
 from datetime import timedelta
 import pytest
 from razorpay.errors import SignatureVerificationError
@@ -229,6 +231,42 @@ class TestPaymentProcessingFlow:
             "memberships.payments.models.razorpay_client.utility.verify_payment_signature",
             return_value=True,
         )
+        subscription = membership.scheduled_subscription
+        payload = {
+            "type": "subscription",
+            "subscription_id": subscription.id,
+            "processor": "razorpay",
+            "payload": {
+                "razorpay_subscription_id": subscription.external_id,
+                "razorpay_payment_id": "pay_123",
+                "razorpay_signature": "sign123",
+            },
+        }
+        response = api_client.post("/api/payments/", payload)
+        assert response.status_code == 201
+        assert Payment.objects.filter(external_id="pay_123").exists()
+
+        # upgrade the membership
+        # this will create new subscription instance with the same external id.
+        membership.refresh_from_db()
+        assert membership.is_active
+        assert membership.active_subscription.id == subscription.id
+        assert membership.scheduled_subscription is None
+
+        response = api_client.post("/api/payments/", payload)
+        assert response.status_code == 400
+        assert (
+            response.json()["non_field_errors"][0]["code"]
+            == "payment_already_processed"
+        )
+
+    def test_subscription_in_halted_cannot_be_reprocessed(
+        self, membership, api_client, mocker, time_machine
+    ):
+        mocker.patch(
+            "memberships.payments.models.razorpay_client.utility.verify_payment_signature",
+            return_value=True,
+        )
 
         subscription = membership.scheduled_subscription
         payload = {
@@ -246,6 +284,11 @@ class TestPaymentProcessingFlow:
         payment = subscription.payments.all().get()
         assert payment.external_id == "pay_123"
 
+        subscription.refresh_from_db()
+        time_machine.move_to(subscription.cycle_end_at + relativedelta(days=4))
+        subscription.halt()
+        subscription.save()
+
         # replay the same request again.
         response = api_client.post("/api/payments/", payload)
         assert response.status_code == 400
@@ -253,8 +296,32 @@ class TestPaymentProcessingFlow:
             response.json()["non_field_errors"][0]["code"]
             == "payment_already_processed"
         )
-        payment = subscription.payments.all().get()
-        assert payment.external_id == "pay_123"
+
+    def test_subscription_with_invalid_state(self, membership, api_client, mocker):
+        mocker.patch(
+            "memberships.payments.models.razorpay_client.utility.verify_payment_signature",
+            return_value=True,
+        )
+
+        subscription: Subscription = membership.scheduled_subscription
+        subscription.authenticate()
+        subscription.save()
+        payload = {
+            "type": "subscription",
+            "subscription_id": subscription.id,
+            "processor": "razorpay",
+            "payload": {
+                "razorpay_subscription_id": subscription.external_id,
+                "razorpay_payment_id": "pay_123",
+                "razorpay_signature": "sign123",
+            },
+        }
+        response = api_client.post("/api/payments/", payload)
+        assert response.status_code == 400
+        assert (
+            response.json()["non_field_errors"][0]["code"]
+            == "invalid_subscription_state"
+        )
 
     def test_invalid_subscription_signature(self, membership, api_client, mocker):
         mocker.patch(

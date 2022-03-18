@@ -370,6 +370,7 @@ class TestMembershipFlow:
             "payment_payload": {
                 "key": "rzp_test_key",
                 "subscription_id": "sub_123",
+                "subscription_card_change": 0,
                 "name": f"{tier.name} - {creator_user.name}",
                 "prefill": {"name": "peter", "email": "peter@griffins.com"},
                 "notes": {"subscription_id": membership.scheduled_subscription_id},
@@ -439,6 +440,7 @@ class TestMembershipFlow:
             "payment_payload": {
                 "key": "rzp_test_key",
                 "subscription_id": "sub_123",
+                "subscription_card_change": 0,
                 "name": f"{tier.name} - {creator_user.name}",
                 "prefill": {"name": user.name, "email": user.email},
                 "notes": {"subscription_id": membership.scheduled_subscription_id},

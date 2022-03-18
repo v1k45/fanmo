@@ -80,10 +80,23 @@ class PaymentProcessingSerializer(serializers.ModelSerializer):
                 "Incorrect payload for given subscription.", "subscription_mismatch"
             )
 
-        if subscription.status != Subscription.Status.CREATED:
+        # payment should not be reprocessed.
+        if Payment.objects.filter(
+            external_id=attrs["payload"]["razorpay_payment_id"]
+        ).exists():
             raise serializers.ValidationError(
                 "Payment for this subscription has already been processed.",
                 "payment_already_processed",
+            )
+
+        # only draft and halted subscription can process payments.
+        if subscription.status not in [
+            Subscription.Status.CREATED,
+            Subscription.Status.HALTED,
+        ]:
+            raise serializers.ValidationError(
+                "Payment for this subscription cannot be processed in its current state.",
+                "invalid_subscription_state",
             )
 
         # Mould the payload to work with razorpay's signature verifier.
