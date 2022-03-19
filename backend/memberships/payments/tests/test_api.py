@@ -126,6 +126,16 @@ class TestPaymentProcessingFlow:
             "memberships.payments.models.razorpay_client.utility.verify_payment_signature",
             return_value=True,
         )
+        mocker.patch(
+            "memberships.payments.models.razorpay_client.payment.fetch",
+            return_value={
+                "id": "pay_123",
+                "amount": 100_00,
+                "currency": "INR",
+                "status": Payment.Status.CAPTURED,
+                "method": Payment.Method.CARD,
+            },
+        )
 
         subscription = membership.scheduled_subscription
         response = api_client.post(
@@ -151,6 +161,8 @@ class TestPaymentProcessingFlow:
         assert membership.scheduled_subscription is None
         payment = subscription.payments.all().get()
         assert payment.external_id == "pay_123"
+        assert payment.status == Payment.Status.CAPTURED
+        assert payment.method == Payment.Method.CARD
 
     def test_process_future_subscription(
         self, membership_with_scheduled_change, api_client, mocker
@@ -161,6 +173,16 @@ class TestPaymentProcessingFlow:
         )
         rzp_cancel_mock = mocker.patch(
             "memberships.subscriptions.models.razorpay_client.subscription.cancel",
+        )
+        mocker.patch(
+            "memberships.payments.models.razorpay_client.payment.fetch",
+            return_value={
+                "id": "pay_123",
+                "amount": 100_00,
+                "currency": "INR",
+                "status": Payment.Status.CAPTURED,
+                "method": Payment.Method.CARD,
+            },
         )
 
         subscription = membership_with_scheduled_change.scheduled_subscription
@@ -231,6 +253,17 @@ class TestPaymentProcessingFlow:
             "memberships.payments.models.razorpay_client.utility.verify_payment_signature",
             return_value=True,
         )
+        mocker.patch(
+            "memberships.payments.models.razorpay_client.payment.fetch",
+            return_value={
+                "id": "pay_123",
+                "amount": 100_00,
+                "currency": "INR",
+                "status": Payment.Status.CAPTURED,
+                "method": Payment.Method.CARD,
+            },
+        )
+
         subscription = membership.scheduled_subscription
         payload = {
             "type": "subscription",
@@ -266,6 +299,16 @@ class TestPaymentProcessingFlow:
         mocker.patch(
             "memberships.payments.models.razorpay_client.utility.verify_payment_signature",
             return_value=True,
+        )
+        mocker.patch(
+            "memberships.payments.models.razorpay_client.payment.fetch",
+            return_value={
+                "id": "pay_123",
+                "amount": 100_00,
+                "currency": "INR",
+                "status": Payment.Status.CAPTURED,
+                "method": Payment.Method.CARD,
+            },
         )
 
         subscription = membership.scheduled_subscription

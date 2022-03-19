@@ -284,7 +284,7 @@ class Subscription(BaseModel):
             "notes": {"external_id": self.id},
         }
         if self.cycle_start_at > timezone.now():
-            subscription_data["start_at"] = self.cycle_start_at.timestamp()
+            subscription_data["start_at"] = int(self.cycle_start_at.timestamp())
 
         external_subscription = razorpay_client.subscription.create(subscription_data)
         self.external_id = external_subscription["id"]

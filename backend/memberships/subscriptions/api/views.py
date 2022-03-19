@@ -35,6 +35,10 @@ class MembersViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
 class MembershipViewSet(
     mixins.CreateModelMixin, mixins.UpdateModelMixin, viewsets.ReadOnlyModelViewSet
 ):
+    """
+    TODO: Test and fix concurrent membership requests.
+    """
+
     serializer_class = MembershipSerializer
 
     def get_queryset(self):

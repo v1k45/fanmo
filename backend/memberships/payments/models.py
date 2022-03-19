@@ -85,24 +85,33 @@ class Payment(BaseModel):
             )
 
         subscription.authenticate()
+
+        razorpay_payment = razorpay_client.payment.fetch(payload["razorpay_order_id"])
         if can_proceed(subscription.activate):
             subscription.activate()
         else:
             subscription.schedule_to_activate()
+        subscription.payment_method = razorpay_payment["method"]
         subscription.save()
 
         # TODO: figure out what to with authentication payments.
         # make sure payment is not already processed?
         # allow soft reprocessing if it is for real local subscription.
+        # cannot use the payment id provided in the payload because it is refunded.
         payment, _ = Payment.objects.get_or_create(
             type=Payment.Type.SUBSCRIPTION,
             subscription=subscription,
-            amount=subscription.plan.amount,
+            amount=money_from_sub_unit(
+                razorpay_payment["amount"], razorpay_payment["currency"]
+            ),
             # payment id is stored in order_id field of subscription
-            external_id=payload["razorpay_order_id"],
+            external_id=razorpay_payment["id"],
             creator_user=subscription.creator_user,
             fan_user=subscription.fan_user,
-            defaults={"status": Payment.Status.CAPTURED},
+            defaults={
+                "status": razorpay_payment["status"],
+                "method": razorpay_payment["method"],
+            },
         )
         return payment
 

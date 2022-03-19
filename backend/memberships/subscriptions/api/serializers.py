@@ -306,7 +306,7 @@ class MembershipSerializer(serializers.ModelSerializer):
             and existing_membership.is_active is not None
         ):
             raise serializers.ValidationError(
-                f"You already have a membership with {creator_user.username}.",
+                f"You already have a membership with {creator_user.username}. Please login to continue.",
                 "membership_exists",
             )
 

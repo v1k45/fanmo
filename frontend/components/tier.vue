@@ -23,7 +23,7 @@
     </div>
     <div v-if="isSubscribing" class="card-body pt-0">
       <fm-form :errors="subscriptionErrors" @submit.prevent="subscribe">
-        <fm-input v-model="subscriptionForm.email" uid="email" class="max-w-md" placeholder="Your email" name="email"></fm-input>
+        <fm-input v-if="!$auth.loggedIn" v-model="subscriptionForm.email" uid="email" class="max-w-md" placeholder="Your email" name="email"></fm-input>
         <div class="justify-center card-actions">
           <button class="btn btn-block">Pay</button>
           <button class="btn btn-block btn-ghost" @click="toggleIsSubscribing">Cancel</button>
@@ -58,6 +58,7 @@ export default {
   },
   methods: {
     async subscribe() {
+      this.$toast.info('Starting payment intent');
       let membership;
       try {
         const existingMembership = await this.$axios.$get(
@@ -83,6 +84,10 @@ export default {
 
       // start payment intent if required
       if (membership.scheduled_subscription.payment.is_required) {
+        // TODO: if there is an active subscription
+        // let the user know that they are going to pay only Rs. 5 for authorizating the transaction.
+        // it sill be automatically refunded and the actual subscription amount will be charged
+        // when the next subscription cycle starts.
         this.startPayment(membership.scheduled_subscription);
       }
     },
@@ -102,6 +107,7 @@ export default {
           subscription_id: subscription.id,
           payload: paymentResponse
         });
+        this.$toast.success('Payment successful.');
       } catch (err) {
         console.error(err.response.data);
         this.subscriptionErrors = err.response.data;

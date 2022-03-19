@@ -699,7 +699,9 @@ class TestMembershipFlow:
             {
                 "plan_id": "plan_456",
                 "total_count": 12,
-                "start_at": active_membership.scheduled_subscription.cycle_start_at.timestamp(),
+                "start_at": int(
+                    active_membership.scheduled_subscription.cycle_start_at.timestamp()
+                ),
                 "notes": {"external_id": response_data["scheduled_subscription"]["id"]},
             }
         )
