@@ -49,19 +49,17 @@ def subscription_charged(payload):
         subscription.payment_method = subscription_payload["payment_method"]
         subscription.save()
 
-    payment_payload = payload["payload"]["payment"]["entity"]
+    payload = payload["payload"]["payment"]["entity"]
     payment, _ = Payment.objects.update_or_create(
         type=Payment.Type.SUBSCRIPTION,
         subscription=subscription,
-        amount=get_money_from_subunit(
-            payment_payload["amount"], payment_payload["currency"]
-        ),
-        external_id=payment_payload["id"],
+        amount=get_money_from_subunit(payload["amount"], payload["currency"]),
+        external_id=payload["id"],
         creator_user=subscription.creator_user,
         fan_user=subscription.fan_user,
         defaults={
             "status": Payment.Status.AUTHORIZED,
-            "method": payment_payload["method"],
+            "method": payload["method"],
         },
     )
 
@@ -123,19 +121,17 @@ def order_paid(payload):
 
     donation = Donation.objects.select_for_update().get(external_id=order_id)
 
-    payment_payload = payload["payload"]["payment"]["entity"]
+    payload = payload["payload"]["payment"]["entity"]
     payment, _ = Payment.objects.update_or_create(
         type=Payment.Type.DONATION,
         donation=donation,
-        amount=get_money_from_subunit(
-            payment_payload["amount"], payment_payload["currency"]
-        ),
-        external_id=payment_payload["id"],
+        amount=get_money_from_subunit(payload["amount"], payload["currency"]),
+        external_id=payload["id"],
         creator_user=donation.creator_user,
         fan_user=donation.fan_user,
         defaults={
             "status": Payment.Status.CAPTURED,
-            "method": payment_payload["method"],
+            "method": payload["method"],
         },
     )
 

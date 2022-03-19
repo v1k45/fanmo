@@ -62,7 +62,7 @@ export default {
         return;
       }
 
-      const paymentOptions = subscription.payment_payload;
+      const paymentOptions = subscription.payload;
       paymentOptions.handler = (paymentResponse) => {
         this.processPayment(subscription, paymentResponse);
       };

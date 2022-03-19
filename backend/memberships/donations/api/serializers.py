@@ -43,8 +43,8 @@ class DonationCreateSerializer(serializers.ModelSerializer):
         decimal_places=2,
         default_currency="INR",
     )
-    payment_processor = serializers.CharField(read_only=True, default="razorpay")
-    payment_payload = DonationPaymentSerializer(source="*", read_only=True)
+    processor = serializers.CharField(read_only=True, default="razorpay")
+    payload = DonationPaymentSerializer(source="*", read_only=True)
     fan_user = UserPreviewSerializer(read_only=True)
 
     class Meta:
@@ -57,8 +57,8 @@ class DonationCreateSerializer(serializers.ModelSerializer):
             "name",
             "message",
             "is_anonymous",
-            "payment_processor",
-            "payment_payload",
+            "processor",
+            "payload",
             "created_at",
         ]
         read_only_fields = ["id", "fan_user", "created_at"]

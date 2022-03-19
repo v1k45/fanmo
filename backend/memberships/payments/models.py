@@ -1,7 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils import timezone
-from django_fsm import FSMField
+from django_fsm import FSMField, can_proceed
 from djmoney.models.fields import MoneyField
 
 from memberships.donations.models import Donation
@@ -85,13 +85,10 @@ class Payment(BaseModel):
             )
 
         subscription.authenticate()
-
-        # if subscription is for future, schedule to activate instead of activating it right away.
-        if subscription.cycle_start_at >= timezone.now():
-            subscription.schedule_to_activate()
-        else:
+        if can_proceed(subscription.activate):
             subscription.activate()
-
+        else:
+            subscription.schedule_to_activate()
         subscription.save()
 
         # TODO: figure out what to with authentication payments.

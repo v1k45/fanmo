@@ -22,37 +22,20 @@
       </div>
     </div>
     <div v-if="isSubscribing" class="card-body pt-0">
-      <form @submit.prevent="subscribe">
-        <error-alert :errors="subscriptionErrors"></error-alert>
-        <div class="form-control">
-          <label class="label label-text">Subscribe with any amount you like</label>
-          <input
-            v-model="subscriptionForm.amount"
-            type="number"
-            class="input input-bordered"
-            :class="{ 'input-error': subscriptionErrors.amount }"
-            required>
-          <label
-            v-for="(error, index) in subscriptionErrors.amount"
-            :key="index"
-            class="label">
-            <span class="label-text-alt">{{ error.message }}</span>
-          </label>
-        </div>
+      <fm-form :errors="subscriptionErrors" @submit.prevent="subscribe">
+        <fm-input v-model="subscriptionForm.email" uid="email" class="max-w-md" placeholder="Your email" name="email"></fm-input>
         <div class="justify-center card-actions">
           <button class="btn btn-block">Pay</button>
           <button class="btn btn-block btn-ghost" @click="toggleIsSubscribing">Cancel</button>
         </div>
-      </form>
+      </fm-form>
     </div>
   </div>
 </div>
 </template>
 
 <script>
-import errorAlert from './ui/error-alert.vue';
 export default {
-  components: { errorAlert },
   props: {
     selfMode: { type: Boolean, default: false }, // shows the option to edit instead of subscribing
     user: {
@@ -66,37 +49,48 @@ export default {
     return {
       isSubscribing: false,
       subscriptionForm: {
-        username: this.user.username,
-        amount: this.tier.amount
+        creator_username: this.user.username,
+        tier_id: this.tier.id,
+        email: ''
       },
       subscriptionErrors: {}
     };
   },
   methods: {
     async subscribe() {
-      let subscription;
+      let membership;
       try {
-        subscription = await this.$axios.$post(
-          '/api/subscriptions/',
-          this.subscriptionForm
+        const existingMembership = await this.$axios.$get(
+          '/api/memberships/',
+          { params: { creator_username: this.user.username } }
         );
+        if (existingMembership.results.length) {
+          membership = await this.$axios.$patch(
+            `/api/memberships/${existingMembership.results[0].id}/`,
+            this.subscriptionForm
+          );
+        } else {
+          membership = await this.$axios.$post(
+            '/api/memberships/',
+            this.subscriptionForm
+          );
+        }
       } catch (err) {
         this.subscriptionErrors = err.response.data;
         console.error(err.response.data);
         return;
       }
 
-      // this is an update request.
-      if (!subscription.requires_payment) {
-        alert('Subscription updated. New plan will start after current one expires.');
-        return;
+      // start payment intent if required
+      if (membership.scheduled_subscription.payment.is_required) {
+        this.startPayment(membership.scheduled_subscription);
       }
-
-      const paymentOptions = subscription.payment_payload;
+    },
+    startPayment(subscription) {
+      const paymentOptions = subscription.payment.payload;
       paymentOptions.handler = (paymentResponse) => {
         this.processPayment(subscription, paymentResponse);
       };
-
       const rzp1 = new Razorpay(paymentOptions); // eslint-disable-line
       rzp1.open();
     },
@@ -105,10 +99,12 @@ export default {
         await this.$axios.$post('/api/payments/', {
           processor: 'razorpay',
           type: 'subscription',
+          subscription_id: subscription.id,
           payload: paymentResponse
         });
       } catch (err) {
         console.error(err.response.data);
+        this.subscriptionErrors = err.response.data;
         this.subscriptionErrors.non_field_errors = [
           {
             message:

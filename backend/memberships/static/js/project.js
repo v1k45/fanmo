@@ -11,7 +11,7 @@ function subscribe(username, amount) {
         username,
         amount
     }).then(function (response) {
-        const paymentOptions = response.data.payment_payload;
+        const paymentOptions = response.data.payload;
         paymentOptions.handler = function (rzpResponse) {
             axios.post("/api/payments/", {
                 processor: "razorpay",
@@ -28,7 +28,7 @@ function subscribe(username, amount) {
 
 
 function submitSubscribe(event) {
-    event.preventDefault(); 
+    event.preventDefault();
     const formData = new FormData(event.target);
     subscribe(formData.get('username'), formData.get('amount'))
 }

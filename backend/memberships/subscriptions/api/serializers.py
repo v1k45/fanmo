@@ -108,16 +108,16 @@ class RazorpayPayloadSerializer(serializers.ModelSerializer):
 
 
 class SubscriptionPaymentSerializer(serializers.ModelSerializer):
-    payment_processor = serializers.CharField(read_only=True, default="razorpay")
-    payment_payload = RazorpayPayloadSerializer(source="*", read_only=True)
-    requires_payment = serializers.SerializerMethodField()
+    processor = serializers.CharField(read_only=True, default="razorpay")
+    payload = RazorpayPayloadSerializer(source="*", read_only=True)
+    is_required = serializers.SerializerMethodField()
 
-    def get_requires_payment(self, subscription):
+    def get_is_required(self, subscription):
         return subscription.status == Subscription.Status.CREATED
 
     class Meta:
         model = Subscription
-        fields = ["payment_processor", "payment_payload", "requires_payment"]
+        fields = ["processor", "payload", "is_required"]
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
@@ -157,10 +157,10 @@ class SubscriptionCreateSerializer(serializers.ModelSerializer):
     creator_user = UserPreviewSerializer(read_only=True)
     tier = TierPreviewSerializer(source="plan.tier", read_only=True)
 
-    payment_processor = serializers.CharField(read_only=True, default="razorpay")
-    payment_payload = RazorpayPayloadSerializer(source="*", read_only=True)
+    processor = serializers.CharField(read_only=True, default="razorpay")
+    payload = RazorpayPayloadSerializer(source="*", read_only=True)
 
-    requires_payment = serializers.SerializerMethodField()
+    is_required = serializers.SerializerMethodField()
 
     class Meta:
         model = Subscription
@@ -171,22 +171,22 @@ class SubscriptionCreateSerializer(serializers.ModelSerializer):
             "status",
             "creator_user",
             "tier",
-            "payment_processor",
-            "payment_payload",
+            "processor",
+            "payload",
             "cycle_end_at",
-            "requires_payment",
+            "is_required",
         ]
         read_only_fields = [
             "status",
             "creator_user",
             "tier",
-            "payment_processor",
-            "payment_payload",
+            "processor",
+            "payload",
             "cycle_end_at",
-            "requires_payment",
+            "is_required",
         ]
 
-    def get_requires_payment(self, subscription):
+    def get_is_required(self, subscription):
         return subscription.status == Subscription.Status.CREATED
 
     def validate(self, attrs):
@@ -249,12 +249,13 @@ class MembershipSerializer(serializers.ModelSerializer):
         source="creator_user",
         write_only=True,
     )
-    email = serializers.EmailField(required=False, write_only=True)
+    email = serializers.EmailField(required=False, allow_blank=True, write_only=True)
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         request = self.context.get("request")
         if request and not request.user.is_authenticated:
+            self.fields["email"].allow_blank = True
             self.fields["email"].required = True
 
     class Meta:
@@ -273,6 +274,18 @@ class MembershipSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
         read_only_fields = ["tier", "creator_user", "is_active"]
+
+    def get_fan_user(self, email=None):
+        request = self.context["request"]
+        if request.user.is_authenticated:
+            return request.user
+
+        existing_user = User.objects.filter(email=email).first()
+        if existing_user:
+            return existing_user
+
+        adapter = get_adapter(request)
+        return adapter.invite(request._request, email)
 
     def validate(self, attrs):
         fan_user = self.get_fan_user(attrs.pop("email", None))
@@ -297,15 +310,19 @@ class MembershipSerializer(serializers.ModelSerializer):
                 "membership_exists",
             )
 
+        if self.instance and self.instance.tier == attrs["tier"]:
+            raise serializers.ValidationError(
+                f"You are already a member of {self.instance.tier.name}.",
+                "membership_exists",
+            )
+
         attrs["fan_user"] = fan_user
         return attrs
 
     def validate_email(self, email):
         user = self.context["request"].user
         if user.is_authenticated:
-            raise serializers.ValidationError(
-                "Setting e-mail is not allowed for logged in users."
-            )
+            return
 
         # TODO: Figure out guest checkout flow for memberships and donations.
         # For now, allow emails of users who haven't logged in.
@@ -324,18 +341,6 @@ class MembershipSerializer(serializers.ModelSerializer):
             )
         return creator_user
 
-    def get_fan_user(self, email=None):
-        request = self.context["request"]
-        if request.user.is_authenticated:
-            return request.user
-
-        existing_user = User.objects.filter(email=email).first()
-        if existing_user:
-            return existing_user
-
-        adapter = get_adapter(request)
-        return adapter.invite(request._request, email)
-
     def create(self, validated_data):
         tier = validated_data.pop("tier")
         membership, _ = Membership.objects.get_or_create(**validated_data)
@@ -344,8 +349,7 @@ class MembershipSerializer(serializers.ModelSerializer):
 
     def update(self, instance: Membership, validated_data):
         tier = validated_data.pop("tier")
-        if tier != instance.tier:
-            instance.update(tier)
+        instance.update(tier)
         return instance
 
 

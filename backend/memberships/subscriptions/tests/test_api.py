@@ -363,8 +363,8 @@ class TestMembershipFlow:
         assert response_data["creator_user"]["username"] == creator_user.username
         assert response_data["active_subscription"] == None
         assert response_data["scheduled_subscription"]["payment"] == {
-            "payment_processor": "razorpay",
-            "payment_payload": {
+            "processor": "razorpay",
+            "payload": {
                 "key": "rzp_test_key",
                 "subscription_id": "sub_123",
                 "subscription_card_change": 0,
@@ -372,7 +372,7 @@ class TestMembershipFlow:
                 "prefill": {"name": "peter", "email": "peter@griffins.com"},
                 "notes": {"subscription_id": membership.scheduled_subscription_id},
             },
-            "requires_payment": True,
+            "is_required": True,
         }
 
         # New user is created
@@ -433,8 +433,8 @@ class TestMembershipFlow:
         assert response_data["creator_user"]["username"] == creator_user.username
         assert response_data["active_subscription"] == None
         assert response_data["scheduled_subscription"]["payment"] == {
-            "payment_processor": "razorpay",
-            "payment_payload": {
+            "processor": "razorpay",
+            "payload": {
                 "key": "rzp_test_key",
                 "subscription_id": "sub_123",
                 "subscription_card_change": 0,
@@ -442,7 +442,7 @@ class TestMembershipFlow:
                 "prefill": {"name": user.name, "email": user.email},
                 "notes": {"subscription_id": membership.scheduled_subscription_id},
             },
-            "requires_payment": True,
+            "is_required": True,
         }
 
         # payment plan is created in rzp
@@ -563,7 +563,7 @@ class TestMembershipFlow:
             == Subscription.Status.SCHEDULED_TO_ACTIVATE
         )
         assert scheduled_subscription["tier"]["id"] == new_tier.id
-        assert not scheduled_subscription["payment"]["requires_payment"]
+        assert not scheduled_subscription["payment"]["is_required"]
 
         created_plan = Plan.objects.get(external_id="plan_456")
         rzp_plan_mock.assert_called_once_with(
@@ -676,7 +676,7 @@ class TestMembershipFlow:
         scheduled_subscription = response_data["scheduled_subscription"]
         assert scheduled_subscription["status"] == Subscription.Status.CREATED
         assert scheduled_subscription["tier"]["id"] == new_tier.id
-        assert scheduled_subscription["payment"]["requires_payment"]
+        assert scheduled_subscription["payment"]["is_required"]
 
         created_plan = Plan.objects.get(external_id="plan_456")
         rzp_plan_mock.assert_called_once_with(

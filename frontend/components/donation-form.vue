@@ -106,7 +106,7 @@ export default {
         return;
       }
 
-      const paymentOptions = donation.payment_payload;
+      const paymentOptions = donation.payload;
       paymentOptions.handler = (paymentResponse) => {
         this.processPayment(donation, paymentResponse);
       };
