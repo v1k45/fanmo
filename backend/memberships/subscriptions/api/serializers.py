@@ -255,7 +255,7 @@ class MembershipSerializer(serializers.ModelSerializer):
         super().__init__(*args, **kwargs)
         request = self.context.get("request")
         if request and not request.user.is_authenticated:
-            self.fields["email"].allow_blank = True
+            self.fields["email"].allow_blank = False
             self.fields["email"].required = True
 
     class Meta:
