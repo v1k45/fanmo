@@ -1,21 +1,10 @@
-from decimal import Decimal
-from moneyed import Money, INR
-from datetime import timedelta
 import pytest
 from razorpay.errors import SignatureVerificationError
-
+from memberships.donations.models import Donation
 from memberships.payments.models import BankAccount, Payment
 from memberships.payments.tests.factories import BankAccountFactory
 from memberships.subscriptions.models import Subscription
-from memberships.subscriptions.tests.factories import (
-    MembershipFactory,
-    PlanFactory,
-    SubscriptionFactory,
-    TierFactory,
-)
-
 from dateutil.relativedelta import relativedelta
-from django.utils import timezone
 
 
 pytestmark = pytest.mark.django_db
@@ -120,7 +109,7 @@ class TestBankAccountFlow:
         }
 
 
-class TestPaymentProcessingFlow:
+class TestSubscriptionPaymentProcessingFlow:
     def test_process_subscription(self, membership, api_client, mocker):
         rzp_verify_mock = mocker.patch(
             "memberships.payments.models.razorpay_client.utility.verify_payment_signature",
@@ -389,3 +378,92 @@ class TestPaymentProcessingFlow:
         assert response.status_code == 400
         assert response.json()["non_field_errors"][0]["code"] == "signature_mismatch"
         assert not subscription.payments.exists()
+
+
+class TestDonationPaymentProcessingFlow:
+    def test_process_donation(self, unpaid_donation, api_client, mocker):
+        rzp_verify_mock = mocker.patch(
+            "memberships.payments.models.razorpay_client.utility.verify_payment_signature",
+            return_value=True,
+        )
+        rzp_capture_mock = mocker.patch(
+            "memberships.payments.models.razorpay_client.payment.capture",
+            return_value={
+                "id": "pay_123",
+                "amount": 100_00,
+                "currency": "INR",
+                "status": Payment.Status.CAPTURED,
+                "method": Payment.Method.CARD,
+            },
+        )
+
+        response = api_client.post(
+            "/api/payments/",
+            {
+                "type": "donation",
+                "donation_id": unpaid_donation.id,
+                "processor": "razorpay",
+                "payload": {
+                    "razorpay_order_id": unpaid_donation.external_id,
+                    "razorpay_payment_id": "pay_123",
+                    "razorpay_signature": "sign123",
+                },
+            },
+        )
+
+        assert response.status_code == 201
+        assert rzp_verify_mock.called
+        rzp_capture_mock.assert_called_once_with("ord_123", 100_00, {"currency": "INR"})
+
+        unpaid_donation.refresh_from_db()
+        assert unpaid_donation.status == Donation.Status.SUCCESSFUL
+
+        payment = Payment.objects.get(external_id="pay_123")
+        assert payment.external_id == "pay_123"
+        assert payment.status == Payment.Status.CAPTURED
+        assert payment.method == Payment.Method.CARD
+
+    def test_invalid_donation_id(self, unpaid_donation, api_client):
+        response = api_client.post(
+            "/api/payments/",
+            {
+                "type": "donation",
+                "donation_id": unpaid_donation.id,
+                "processor": "razorpay",
+                "payload": {
+                    "razorpay_order_id": "incorect_id",
+                    "razorpay_payment_id": "pay_123",
+                    "razorpay_signature": "sign123",
+                },
+            },
+        )
+        assert response.status_code == 400
+        assert response.json()["non_field_errors"][0]["code"] == "donation_mismatch"
+
+        unpaid_donation.refresh_from_db()
+        assert unpaid_donation.status == Donation.Status.PENDING
+
+    def test_invalid_subscription_signature(self, unpaid_donation, api_client, mocker):
+        mocker.patch(
+            "memberships.payments.models.razorpay_client.utility.verify_payment_signature",
+            side_effect=SignatureVerificationError,
+        )
+
+        response = api_client.post(
+            "/api/payments/",
+            {
+                "type": "donation",
+                "donation_id": unpaid_donation.id,
+                "processor": "razorpay",
+                "payload": {
+                    "razorpay_order_id": unpaid_donation.external_id,
+                    "razorpay_payment_id": "pay_123",
+                    "razorpay_signature": "sign123",
+                },
+            },
+        )
+        assert response.status_code == 400
+        assert response.json()["non_field_errors"][0]["code"] == "signature_mismatch"
+
+        unpaid_donation.refresh_from_db()
+        assert unpaid_donation.status == Donation.Status.PENDING

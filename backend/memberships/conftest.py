@@ -1,3 +1,4 @@
+from decimal import Decimal
 import pytest
 from moneyed import Money, INR
 from rest_framework.test import APIClient
@@ -5,6 +6,7 @@ from memberships.subscriptions.models import Membership, Subscription
 
 from memberships.users.models import User
 from memberships.users.tests.factories import UserFactory
+from memberships.donations.models import Donation
 
 from memberships.subscriptions.tests.factories import (
     TierFactory,
@@ -88,6 +90,17 @@ def membership_with_scheduled_change(
     membership.save()
     membership.refresh_from_db()
     return membership
+
+
+@pytest.fixture
+def unpaid_donation(creator_user, user):
+    return Donation.objects.create(
+        external_id="ord_123",
+        message="Hello, world",
+        amount=Money(Decimal("100"), INR),
+        creator_user=creator_user,
+        fan_user=user,
+    )
 
 
 @pytest.fixture

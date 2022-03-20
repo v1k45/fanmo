@@ -6,6 +6,7 @@ from allauth.account.adapter import get_adapter
 from memberships.subscriptions.models import Membership, Plan, Subscription, Tier
 from memberships.users.api.serializers import UserPreviewSerializer
 from memberships.users.models import User
+from memberships.core.serializers import PaymentIntentSerializerMixin
 
 from drf_extra_fields.fields import Base64ImageField
 from versatileimagefield.serializers import VersatileImageFieldSerializer
@@ -231,7 +232,7 @@ class SubscriptionCreateSerializer(serializers.ModelSerializer):
         return payment_plan.subscribe(fan_user)
 
 
-class MembershipSerializer(serializers.ModelSerializer):
+class MembershipSerializer(PaymentIntentSerializerMixin, serializers.ModelSerializer):
     tier = TierPreviewSerializer(read_only=True)
     creator_user = UserPreviewSerializer(read_only=True)
     active_subscription = SubscriptionSerializer(read_only=True)
@@ -243,20 +244,6 @@ class MembershipSerializer(serializers.ModelSerializer):
         source="tier",
         write_only=True,
     )
-    creator_username = serializers.SlugRelatedField(
-        slug_field="username",
-        queryset=User.objects.filter(is_active=True, is_creator=True),
-        source="creator_user",
-        write_only=True,
-    )
-    email = serializers.EmailField(required=False, allow_blank=True, write_only=True)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        request = self.context.get("request")
-        if request and not request.user.is_authenticated:
-            self.fields["email"].allow_blank = False
-            self.fields["email"].required = True
 
     class Meta:
         model = Membership
@@ -274,18 +261,6 @@ class MembershipSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
         read_only_fields = ["tier", "creator_user", "is_active"]
-
-    def get_fan_user(self, email=None):
-        request = self.context["request"]
-        if request.user.is_authenticated:
-            return request.user
-
-        existing_user = User.objects.filter(email=email).first()
-        if existing_user:
-            return existing_user
-
-        adapter = get_adapter(request)
-        return adapter.invite(request._request, email)
 
     def validate(self, attrs):
         fan_user = self.get_fan_user(attrs.pop("email", None))
@@ -318,28 +293,6 @@ class MembershipSerializer(serializers.ModelSerializer):
 
         attrs["fan_user"] = fan_user
         return attrs
-
-    def validate_email(self, email):
-        user = self.context["request"].user
-        if user.is_authenticated:
-            return
-
-        # TODO: Figure out guest checkout flow for memberships and donations.
-        # For now, allow emails of users who haven't logged in.
-        user = User.objects.filter(email=email).first()
-        if user and user.last_login:
-            raise serializers.ValidationError(
-                "An account with this email already exists. Please login to continue.",
-                "user_exists",
-            )
-        return email
-
-    def validate_creator_user(self, creator_user):
-        if self.instance and self.instance.creator_user != creator_user:
-            raise serializers.ValidationError(
-                "Creator cannot be changed. Please create a separate membership.",
-            )
-        return creator_user
 
     def create(self, validated_data):
         tier = validated_data.pop("tier")

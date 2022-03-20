@@ -4,10 +4,10 @@ from rest_framework import serializers
 
 from memberships.donations.models import Donation
 from memberships.users.api.serializers import UserPreviewSerializer
-from memberships.users.models import User
+from memberships.core.serializers import PaymentIntentSerializerMixin
 
 
-class DonationPaymentSerializer(serializers.ModelSerializer):
+class RazorpayPayloadSerializer(serializers.ModelSerializer):
     key = serializers.SerializerMethodField()
     order_id = serializers.CharField(source="external_id")
     name = serializers.CharField(source="creator_user.display_name")
@@ -21,68 +21,61 @@ class DonationPaymentSerializer(serializers.ModelSerializer):
     def get_key(self, _):
         return settings.RAZORPAY_KEY
 
-    def get_prefill(self, _):
-        sender = self.context["request"].user
-        if sender.is_authenticated:
-            return {"name": sender.display_name, "email": sender.email}
-        return dict()
+    def get_prefill(self, donation):
+        fan_user = donation.fan_user
+        return {"name": fan_user.display_name, "email": fan_user.email}
 
     def get_notes(self, donation):
         return {"donation_id": donation.id}
 
 
-class DonationCreateSerializer(serializers.ModelSerializer):
-    username = serializers.SlugRelatedField(
-        slug_field="username",
-        queryset=User.objects.filter(is_active=True),
-        source="creator_user",
-        write_only=True,
-    )
+class DonationPaymentSerializer(serializers.ModelSerializer):
+    processor = serializers.CharField(read_only=True, default="razorpay")
+    payload = RazorpayPayloadSerializer(source="*", read_only=True)
+    is_required = serializers.SerializerMethodField()
+
+    def get_is_required(self, donation):
+        return donation.status == Donation.Status.PENDING
+
+    class Meta:
+        model = Donation
+        fields = ["processor", "payload", "is_required"]
+
+
+class DonationCreateSerializer(
+    PaymentIntentSerializerMixin, serializers.ModelSerializer
+):
     amount = MoneyField(
         max_digits=7,
         decimal_places=2,
         default_currency="INR",
     )
-    processor = serializers.CharField(read_only=True, default="razorpay")
-    payload = DonationPaymentSerializer(source="*", read_only=True)
+    payment = DonationPaymentSerializer(source="*", read_only=True)
     fan_user = UserPreviewSerializer(read_only=True)
+    creator_user = UserPreviewSerializer(read_only=True)
 
     class Meta:
         model = Donation
         fields = [
             "id",
-            "username",
+            "creator_username",
+            "email",
             "fan_user",
+            "creator_user",
             "amount",
             "name",
             "message",
             "is_anonymous",
-            "processor",
-            "payload",
+            "payment",
             "created_at",
         ]
-        read_only_fields = ["id", "fan_user", "created_at"]
+        read_only_fields = ["id", "fan_user", "creator_user", "created_at"]
 
     def validate(self, attrs):
-        creator_user = attrs["creator_user"]
-        if not creator_user.can_accept_payments():
-            raise serializers.ValidationError(
-                f"{creator_user.display_name} is currently not accepting payments.",
-                "cannot_accept_payments",
-            )
-
-        min_amount = creator_user.user_preferences.minimum_amount
-        if min_amount > attrs["amount"]:
-            raise serializers.ValidationError(
-                f"Amount cannot be lower than {min_amount.amount}",
-                "min_payment_account",
-            )
+        attrs["fan_user"] = self.get_fan_user(attrs.pop("email", None))
         return attrs
 
     def create(self, validated_data):
-        user = self.context["request"].user
-        if user.is_authenticated:
-            validated_data["fan_user"] = user
         donation = super().create(validated_data)
         donation.create_external()
         return donation

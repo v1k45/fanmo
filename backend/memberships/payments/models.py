@@ -120,27 +120,28 @@ class Payment(BaseModel):
         razorpay_client.utility.verify_payment_signature(payload)
 
         donation = Donation.objects.get(external_id=payload["razorpay_order_id"])
+        razorpay_payment = razorpay_client.payment.capture(
+            donation.external_id,
+            donation.amount.get_amount_in_sub_unit(),
+            {"currency": donation.amount.currency.code},
+        )
+        donation.status = Donation.Status.SUCCESSFUL
+        donation.save()
 
         payment, _ = Payment.objects.get_or_create(
             type=Payment.Type.DONATION,
             donation=donation,
-            amount=donation.amount,
-            external_id=payload["razorpay_payment_id"],
+            external_id=razorpay_payment["id"],
             creator_user=donation.creator_user,
             fan_user=donation.fan_user,
+            defaults={
+                "status": razorpay_payment["status"],
+                "method": razorpay_payment["method"],
+                "amount": money_from_sub_unit(
+                    razorpay_payment["amount"], razorpay_payment["currency"]
+                ),
+            },
         )
-
-        # not needed?
-        razorpay_client.payment.capture(
-            payment.external_id,
-            payment.amount.get_amount_in_sub_unit(),
-            {"currency": payment.amount.currency.code},
-        )
-        payment.status = Payment.Status.CAPTURED
-        payment.save()
-
-        donation.status = Donation.Status.SUCCESSFUL
-        donation.save()
         return payment
 
 

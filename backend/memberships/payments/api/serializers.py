@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from memberships.donations.api.serializers import DonationSerializer
+from memberships.donations.models import Donation
 from memberships.payments.models import BankAccount, Payment, Payout
 from memberships.subscriptions.api.serializers import SubscriptionSerializer
 from memberships.subscriptions.models import Subscription
@@ -34,6 +35,12 @@ class PaymentProcessingSerializer(serializers.ModelSerializer):
         required=False,
         queryset=Subscription.objects.all(),
     )
+    donation_id = serializers.PrimaryKeyRelatedField(
+        source="donation",
+        write_only=True,
+        required=False,
+        queryset=Donation.objects.all(),
+    )
     creator_user = UserPreviewSerializer(read_only=True)
     donation = DonationSerializer(read_only=True)
     subscription = SubscriptionSerializer(read_only=True)
@@ -47,6 +54,7 @@ class PaymentProcessingSerializer(serializers.ModelSerializer):
             "subscription",
             "subscription_id",
             "donation",
+            "donation_id",
             "created_at",
             "processor",
             "type",
@@ -63,9 +71,46 @@ class PaymentProcessingSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         if attrs["type"] == Payment.Type.DONATION:
-            raise serializers.ValidationError("NOT IMPLEMENTED>")
+            attrs = self._validate_donation_payload(attrs)
         elif attrs["type"] == Payment.Type.SUBSCRIPTION:
             attrs = self._validate_subscription_payload(attrs)
+        return attrs
+
+    def _validate_donation_payload(self, attrs):
+        donation = attrs.get("donation")
+        if not donation:
+            raise serializers.ValidationError(
+                "donation_id field is required.", "required"
+            )
+
+        if donation.external_id != attrs["payload"]["razorpay_order_id"]:
+            raise serializers.ValidationError(
+                "Incorrect payload for given donation.", "donation_mismatch"
+            )
+
+        # payment should not be reprocessed.
+        if Payment.objects.filter(
+            external_id=attrs["payload"]["razorpay_payment_id"]
+        ).exists():
+            raise serializers.ValidationError(
+                "Payment for this donation has already been processed.",
+                "payment_already_processed",
+            )
+
+        # only draft and halted subscription can process payments.
+        if donation.status != Donation.Status.PENDING:
+            raise serializers.ValidationError(
+                "Payment for this donation cannot be processed in its current state.",
+                "invalid_donation_state",
+            )
+
+        try:
+            razorpay_client.utility.verify_payment_signature(attrs["payload"])
+        except SignatureVerificationError:
+            raise serializers.ValidationError(
+                "Invalid payload signature", "signature_mismatch"
+            )
+
         return attrs
 
     def _validate_subscription_payload(self, attrs):
