@@ -24,6 +24,20 @@
       </div>
 
       <div v-if="step == 2 && !$auth.loggedIn" class="form-control mb-3">
+        <label class="label label-text">Email</label>
+        <input
+          v-model="form.email"
+          type="email"
+          class="input input-bordered"
+          :class="{ 'input-error': errors.email }"
+          placeholder="name@example.com">
+        <label
+          v-for="(error, index) in errors.email"
+          :key="index"
+          class="label">
+          <span class="label-text-alt">{{ error.message }}</span>
+        </label>
+
         <label class="label label-text">Name</label>
         <input
           v-model="form.name"
@@ -85,7 +99,8 @@ export default {
       step: 1,
       form: {
         amount: this.user.preferences.minimum_amount,
-        username: this.user.username,
+        creator_username: this.user.username,
+        email: '',
         name: '',
         message: '',
         is_anonymous: !this.$auth.loggedIn
@@ -106,7 +121,7 @@ export default {
         return;
       }
 
-      const paymentOptions = donation.payload;
+      const paymentOptions = donation.payment.payload;
       paymentOptions.handler = (paymentResponse) => {
         this.processPayment(donation, paymentResponse);
       };
@@ -119,6 +134,7 @@ export default {
         await this.$axios.$post('/api/payments/', {
           processor: 'razorpay',
           type: 'donation',
+          donation_id: donation.id,
           payload: paymentResponse
         });
         this.step = 3;
