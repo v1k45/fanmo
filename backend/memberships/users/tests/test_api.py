@@ -23,18 +23,8 @@ class TestAuthenticationFlow:
             "one_liner": "",
             "about": "",
             "email": "ashok@gmail.com",
-            "avatar": {
-                "small": "http://testserver/media/__sized__/__placeholder__/avatar-crop-c0-5__0-5-150x150-70.jpg",
-                "full": "http://testserver/media/__placeholder__/avatar.jpg",
-                "thumbnail": "http://testserver/media/__sized__/__placeholder__/avatar-crop-c0-5__0-5-50x50-70.jpg",
-                "medium": "http://testserver/media/__sized__/__placeholder__/avatar-crop-c0-5__0-5-300x300-70.jpg",
-            },
-            "cover": {
-                "small": "http://testserver/media/__sized__/__placeholder__/cover-crop-c0-5__0-5-300x70-70.jpg",
-                "medium": "http://testserver/media/__sized__/__placeholder__/cover-crop-c0-5__0-5-900x200-70.jpg",
-                "full": "http://testserver/media/__placeholder__/cover.jpg",
-                "big": "http://testserver/media/__sized__/__placeholder__/cover-crop-c0-5__0-5-1800x400-70.jpg",
-            },
+            "avatar": None,
+            "cover": None,
             "tiers": [],
             "social_links": {
                 "website_url": "",
@@ -93,18 +83,8 @@ class TestAuthenticationFlow:
             "one_liner": "",
             "about": "",
             "email": user.email,
-            "avatar": {
-                "small": "http://testserver/media/__sized__/__placeholder__/avatar-crop-c0-5__0-5-150x150-70.jpg",
-                "full": "http://testserver/media/__placeholder__/avatar.jpg",
-                "thumbnail": "http://testserver/media/__sized__/__placeholder__/avatar-crop-c0-5__0-5-50x50-70.jpg",
-                "medium": "http://testserver/media/__sized__/__placeholder__/avatar-crop-c0-5__0-5-300x300-70.jpg",
-            },
-            "cover": {
-                "small": "http://testserver/media/__sized__/__placeholder__/cover-crop-c0-5__0-5-300x70-70.jpg",
-                "medium": "http://testserver/media/__sized__/__placeholder__/cover-crop-c0-5__0-5-900x200-70.jpg",
-                "full": "http://testserver/media/__placeholder__/cover.jpg",
-                "big": "http://testserver/media/__sized__/__placeholder__/cover-crop-c0-5__0-5-1800x400-70.jpg",
-            },
+            "avatar": None,
+            "cover": None,
             "tiers": [],
             "social_links": {
                 "website_url": "",
@@ -169,18 +149,8 @@ class TestMeAPI:
             "one_liner": "",
             "about": "",
             "email": user.email,
-            "avatar": {
-                "small": "http://testserver/media/__sized__/__placeholder__/avatar-crop-c0-5__0-5-150x150-70.jpg",
-                "thumbnail": "http://testserver/media/__sized__/__placeholder__/avatar-crop-c0-5__0-5-50x50-70.jpg",
-                "medium": "http://testserver/media/__sized__/__placeholder__/avatar-crop-c0-5__0-5-300x300-70.jpg",
-                "full": "http://testserver/media/__placeholder__/avatar.jpg",
-            },
-            "cover": {
-                "small": "http://testserver/media/__sized__/__placeholder__/cover-crop-c0-5__0-5-300x70-70.jpg",
-                "full": "http://testserver/media/__placeholder__/cover.jpg",
-                "big": "http://testserver/media/__sized__/__placeholder__/cover-crop-c0-5__0-5-1800x400-70.jpg",
-                "medium": "http://testserver/media/__sized__/__placeholder__/cover-crop-c0-5__0-5-900x200-70.jpg",
-            },
+            "avatar": None,
+            "cover": None,
             "tiers": [],
             "social_links": {
                 "website_url": "",
@@ -466,18 +436,8 @@ class TestUserAPI:
             "name": creator_user.name,
             "one_liner": "",
             "about": "",
-            "avatar": {
-                "thumbnail": "http://testserver/media/__sized__/__placeholder__/avatar-crop-c0-5__0-5-50x50-70.jpg",
-                "medium": "http://testserver/media/__sized__/__placeholder__/avatar-crop-c0-5__0-5-300x300-70.jpg",
-                "full": "http://testserver/media/__placeholder__/avatar.jpg",
-                "small": "http://testserver/media/__sized__/__placeholder__/avatar-crop-c0-5__0-5-150x150-70.jpg",
-            },
-            "cover": {
-                "small": "http://testserver/media/__sized__/__placeholder__/cover-crop-c0-5__0-5-300x70-70.jpg",
-                "big": "http://testserver/media/__sized__/__placeholder__/cover-crop-c0-5__0-5-1800x400-70.jpg",
-                "medium": "http://testserver/media/__sized__/__placeholder__/cover-crop-c0-5__0-5-900x200-70.jpg",
-                "full": "http://testserver/media/__placeholder__/cover.jpg",
-            },
+            "avatar": None,
+            "cover": None,
             "tiers": [
                 {
                     "id": tier.id,

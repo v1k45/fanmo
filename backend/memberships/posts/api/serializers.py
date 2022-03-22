@@ -3,10 +3,10 @@ from collections import defaultdict
 from drf_extra_fields.fields import Base64ImageField
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
-from versatileimagefield.serializers import VersatileImageFieldSerializer
 
 from memberships.posts.models import Comment, Content, Post, Reaction
 from memberships.users.api.serializers import UserPreviewSerializer
+from memberships.utils.fields import VersatileImageFieldSerializer
 
 
 class ContentSerializer(serializers.ModelSerializer):

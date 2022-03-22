@@ -4,7 +4,6 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
 from versatileimagefield.fields import VersatileImageField
-from versatileimagefield.placeholder import OnDiscPlaceholderImage
 
 from memberships.payments.models import BankAccount
 from memberships.utils.models import BaseModel
@@ -20,16 +19,10 @@ class User(BaseModel, AbstractUser):
     avatar = VersatileImageField(
         upload_to="profiles/avatars/",
         blank=True,
-        placeholder_image=OnDiscPlaceholderImage(
-            path=settings.PLACEHOLDERS_DIR / "avatar.jpg"
-        ),
     )
     cover = VersatileImageField(
         upload_to="profiles/covers/",
         blank=True,
-        placeholder_image=OnDiscPlaceholderImage(
-            path=settings.PLACEHOLDERS_DIR / "cover.jpg"
-        ),
     )
     about = models.TextField(blank=True)
 

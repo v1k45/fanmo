@@ -9,13 +9,13 @@ from django_otp.plugins.otp_totp.models import TOTPDevice
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.exceptions import ErrorDetail
-from versatileimagefield.serializers import VersatileImageFieldSerializer
 from dj_rest_auth.registration.serializers import (
     RegisterSerializer as BaseRegisterSerializer,
 )
 
 from memberships.subscriptions.models import Tier
 from memberships.users.models import SocialLink, User, UserOnboarding, UserPreference
+from memberships.utils.fields import VersatileImageFieldSerializer
 
 
 class RegisterSerializer(BaseRegisterSerializer):

@@ -9,7 +9,7 @@ from memberships.users.models import User
 from memberships.core.serializers import PaymentIntentSerializerMixin
 
 from drf_extra_fields.fields import Base64ImageField
-from versatileimagefield.serializers import VersatileImageFieldSerializer
+from memberships.utils.fields import VersatileImageFieldSerializer
 
 
 class TierSerializer(serializers.ModelSerializer):
