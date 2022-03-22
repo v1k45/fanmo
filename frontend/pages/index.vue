@@ -64,7 +64,7 @@
       <nuxt-link :to="`/${user.username}`" class="flex flex-col border items-center shadow-md bg-white rounded-lg p-8 hover:scale-105 transition-transform transform">
         <div class="avatar">
           <div class="w-24 h-24 border rounded-full">
-            <img :src="user.avatar.medium">
+            <img v-if="user.avatar" :src="user.avatar.medium">
           </div>
         </div>
         <div class="mt-2">{{ user.username }}</div>
