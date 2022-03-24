@@ -105,6 +105,7 @@ module.exports = {
     require('@tailwindcss/aspect-ratio'),
     require('@tailwindcss/forms'),
     require('tailwind-animatecss'),
+    require('@tailwindcss/line-clamp'),
     require('tailwind-bootstrap-grid')({
       gridGutters: {
         0: 0,
@@ -135,7 +136,7 @@ module.exports = {
         inherit: 'inherit',
         // TODO: update this eventually
         'fm-primary': { DEFAULT: colors.indigo['500'], ...colors.indigo },
-        'fm-success': brandColors.success,
+        'fm-success': { DEFAULT: colors.lime['500'], ...colors.lime }, // brandColors.success,
         'fm-info': brandColors.info,
         'fm-warning': brandColors.warning,
         'fm-error': brandColors.error
