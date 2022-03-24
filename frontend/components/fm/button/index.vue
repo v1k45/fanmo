@@ -62,10 +62,10 @@ export default {
   @apply active:bg-fm-primary-700;
 }
 .fm-button--success {
-  @apply bg-fm-success-500 text-white;
-  @apply hover:bg-fm-success-600;
-  @apply focus:bg-fm-success-600;
-  @apply active:bg-fm-success-700;
+  @apply bg-fm-success-600 text-white;
+  @apply hover:bg-fm-success-700;
+  @apply focus:bg-fm-success-700;
+  @apply active:bg-fm-success-800;
 }
 .fm-button--error {
   @apply bg-fm-error-500 text-white;
