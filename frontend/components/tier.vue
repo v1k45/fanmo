@@ -16,6 +16,11 @@
     </div>
     <div v-if="!isSubscribing" class="card-body pt-0 flex-grow justify-start">
       <p class="mt-2">{{ tier.description }}</p>
+      <ul class="list-disc list-inside text-left mt-3 mb-auto">
+        <li v-for="(benefit, index) in tier.benefits" :key="index">
+          {{ benefit }}
+        </li>
+      </ul>
       <div class="justify-center card-actions">
         <button v-if="selfMode" class="btn btn-block btn-info" @click="$emit('edit', tier)">Edit</button>
         <button v-else class="btn btn-block" @click="toggleIsSubscribing">Subscribe</button>

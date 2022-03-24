@@ -27,6 +27,7 @@ class TestTierAPI:
                 "amount": 100,
                 "description": "Standard text",
                 "welcome_message": "Hello standard!",
+                "benefits": ["Private Posts", "Discord", "Private Streams"],
                 "is_public": True,
             },
             format="json",
@@ -65,6 +66,7 @@ class TestTierAPI:
             {
                 "name": "Standard",
                 "amount": 100,
+                "benefits": ["Private Posts", "Discord", "Private Streams"],
                 "is_recommended": True,
             },
         )
@@ -160,6 +162,7 @@ class TestSubscriptionFlow:
                 "amount": 100,
                 "description": "Standard text",
                 "welcome_message": "Hello standard!",
+                "benefits": ["Private Posts", "Discord", "Private Streams"],
                 "is_public": True,
             },
             format="json",

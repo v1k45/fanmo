@@ -3,7 +3,7 @@
   <div class="flex flex-wrap">
     <div class="mr-auto">
       <h1 class="text-2xl font-bold">Manage tiers ({{ tiers.count }})</h1>
-      <div class="mt-2 font-medium opacity-70">Create and manage your tiers and more</div>
+      <div class="mt-2 font-medium opacity-70">Create and manage your tiers, benefits and more</div>
     </div>
     <button class="mt-4 sm:mt-0 btn btn-wide btn-primary" @click="openTierDialog()">
       <IconPlus class="mr-1" :size="16"></IconPlus>

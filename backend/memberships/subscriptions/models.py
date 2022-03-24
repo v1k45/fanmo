@@ -18,7 +18,10 @@ class Tier(BaseModel):
     description = models.TextField(blank=True)
     cover = VersatileImageField(upload_to="uploads/covers/", blank=True)
     welcome_message = models.TextField(blank=True)
+    benefits = ArrayField(models.CharField(max_length=50), size=8)
+
     amount = MoneyField(max_digits=7, decimal_places=2)
+
     is_active = models.BooleanField(default=True)
     is_public = models.BooleanField(default=True)
     is_recommended = models.BooleanField(default=False)

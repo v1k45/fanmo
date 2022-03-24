@@ -43,6 +43,28 @@
             <span class="label-text-alt">{{ error.message }}</span>
           </label>
         </div>
+        <div class="form-control mt-3">
+          <label class="label label-text">Benefits</label>
+          <ol class="list-decimal">
+            <li v-for="(benefit, index) in form.benefits" :key="index" class="ml-5 mt-2">
+              <div class="flex items-center ml-2">
+                <input v-model="form.benefits[index]" type="text" class="input input-bordered flex-grow">
+                <button
+                  v-if="form.benefits.length > 1"
+                  type="button" class="btn btn-sm btn-ghost ml-2 px-1"
+                  title="Remove benefit" @click="form.benefits.splice(index, 1)">
+                  <icon-x></icon-x>
+                </button>
+              </div>
+            </li>
+          </ol>
+          <div class="text-right mt-3">
+            <button type="button" class="btn btn-sm btn-outline" @click="form.benefits.push('')">Add another</button>
+          </div>
+          <label v-for="(error, index) in errors.benefits" :key="index" class="label">
+            <span class="label-text-alt">{{ error.message }}</span>
+          </label>
+        </div>
         <!-- <div class="form-control mt-3">
           <label class="label">
             <span class="label-text">Image <span class="text-xs">(optional)</span></span>
@@ -71,6 +93,7 @@ const initialFormState = () => ({
   amount: '',
   description: '',
   welcome_message: '',
+  benefits: ['', '', ''],
   is_public: true
 });
 
@@ -113,6 +136,7 @@ export default {
     async save() {
       try {
         let createdOrUpdatedTier;
+        this.form.benefits = this.form.benefits.filter(benefit => !!benefit);
         if (this.isEditing) createdOrUpdatedTier = await this.$axios.$put(`/api/tiers/${this.tierToUpdate.id}/`, this.form);
         else createdOrUpdatedTier = await this.$axios.$post('/api/tiers/', this.form);
 

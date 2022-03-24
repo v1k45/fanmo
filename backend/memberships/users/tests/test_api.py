@@ -445,6 +445,7 @@ class TestUserAPI:
                     "description": "",
                     "amount": "100.00",
                     "cover": None,
+                    "benefits": ["Membership!"],
                     "is_recommended": False,
                 }
             ],
