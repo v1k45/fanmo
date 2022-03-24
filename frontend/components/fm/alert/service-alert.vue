@@ -40,6 +40,7 @@ export default {
 <style lang="scss">
 .fm-alert__container {
   @apply fixed left-1/2 transform -translate-x-1/2 top-3 z-30 flex flex-col items-center;
+  @apply w-[95vw] max-w-max;
   > .fm-alert {
     @apply w-full max-w-lg;
   }
