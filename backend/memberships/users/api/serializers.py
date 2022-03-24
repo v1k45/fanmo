@@ -212,7 +212,7 @@ class UserSerializer(serializers.ModelSerializer):
                 self.fields["onboarding"].read_only = True
 
     def validate_about(self, about):
-        return bleach.clean(about, tags=['p', 'b', 'strong', 'i', 'strike'])
+        return bleach.clean(about, tags=['p', 'b', 'strong', 'i', 'strike', 'em', 's'])
 
     def validate_is_creator(self, is_creator):
         if self.instance.is_creator and not is_creator:
