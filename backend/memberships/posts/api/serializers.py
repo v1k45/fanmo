@@ -37,6 +37,8 @@ class PostSerializer(serializers.ModelSerializer):
     content = serializers.SerializerMethodField()
     author_user = UserPreviewSerializer(read_only=True)
     reactions = serializers.SerializerMethodField()
+    can_access = serializers.SerializerMethodField()
+    can_comment = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
@@ -48,6 +50,8 @@ class PostSerializer(serializers.ModelSerializer):
             "reactions",
             "visibility",
             "minimum_tier",
+            "can_access",
+            "can_comment",
             "author_user",
             "created_at",
             "updated_at",
@@ -55,10 +59,14 @@ class PostSerializer(serializers.ModelSerializer):
         read_only_fields = ["author_user", "slug"]
 
     def get_content(self, post):
-        user = self.context["request"].user
-        if post.is_locked(user):
-            return None
-        return ContentSerializer(post.content, context=self.context).data
+        if post.can_access:
+            return ContentSerializer(post.content, context=self.context).data
+
+    def get_can_access(self, post):
+        return post.can_access
+
+    def get_can_comment(self, post):
+        return post.can_comment
 
     @extend_schema_field(PostReactionSummarySerializer(many=True))
     def get_reactions(self, post):
@@ -125,8 +133,14 @@ class CommentSerializer(serializers.ModelSerializer):
         model = Comment
         fields = ["id", "post_id", "body", "author_user"]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["post_id"].queryset = Post.objects.filter(
+            is_published=True
+        ).with_permissions(self.context["request"].user)
+
     def validate_post(self, post):
-        if post.is_locked(self.context["request"].user):
+        if not post.can_comment:
             raise serializers.ValidationError("Only members can comment on this post.")
         return post
 

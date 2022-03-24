@@ -1,12 +1,77 @@
 import metadata_parser
 from django.db import models
 from django_extensions.db.fields import AutoSlugField
+from django.core.cache import cache
+import micawber
 from micawber.exceptions import ProviderException
 from versatileimagefield.fields import VersatileImageField
 
-from memberships.posts.integrations import oembed_providers
-from memberships.subscriptions.models import Subscription
+from memberships.subscriptions.models import Membership, Subscription, Tier
 from memberships.utils.models import BaseModel
+
+
+class PostQuerySet(models.QuerySet):
+    def with_permissions(self, fan_user):
+        fan_user_id = fan_user.pk
+        qs = (
+            # Find the active membership between post author and fan
+            self.annotate(
+                membership_tier=models.FilteredRelation(
+                    "author_user__members__tier",
+                    condition=models.Q(
+                        author_user__members__fan_user_id=fan_user_id,
+                        author_user__members__is_active=True,
+                    ),
+                )
+            )
+            # Extract membership tier amount
+            .annotate(tier_amount=models.F("membership_tier__amount"))
+            # Determine access
+            .annotate(
+                can_access=models.Case(
+                    # Author can always access their own posts.
+                    models.When(author_user_id=fan_user_id, then=True),
+                    # Everyone can access public posts.
+                    models.When(visibility=self.model.Visiblity.PUBLIC, then=True),
+                    # Everyone can access public posts.
+                    models.When(visibility=self.model.Visiblity.PUBLIC, then=True),
+                    # Only members can access "all member" content.
+                    models.When(
+                        visibility=self.model.Visiblity.ALL_MEMBERS,
+                        tier_amount__isnull=False,
+                        then=True,
+                    ),
+                    # Only members can members with certian tier can access "minimum tier" content.
+                    models.When(
+                        visibility=self.model.Visiblity.MINIMUM_TIER,
+                        tier_amount__gte=models.F("minimum_tier__amount"),
+                        then=True,
+                    ),
+                    default=False,
+                    output_field=models.BooleanField(),
+                ),
+                can_comment=models.Case(
+                    models.When(author_user_id=fan_user_id, then=True),
+                    # ony members can interact with a post, even if the post is public
+                    models.When(
+                        visibility=self.model.Visiblity.PUBLIC,
+                        tier_amount__isnull=False,
+                        then=True,
+                    ),
+                    models.When(
+                        can_access=True,
+                        visibility__in=[
+                            self.model.Visiblity.ALL_MEMBERS,
+                            self.model.Visiblity.MINIMUM_TIER,
+                        ],
+                        then=True,
+                    ),
+                    default=False,
+                    output_field=models.BooleanField(),
+                ),
+            )
+        )
+        return qs
 
 
 class Post(BaseModel):
@@ -30,29 +95,7 @@ class Post(BaseModel):
 
     is_published = models.BooleanField(default=True)
 
-    # lru cache?
-    def is_locked(self, user):
-        # author gets to see their own posts
-        if user.pk == self.author_user_id:
-            return False
-
-        # anyone can see public posts
-        if self.visibility == Post.Visiblity.PUBLIC:
-            return False
-
-        if user.is_anonymous:
-            return True
-
-        # todo cache
-        try:
-            active_subscription = Subscription.objects.active(self.author_user, user)
-        except Subscription.DoesNotExist:
-            return False
-
-        if self.visibility == Post.Visiblity.ALL_MEMBERS:
-            return True
-
-        return active_subscription.plan.amount >= self.minimum_tier.amount
+    objects = PostQuerySet.as_manager()
 
 
 class Content(BaseModel):
@@ -75,6 +118,7 @@ class Content(BaseModel):
             return
 
         try:
+            oembed_providers = micawber.bootstrap_noembed(cache)
             self.link_embed = oembed_providers.request(self.link)
         except ProviderException:
             pass

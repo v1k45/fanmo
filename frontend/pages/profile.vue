@@ -3,13 +3,14 @@
   <div class="aspect-w-16 aspect-h-3 relative bg-black">
     <img
       class="object-cover h-full w-full absolute"
+      v-if="user.cover"
       :src="user.cover.big"
       alt="Cover photo">
   </div>
   <div class="-mt-6 container flex items-center">
     <div class="avatar rounded-full p-1 bg-white">
       <div class="w-32 h-32 rounded-full">
-        <img :src="user.avatar.medium">
+        <img v-if="user.avatar" :src="user.avatar.medium">
       </div>
     </div>
     <div class="ml-3">

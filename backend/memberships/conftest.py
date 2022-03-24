@@ -23,11 +23,6 @@ def media_storage(settings, tmpdir):
     settings.MEDIA_ROOT = tmpdir.strpath
 
 
-@pytest.fixture(autouse=True)
-def bootstrap_oembed(mocker):
-    mocker.patch("memberships.posts.integrations.micawber.bootstrap_oembed")
-
-
 @pytest.fixture
 def user() -> User:
     return UserFactory()

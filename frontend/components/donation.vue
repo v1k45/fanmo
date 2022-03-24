@@ -5,7 +5,7 @@
       <div class="flex items-center">
         <div v-if="donation.fan_user" class="avatar">
           <div class="w-11 h-11 border rounded-full">
-            <img :src="donation.fan_user.avatar.small">
+            <img v-if="donation.fan_user.avatar" :src="donation.fan_user.avatar.small">
           </div>
         </div>
         <div v-else class="avatar placeholder">

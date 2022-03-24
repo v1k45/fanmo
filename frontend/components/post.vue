@@ -4,7 +4,7 @@
     <div class="flex items-center">
       <div class="avatar">
         <div class="w-11 h-11 border rounded-full">
-          <img :src="post.author_user.avatar.small">
+          <img v-if="post.author_user.avatar" :src="post.author_user.avatar.small">
         </div>
       </div>
       <div class="ml-3">

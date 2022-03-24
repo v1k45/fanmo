@@ -42,18 +42,16 @@ class PostViewSet(
             - qs.filter(author__subscribers=self.request.user)
             - qs.filter(author__subscribers__plan__amount__gte=F('minimum_tier_level__amount'))
         """
-        queryset = super().get_queryset()
+        queryset = super().get_queryset().with_permissions(self.request.user)
         queryset = queryset.select_related(
             "minimum_tier", "content", "author_user"
         ).prefetch_related("reactions")
+
         username = self.request.query_params.get("username")
         if username:
-            return queryset.filter(author_user__username=username)
+            queryset = queryset.filter(author_user__username=username)
 
-        if self.request.user.is_authenticated:
-            return queryset.filter(author_user__followers=self.request.user)
-
-        return queryset
+        return queryset.distinct()
 
     def get_serializer_class(self):
         if self.action == "create":
