@@ -74,7 +74,7 @@ export default {
   @apply absolute top-0 left-0 h-full w-full bg-black bg-opacity-50;
 }
 .fm-dialog__container {
-  @apply bg-white rounded-lg relative flex flex-col overflow-hidden;
+  @apply bg-white rounded-lg relative flex flex-col flex-grow overflow-hidden;
   animation-duration: 200ms;
 }
 .fm-dialog__header {
