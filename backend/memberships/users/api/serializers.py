@@ -195,6 +195,9 @@ class UserSerializer(serializers.ModelSerializer):
             "subscriber_count",
             "preferences",
         ]
+        extra_kwargs = {
+            "name": {"allow_blank": False}
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
