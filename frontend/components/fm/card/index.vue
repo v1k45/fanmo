@@ -3,7 +3,7 @@
   <header v-if="$slots.header" class="fm-card__header">
     <slot name="header"></slot>
   </header>
-  <div class="fm-card__body">
+  <div class="fm-card__body" :class="bodyClass">
     <slot></slot>
   </div>
 </section>
@@ -11,7 +11,9 @@
 
 <script>
 export default {
-
+  props: {
+    bodyClass: { type: [String, Array], default: '' }
+  }
 };
 </script>
 
