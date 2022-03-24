@@ -70,12 +70,23 @@
   </section>
   <!-- alerts end -->
 
+  <!-- tabs start -->
+  <section v-show="sections.tabs" class="pb-12 mb-12 border-b-2">
+    <h2 class="text-3xl font-title font-bold mb-6">Tabs</h2>
+    <fm-tabs v-model="misc.tabs.model">
+      <fm-tabs-pane id="home" label="Home">Create account</fm-tabs-pane>
+      <fm-tabs-pane id="memberships" label="Memberships">Complete profile</fm-tabs-pane>
+      <fm-tabs-pane id="donations" label="Donations">Add payment details</fm-tabs-pane>
+    </fm-tabs>
+  </section>
+  <!-- tabs end -->
+
 
   <!-- dropdown start -->
-  <!-- <section class="pb-12 mb-12 border-b-2">
+  <section v-show="sections.dropdown" class="pb-12 mb-12 border-b-2">
     <h2 class="text-3xl font-title font-bold mb-6">Dropdown</h2>
 
-    <fm-dropdown>
+    <fm-dropdown placement="bottom-start">
       <fm-button type="primary">Click me</fm-button>
 
       <template #items>
@@ -88,7 +99,7 @@
       </template>
     </fm-dropdown>
 
-  </section> -->
+  </section>
   <!-- dropdown end -->
 
   <!-- wizard start -->
@@ -143,6 +154,20 @@
   </section>
   <!-- dialogs end -->
 
+  <!-- editors start -->
+  <section v-show="sections.editor" class="pb-12 mb-12 border-b-2">
+    <h2 class="text-3xl font-title font-bold mb-6">Editor</h2>
+
+    <fm-input v-model="misc.editor.preset" horizontal type="radio" name="preset" native-value="basic">Basic</fm-input>
+    <fm-input v-model="misc.editor.preset" horizontal type="radio" name="preset" native-value="intermediate">Intermediate</fm-input>
+    <fm-input v-model="misc.editor.preset" horizontal type="radio" name="preset" native-value="advanced">Advanced</fm-input>
+
+    <div class="bg-gray-100 rounded-lg mt-4 p-2" v-html="misc.editor.model"></div>
+
+    <fm-editor :key="misc.editor.preset" v-model="misc.editor.model" class="mt-6" :preset="misc.editor.preset"></fm-editor>
+  </section>
+  <!-- editors end -->
+
   <!-- card start -->
   <section v-show="sections.card" class="pb-12 mb-12 border-b-2">
     <h2 class="text-3xl font-title font-bold mb-6">Card</h2>
@@ -176,19 +201,29 @@ export default {
         button: false,
         input: false,
         alert: false,
+        dropdown: true,
+        tabs: false,
         wizard: false,
-        dialog: true,
+        dialog: false,
+        editor: false,
         card: false
       },
       misc: {
         alert: {
           clamped: false
         },
+        tabs: {
+          model: 'home'
+        },
         wizard: {
           current: 2
         },
         dialog: {
           isVisible: false
+        },
+        editor: {
+          model: '',
+          preset: 'basic'
         }
       }
     };
