@@ -10,9 +10,17 @@
   <!-- field start -->
   <div class="relative">
 
+    <!-- otp input start -->
     <template v-if="type === 'otp'">
       <fm-input-otp ref="input" v-model="model" :block="block" @filled="$emit('filled', $event)"></fm-input-otp>
     </template>
+    <!-- otp input end -->
+
+    <!-- rich input start -->
+    <template v-if="type === 'rich'">
+      <fm-editor ref="input" v-model="model" :preset="preset"></fm-editor>
+    </template>
+    <!-- rich input end -->
 
     <!-- checkbox input start -->
     <template v-else-if="type === 'checkbox'">
@@ -102,7 +110,8 @@ export default {
     label: { type: String, default: '' },
     error: { type: String, default: '' },
     horizontal: { type: Boolean, default: false },
-    block: { type: Boolean, default: false }
+    block: { type: Boolean, default: false },
+    preset: { type: String, default: undefined } // for fm-editor (type=rich)
   },
   data() {
     return {
@@ -146,6 +155,7 @@ export default {
   @apply relative;
   .fm-input__input[type=email], .fm-input__input[type=number],
   .fm-input__input[type=text], .fm-input__input[type=password],
+  .fm-input__input[type=url],
   textarea.fm-input__input, select.fm-input__input {
     @apply block w-full rounded-lg border-gray-300 border bg-white text-sm py-3;
     @apply focus:border-fm-primary;
@@ -182,7 +192,8 @@ export default {
   }
   .fm-input__input[type=email], .fm-input__input[type=number],
   .fm-input__input[type=text], .fm-input__input[type=password],
-  .fm-input__input[type=checkbox], .fm-input__input[type=radio],
+  .fm-input__input[type=url], .fm-input__input[type=checkbox],
+  .fm-input__input[type=radio],
   textarea.fm-input__input, select.fm-input__input {
     @apply border-fm-error;
     @apply focus:border-fm-error focus:ring-fm-error;
