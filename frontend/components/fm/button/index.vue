@@ -34,7 +34,7 @@ export default {
     classes() {
       return {
         [BUTTON_TYPE_CLASSNAME_MAP[this.type] || 'fm-button--default']: true,
-        [BUTTON_SIZE_CLASSNAME_MAP[this.size]]: true,
+        [BUTTON_SIZE_CLASSNAME_MAP[this.size] || '']: true,
         'fm-button--block': this.block
       };
     }
