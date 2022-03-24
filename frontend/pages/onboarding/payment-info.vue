@@ -141,7 +141,10 @@ export default {
     async setPaymentInfo() {
       try {
         if (this.accountId) await this.$axios.$patch(`/api/accounts/${this.accountId}/`, this.form);
-        else await this.$axios.$post('/api/accounts/', this.form);
+        else {
+          const account = await this.$axios.$post('/api/accounts/', this.form);
+          this.accountId = account.id;
+        }
         await this.$auth.fetchUser();
         this.errors = {};
         this.$toast.info('Your payment information was saved successfully!');
