@@ -215,6 +215,18 @@ class TestMeAPI:
             "minimum_amount": "100.00",
         }
 
+    def test_update_about_xss(self, user, api_client):
+        api_client.force_authenticate(user)
+
+        response = api_client.patch(
+            "/api/me/",
+            {
+                "about": '<b>Hello</b><strong>world</strong>! <a title="xss" href="javascript:alert(0);">click me</a>'
+            }
+        )
+        assert response.status_code == 200
+        assert response.json()["about"] == '<b>Hello</b><strong>world</strong>! &lt;a title="xss" href="javascript:alert(0);"&gt;click me&lt;/a&gt;'
+
 
 class TestOnboardingFlow:
     def test_select_user_type(self, user, api_client):

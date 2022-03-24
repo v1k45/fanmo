@@ -1,3 +1,4 @@
+import bleach
 import django_otp
 from allauth.account.adapter import get_adapter
 from allauth.account.models import EmailAddress
@@ -209,6 +210,9 @@ class UserSerializer(serializers.ModelSerializer):
                 != UserOnboarding.Status.IN_PROGRESS
             ):
                 self.fields["onboarding"].read_only = True
+
+    def validate_about(self, about):
+        return bleach.clean(about, tags=['p', 'b', 'strong', 'i', 'strike'])
 
     def validate_is_creator(self, is_creator):
         if self.instance.is_creator and not is_creator:
