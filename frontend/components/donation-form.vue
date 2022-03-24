@@ -1,5 +1,5 @@
 <template>
-<div class="max-w-md flex-grow card compact sm:bg-white sm:shadow-lg border">
+<div class="flex-grow card compact sm:bg-white sm:shadow-lg border">
   <div class="card-body">
     <h1 class="font-extrabold text-3xl">
       Support me!
