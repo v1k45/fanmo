@@ -17,7 +17,7 @@ export default {
 
 <style lang="scss">
 .fm-card {
-  @apply bg-white rounded-xl shadow-lg shadow-gray-200;
+  @apply bg-white rounded-xl border;
 }
 .fm-card__header {
   @apply font-bold border-b px-6 py-3 text-xl;
