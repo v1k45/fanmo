@@ -2,7 +2,7 @@
 <div class="flex flex-col min-h-screen">
 
   <!-- header start -->
-  <header class="sticky top-0 z-10 py-2 bg-white shadow-sm">
+  <header class="sticky top-0 z-20 py-2 bg-white shadow-sm">
     <div class="container flex items-center">
       <div v-if="0" class="inline-block text-xl font-bold">
         <div class="sm:hidden">XS</div>
