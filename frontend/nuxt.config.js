@@ -11,7 +11,7 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: titleChunk => titleChunk ? `${titleChunk} | fanmo` : 'fanmo',
+    titleTemplate: titleChunk => titleChunk ? `${titleChunk} | Fanmo` : 'Fanmo',
     htmlAttrs: {
       lang: 'en',
       'data-theme': 'brand'
