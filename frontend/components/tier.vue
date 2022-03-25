@@ -101,7 +101,7 @@ export default {
       paymentOptions.handler = (paymentResponse) => {
         this.processPayment(subscription, paymentResponse);
       };
-      const rzp1 = new Razorpay(paymentOptions); // eslint-disable-line
+      const rzp1 = new window.Razorpay(paymentOptions);
       rzp1.open();
     },
     async processPayment(subscription, paymentResponse) {
