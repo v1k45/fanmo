@@ -43,9 +43,9 @@ class PostViewSet(
             - qs.filter(author__subscribers__plan__amount__gte=F('minimum_tier_level__amount'))
         """
         queryset = super().get_queryset().with_permissions(self.request.user)
-        queryset = queryset.select_related(
-            "minimum_tier", "content", "author_user"
-        ).prefetch_related("reactions")
+        queryset = queryset.select_related("content", "author_user").prefetch_related(
+            "reactions"
+        )
 
         username = self.request.query_params.get("username")
         if username:

@@ -49,7 +49,7 @@ class PostSerializer(serializers.ModelSerializer):
             "content",
             "reactions",
             "visibility",
-            "minimum_tier",
+            "allowed_tiers",
             "can_access",
             "can_comment",
             "author_user",
@@ -57,16 +57,26 @@ class PostSerializer(serializers.ModelSerializer):
             "updated_at",
         ]
         read_only_fields = ["author_user", "slug"]
+        extra_kwargs = {
+            "allowed_tiers": {
+                "allow_empty": True,
+                "required": False,
+            }
+        }
+
+    @property
+    def is_create_action(self):
+        return self.context["view"].action == "create"
 
     def get_content(self, post):
-        if post.can_access:
+        if self.is_create_action or post.can_access:
             return ContentSerializer(post.content, context=self.context).data
 
     def get_can_access(self, post):
-        return post.can_access
+        return self.is_create_action or post.can_access
 
     def get_can_comment(self, post):
-        return post.can_comment
+        return self.is_create_action or post.can_comment
 
     @extend_schema_field(PostReactionSummarySerializer(many=True))
     def get_reactions(self, post):
@@ -115,7 +125,7 @@ class PostCreateSerializer(PostSerializer):
         pass
 
     def create(self, validated_data):
-        content = Content.objects.create(**validated_data["content"])
+        content: Content = Content.objects.create(**validated_data["content"])
         content.update_link_metadata()
 
         validated_data["content"] = content

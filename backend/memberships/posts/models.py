@@ -2,7 +2,7 @@ import metadata_parser
 from django.db import models
 from django_extensions.db.fields import AutoSlugField
 from django.core.cache import cache
-import micawber
+from micawber.providers import bootstrap_oembed
 from micawber.exceptions import ProviderException
 from versatileimagefield.fields import VersatileImageField
 
@@ -38,13 +38,13 @@ class PostQuerySet(models.QuerySet):
                     # Only members can access "all member" content.
                     models.When(
                         visibility=self.model.Visiblity.ALL_MEMBERS,
-                        tier_amount__isnull=False,
+                        membership_tier__isnull=False,
                         then=True,
                     ),
-                    # Only members can members with certian tier can access "minimum tier" content.
+                    # Only members can members with certian tier can access "allowed tiers" content.
                     models.When(
-                        visibility=self.model.Visiblity.MINIMUM_TIER,
-                        tier_amount__gte=models.F("minimum_tier__amount"),
+                        visibility=self.model.Visiblity.ALLOWED_TIERS,
+                        allowed_tiers=models.F("membership_tier"),
                         then=True,
                     ),
                     default=False,
@@ -62,7 +62,7 @@ class PostQuerySet(models.QuerySet):
                         can_access=True,
                         visibility__in=[
                             self.model.Visiblity.ALL_MEMBERS,
-                            self.model.Visiblity.MINIMUM_TIER,
+                            self.model.Visiblity.ALLOWED_TIERS,
                         ],
                         then=True,
                     ),
@@ -78,7 +78,7 @@ class Post(BaseModel):
     class Visiblity(models.TextChoices):
         PUBLIC = "public"
         ALL_MEMBERS = "all_members"
-        MINIMUM_TIER = "minimum_tier"
+        ALLOWED_TIERS = "allowed_tiers"
 
     title = models.CharField(max_length=255)
     slug = AutoSlugField(populate_from="title", allow_duplicates=True)
@@ -89,9 +89,7 @@ class Post(BaseModel):
     visibility = models.CharField(
         max_length=16, choices=Visiblity.choices, default=Visiblity.PUBLIC
     )
-    minimum_tier = models.ForeignKey(
-        "subscriptions.Tier", on_delete=models.SET_NULL, null=True
-    )
+    allowed_tiers = models.ManyToManyField("subscriptions.Tier")
 
     is_published = models.BooleanField(default=True)
 
@@ -118,7 +116,7 @@ class Content(BaseModel):
             return
 
         try:
-            oembed_providers = micawber.bootstrap_noembed(cache)
+            oembed_providers = bootstrap_oembed(cache)
             self.link_embed = oembed_providers.request(self.link)
         except ProviderException:
             pass

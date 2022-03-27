@@ -15,7 +15,6 @@ class PostAdmin(admin.ModelAdmin):
         "content",
         "author_user",
         "visibility",
-        "minimum_tier",
         "is_published",
     )
     list_filter = (
@@ -23,7 +22,7 @@ class PostAdmin(admin.ModelAdmin):
         "updated_at",
         "content",
         "author_user",
-        "minimum_tier",
+        "allowed_tiers",
         "is_published",
     )
     search_fields = ("slug",)

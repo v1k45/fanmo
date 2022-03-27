@@ -109,7 +109,7 @@
             <option disabled value="">Please select one</option>
             <option value="public">Public</option>
             <option value="all_members">All Members</option>
-            <option value="minimum_tier">Minimum Tier</option>
+            <option value="allowed_tiers">Allowed Tiers</option>
           </select>
           <label
             v-for="(error, index) in errors.visibility"
@@ -119,19 +119,20 @@
           </label>
         </div>
 
-        <div v-if="form.visibility == 'minimum_tier'" class="form-control mt-3">
-          <label class="label label-text">Minimum Tier</label>
+        <div v-if="form.visibility == 'allowed_tiers'" class="form-control mt-3">
+          <label class="label label-text">Allowed Tier</label>
           <select
-            v-model="form.minimum_tier"
+            v-model="form.allowed_tiers"
             type="text"
             class="select select-bordered"
-            :class="{ 'input-error': errors.minimum_tier }"
+            :class="{ 'input-error': errors.allowed_tiers }"
+            multiple
             required>
-            <option disabled value="">Please select one</option>
+            <option disabled value="">Select tiers</option>
             <option v-for="tier in $auth.user.tiers" :key="tier.id" :value="tier.id">{{ tier.name }}</option>
           </select>
           <label
-            v-for="(error, index) in errors.minimum_tier"
+            v-for="(error, index) in errors.allowed_tiers"
             :key="index"
             class="label">
             <span class="label-text-alt">{{ error.message }}</span>
@@ -167,7 +168,7 @@ export default {
           image_base64: ''
         },
         visibility: 'public',
-        minimum_tier: ''
+        allowed_tiers: []
       },
       errors: {}
     };

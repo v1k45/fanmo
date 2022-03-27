@@ -222,10 +222,13 @@ class TestMeAPI:
             "/api/me/",
             {
                 "about": '<b>Hello</b><strong>world</strong>! <a title="xss" href="javascript:alert(0);">click me</a>'
-            }
+            },
         )
         assert response.status_code == 200
-        assert response.json()["about"] == '<b>Hello</b><strong>world</strong>! &lt;a title="xss" href="javascript:alert(0);"&gt;click me&lt;/a&gt;'
+        assert (
+            response.json()["about"]
+            == '<b>Hello</b><strong>world</strong>! &lt;a title="xss" href="javascript:alert(0);"&gt;click me&lt;/a&gt;'
+        )
 
 
 class TestOnboardingFlow:

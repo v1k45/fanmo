@@ -7,13 +7,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('subscriptions', '0009_remove_tier_benefits'),
+        ("subscriptions", "0009_remove_tier_benefits"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='tier',
-            name='benefits',
-            field=django.contrib.postgres.fields.ArrayField(base_field=models.CharField(max_length=50), default=list, size=8),
+            model_name="tier",
+            name="benefits",
+            field=django.contrib.postgres.fields.ArrayField(
+                base_field=models.CharField(max_length=50), default=list, size=8
+            ),
         ),
     ]
