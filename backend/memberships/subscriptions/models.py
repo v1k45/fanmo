@@ -143,6 +143,15 @@ class Membership(BaseModel):
         active_subscription.schedule_to_cancel()
         active_subscription.save()
 
+    def activate(self, subscription):
+        # clear scheduled subscription
+        if self.scheduled_subscription == subscription:
+            self.scheduled_subscription = None
+        self.active_subscription = subscription
+        self.tier = self.active_subscription.plan.tier
+        self.is_active = True
+        self.save()
+
 
 class Plan(BaseModel):
     """
@@ -318,12 +327,7 @@ class Subscription(BaseModel):
         conditions=[can_activate],
     )
     def activate(self):
-        self.is_active = True
-        # todo: move this to a task queue.
-        self.membership.is_active = True
-        self.membership.tier = self.plan.tier
-        self.membership.active_subscription = self.membership.scheduled_subscription
-        self.membership.scheduled_subscription = None
+        self.membership.activate(self)
         self.membership.save()
 
     @transition(
@@ -398,7 +402,7 @@ class Subscription(BaseModel):
             )
         return new_subscription
 
-    def can_renew(self):
+    def can_start_renew(self):
         return self.cycle_end_at < timezone.now()
 
     @transition(
@@ -407,7 +411,7 @@ class Subscription(BaseModel):
             Status.ACTIVE,
         ],
         target=Status.PENDING,
-        conditions=[can_renew],
+        conditions=[can_start_renew],
     )
     def start_renewal(self):
         """
@@ -416,12 +420,14 @@ class Subscription(BaseModel):
         pass
 
     @transition(
-        field=status, source=[Status.PENDING, Status.ACTIVE], target=Status.ACTIVE
+        field=status,
+        source=[Status.PENDING, Status.PAUSED, Status.HALTED, Status.ACTIVE],
+        target=Status.ACTIVE,
     )
-    def renew(self):
+    def renew(self, cycle_end_at):
         """Subscription was renewned"""
-        self.cycle_end_at = relativedelta(self.cycle_start_at, months=1)
-        self.save()
+        self.cycle_end_at = cycle_end_at
+        self.membership.activate(self)
 
     def can_halt(self):
         halt_date = self.cycle_end_at + relativedelta(

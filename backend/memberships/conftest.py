@@ -14,6 +14,7 @@ from memberships.subscriptions.tests.factories import (
     PlanFactory,
     SubscriptionFactory,
 )
+from memberships.payments.tests.factories import BankAccountFactory
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 
@@ -32,6 +33,7 @@ def user() -> User:
 def creator_user() -> User:
     user = UserFactory(is_creator=True)
     TierFactory(creator_user=user)
+    BankAccountFactory(beneficiary_user=user)
     return user
 
 

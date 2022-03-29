@@ -1,6 +1,8 @@
+from datetime import datetime
 from decimal import Decimal
 
 from django.db.transaction import atomic
+from django.utils import timezone
 from django_fsm import can_proceed
 from moneyed import Money, get_currency
 
@@ -38,33 +40,35 @@ def subscription_charged(payload):
     # nowait and try later?
     # it is possible that multiple exists.
     subscription_payload = payload["payload"]["subscription"]["entity"]
-    subscription = Subscription.objects.select_for_update().get(
+    subscription: Subscription = Subscription.objects.select_for_update().get(
         external_id=subscription_payload["id"],
         plan__external_id=subscription_payload["plan_id"],
     )
 
-    # hard fail instead?
+    # renew membership
     if can_proceed(subscription.activate):
         subscription.activate()
-        subscription.payment_method = subscription_payload["payment_method"]
-        subscription.save()
+    elif can_proceed(subscription.renew):
+        cycle_end_at = datetime.fromtimestamp(subscription_payload["current_end"])
+        subscription.renew(cycle_end_at)
+    subscription.save()
 
-    payload = payload["payload"]["payment"]["entity"]
+    # record the payment
+    payment_payload = payload["payload"]["payment"]["entity"]
     payment, _ = Payment.objects.update_or_create(
         type=Payment.Type.SUBSCRIPTION,
         subscription=subscription,
-        amount=get_money_from_subunit(payload["amount"], payload["currency"]),
-        external_id=payload["id"],
+        amount=get_money_from_subunit(
+            payment_payload["amount"], payment_payload["currency"]
+        ),
+        external_id=payment_payload["id"],
         creator_user=subscription.creator_user,
         fan_user=subscription.fan_user,
         defaults={
-            "status": Payment.Status.AUTHORIZED,
-            "method": payload["method"],
+            "status": payment_payload["status"],
+            "method": payment_payload["method"],
         },
     )
-
-    payment.status = Payment.Status.CAPTURED
-    payment.save()
 
     # send payout
     Payout.for_payment(payment)

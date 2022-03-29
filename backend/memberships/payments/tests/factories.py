@@ -10,6 +10,7 @@ class BankAccountFactory(DjangoModelFactory):
     account_number = Faker("iban")
     ifsc = Faker("swift")
     status = BankAccount.Status.CREATED
+    external_id = Faker("iban")
 
     class Meta:
         model = BankAccount

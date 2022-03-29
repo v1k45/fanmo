@@ -18,9 +18,6 @@ def refresh_membership(membership_id: int):
     membership: Membership = Membership.objects.select_for_update().get(
         id=membership_id
     )
-    if not membership.is_active:
-        return
-
     active_subscription: Subscription = membership.active_subscription
     scheduled_subscription: Subscription = membership.scheduled_subscription
 
