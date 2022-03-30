@@ -1,6 +1,8 @@
 from decimal import Decimal
 from dateutil.relativedelta import relativedelta
 import pytest
+from moneyed import Money, INR
+from memberships.donations.models import Donation
 from memberships.payments.models import Payment, Payout
 from memberships.webhooks.models import WebhookMessage
 
@@ -210,3 +212,67 @@ class TestProcessRazorpayWebhook:
 
         process_razorpay_webhook(webhook_message.id)
         refresh_membership_mock.assert_called_once_with(active_membership.id)
+
+    def test_order_paid(self, creator_user, user, mocker):
+        transfer_mock = mocker.patch(
+            "memberships.payments.models.razorpay_client.payment.transfer",
+            return_value={"items": [{"id": "trf_123"}]},
+        )
+
+        donation = Donation.objects.create(
+            creator_user=creator_user,
+            fan_user=user,
+            amount=Money(Decimal("100"), INR),
+            external_id="don_123",
+            status=Donation.Status.SUCCESSFUL,
+        )
+        payment = Payment.objects.create(
+            type=Payment.Type.DONATION,
+            donation=donation,
+            creator_user=creator_user,
+            fan_user=user,
+            amount=Money(Decimal("100"), INR),
+            method=Payment.Status.CAPTURED,
+        )
+        webhook_payload = {
+            "event": "order.paid",
+            "payload": {
+                "order": {
+                    "entity": {
+                        "id": donation.external_id,
+                    },
+                },
+                "payment": {
+                    "entity": {
+                        "id": payment.external_id,
+                        "amount": 100_00,
+                        "currency": "INR",
+                        "method": "upi",
+                        "status": "captured",
+                    }
+                },
+            },
+        }
+        webhook_message = WebhookMessage.objects.create(
+            sender=WebhookMessage.Sender.RAZORPAY,
+            external_id="rzp_001",
+            payload=webhook_payload,
+        )
+
+        process_razorpay_webhook(webhook_message.id)
+
+        payout = Payout.objects.get(payment=payment)
+        assert payout.amount.amount == Decimal("95.10")
+        assert payout.external_id == "trf_123"
+        transfer_mock.assert_called_once_with(
+            payment.external_id,
+            {
+                "transfers": [
+                    {
+                        "account": creator_user.bank_accounts.first().external_id,
+                        "amount": 95_10,
+                        "currency": "INR",
+                    }
+                ]
+            },
+        )

@@ -118,29 +118,26 @@ def order_paid(payload):
     Update donation publish state, record payment, issue a payout.
     """
     order_id = payload["payload"]["order"]["entity"]["id"]
-    if not Donation.objects.filter(external_id=order_id).exists():
-        # donation with this order id does not exists.
-        # this was most likely a subscription
+    try:
+        donation = Donation.objects.select_for_update().get(external_id=order_id)
+    except Donation.DoesNotExist:
         return
 
-    donation = Donation.objects.select_for_update().get(external_id=order_id)
-
-    payload = payload["payload"]["payment"]["entity"]
+    payment_payload = payload["payload"]["payment"]["entity"]
     payment, _ = Payment.objects.update_or_create(
         type=Payment.Type.DONATION,
         donation=donation,
-        amount=get_money_from_subunit(payload["amount"], payload["currency"]),
-        external_id=payload["id"],
+        amount=get_money_from_subunit(
+            payment_payload["amount"], payment_payload["currency"]
+        ),
+        external_id=payment_payload["id"],
         creator_user=donation.creator_user,
         fan_user=donation.fan_user,
         defaults={
-            "status": Payment.Status.CAPTURED,
-            "method": payload["method"],
+            "status": payment_payload["status"],
+            "method": payment_payload["method"],
         },
     )
-
-    payment.status = Payment.Status.CAPTURED
-    payment.save()
 
     # send payout
     Payout.for_payment(payment)
