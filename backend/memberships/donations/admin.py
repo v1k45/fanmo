@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
+from simple_history.admin import SimpleHistoryAdmin
 
 from .models import Donation
 
 
 @admin.register(Donation)
-class DonationAdmin(admin.ModelAdmin):
+class DonationAdmin(SimpleHistoryAdmin):
     list_display = (
         "id",
         "created_at",

@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
+from simple_history.admin import SimpleHistoryAdmin
 
 from .models import Plan, Subscription, Tier
 
 
 @admin.register(Tier)
-class TierAdmin(admin.ModelAdmin):
+class TierAdmin(SimpleHistoryAdmin):
     list_display = (
         "id",
         "name",
@@ -51,7 +52,7 @@ class PlanAdmin(admin.ModelAdmin):
 
 
 @admin.register(Subscription)
-class SubscriptionAdmin(admin.ModelAdmin):
+class SubscriptionAdmin(SimpleHistoryAdmin):
     list_display = (
         "id",
         "created_at",

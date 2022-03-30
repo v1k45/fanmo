@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError
 from django.conf import settings
 from django_fsm import FSMField, transition
 from djmoney.models.fields import MoneyField
+from simple_history.models import HistoricalRecords
 from versatileimagefield.fields import VersatileImageField
 
 from memberships.subscriptions.querysets import SubscriptionQuerySet
@@ -27,6 +28,8 @@ class Tier(BaseModel):
     is_recommended = models.BooleanField(default=False)
 
     creator_user = models.ForeignKey("users.User", on_delete=models.CASCADE)
+
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.name
@@ -55,6 +58,8 @@ class Membership(BaseModel):
     )
 
     is_active = models.BooleanField(default=None, null=True)
+
+    history = HistoricalRecords()
 
     class Meta:
         constraints = [
@@ -288,6 +293,7 @@ class Subscription(BaseModel):
     scheduled_to_change = models.BooleanField(default=False)
 
     objects = SubscriptionQuerySet.as_manager()
+    history = HistoricalRecords()
 
     def create_external(self):
         subscription_data = {

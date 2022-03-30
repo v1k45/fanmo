@@ -84,6 +84,7 @@ THIRD_PARTY_APPS = [
     "djmoney",
     "versatileimagefield",
     "django_q",
+    "simple_history",
 ]
 
 LOCAL_APPS = [
@@ -152,6 +153,7 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django_otp.middleware.OTPMiddleware",
+    "simple_history.middleware.HistoryRequestMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.common.BrokenLinkEmailsMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",

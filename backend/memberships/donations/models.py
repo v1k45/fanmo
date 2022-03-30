@@ -1,6 +1,7 @@
 from django.db import models
 from django_fsm import FSMField
 from djmoney.models.fields import MoneyField
+from simple_history.models import HistoricalRecords
 
 from memberships.utils import razorpay_client
 from memberships.utils.models import BaseModel
@@ -25,6 +26,7 @@ class Donation(BaseModel):
 
     amount = MoneyField(max_digits=7, decimal_places=2)
     external_id = models.CharField(max_length=255)
+    history = HistoricalRecords()
 
     def create_external(self):
         external_data = razorpay_client.order.create(

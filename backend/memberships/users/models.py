@@ -4,6 +4,7 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
 from versatileimagefield.fields import VersatileImageField
+from simple_history.models import HistoricalRecords
 
 from memberships.payments.models import BankAccount
 from memberships.utils.models import BaseModel
@@ -111,6 +112,8 @@ class UserPreference(BaseModel):
     platform_fee_percent = models.DecimalField(
         decimal_places=2, max_digits=3, default=settings.DEFAULT_PLATFORM_FEE_PERCENT
     )
+
+    history = HistoricalRecords()
 
 
 class UserOnboarding(BaseModel):
