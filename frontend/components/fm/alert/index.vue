@@ -1,7 +1,7 @@
 <template>
 <div class="fm-alert" :class="classes">
   <!-- icon start -->
-  <div class="fm-alert__icon">
+  <div v-if="showIcon" class="fm-alert__icon">
     <icon-info v-if="type === 'info'"></icon-info>
     <icon-alert-triangle v-else-if="type === 'warning'"></icon-alert-triangle>
     <icon-x-circle v-else-if="type === 'error'"></icon-x-circle>
@@ -34,7 +34,8 @@ export default {
     type: { type: String, default: 'info', validator: val => ['', 'info', 'warning', 'error', 'success'].includes(val) },
     title: { type: String, default: '' },
     message: { type: String, default: '' },
-    clamped: { type: Boolean, default: false }
+    clamped: { type: Boolean, default: false },
+    showIcon: { type: Boolean, default: true }
   },
   computed: {
     classes() {
