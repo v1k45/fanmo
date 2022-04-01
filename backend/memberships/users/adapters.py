@@ -9,6 +9,9 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.http import HttpRequest
 from django.utils import timezone
 
+import random
+from .wordlist import adjectives, animals
+
 
 class AccountAdapter(DefaultAccountAdapter):
     def is_open_for_signup(self, request: HttpRequest):
@@ -21,9 +24,16 @@ class AccountAdapter(DefaultAccountAdapter):
         user_username(user, username)
 
     def save_user(self, request, user, form, commit=True):
-        user.name = form.cleaned_data.get("name", "")
+        user.name = form.cleaned_data.get("name")
+        if not user.name:
+            user.name = self.generate_name()
         user.is_creator = form.cleaned_data.get("is_creator", None)
         return super().save_user(request, user, form, commit)
+
+    def generate_name(self):
+        adjective = random.choice(adjectives)
+        animal = random.choice(animals)
+        return f"{adjective} {animal}"
 
     def send_confirmation_mail(self, request, email_device, signup):
         # do not send confirmation email immediately on signup

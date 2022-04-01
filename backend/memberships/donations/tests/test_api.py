@@ -10,6 +10,10 @@ class TestDonationAPI:
             "memberships.donations.models.razorpay_client.order.create",
             return_value={"id": "ord_123"},
         )
+        mocker.patch(
+            "memberships.users.adapters.AccountAdapter.generate_name",
+            return_value="confused racoon",
+        )
 
         response = api_client.post(
             "/api/donations/",
@@ -23,7 +27,7 @@ class TestDonationAPI:
         assert response.status_code == 201
         response_data = response.json()
         assert response_data["message"] == "Some fancy text goes here!"
-        assert response_data["fan_user"]["username"] == "fan"
+        assert response_data["fan_user"]["username"] == "confused_racoon"
         assert response_data["creator_user"]["username"] == creator_user.username
         assert response_data["amount"] == "100.00"
         assert response_data["payment"] == {
@@ -32,7 +36,7 @@ class TestDonationAPI:
                 "key": "rzp_test_key",
                 "order_id": "ord_123",
                 "name": creator_user.name,
-                "prefill": {"name": "fan", "email": "fan@example.com"},
+                "prefill": {"name": "confused racoon", "email": "fan@example.com"},
                 "notes": {"donation_id": response_data["id"]},
             },
             "is_required": True,

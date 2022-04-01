@@ -346,6 +346,10 @@ class TestMembershipFlow:
             "memberships.subscriptions.models.razorpay_client.subscription.create",
             return_value={"id": "sub_123"},
         )
+        mocker.patch(
+            "memberships.users.adapters.AccountAdapter.generate_name",
+            return_value="confused racoon",
+        )
 
         tier = creator_user.tiers.first()
         response = api_client.post(
@@ -372,7 +376,7 @@ class TestMembershipFlow:
                 "subscription_id": "sub_123",
                 "subscription_card_change": 0,
                 "name": f"{tier.name} - {creator_user.name}",
-                "prefill": {"name": "peter", "email": "peter@griffins.com"},
+                "prefill": {"name": "confused racoon", "email": "peter@griffins.com"},
                 "notes": {"subscription_id": membership.scheduled_subscription_id},
             },
             "is_required": True,
