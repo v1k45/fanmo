@@ -32,6 +32,19 @@ export const getters = {
       (get(rootState, 'auth.user.username') && get(state, 'user.username')) &&
       (rootState.auth.user.username === state.user.username)
     );
+  },
+  currentUserHasActiveSubscription(state, getters, rootState) {
+    if (!rootState.auth.loggedIn) return false; // unauthenticated
+    const currentMembership = (state.existingMemberships || [])[0];
+    if (!currentMembership || !currentMembership.is_active) return false;
+    return true;
+  },
+  currentUserHasActiveAndScheduledSubscription(state, getters, rootState) {
+    if (!getters.currentUserHasActiveSubscription) return false;
+    if (!rootState.auth.loggedIn) return false; // unauthenticated
+    const scheduledSubscription = state.existingMemberships[0].scheduled_subscription;
+    if (!scheduledSubscription || scheduledSubscription.status !== 'scheduled_to_activate') return false;
+    return true;
   }
 };
 
