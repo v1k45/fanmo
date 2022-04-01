@@ -1,6 +1,6 @@
 <template>
 <transition enter-active-class="animatecss-fadeIn" leave-to-class="animatecss-fadeOut" @after-leave="$emit('hidden')">
-  <div v-show="isVisible" class="fm-dialog fm-dialog--sm animatecss" :class="classes">
+  <div v-show="isVisible" class="fm-dialog animatecss" :class="classes">
     <div class="fm-dialog__backdrop" @click="closeOnBackdropClick ? close() : () => {}"></div>
     <transition enter-active-class="animatecss-zoomIn" leave-to-class="animatecss-zoomOut">
       <div v-show="isVisible" class="fm-dialog__container animatecss" :class="dialogClass">
