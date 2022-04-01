@@ -13,8 +13,12 @@
     </div>
     <!-- icon end -->
     <div>
-      <div v-if="title" class="fm-service-dialog__title">{{ title }}</div>
-      <div>{{ message }}</div>
+      <template v-if="title">
+        <div v-if="html" class="fm-service-dialog__title" v-html="title"></div>
+        <div v-else class="fm-service-dialog__title">{{ title }}</div>
+      </template>
+      <div v-if="html" v-html="message"></div>
+      <div v-else>{{ message }}</div>
     </div>
 
   </div>
@@ -35,6 +39,7 @@ export default {
     type: { type: String, default: '', validator: val => ['', 'info', 'warning', 'error', 'success'].includes(val) },
     title: { type: String, default: '' },
     message: { type: String, default: '' },
+    html: { type: Boolean, default: false },
 
     okButtonText: { type: String, default: 'OK' },
     cancelButtonText: { type: String, default: 'Cancel' }
