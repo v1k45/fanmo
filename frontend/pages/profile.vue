@@ -3,10 +3,24 @@
   <profile-above-the-tab></profile-above-the-tab>
 
   <div class="container">
-    <fm-tabs v-model="activeTab" class="mt-8">
-      <fm-tabs-pane :id="tabName.HOME" label="Home" class="grid grid-cols-12 gap-5 pb-10">
+      <fm-tabs-pane :id="tabName.POSTS" lazy label="Posts" class="grid grid-cols-12 gap-5 pb-10">
         <div class="col-span-12 md:col-span-7">
-          <fm-card body-class="bg-gray-100 text-gray-600" class="overflow-hidden">
+
+          <div class="mt-8">
+            <div class="flex flex-wrap items-center">
+              <h1 class="text-2xl font-bold mr-auto">Posts</h1>
+              <button v-if="$auth.loggedIn && user.username == $auth.user.username" class="mt-4 sm:mt-0 btn btn-wide btn-black" @click="isAddPostVisible = true;">
+                <IconPlus class="mr-1" :size="16"></IconPlus>
+                Add a post
+              </button>
+            </div>
+            <div v-if="posts && posts.count" class="mt-8">
+              <post v-for="post in posts.results" :key="post.id" :post="post" class="mb-6"></post>
+            </div>
+          </div>
+        </div>
+        <div class="col-span-12 md:col-span-5 h-full">
+          <fm-card body-class="bg-gray-100 text-gray-600" class="overflow-hidden sticky top-20">
             <fm-read-more v-if="user.about" lines="6" class="mb-4">
               <p v-html="user.about"></p>
             </fm-read-more>
@@ -28,6 +42,8 @@
               </a>
             </div>
           </fm-card>
+        </div>
+      </fm-tabs-pane>
 
           <div class="mt-8">
             <div class="flex flex-wrap items-center">
@@ -102,7 +118,7 @@ export default {
   },
   data() {
     const tabName = {
-      HOME: 'home',
+      POSTS: 'posts',
       TIERS: 'tiers',
       DONATIONS: 'donations'
     };
