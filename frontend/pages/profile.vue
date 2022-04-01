@@ -70,22 +70,14 @@
         </div>
       </fm-tabs-pane>
 
-      <fm-tabs-pane :id="tabName.TIERS" label="Memberships" class="row justify-center pb-10">
-        <tier
-          v-for="tier in user.tiers"
-          :key="tier.id"
-          :user="user"
-          :tier="tier"></tier>
-      </fm-tabs-pane>
-
-      <fm-tabs-pane :id="tabName.DONATIONS" label="Donations" class="row justify-end pb-10">
-        <div v-if="donations && donations.count" class="col-12 md:col-6">
+      <fm-tabs-pane :id="tabName.DONATION" lazy label="Donations" class="row max-w-6xl mx-auto bg-yellow-50 justify-end pb-10">
+        <div v-if="donations && donations.count" class="col-12 md:col-7">
           <div class="row justify-center">
             <donation v-for="donation in donations.results" :key="donation.id" :donation="donation">
             </donation>
           </div>
         </div>
-        <div class="col-12 md:col-6">
+        <div class="col-12 md:col-5">
           <div class="row justify-center">
             <donation-form :user="user" @donated="prependDonation"></donation-form>
           </div>
@@ -121,7 +113,7 @@ export default {
     const tabName = {
       POSTS: 'posts',
       TIERS: 'tiers',
-      DONATIONS: 'donations'
+      DONATION: 'donation'
     };
     return {
       tabName,
