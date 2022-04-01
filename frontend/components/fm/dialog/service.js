@@ -11,7 +11,7 @@ const destroyInstance = (instance) => {
   instance.$destroy();
 };
 
-const dialog = ({ dialogType, message, title, html, type }) => {
+const dialog = ({ dialogType, message, title, html, type, returnPromise = false }) => {
   const instance = new Dialog();
   const container = document.body;
 
@@ -22,6 +22,17 @@ const dialog = ({ dialogType, message, title, html, type }) => {
   instance.$on('closed', () => {
     destroyInstance(instance);
   });
+
+  if (returnPromise) {
+    const promise = new Promise((resolve, reject) => {
+      instance.$on('ok', () => resolve());
+      // eslint-disable-next-line prefer-promise-reject-errors
+      instance.$on('cancel', () => reject());
+      // eslint-disable-next-line prefer-promise-reject-errors
+      instance.$on('closed', () => reject());
+    });
+    return promise;
+  };
 
   return {
     close: () => {
@@ -48,8 +59,8 @@ alertService.error = (message, title, options = {}) => {
 };
 alertService.success = (message, title, options = {}) => dialog({ message, title, ...options, type: 'success', dialogType: 'alert' });
 
-export const confirmService = (message, title, options = {}) => dialog({ message, title, ...options, dialogType: 'confirm' });
-confirmService.info = (message, title, options = {}) => dialog({ message, title, ...options, type: 'info', dialogType: 'confirm' });
-confirmService.warning = (message, title, options = {}) => dialog({ message, title, ...options, type: 'warning', dialogType: 'confirm' });
-confirmService.error = (message, title, options = {}) => dialog({ message, title, ...options, type: 'error', dialogType: 'confirm' });
-confirmService.success = (message, title, options = {}) => dialog({ message, title, ...options, type: 'success', dialogType: 'confirm' });
+export const confirmService = (message, title, options = {}) => dialog({ message, title, ...options, returnPromise: true, dialogType: 'confirm' });
+confirmService.info = (message, title, options = {}) => dialog({ message, title, ...options, type: 'info', returnPromise: true, dialogType: 'confirm' });
+confirmService.warning = (message, title, options = {}) => dialog({ message, title, ...options, type: 'warning', returnPromise: true, dialogType: 'confirm' });
+confirmService.error = (message, title, options = {}) => dialog({ message, title, ...options, type: 'error', returnPromise: true, dialogType: 'confirm' });
+confirmService.success = (message, title, options = {}) => dialog({ message, title, ...options, type: 'success', returnPromise: true, dialogType: 'confirm' });

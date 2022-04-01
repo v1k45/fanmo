@@ -12,7 +12,7 @@ This folder contains `fm-` prefixed UI components.
 6. [ ] Image (handle responsive variants using srcset based on the response structure)
 7. [x] Read More
 9. [x] Dropdown (not Select input)
-10. [-] Confirm dialog
+10. [x] Confirm dialog
 11. [ ] Currency display
 12. [x] Input select
 13. [x] Input textarea
