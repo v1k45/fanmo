@@ -1,6 +1,6 @@
 <template>
 <div class="fm-tabs">
-  <div class="fm-tabs__header">
+  <div class="fm-tabs__header" :class="{ 'fm-tabs__header--centered': centered }">
     <div v-for="tab in tabs" :key="tab.id" class="fm-tabs__header-item" :class="{
       'fm-tabs__header-item--active': tab.id === localValue
     }" @click="localValue = tab.id;">
@@ -31,7 +31,8 @@ export default {
     };
   },
   props: {
-    value: { type: [String, Number], default: '' }
+    value: { type: [String, Number], default: '' },
+    centered: { type: Boolean, default: false }
   },
   data() {
     return {
@@ -51,7 +52,7 @@ export default {
   methods: {
     getTabs() {
       const tabPanes = this.$slots.default
-        .filter(compOrEl => get(compOrEl, 'componentInstance.$options.name') === 'FmTabsPane')
+        .filter(compOrEl => get(compOrEl, 'componentInstance.identity') === 'fm-tabs-pane')
         .map(comp => comp.componentInstance);
       this.tabs = tabPanes.map(tab => ({
         id: tab.$props.id,
@@ -68,6 +69,9 @@ export default {
 }
 .fm-tabs__header {
   @apply flex justify-center lg:justify-start max-w-full overflow-auto border-b;
+}
+.fm-tabs__header--centered {
+  @apply justify-center lg:justify-center;
 }
 .fm-tabs__header-item {
   @apply px-4 sm:px-6 py-3 font-medium text-gray-400 text-lg cursor-pointer hover:bg-gray-100 rounded-t-lg select-none;

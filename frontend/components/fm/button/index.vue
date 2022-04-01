@@ -1,10 +1,14 @@
 <template>
 <button :type="nativeType" class="fm-button" :class="classes" v-on="$listeners">
+  <div v-if="loading" class="fm-button__loading">
+    <icon-loader></icon-loader>
+  </div>
   <slot></slot>
 </button>
 </template>
 
 <script>
+import { Loader2 as IconLoader } from 'lucide-vue';
 
 const BUTTON_TYPE_CLASSNAME_MAP = {
   primary: 'fm-button--primary',
@@ -20,6 +24,9 @@ const BUTTON_SIZE_CLASSNAME_MAP = {
 };
 
 export default {
+  components: {
+    IconLoader
+  },
   props: {
     nativeType: { type: String, default: 'button' },
     type: {
@@ -28,14 +35,16 @@ export default {
       validator: val => !val || !!BUTTON_TYPE_CLASSNAME_MAP[val]
     },
     block: { type: Boolean, default: false },
-    size: { type: String, default: '', validator: val => !val || !!BUTTON_SIZE_CLASSNAME_MAP[val] }
+    size: { type: String, default: '', validator: val => !val || !!BUTTON_SIZE_CLASSNAME_MAP[val] },
+    loading: { type: Boolean, default: false }
   },
   computed: {
     classes() {
       return {
         [BUTTON_TYPE_CLASSNAME_MAP[this.type] || 'fm-button--default']: true,
         [BUTTON_SIZE_CLASSNAME_MAP[this.size] || '']: true,
-        'fm-button--block': this.block
+        'fm-button--block': this.block,
+        'fm-button--loading': this.loading
       };
     }
   }
@@ -43,7 +52,7 @@ export default {
 </script>
 <style lang="scss">
 .fm-button {
-  @apply px-8 py-3 text-sm leading-tight rounded-full transition duration-150 ease-in-out;
+  @apply px-8 py-3 text-sm leading-tight rounded-full transition duration-150 ease-in-out relative overflow-hidden;
   @apply active:scale-95;
   &:focus {
     @apply outline-2 outline-offset-2;
@@ -102,5 +111,16 @@ export default {
 
 .fm-button--lg {
   @apply py-3 text-base;
+}
+
+.fm-button--loading {
+  @apply opacity-60 pointer-events-none;
+}
+
+.fm-button__loading {
+  @apply absolute h-full w-full mr-2 bg-inherit left-0 top-0 flex items-center justify-center;
+  svg {
+    @apply animate-spin;
+  }
 }
 </style>

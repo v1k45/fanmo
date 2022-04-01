@@ -1,6 +1,6 @@
 <template>
 <transition enter-active-class="animatecss-fadeIn" leave-to-class="animatecss-fadeOut" @after-leave="$emit('hidden')">
-  <div v-show="isVisible" class="fm-dialog fm-dialog--sm animatecss" :class="classes">
+  <div v-show="isVisible" class="fm-dialog animatecss" :class="classes">
     <div class="fm-dialog__backdrop" @click="closeOnBackdropClick ? close() : () => {}"></div>
     <transition enter-active-class="animatecss-zoomIn" leave-to-class="animatecss-zoomOut">
       <div v-show="isVisible" class="fm-dialog__container animatecss" :class="dialogClass">
@@ -38,7 +38,8 @@ export default {
     fullscreen: { type: Boolean, default: false },
     alert: { type: Boolean, default: false },
     closeOnBackdropClick: { type: Boolean, default: true },
-    dialogClass: { type: String, default: '' }
+    dialogClass: { type: String, default: '' },
+    customWidth: { type: Boolean, default: false }
   },
   computed: {
     isVisible: {
@@ -50,11 +51,11 @@ export default {
       }
     },
     classes() {
-      const { fullscreen, alert } = this;
+      const { fullscreen, alert, customWidth } = this;
       return {
         'fm-dialog--alert': alert,
-        'fm-dialog--clamped': !fullscreen,
-        'fm-dialog--fullscreen': fullscreen
+        'fm-dialog--clamped': !customWidth && !fullscreen,
+        'fm-dialog--fullscreen': !customWidth && fullscreen
       };
     }
   },
@@ -74,7 +75,7 @@ export default {
   @apply absolute top-0 left-0 h-full w-full bg-black bg-opacity-50;
 }
 .fm-dialog__container {
-  @apply bg-white rounded-lg relative flex flex-col flex-grow overflow-hidden;
+  @apply bg-white rounded-lg relative flex flex-col flex-grow overflow-hidden max-h-[90vh];
   animation-duration: 200ms;
 }
 .fm-dialog__header {
@@ -92,17 +93,17 @@ export default {
 
 
 .fm-dialog--clamped .fm-dialog__container {
-  @apply max-w-xl max-h-[90vh];
+  @apply max-w-xl;
 }
 .fm-dialog--fullscreen .fm-dialog__container {
-  @apply w-full h-full rounded-none;
+  @apply w-full h-full rounded-none max-h-[unset];
 }
 
 
 .fm-dialog--alert {
   @apply items-center;
   .fm-dialog__container {
-    @apply w-[28rem] max-w-[90vw];
+    @apply flex-grow-0 w-[28rem] max-w-[90vw];
   }
 }
 

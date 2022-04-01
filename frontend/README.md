@@ -75,4 +75,4 @@ More information about the usage of this directory in [the documentation](https:
 - [ ] Toast fix width on phone
 - [ ] Sane width presets for dialog
 - [ ] Remove all faker imports
-
+- [ ] Login/Signup add loading to buttons

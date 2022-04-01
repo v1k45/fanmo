@@ -5,6 +5,7 @@ const Component = Vue.extend(Loader);
 
 const destroyInstance = instance => {
   const el = instance.$el;
+  if (!el || !el.parentNode) return;
   el.parentNode.removeChild(el);
   instance.$destroy();
 };
@@ -20,7 +21,8 @@ const bindUpdateHandler = (el, binding) => {
 
   // mount
   instance.vm = instance.$mount();
-  el.appendChild(instance.$el);
+  if (binding.modifiers.fullscreen) document.body.appendChild(instance.$el);
+  else el.appendChild(instance.$el);
 
   // store reference to destroy in unbind/update
   el.$loaderInstance = instance;

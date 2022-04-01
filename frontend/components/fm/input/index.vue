@@ -17,7 +17,7 @@
     <!-- otp input end -->
 
     <!-- rich input start -->
-    <template v-if="type === 'rich'">
+    <template v-else-if="type === 'rich'">
       <fm-editor ref="input" v-model="model" :preset="preset"></fm-editor>
     </template>
     <!-- rich input end -->
