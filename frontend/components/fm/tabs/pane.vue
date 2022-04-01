@@ -15,6 +15,7 @@ export default {
   },
   data() {
     return {
+      identity: 'fm-tabs-pane',
       wasActiveBefore: false
     };
   },

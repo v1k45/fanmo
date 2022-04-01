@@ -51,7 +51,7 @@ export default {
   methods: {
     getTabs() {
       const tabPanes = this.$slots.default
-        .filter(compOrEl => get(compOrEl, 'componentInstance.$options.name') === 'FmTabsPane')
+        .filter(compOrEl => get(compOrEl, 'componentInstance.identity') === 'fm-tabs-pane')
         .map(comp => comp.componentInstance);
       this.tabs = tabPanes.map(tab => ({
         id: tab.$props.id,
