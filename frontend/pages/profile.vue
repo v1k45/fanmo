@@ -3,6 +3,7 @@
   <profile-above-the-tab></profile-above-the-tab>
 
   <div class="container">
+    <fm-tabs v-model="activeTab" centered class="mt-8">
       <fm-tabs-pane :id="tabName.POSTS" lazy label="Posts" class="grid grid-cols-12 gap-5 pb-10">
         <div class="col-span-12 md:col-span-7">
 
