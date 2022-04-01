@@ -63,9 +63,8 @@ class DonationCreateSerializer(
             "fan_user",
             "creator_user",
             "amount",
-            "name",
             "message",
-            "is_anonymous",
+            "is_hidden",
             "payment",
             "created_at",
         ]
@@ -89,15 +88,14 @@ class DonationSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "fan_user",
-            "name",
             "message",
             "amount",
-            "is_anonymous",
+            "is_hidden",
             "status",
             "created_at",
         ]
 
     def get_fan_user(self, donation):
-        if donation.is_anonymous or donation.fan_user_id is None:
+        if donation.is_hidden or donation.fan_user_id is None:
             return None
         return UserPreviewSerializer(donation.fan_user, context=self.context).data

@@ -38,19 +38,6 @@
           <span class="label-text-alt">{{ error.message }}</span>
         </label>
 
-        <label class="label label-text">Name</label>
-        <input
-          v-model="form.name"
-          type="text"
-          class="input input-bordered"
-          :class="{ 'input-error': errors.name }"
-          placeholder="Anonymous">
-        <label
-          v-for="(error, index) in errors.name"
-          :key="index"
-          class="label">
-          <span class="label-text-alt">{{ error.message }}</span>
-        </label>
       </div>
 
       <!-- add email field to auto-register?  -->
@@ -101,9 +88,8 @@ export default {
         amount: this.user.preferences.minimum_amount,
         creator_username: this.user.username,
         email: '',
-        name: '',
         message: '',
-        is_anonymous: !this.$auth.loggedIn
+        is_hidden: false
       },
       errors: {}
     };

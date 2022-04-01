@@ -13,8 +13,7 @@ class DonationAdmin(SimpleHistoryAdmin):
         "updated_at",
         "creator_user",
         "fan_user",
-        "name",
-        "is_anonymous",
+        "is_hidden",
         "status",
         "amount",
     )
@@ -23,7 +22,7 @@ class DonationAdmin(SimpleHistoryAdmin):
         "updated_at",
         "fan_user",
         "creator_user",
-        "is_anonymous",
+        "is_hidden",
     )
     search_fields = ("name",)
     date_hierarchy = "created_at"

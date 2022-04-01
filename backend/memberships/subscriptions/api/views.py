@@ -44,7 +44,15 @@ class MembershipViewSet(
     def get_queryset(self):
         if self.request.user.is_anonymous:
             return Membership.objects.none()
+
         queryset = self.request.user.memberships.all().exclude(is_active__isnull=True)
+        if self.request.query_params.get("creator_username"):
+            queryset = queryset.filter(
+                creator_user__username__iexact=self.request.query_params[
+                    "creator_username"
+                ]
+            )
+
         return queryset.select_related(
             "fan_user",
             "creator_user",

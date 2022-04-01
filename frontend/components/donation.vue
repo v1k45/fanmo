@@ -14,8 +14,7 @@
           </div>
         </div>
         <div class="ml-3">
-          <div v-if="donation.is_anonymous || donation.fan_user == null" class="text-xl font-bold">{{ donation.name }}</div>
-          <div v-else class="text-xl font-bold">{{ donation.fan_user.username }}</div>
+          <div class="text-xl font-bold">{{ donation.fan_user.username }}</div>
           <div class="text-xs text-base-content text-opacity-40">{{ donation.created_at }}</div>
         </div>
       </div>

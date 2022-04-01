@@ -13,20 +13,19 @@ class Donation(BaseModel):
         FAILED = "failed"
         SUCCESSFUL = "successful"
 
-    fan_user = models.ForeignKey("users.User", on_delete=models.SET_NULL, null=True)
+    fan_user = models.ForeignKey("users.User", on_delete=models.CASCADE)
     creator_user = models.ForeignKey(
-        "users.User", on_delete=models.CASCADE, related_name="received_donations"
+        "users.User", on_delete=models.CASCADE, related_name="donations_received"
     )
 
-    name = models.CharField(max_length=30, blank=True)
     message = models.TextField(blank=True, max_length=500)
-    is_anonymous = models.BooleanField(default=False)
-
     status = FSMField(default=Status.PENDING, choices=Status.choices)
 
     amount = MoneyField(max_digits=7, decimal_places=2)
     external_id = models.CharField(max_length=255)
     history = HistoricalRecords()
+
+    is_hidden = models.BooleanField(default=False)
 
     def create_external(self):
         external_data = razorpay_client.order.create(

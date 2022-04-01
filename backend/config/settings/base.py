@@ -85,6 +85,7 @@ THIRD_PARTY_APPS = [
     "versatileimagefield",
     "django_q",
     "simple_history",
+    "django_filters",
 ]
 
 LOCAL_APPS = [
