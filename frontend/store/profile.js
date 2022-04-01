@@ -22,7 +22,8 @@ const HTTP_METHOD_AXIOS_MAP = {
 export const state = () => ({
   user: null,
   posts: null,
-  donations: null
+  donations: null,
+  existingMemberships: null
 });
 
 export const getters = {
@@ -90,11 +91,16 @@ export const actions = {
   async fetchProfileDonations({ dispatch }, username) {
     return await dispatch('fetch', { url: `/api/donations/?username=${username}`, mutation: 'setProfileDonations' });
   },
+  async fetchExistingMemberships({ dispatch }, username) {
+    return await dispatch('fetch', { url: `/api/memberships/?username=${username}`, mutation: 'setExistingMemberships' });
+  },
+
   async fetchProfile({ dispatch }, username) {
     const errors = await Promise.allSettled([
       dispatch('fetchProfileUser', username),
       dispatch('fetchProfilePosts', username),
-      dispatch('fetchProfileDonations', username)
+      dispatch('fetchProfileDonations', username),
+      dispatch('fetchExistingMemberships', username)
     ]);
     return errors.some(err => !!err) ? ERRORED : NO_ERROR;
   },
@@ -144,5 +150,8 @@ export const mutations = {
   },
   setProfileDonations(state, donations) {
     state.donations = donations;
+  },
+  setExistingMemberships(state, existingMemberships) {
+    state.existingMemberships = existingMemberships.results;
   }
 };
