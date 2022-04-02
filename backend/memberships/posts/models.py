@@ -22,12 +22,7 @@ class PostQuerySet(models.QuerySet):
                         author_user__members__fan_user_id=fan_user_id,
                         author_user__members__is_active=True,
                     ),
-                )
-            )
-            # Extract membership tier amount
-            .annotate(tier_amount=models.F("membership_tier__amount"))
-            # Determine access
-            .annotate(
+                ),
                 can_access=models.Case(
                     # Author can always access their own posts.
                     models.When(author_user_id=fan_user_id, then=True),
@@ -55,7 +50,7 @@ class PostQuerySet(models.QuerySet):
                     # ony members can interact with a post, even if the post is public
                     models.When(
                         visibility=self.model.Visiblity.PUBLIC,
-                        tier_amount__isnull=False,
+                        membership_tier__isnull=False,
                         then=True,
                     ),
                     models.When(
