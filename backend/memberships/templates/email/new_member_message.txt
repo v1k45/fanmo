@@ -1,0 +1,5 @@
+Hi {{ notification.obj.creator_user.display_name }},
+
+{{ notification.obj.fan_user.display_name }} joined {{ notification.obj.tier.name }}.
+
+If you wish to contact {{ notification.obj.fan_user.display_name }} directly, you can send an email on {{ notification.obj.fan_user.email }}.

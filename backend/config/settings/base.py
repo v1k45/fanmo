@@ -86,6 +86,8 @@ THIRD_PARTY_APPS = [
     "django_q",
     "simple_history",
     "django_filters",
+    "notifications",
+    # "anymail",
 ]
 
 LOCAL_APPS = [
@@ -93,6 +95,7 @@ LOCAL_APPS = [
     "memberships.subscriptions.apps.SubscriptionsConfig",
     "memberships.posts.apps.PostsConfig",
     "memberships.payments.apps.PaymentsConfig",
+    "memberships.core.apps.CoreConfig",
     "memberships.donations",
     "memberships.webhooks",
     "memberships.integrations",
@@ -250,7 +253,7 @@ EMAIL_BACKEND = env(
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-timeout
 EMAIL_TIMEOUT = 5
 DEFAULT_FROM_EMAIL = env(
-    "DJANGO_DEFAULT_FROM_EMAIL", default="Fanmo <noreply@fanmo.in>"
+    "DJANGO_DEFAULT_FROM_EMAIL", default="Fanmo.in <noreply@fanmo.in>"
 )
 # https://docs.djangoproject.com/en/dev/ref/settings/#server-email
 SERVER_EMAIL = env("DJANGO_SERVER_EMAIL", default=DEFAULT_FROM_EMAIL)

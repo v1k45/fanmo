@@ -1,7 +1,0 @@
-Hi {{ subscription.creator_user.display_name }},
-
-{{ subscription.fan_user.display_name }} subscribed {{ subscription.plan.amount }} per month.
-
-{% if subscription.tier %}{{ subscription.fan_user.display_name }} has been added to {{ subscription.tier.name }} tier.{% endif %}
-
-If you wish to contact them directly, you can email them on {{ subscription.fan_user.email }}.

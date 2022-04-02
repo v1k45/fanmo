@@ -1,0 +1,1 @@
+{{ notification.obj.fan_user.display_name }} became a member
