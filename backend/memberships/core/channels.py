@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.template.loader import render_to_string
 from notifications.channels import BaseNotificationChannel
 
@@ -7,11 +8,16 @@ class EmailNotificationChannel(BaseNotificationChannel):
     providers = ["console", "email"]
 
     def build_payload(self, provider):
-        return {
+        payload = {
             "to": [self.notification.recipient.email],
             "subject": self.get_subject(),
             "body": self.get_body(),
         }
+        if self.context.get("source_as_sender_name"):
+            email_label = self.notification.source.display_name
+            email_address = settings.DEFAULT_FROM_EMAIL_ADDRESS
+            payload["from_email"] = f"{email_label} {email_address}"
+        return payload
 
     def get_subject(self):
         return render_to_string(

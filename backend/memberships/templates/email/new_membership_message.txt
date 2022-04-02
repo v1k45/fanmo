@@ -1,0 +1,7 @@
+Hi {{ notification.obj.fan_user.display_name }},
+
+Your membership for {{ notification.obj.tier.name }} has been successfully activated.
+
+You'll be charged {{ notification.obj.active_subscription.plan.amount }} per month. Your membership will automatically renew on {{ notification.obj.active_subscription.cycle_end_at }}.
+
+{{ notification.obj.tier.welcome_message }}

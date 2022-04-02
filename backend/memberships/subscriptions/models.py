@@ -10,6 +10,7 @@ from simple_history.models import HistoricalRecords
 from versatileimagefield.fields import VersatileImageField
 
 from memberships.subscriptions.querysets import SubscriptionQuerySet
+from memberships.core.email import notify_new_membership
 from memberships.utils import razorpay_client
 from memberships.utils.models import BaseModel
 
@@ -156,6 +157,7 @@ class Membership(BaseModel):
         self.tier = self.active_subscription.plan.tier
         self.is_active = True
         self.save()
+        notify_new_membership(self)
 
 
 class Plan(BaseModel):
