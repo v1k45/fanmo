@@ -1,5 +1,0 @@
-Hi {{ donation.creator_user.display_name }},
-
-{{ donation.fan_user.display_name }} donated {{ donation.amount }}.
-
-{% if donation.message %}Message: {{ donation.message }}.{% endif %}

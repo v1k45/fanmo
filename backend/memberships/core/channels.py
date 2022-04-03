@@ -10,8 +10,8 @@ class EmailNotificationChannel(BaseNotificationChannel):
     def build_payload(self, provider):
         payload = {
             "to": [self.notification.recipient.email],
-            "subject": self.get_subject(),
-            "body": self.get_body(),
+            "subject": self.render_template("subject"),
+            "body": self.render_template("message"),
         }
         if self.context.get("source_as_sender_name"):
             email_label = self.notification.source.display_name
@@ -19,14 +19,9 @@ class EmailNotificationChannel(BaseNotificationChannel):
             payload["from_email"] = f"{email_label} {email_address}"
         return payload
 
-    def get_subject(self):
+    def render_template(self, suffix=None):
+        suffix = f"_{suffix}" if suffix else ""
         return render_to_string(
-            f"email/{self.notification.action}_subject.txt",
-            {"notification": self.notification},
-        ).strip()
-
-    def get_body(self):
-        return render_to_string(
-            f"email/{self.notification.action}_message.txt",
-            {"notification": self.notification},
+            f"email/{self.notification.action}{suffix}.txt",
+            {"notification": self.notification, "obj": self.notification.obj},
         ).strip()

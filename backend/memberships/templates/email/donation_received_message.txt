@@ -1,0 +1,11 @@
+Hi,
+
+{{ notification.obj.fan_user.display_name }} supported you by donating {{ donation.amount }}.
+
+{% if notification.obj.message %}{{ notification.obj.is_hidden|yesno:"Private Message,Message" }}:
+{{ notification.obj.message }}
+{% endif %}
+
+If you wish to contact {{ notification.obj.fan_user.display_name }} directly, you can send an email on {{ notification.obj.fan_user.email }}.
+
+You can also manage this donation by logging into your Fanmo Account.

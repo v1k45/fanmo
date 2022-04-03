@@ -9,6 +9,7 @@ from memberships.subscriptions.models import Subscription
 from memberships.utils import razorpay_client
 from memberships.utils.models import BaseModel
 from memberships.utils.money import deduct_platform_fee, money_from_sub_unit
+from memberships.core.email import notify_donation
 
 
 class Payment(BaseModel):
@@ -142,6 +143,7 @@ class Payment(BaseModel):
                 ),
             },
         )
+        notify_donation(donation)
         return payment
 
 

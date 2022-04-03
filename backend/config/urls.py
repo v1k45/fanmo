@@ -13,15 +13,20 @@ index_view = TemplateView.as_view(template_name="pages/home.html")
 urlpatterns = [
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
-    # Dummy routes.
     path("", index_view, name="home"),
+    # authentication
     path("login/", index_view, name="account_login"),
     path("logout/", index_view, name="account_logout"),
     path("signup/", index_view, name="account_signup"),
     path("login/facebook/", index_view, name="facebook_callback"),
     path("login/google/", index_view, name="google_callback"),
     path("reset/confirm/<uidb36>/<token>/", index_view, name="password_reset_confirm"),
-    path("confirm/<key>/", index_view, name="account_confirm_email"),
+    path("confirm/<key>", index_view, name="account_confirm_email"),
+    path("accept-invite/<key>", index_view, name="account_invite"),
+    # creator
+    path("<username>/support", index_view, name="creator_support"),
+    path("<username>/memberships", index_view, name="creator_memberships"),
+    path("<username>", index_view, name="creator_page"),
     # Your stuff: custom urls includes go here
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

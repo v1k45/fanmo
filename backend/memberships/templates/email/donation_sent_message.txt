@@ -1,0 +1,5 @@
+Hi,
+
+You have successfully sent {{ obj.amount }} to {{ obj.creator_user.display_name }} on Fanmo.
+
+You can also view it on {{ obj.creator_user.display_name }}'s page by clicking this link: https://put.link.here{% url 'creator_support' obj.creator_user.username %}
