@@ -121,7 +121,7 @@ class Payment(BaseModel):
 
         donation = Donation.objects.get(external_id=payload["razorpay_order_id"])
         razorpay_payment = razorpay_client.payment.capture(
-            donation.external_id,
+            payload["razorpay_payment_id"],
             donation.amount.get_amount_in_sub_unit(),
             {"currency": donation.amount.currency.code},
         )

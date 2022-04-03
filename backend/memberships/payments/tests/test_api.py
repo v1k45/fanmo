@@ -413,7 +413,7 @@ class TestDonationPaymentProcessingFlow:
 
         assert response.status_code == 201
         assert rzp_verify_mock.called
-        rzp_capture_mock.assert_called_once_with("ord_123", 100_00, {"currency": "INR"})
+        rzp_capture_mock.assert_called_once_with("pay_123", 100_00, {"currency": "INR"})
 
         unpaid_donation.refresh_from_db()
         assert unpaid_donation.status == Donation.Status.SUCCESSFUL

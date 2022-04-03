@@ -81,7 +81,7 @@ class DonationCreateSerializer(
 
 
 class DonationSerializer(serializers.ModelSerializer):
-    fan_user = serializers.SerializerMethodField()
+    fan_user = UserPreviewSerializer()
 
     class Meta:
         model = Donation
@@ -95,7 +95,9 @@ class DonationSerializer(serializers.ModelSerializer):
             "created_at",
         ]
 
-    def get_fan_user(self, donation):
-        if donation.is_hidden or donation.fan_user_id is None:
+    def get_message(self, donation):
+        request = self.context["request"]
+        if donation.is_hidden and request.user.pk not in (donation.creator_user_id, donation.fan_user_id):
             return None
-        return UserPreviewSerializer(donation.fan_user, context=self.context).data
+        return donation.message
+
