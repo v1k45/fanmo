@@ -32,7 +32,7 @@ def user() -> User:
 @pytest.fixture
 def creator_user() -> User:
     user = UserFactory(is_creator=True)
-    TierFactory(creator_user=user)
+    TierFactory(creator_user=user, welcome_message="Thanks!")
     BankAccountFactory(beneficiary_user=user)
     return user
 
@@ -71,7 +71,11 @@ def membership_with_scheduled_change(
 ) -> Membership:
     membership = active_membership
     # another subscription which is in scheduled state
-    tier = TierFactory(creator_user=creator_user, amount=Money("200", INR))
+    tier = TierFactory(
+        creator_user=creator_user,
+        amount=Money("200", INR),
+        welcome_message="Thanks from future!",
+    )
     plan = PlanFactory(
         tier=tier,
     )

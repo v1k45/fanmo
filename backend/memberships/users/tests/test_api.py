@@ -1,6 +1,7 @@
 import pytest
 
 from memberships.users.models import User
+from django.conf import settings
 
 pytestmark = pytest.mark.django_db
 
@@ -33,7 +34,12 @@ class TestAuthenticationFlow:
                 "instagram_url": "",
                 "twitter_url": "",
             },
-            "preferences": {"is_accepting_payments": True, "minimum_amount": "10.00"},
+            "preferences": {
+                "is_accepting_payments": True,
+                "minimum_amount": "10.00",
+                "donation_description": "",
+                "thank_you_message": settings.DEFAULT_THANK_YOU_MESSAGE,
+            },
             "onboarding": {
                 "full_name": "",
                 "introduction": "",
@@ -93,7 +99,12 @@ class TestAuthenticationFlow:
                 "instagram_url": "",
                 "twitter_url": "",
             },
-            "preferences": {"is_accepting_payments": True, "minimum_amount": "10.00"},
+            "preferences": {
+                "is_accepting_payments": True,
+                "minimum_amount": "10.00",
+                "donation_description": "",
+                "thank_you_message": settings.DEFAULT_THANK_YOU_MESSAGE,
+            },
             "onboarding": {
                 "full_name": "",
                 "introduction": "",
@@ -159,7 +170,12 @@ class TestMeAPI:
                 "instagram_url": "",
                 "twitter_url": "",
             },
-            "preferences": {"is_accepting_payments": True, "minimum_amount": "10.00"},
+            "preferences": {
+                "is_accepting_payments": True,
+                "minimum_amount": "10.00",
+                "donation_description": "",
+                "thank_you_message": settings.DEFAULT_THANK_YOU_MESSAGE,
+            },
             "onboarding": {
                 "full_name": "",
                 "introduction": "",
@@ -195,6 +211,8 @@ class TestMeAPI:
                 "preferences": {
                     "is_accepting_payments": True,
                     "minimum_amount": "100",
+                    "donation_description": "Hello world!",
+                    "thank_you_message": "thanksbro",
                 },
             },
             format="json",
@@ -213,6 +231,8 @@ class TestMeAPI:
         assert response_data["preferences"] == {
             "is_accepting_payments": True,
             "minimum_amount": "100.00",
+            "donation_description": "Hello world!",
+            "thank_you_message": "thanksbro",
         }
 
     def test_update_about_xss(self, user, api_client):
@@ -471,7 +491,12 @@ class TestUserAPI:
                 "instagram_url": "",
                 "twitter_url": "",
             },
-            "preferences": {"is_accepting_payments": True, "minimum_amount": "10.00"},
+            "preferences": {
+                "is_accepting_payments": True,
+                "minimum_amount": "10.00",
+                "donation_description": "",
+                "thank_you_message": settings.DEFAULT_THANK_YOU_MESSAGE,
+            },
             "is_creator": True,
             "follower_count": 0,
             "is_following": False,

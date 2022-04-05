@@ -1,3 +1,4 @@
+from functools import cached_property
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -50,9 +51,12 @@ class User(BaseModel, AbstractUser):
     def display_name(self):
         return self.name or self.username
 
+    @cached_property
     def can_accept_payments(self):
         return (
-            self.user_preferences.is_accepting_payments
+            self.is_creator
+            and self.user_onboarding.is_creator_approved
+            and self.user_preferences.is_accepting_payments
             and self.bank_accounts.filter(status=BankAccount.Status.LINKED).exists()
         )
 
@@ -105,6 +109,8 @@ class UserPreference(BaseModel):
     )
 
     is_accepting_payments = models.BooleanField(default=True)
+    donation_description = models.TextField(blank=True)
+    thank_you_message = models.TextField(default=settings.DEFAULT_THANK_YOU_MESSAGE)
     minimum_amount = MoneyField(
         max_digits=7, decimal_places=2, default=settings.MINIMUM_PAYMENT_AMOUNT
     )

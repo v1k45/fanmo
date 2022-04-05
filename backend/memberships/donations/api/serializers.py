@@ -97,7 +97,9 @@ class DonationSerializer(serializers.ModelSerializer):
 
     def get_message(self, donation):
         request = self.context["request"]
-        if donation.is_hidden and request.user.pk not in (donation.creator_user_id, donation.fan_user_id):
+        if donation.is_hidden and request.user.pk not in (
+            donation.creator_user_id,
+            donation.fan_user_id,
+        ):
             return None
         return donation.message
-

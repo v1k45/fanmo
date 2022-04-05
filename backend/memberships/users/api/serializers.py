@@ -68,7 +68,12 @@ class SocialLinkSerializer(serializers.ModelSerializer):
 class UserPreferenceSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserPreference
-        fields = ["is_accepting_payments", "minimum_amount"]
+        fields = [
+            "is_accepting_payments",
+            "minimum_amount",
+            "thank_you_message",
+            "donation_description",
+        ]
 
 
 class OnboardingChecklist(serializers.Serializer):
@@ -145,7 +150,6 @@ class PublicUserSerializer(serializers.ModelSerializer):
             "tiers",
             "social_links",
             "follower_count",
-            # TODO: REMOVE PREFERENCES!
             "preferences",
             "is_creator",
             "is_following",

@@ -40,10 +40,7 @@ class PaymentIntentSerializerMixin(serializers.ModelSerializer):
                 "Creator cannot be changed. Please create a separate membership.",
             )
 
-        if (
-            not creator_user.is_creator
-            or not creator_user.user_onboarding.is_creator_approved
-        ):
+        if not creator_user.can_accept_payments:
             raise serializers.ValidationError(
                 f"{creator_user.name} is currently not accepting payments.",
                 "creator_not_approved",

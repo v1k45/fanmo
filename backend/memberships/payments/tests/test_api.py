@@ -5,6 +5,7 @@ from memberships.payments.models import BankAccount, Payment
 from memberships.payments.tests.factories import BankAccountFactory
 from memberships.subscriptions.models import Subscription
 from dateutil.relativedelta import relativedelta
+from django.conf import settings
 
 
 pytestmark = pytest.mark.django_db
@@ -142,6 +143,7 @@ class TestSubscriptionPaymentProcessingFlow:
         )
 
         assert response.status_code == 201
+        assert response.json()["message"] == "Thanks!"
         assert rzp_verify_mock.called
 
         membership.refresh_from_db()
@@ -190,6 +192,7 @@ class TestSubscriptionPaymentProcessingFlow:
         )
 
         assert response.status_code == 201
+        assert response.json()["message"] == settings.DEFAULT_THANK_YOU_MESSAGE
         assert rzp_verify_mock.called
 
         membership = membership_with_scheduled_change
@@ -412,6 +415,8 @@ class TestDonationPaymentProcessingFlow:
         )
 
         assert response.status_code == 201
+        assert response.json()["message"] == settings.DEFAULT_THANK_YOU_MESSAGE
+
         assert rzp_verify_mock.called
         rzp_capture_mock.assert_called_once_with("pay_123", 100_00, {"currency": "INR"})
 

@@ -44,6 +44,7 @@ class PaymentProcessingSerializer(serializers.ModelSerializer):
     creator_user = UserPreviewSerializer(read_only=True)
     donation = DonationSerializer(read_only=True)
     subscription = SubscriptionSerializer(read_only=True)
+    message = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Payment
@@ -55,6 +56,7 @@ class PaymentProcessingSerializer(serializers.ModelSerializer):
             "subscription_id",
             "donation",
             "donation_id",
+            "message",
             "created_at",
             "processor",
             "type",
@@ -68,6 +70,14 @@ class PaymentProcessingSerializer(serializers.ModelSerializer):
             "donation",
             "created_at",
         ]
+
+    def get_message(self, payment):
+        if (
+            payment.type == Payment.Type.SUBSCRIPTION
+            and payment.subscription.status == Subscription.Status.ACTIVE
+        ):
+            return payment.subscription.plan.tier.welcome_message
+        return payment.creator_user.user_preferences.thank_you_message
 
     def validate(self, attrs):
         if attrs["type"] == Payment.Type.DONATION:
