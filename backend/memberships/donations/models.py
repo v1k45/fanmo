@@ -18,7 +18,7 @@ class Donation(BaseModel):
         "users.User", on_delete=models.CASCADE, related_name="donations_received"
     )
 
-    message = models.TextField(blank=True, max_length=500)
+    message = models.TextField(blank=True, max_length=3000)
     status = FSMField(default=Status.PENDING, choices=Status.choices)
 
     amount = MoneyField(max_digits=7, decimal_places=2)
