@@ -33,7 +33,7 @@ class AccountAdapter(DefaultAccountAdapter):
     def generate_name(self):
         adjective = random.choice(adjectives)
         animal = random.choice(animals)
-        return f"{adjective} {animal}"
+        return f"{adjective} {animal}".title()
 
     def send_confirmation_mail(self, request, email_device, signup):
         # do not send confirmation email immediately on signup
