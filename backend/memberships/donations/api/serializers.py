@@ -82,6 +82,7 @@ class DonationCreateSerializer(
 
 class DonationSerializer(serializers.ModelSerializer):
     fan_user = UserPreviewSerializer()
+    message = serializers.SerializerMethodField()
 
     class Meta:
         model = Donation
