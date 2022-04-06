@@ -104,3 +104,33 @@ class DonationSerializer(serializers.ModelSerializer):
         ):
             return None
         return donation.message
+
+
+class DonationUpdateSerializer(DonationSerializer):
+    class Meta:
+        model = Donation
+        fields = [
+            "id",
+            "fan_user",
+            "message",
+            "amount",
+            "is_hidden",
+            "status",
+            "created_at",
+        ]
+        read_only_fields = [
+            "id",
+            "fan_user",
+            "message",
+            "amount",
+            "status",
+            "created_at",
+        ]
+
+    def validate(self, attrs):
+        if self.context["request"].user != self.instance.creator_user:
+            raise serializers.ValidationError(
+                "You do not have permissions to perform this action.",
+                "permission_denied",
+            )
+        return attrs

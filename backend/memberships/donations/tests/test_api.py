@@ -1,5 +1,9 @@
 import pytest
 
+from memberships.donations.models import Donation
+from decimal import Decimal
+from moneyed import Money, INR
+
 
 pytestmark = pytest.mark.django_db
 
@@ -74,3 +78,63 @@ class TestDonationAPI:
             },
             "is_required": True,
         }
+
+    def test_update_as_creator(self, api_client, creator_user, user):
+        donation = Donation.objects.create(
+            fan_user=user,
+            creator_user=creator_user,
+            amount=Money(Decimal("100"), INR),
+            message="Hello world!",
+            status=Donation.Status.SUCCESSFUL,
+        )
+        api_client.force_authenticate(creator_user)
+
+        response = api_client.patch(
+            f"/api/donations/{donation.id}/",
+            {
+                "message": "This change shouldn't reflect!",
+                "amount": "500",
+                "is_hidden": True,
+            },
+        )
+        assert response.status_code == 200
+        response_data = response.json()
+        assert response_data["message"] == "Hello world!"
+        assert response_data["amount"] == "100.00"
+        assert response_data["is_hidden"]
+
+        response = api_client.patch(
+            f"/api/donations/{donation.id}/",
+            {
+                "message": "This change shouldn't reflect!",
+                "amount": "500",
+                "is_hidden": False,
+            },
+        )
+        assert response.status_code == 200
+        response_data = response.json()
+        assert response_data["message"] == "Hello world!"
+        assert response_data["amount"] == "100.00"
+        assert not response_data["is_hidden"]
+
+    def test_update_as_fan(self, api_client, creator_user, user):
+        donation = Donation.objects.create(
+            fan_user=user,
+            creator_user=creator_user,
+            amount=Money(Decimal("100"), INR),
+            message="Hello world!",
+            status=Donation.Status.SUCCESSFUL,
+        )
+        api_client.force_authenticate(user)
+
+        response = api_client.patch(
+            f"/api/donations/{donation.id}/",
+            {
+                "message": "This change shouldn't reflect!",
+                "amount": "500",
+                "is_hidden": True,
+            },
+        )
+        assert response.status_code == 400
+        response_data = response.json()
+        assert response_data["non_field_errors"][0]["code"] == "permission_denied"
