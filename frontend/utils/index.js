@@ -1,3 +1,12 @@
+const currencyFormatter = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' });
+const currencyFormatterInteger = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0 });
+
+export const toCurrency = val => {
+  // Number constructor converts null, false, true, empty strings, etc. values to their corresponding numeric values, which we don't want.
+  if (!['string', 'number'].includes(typeof val) || val === '') return val;
+  return (val % 1 === 0 ? currencyFormatterInteger : currencyFormatter).format(val);
+};
+
 export const delay = (ms = 0) => new Promise(resolve => setTimeout(resolve, ms));
 export const skipOnboarding = {
   value: (userId) => { return localStorage.getItem(`onboarding:skipped:${userId}`) || false; },
