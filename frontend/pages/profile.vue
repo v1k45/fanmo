@@ -61,12 +61,24 @@
       </div>
     </fm-tabs-pane>
 
-      <fm-tabs-pane :id="tabName.DONATION" lazy label="Donations" class="row max-w-6xl mx-auto bg-yellow-50 justify-end pb-10">
-        <div v-if="donations && donations.count" class="col-12 md:col-7">
-          <div class="row justify-center">
-            <donation v-for="donation in donations.results" :key="donation.id" :donation="donation">
-            </donation>
+    <fm-tabs-pane :id="tabName.DONATION" lazy label="Donations" class="bg-gray-50 pb-10">
+      <div class="container">
+        <div class="row gx-0 lg:gx-4 max-w-6xl mx-auto justify-center">
+          <div v-if="donations && donations.length" class="col-12 order-2 lg:col-7 lg:order-1">
+            <hr class="mt-6 mb-8 lg:hidden">
+            <div class="text-xl font-bold mb-4">Recent donations</div>
+            <profile-donation
+              v-for="(donation, idx) in donations" :key="donation.id" :donation="donation"
+              :class="{ 'mb-4 lg:mb-6': idx !== donations.length - 1 }">
+            </profile-donation>
+            <div v-if="!donations.length" class="mt-8 text-gray-500">Nothing to see here yet.</div>
           </div>
+          <div class="col-12 order-1 mb-6 sm:col-10 md:col-8 lg:col-5 lg:order-2 lg:mb-0">
+            <donation-widget
+              ref="donationWidget" :user="user" :loading="donationLoading"
+              class="donation-card-sticky"
+              @donate-click="handleDonateClick">
+            </donation-widget>
           </div>
         </div>
       </div>
@@ -78,6 +90,7 @@
   <profile-express-checkout
     v-model="expressCheckout.isVisible"
     :tier="expressCheckout.tier"
+    :donation-data="expressCheckout.donationData"
     :support-type="expressCheckout.supportType"
     @submit="handleExpressCheckoutSubmit">
   </profile-express-checkout>
@@ -87,7 +100,8 @@
     v-model="paymentSuccess.isVisible"
     :tier="paymentSuccess.tier"
     :support-type="paymentSuccess.supportType"
-    :donation-amount="paymentSuccess.donationAmount"
+    :success-message="paymentSuccess.successMessage"
+    :donation-data="paymentSuccess.donationData"
     @dashboard-click="handlePaymentSuccessNext('dashboard')"
     @authenticated-next-click="handlePaymentSuccessNext('authenticated-next')"
     @unauthenticated-next-click="handlePaymentSuccessNext('unauthenticated-next')"
@@ -102,6 +116,9 @@ import {
 } from 'lucide-vue';
 import { mapActions, mapGetters, mapState } from 'vuex';
 import { loadRazorpay } from '~/utils';
+
+const MEMBERSHIP = 'membership';
+const DONATION = 'donation';
 
 export default {
   components: {
@@ -126,18 +143,22 @@ export default {
       activeTab: null,
       isAddPostVisible: false,
       isLoading: true, // NOT being used. Use it if profile loading becomes slow
+      donationFormErrors: null,
       expressCheckout: {
         isVisible: false,
         tier: null,
-        supportType: null
+        supportType: null,
+        donationData: null
       },
       paymentSuccess: {
         isVisible: false,
+        successMessage: null,
         tier: null,
-        donationAmount: null,
+        donationData: null,
         supportType: null
       },
-      loadingTierId: null
+      loadingTierId: null,
+      donationLoading: false
     };
   },
   async fetch() {
@@ -158,14 +179,16 @@ export default {
     loadRazorpay();
   },
   methods: {
-    ...mapActions('profile', ['fetchProfile', 'createOrGetMembership', 'processPayment']),
+    ...mapActions('profile', ['fetchProfile', 'createOrGetMembership', 'createDonation', 'processPayment']),
 
+    // logic is documented in createOrGetMembership
     async handleSubscribeClick(tier) {
       if (!this.$auth.loggedIn) {
         this.expressCheckout = {
           isVisible: true,
           tier,
-          supportType: 'membership'
+          supportType: 'membership',
+          donationData: null
         };
         return;
       }
@@ -197,47 +220,78 @@ export default {
       if (!membership) {
         this.paymentSuccess = {
           isVisible: true,
+          successMessage: 'Your membership level was scheduled to update. Changes will be reflected during the next subscription cycle.',
           tier,
-          donationAmount: null,
+          donationData: null,
           supportType: 'membership'
         };
         return;
       }
 
-      this.initiateRazorpayPayment(membership);
+      this.initiateRazorpayPayment(membership, MEMBERSHIP);
     },
 
-    handleExpressCheckoutSubmit(membership) {
+    async handleDonateClick(donationData) {
+      if (!this.$auth.loggedIn) {
+        this.expressCheckout = {
+          isVisible: true,
+          tier: null,
+          donationData,
+          supportType: 'donation'
+        };
+        return;
+      }
+
+      this.donationLoading = true;
+      const { success, data } = await this.createDonation(donationData);
+      if (!success) {
+        if (data.message) data.non_field_errors = data.message;
+        else if (data.amount) data.non_field_errors = data.amount;
+        this.$toast.error(data);
+        this.donationLoading = false;
+        return;
+      }
+      const donation = data;
+      this.initiateRazorpayPayment(donation, DONATION);
+    },
+
+    handleExpressCheckoutSubmit(membershipOrDonation) {
+      const type = this.expressCheckout.supportType;
       this.expressCheckout = {
         isVisible: false,
         tier: null,
-        supportType: null
+        supportType: null,
+        donationData: null
       };
-      this.initiateRazorpayPayment(membership);
+      this.initiateRazorpayPayment(membershipOrDonation, type);
     },
 
-    initiateRazorpayPayment(subscription) {
-      const paymentOptions = subscription.payment.payload;
+    initiateRazorpayPayment(donationOrSubscription, supportType) {
+      const paymentOptions = donationOrSubscription.payment.payload;
       // success
       paymentOptions.handler = async (paymentResponse) => {
         this.loadingTierId = null;
-        const err = await this.processPayment({ subscription, paymentResponse });
-        if (err) {
+        this.donationLoading = false;
+        const { error, response } = await this.processPayment({ donationOrSubscription, paymentResponse, supportType });
+        if (error) {
           // TODO: add a retry option to the dialog
-          this.$alert.error(err, 'Error');
+          this.$alert.error(response, 'Error');
           return;
         }
+        this.$refs.donationWidget.reset();
         this.paymentSuccess = {
           isVisible: true,
-          tier: subscription.tier,
-          donationAmount: null,
-          supportType: 'membership'
+          successMessage: response.message,
+          tier: supportType === MEMBERSHIP ? donationOrSubscription.tier : null,
+          donationData: supportType === DONATION ? donationOrSubscription : null,
+          supportType
         };
       };
       // cancel
       paymentOptions.modal = {
         ondismiss: () => {
           this.loadingTierId = null;
+          this.donationLoading = false;
         }
       };
       const rzp1 = new window.Razorpay(paymentOptions);
@@ -245,10 +299,9 @@ export default {
       // TODO: handle error in a more fancy way
       // failed
       rzp1.on('payment.failed', (response) => {
+        // response.error.description, response.error.reason
         this.loadingTierId = null;
-        // this.$alert.error(err);
-        // alert(response.error.description);
-        // alert(response.error.reason);
+        this.donationLoading = false;
       });
       rzp1.open();
     },
@@ -256,8 +309,9 @@ export default {
     handlePaymentSuccessNext(actionType) {
       this.paymentSuccess = {
         isVisible: false,
+        successMessage: null,
         tier: null,
-        donationAmount: null,
+        donationData: null,
         supportType: null
       };
       if (actionType === 'dashboard') this.$router.push('dashboard');
@@ -279,3 +333,13 @@ export default {
   }
 };
 </script>
+<style lang="scss">
+.donation-card-sticky {
+  @apply lg:sticky lg:top-20;
+}
+@media (max-height: 600px) {
+  .donation-card-sticky {
+    @apply lg:max-h-[75vh] lg:overflow-auto;
+  }
+}
+</style>
