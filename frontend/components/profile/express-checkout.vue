@@ -12,10 +12,12 @@
   <div class="mt-4 text-center text-black font-bold text-2xl">Support {{ user.name || user.username }}</div>
 
   <div v-if="supportType === 'membership'" class="text-center mt-1">
-    by joining <strong class="text-black">{{ tier.name }}</strong> for <strong class="text-black">₹{{ tier.amount }}</strong> per month.
+    by joining <strong class="text-black">{{ tier.name }}</strong> for
+    <strong class="text-black">{{ $currency(tier.amount) }}</strong> per month.
   </div>
-  <!-- TODO: remove hardcoded during implementation -->
-  <div v-else-if="supportType === 'donation'" class="text-center mt-1">with a one time payment of <strong class="text-black text-xl">₹45</strong></div>
+  <div v-else-if="supportType === 'donation'" class="text-center mt-1">
+    with a one time payment of <strong class="text-black text-xl">{{ $currency(donationData.amount) }}</strong>
+  </div>
   <!-- support {creator} & support-type end -->
 
   <!-- sign in options and email form start -->
@@ -64,6 +66,7 @@ export default {
   props: {
     value: { type: Boolean, default: true },
     tier: { type: Object, default: null },
+    donationData: { type: Object, default: null },
     supportType: { type: String, default: null, validator: val => ['membership', 'donation'].includes(val) }
   },
   data() {
@@ -94,23 +97,36 @@ export default {
     }
   },
   methods: {
-    ...mapActions('profile', ['fetchProfile', 'createOrGetMembership']),
+    ...mapActions('profile', ['fetchProfile', 'createOrGetMembership', 'createDonation']),
 
     async handleSubmit() {
       this.loading = true;
-      const { success, data } = await this.createOrGetMembership({
-        creator_username: this.user.username,
-        tier_id: this.tier.id,
-        email: this.email
-      });
-      this.loading = false;
-      if (!success) {
-        this.errors = data;
-        return;
+      if (this.supportType === 'membership') {
+        const { success, data } = await this.createOrGetMembership({
+          creator_username: this.user.username,
+          tier_id: this.tier.id,
+          email: this.email
+        });
+        if (!success) {
+          this.errors = data;
+          this.loading = false;
+          return;
+        }
+        this.$emit('submit', data); // membership
+      } else {
+        const { success, data } = await this.createDonation({
+          ...this.donationData,
+          email: this.email
+        });
+        if (!success) {
+          this.errors = data;
+          this.loading = false;
+          return;
+        }
+        this.$emit('submit', data); // donation
       }
+      this.loading = false;
       this.errors = {};
-      const membership = data;
-      this.$emit('submit', membership);
     }
   }
 };
