@@ -12,7 +12,7 @@
 
 
     <!-- actions icon start -->
-    <div v-if="isSelfProfile" class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
+    <div v-if="isSelfProfile" class="absolute z-10 left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2">
       <input v-show="false" ref="coverInput" type="file" accept="image/*" @change="handleCoverChange">
       <fm-dropdown>
         <button class="rounded-full bg-gray-300 hover:bg-gray-400 p-4" title="Cover picture options">
@@ -36,7 +36,7 @@
 
     <!-- avatar start -->
     <div
-      class="z-10 rounded-t-full p-1 bg-white border-1 lg:border-4 border-white flex-shrink-0 relative"
+      class="lg:z-10 rounded-t-full p-1 bg-white border-1 lg:border-2 border-white flex-shrink-0 relative"
       :class="{
         'lg:-mt-16': user.cover && !user.one_liner && !isSelfProfile,
         'lg:-mt-12': isSelfProfile || (user.cover && user.one_liner)
