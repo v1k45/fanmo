@@ -25,6 +25,6 @@ export default {
   @apply font-bold border-b px-6 py-3 text-xl;
 }
 .fm-card__body {
-  @apply px-6 py-4;
+  @apply px-4 sm:px-5 md:px-6 py-4;
 }
 </style>
