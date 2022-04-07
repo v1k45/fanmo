@@ -136,9 +136,9 @@ module.exports = {
         inherit: 'inherit',
         // TODO: update this eventually
         'fm-primary': { DEFAULT: colors.indigo['500'], ...colors.indigo },
-        'fm-success': { DEFAULT: colors.lime['500'], ...colors.lime }, // brandColors.success,
+        'fm-success': { DEFAULT: colors.emerald['500'], ...colors.emerald }, // brandColors.success,
         'fm-info': brandColors.info,
-        'fm-warning': brandColors.warning,
+        'fm-warning': { DEFAULT: colors.amber['500'], ...colors.amber }, // brandColors.warning,
         'fm-error': brandColors.error
       },
       fontFamily: {

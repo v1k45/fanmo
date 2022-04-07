@@ -1,5 +1,5 @@
 <template>
-<div v-show="isActive">
+<div v-show="isActive" class="pt-6">
   <slot v-if="(lazy && !wasActiveBefore) ? isActive : true"></slot>
 </div>
 </template>

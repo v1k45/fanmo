@@ -2,53 +2,52 @@
 <div v-if="user">
   <profile-above-the-tab></profile-above-the-tab>
 
-  <div class="container">
-    <fm-tabs v-model="activeTab" centered class="mt-8">
-      <fm-tabs-pane :id="tabName.POSTS" lazy label="Posts" class="grid grid-cols-12 gap-5 pb-10">
-        <div class="col-span-12 md:col-span-7">
+  <fm-tabs v-model="activeTab" centered class="mt-8">
+    <fm-tabs-pane :id="tabName.POSTS" lazy label="Posts" class="grid grid-cols-12 gap-5 pb-10 container">
+      <div class="col-span-12 md:col-span-7">
 
-          <div class="mt-8">
-            <div class="flex flex-wrap items-center">
-              <h1 class="text-2xl font-bold mr-auto">Posts</h1>
-              <button v-if="$auth.loggedIn && user.username == $auth.user.username" class="mt-4 sm:mt-0 btn btn-wide btn-black" @click="isAddPostVisible = true;">
-                <IconPlus class="mr-1" :size="16"></IconPlus>
-                Add a post
-              </button>
-            </div>
-            <div v-if="posts && posts.count" class="mt-8">
-              <post v-for="post in posts.results" :key="post.id" :post="post" class="mb-6"></post>
-            </div>
+        <div class="mt-8">
+          <div class="flex flex-wrap items-center">
+            <h1 class="text-2xl font-bold mr-auto">Posts</h1>
+            <button v-if="$auth.loggedIn && user.username == $auth.user.username" class="mt-4 sm:mt-0 btn btn-wide btn-black" @click="isAddPostVisible = true;">
+              <IconPlus class="mr-1" :size="16"></IconPlus>
+              Add a post
+            </button>
+          </div>
+          <div v-if="posts && posts.count" class="mt-8">
+            <post v-for="post in posts.results" :key="post.id" :post="post" class="mb-6"></post>
           </div>
         </div>
-        <div class="col-span-12 md:col-span-5 h-full">
-          <fm-card body-class="bg-gray-100 text-gray-600" class="overflow-hidden sticky top-20">
-            <fm-read-more v-if="user.about" lines="6" class="mb-4">
-              <p v-html="user.about"></p>
-            </fm-read-more>
-            <div class="flex justify-center space-x-4 text-gray-600">
-              <a v-if="user.social_links.website_url" class="unstyled hover:text-gray-800" title="Website" target="_blank" :href="user.social_links.website_url">
-                <icon-globe :size="24"></icon-globe>
-              </a>
-              <a v-if="user.social_links.twitter_url" class="unstyled hover:text-gray-800" title="Twitter" target="_blank" :href="user.social_links.twitter_url">
-                <icon-twitter :size="24"></icon-twitter>
-              </a>
-              <a v-if="user.social_links.youtube_url" class="unstyled hover:text-gray-800" title="Youtube" target="_blank" :href="user.social_links.youtube_url">
-                <icon-youtube :size="24"></icon-youtube>
-              </a>
-              <a v-if="user.social_links.instagram_url" class="unstyled hover:text-gray-800" title="Instagram" target="_blank" :href="user.social_links.instagram_url">
-                <icon-instagram :size="24"></icon-instagram>
-              </a>
-              <a v-if="user.social_links.facebook_url" class="unstyled hover:text-gray-800" title="Facebook" target="_blank" :href="user.social_links.facebook_url">
-                <icon-facebook :size="24"></icon-facebook>
-              </a>
-            </div>
-          </fm-card>
-        </div>
-      </fm-tabs-pane>
+      </div>
+      <div class="col-span-12 md:col-span-5 h-full">
+        <fm-card body-class="bg-gray-100 text-gray-600" class="overflow-hidden sticky top-20">
+          <fm-read-more v-if="user.about" lines="6" class="mb-4">
+            <p v-html="user.about"></p>
+          </fm-read-more>
+          <div class="flex justify-center space-x-4 text-gray-600">
+            <a v-if="user.social_links.website_url" class="unstyled hover:text-gray-800" title="Website" target="_blank" :href="user.social_links.website_url">
+              <icon-globe :size="24"></icon-globe>
+            </a>
+            <a v-if="user.social_links.twitter_url" class="unstyled hover:text-gray-800" title="Twitter" target="_blank" :href="user.social_links.twitter_url">
+              <icon-twitter :size="24"></icon-twitter>
+            </a>
+            <a v-if="user.social_links.youtube_url" class="unstyled hover:text-gray-800" title="Youtube" target="_blank" :href="user.social_links.youtube_url">
+              <icon-youtube :size="24"></icon-youtube>
+            </a>
+            <a v-if="user.social_links.instagram_url" class="unstyled hover:text-gray-800" title="Instagram" target="_blank" :href="user.social_links.instagram_url">
+              <icon-instagram :size="24"></icon-instagram>
+            </a>
+            <a v-if="user.social_links.facebook_url" class="unstyled hover:text-gray-800" title="Facebook" target="_blank" :href="user.social_links.facebook_url">
+              <icon-facebook :size="24"></icon-facebook>
+            </a>
+          </div>
+        </fm-card>
+      </div>
+    </fm-tabs-pane>
 
-      <fm-tabs-pane :id="tabName.TIERS" lazy label="Memberships" class="row justify-center pb-10">
-
-        <div class="max-w-6xl">
+    <fm-tabs-pane :id="tabName.TIERS" lazy label="Memberships" class="pb-10 bg-gray-50">
+      <div class="container">
+        <div class="max-w-6xl mx-auto">
           <div class="row justify-center mt-2 gy-4 px-4">
             <div v-for="tier in user.tiers" :key="tier.id" class="col-12 md:col-6 lg:col-4">
               <profile-tier-card
@@ -59,29 +58,39 @@
             </div>
           </div>
         </div>
-      </fm-tabs-pane>
+      </div>
+    </fm-tabs-pane>
 
-      <fm-tabs-pane :id="tabName.DONATION" lazy label="Donations" class="row max-w-6xl mx-auto bg-yellow-50 justify-end pb-10">
-        <div v-if="donations && donations.count" class="col-12 md:col-7">
-          <div class="row justify-center">
-            <donation v-for="donation in donations.results" :key="donation.id" :donation="donation">
-            </donation>
+    <fm-tabs-pane :id="tabName.DONATION" lazy label="Donations" class="bg-gray-50 pb-10">
+      <div class="container">
+        <div class="row gx-0 lg:gx-4 max-w-6xl mx-auto justify-center">
+          <div v-if="donations && donations.length" class="col-12 order-2 lg:col-7 lg:order-1">
+            <hr class="mt-6 mb-8 lg:hidden">
+            <div class="text-xl font-bold mb-4">Recent donations</div>
+            <profile-donation
+              v-for="(donation, idx) in donations" :key="donation.id" :donation="donation"
+              :class="{ 'mb-4 lg:mb-6': idx !== donations.length - 1 }">
+            </profile-donation>
+            <div v-if="!donations.length" class="mt-8 text-gray-500">Nothing to see here yet.</div>
+          </div>
+          <div class="col-12 order-1 mb-6 sm:col-10 md:col-8 lg:col-5 lg:order-2 lg:mb-0">
+            <donation-widget
+              ref="donationWidget" :user="user" :loading="donationLoading"
+              class="donation-card-sticky"
+              @donate-click="handleDonateClick">
+            </donation-widget>
           </div>
         </div>
-        <div class="col-12 md:col-5">
-          <div class="row justify-center">
-            <donation-form :user="user" @donated="prependDonation"></donation-form>
-          </div>
-        </div>
-      </fm-tabs-pane>
-    </fm-tabs>
-  </div>
+      </div>
+    </fm-tabs-pane>
+  </fm-tabs>
 
 
   <add-post v-model="isAddPostVisible" @created="prependPost"></add-post>
   <profile-express-checkout
     v-model="expressCheckout.isVisible"
     :tier="expressCheckout.tier"
+    :donation-data="expressCheckout.donationData"
     :support-type="expressCheckout.supportType"
     @submit="handleExpressCheckoutSubmit">
   </profile-express-checkout>
@@ -91,7 +100,8 @@
     v-model="paymentSuccess.isVisible"
     :tier="paymentSuccess.tier"
     :support-type="paymentSuccess.supportType"
-    :donation-amount="paymentSuccess.donationAmount"
+    :success-message="paymentSuccess.successMessage"
+    :donation-data="paymentSuccess.donationData"
     @dashboard-click="handlePaymentSuccessNext('dashboard')"
     @authenticated-next-click="handlePaymentSuccessNext('authenticated-next')"
     @unauthenticated-next-click="handlePaymentSuccessNext('unauthenticated-next')"
@@ -106,6 +116,9 @@ import {
 } from 'lucide-vue';
 import { mapActions, mapGetters, mapState } from 'vuex';
 import { loadRazorpay } from '~/utils';
+
+const MEMBERSHIP = 'membership';
+const DONATION = 'donation';
 
 export default {
   components: {
@@ -130,18 +143,22 @@ export default {
       activeTab: null,
       isAddPostVisible: false,
       isLoading: true, // NOT being used. Use it if profile loading becomes slow
+      donationFormErrors: null,
       expressCheckout: {
         isVisible: false,
         tier: null,
-        supportType: null
+        supportType: null,
+        donationData: null
       },
       paymentSuccess: {
         isVisible: false,
+        successMessage: null,
         tier: null,
-        donationAmount: null,
+        donationData: null,
         supportType: null
       },
-      loadingTierId: null
+      loadingTierId: null,
+      donationLoading: false
     };
   },
   async fetch() {
@@ -162,14 +179,16 @@ export default {
     loadRazorpay();
   },
   methods: {
-    ...mapActions('profile', ['fetchProfile', 'createOrGetMembership', 'processPayment']),
+    ...mapActions('profile', ['fetchProfile', 'createOrGetMembership', 'createDonation', 'processPayment']),
 
+    // logic is documented in createOrGetMembership
     async handleSubscribeClick(tier) {
       if (!this.$auth.loggedIn) {
         this.expressCheckout = {
           isVisible: true,
           tier,
-          supportType: 'membership'
+          supportType: 'membership',
+          donationData: null
         };
         return;
       }
@@ -201,47 +220,78 @@ export default {
       if (!membership) {
         this.paymentSuccess = {
           isVisible: true,
+          successMessage: 'Your membership level was scheduled to update. Changes will be reflected during the next subscription cycle.',
           tier,
-          donationAmount: null,
+          donationData: null,
           supportType: 'membership'
         };
         return;
       }
 
-      this.initiateRazorpayPayment(membership);
+      this.initiateRazorpayPayment(membership, MEMBERSHIP);
     },
 
-    handleExpressCheckoutSubmit(membership) {
+    async handleDonateClick(donationData) {
+      if (!this.$auth.loggedIn) {
+        this.expressCheckout = {
+          isVisible: true,
+          tier: null,
+          donationData,
+          supportType: 'donation'
+        };
+        return;
+      }
+
+      this.donationLoading = true;
+      const { success, data } = await this.createDonation(donationData);
+      if (!success) {
+        if (data.message) data.non_field_errors = data.message;
+        else if (data.amount) data.non_field_errors = data.amount;
+        this.$toast.error(data);
+        this.donationLoading = false;
+        return;
+      }
+      const donation = data;
+      this.initiateRazorpayPayment(donation, DONATION);
+    },
+
+    handleExpressCheckoutSubmit(membershipOrDonation) {
+      const type = this.expressCheckout.supportType;
       this.expressCheckout = {
         isVisible: false,
         tier: null,
-        supportType: null
+        supportType: null,
+        donationData: null
       };
-      this.initiateRazorpayPayment(membership);
+      this.initiateRazorpayPayment(membershipOrDonation, type);
     },
 
-    initiateRazorpayPayment(subscription) {
-      const paymentOptions = subscription.payment.payload;
+    initiateRazorpayPayment(donationOrSubscription, supportType) {
+      const paymentOptions = donationOrSubscription.payment.payload;
       // success
       paymentOptions.handler = async (paymentResponse) => {
         this.loadingTierId = null;
-        const err = await this.processPayment({ subscription, paymentResponse });
-        if (err) {
+        this.donationLoading = false;
+        const { error, response } = await this.processPayment({ donationOrSubscription, paymentResponse, supportType });
+        if (error) {
           // TODO: add a retry option to the dialog
-          this.$alert.error(err, 'Error');
+          this.$alert.error(response, 'Error');
           return;
         }
+        this.$refs.donationWidget.reset();
         this.paymentSuccess = {
           isVisible: true,
-          tier: subscription.tier,
-          donationAmount: null,
-          supportType: 'membership'
+          successMessage: response.message,
+          tier: supportType === MEMBERSHIP ? donationOrSubscription.tier : null,
+          donationData: supportType === DONATION ? donationOrSubscription : null,
+          supportType
         };
       };
       // cancel
       paymentOptions.modal = {
         ondismiss: () => {
           this.loadingTierId = null;
+          this.donationLoading = false;
         }
       };
       const rzp1 = new window.Razorpay(paymentOptions);
@@ -249,10 +299,9 @@ export default {
       // TODO: handle error in a more fancy way
       // failed
       rzp1.on('payment.failed', (response) => {
+        // response.error.description, response.error.reason
         this.loadingTierId = null;
-        // this.$alert.error(err);
-        // alert(response.error.description);
-        // alert(response.error.reason);
+        this.donationLoading = false;
       });
       rzp1.open();
     },
@@ -260,8 +309,9 @@ export default {
     handlePaymentSuccessNext(actionType) {
       this.paymentSuccess = {
         isVisible: false,
+        successMessage: null,
         tier: null,
-        donationAmount: null,
+        donationData: null,
         supportType: null
       };
       if (actionType === 'dashboard') this.$router.push('dashboard');
@@ -283,3 +333,13 @@ export default {
   }
 };
 </script>
+<style lang="scss">
+.donation-card-sticky {
+  @apply lg:sticky lg:top-20;
+}
+@media (max-height: 600px) {
+  .donation-card-sticky {
+    @apply lg:max-h-[75vh] lg:overflow-auto;
+  }
+}
+</style>

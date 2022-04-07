@@ -94,6 +94,28 @@ export const actions = {
     }
   },
 
+  async updateGeneric({ commit }, { url, payload, method = 'post', handleAll = false }) {
+    try {
+      const response = await this.$axios[HTTP_METHOD_AXIOS_MAP[method]](url, payload);
+      return { error: NO_ERROR, response };
+    } catch (err) {
+      if (err.response.status >= 500) {
+        console.error(err);
+        toast.error("Internal server error. It's not you, it's us. Please try again in a minute.");
+      } else if (err.response.status >= 400) {
+        if (handleAll) toast.error(err.response.data);
+        else return { error: ERRORED, response: err.response.data };
+      } else if (get(err, 'response.data')) { // shouldn't come here
+        console.error(err);
+        toast.error(err.response.data);
+      } else {
+        console.error(err);
+        toast.error("We're sorry but an unknown error occurred. If this persists, please contact support.");
+      }
+      return { error: ERRORED, response: err.response.data };
+    }
+  },
+
   // GET
   async fetchProfileUser({ dispatch }, username) {
     return await dispatch('fetch', { url: `/api/users/${username}/`, mutation: 'setProfileUser' });
@@ -129,7 +151,20 @@ export const actions = {
     });
     if (err) return ERRORED;
     err = await dispatch('fetchProfileUser', state.user.username);
+    dispatch('refreshUser', null, { root: true });
     return !!err;
+  },
+
+  async updateDonation({ dispatch, state }, { id, payload }) {
+    const err = await dispatch('update', {
+      method: 'patch',
+      url: `/api/donations/${id}/`,
+      payload,
+      mutation: 'replaceDonation',
+      handleAll: true
+    });
+    if (err) return ERRORED;
+    return NO_ERROR;
   },
 
   // POST
@@ -165,7 +200,7 @@ export const actions = {
                                                    successful. Just show the success dialog as feedback.
    */
   // eslint-disable-next-line camelcase
-  async createOrGetMembership({ state, dispatch }, { creator_username, tier_id, email }) {
+  async createOrGetMembership({ state }, { creator_username, tier_id, email }) {
     let membership;
     try {
       const { existingMemberships } = state;
@@ -194,31 +229,51 @@ export const actions = {
     return { success: true, data: null };
   },
 
+  // eslint-disable-next-line camelcase
+  async createDonation({ state, dispatch }, { amount, creator_username, email, message, is_hidden }) {
+    let donation;
+    try {
+      donation = await this.$axios.$post('/api/donations/', { amount, creator_username, email, message, is_hidden });
+      return { success: true, data: donation };
+    } catch (err) {
+      console.error(err.response.data);
+      return { success: false, data: err.response.data };
+    }
+  },
+
   /*
    To be called with Razorpay's response after a payment is made by the user. Show success dialog as feedback if no error.
   */
-  async processPayment({ state, dispatch }, { subscription, paymentResponse }) {
-    let err = await dispatch('update', {
+  async processPayment({ state, dispatch }, { donationOrSubscription, paymentResponse, supportType }) {
+    // eslint-disable-next-line prefer-const
+    let { error, response } = await dispatch('updateGeneric', {
       url: '/api/payments/',
       payload: {
         processor: 'razorpay',
-        type: 'subscription',
-        subscription_id: subscription.id,
-        payload: paymentResponse
+        payload: paymentResponse,
+        ...(supportType === 'membership'
+          ? {
+              type: 'subscription',
+              subscription_id: donationOrSubscription.id
+            }
+          : {
+              type: 'donation',
+              donation_id: donationOrSubscription.id
+            })
       }
     });
-    if (err) {
-      if (typeof err !== 'object') err = {};
-      err.non_field_errors = [{
+    if (error) {
+      if (typeof response !== 'object') response = {};
+      response.non_field_errors = [{
         message: [
           'There was an error while processing the payment.',
           'If money was deducted from your account, it will be automatically refunded in 2 days.',
           'Feel free to contact us if you have any questions.'
         ].join(' ')
       }];
-      return err;
+      return { error, response };
     }
-    return NO_ERROR;
+    return { error, response };
   }
 };
 
@@ -231,9 +286,14 @@ export const mutations = {
     state.posts = posts;
   },
   setProfileDonations(state, donations) {
-    state.donations = donations;
+    state.donations = donations.results;
   },
   setExistingMemberships(state, existingMemberships) {
     state.existingMemberships = existingMemberships.results;
+  },
+  replaceDonation(state, donation) {
+    const idxToReplace = (state.donations || []).findIndex(currDonation => currDonation.id === donation.id);
+    if (idxToReplace < 0) return;
+    state.donations.splice(idxToReplace, 1, donation);
   }
 };

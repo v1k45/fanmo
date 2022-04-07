@@ -62,11 +62,11 @@
   <div class="row row-cols-5 g-4">
     <div v-for="user in creators.results" :key="user.id">
       <nuxt-link :to="`/${user.username}`" class="flex flex-col border items-center shadow-md bg-white rounded-lg p-8 hover:scale-105 transition-transform transform">
-        <div class="avatar">
-          <div class="w-24 h-24 border rounded-full">
-            <img v-if="user.avatar" :src="user.avatar.medium">
-          </div>
-        </div>
+        <fm-avatar
+          :src="user.avatar && user.avatar.medium"
+          :name="user.name" :username="user.username"
+          size="h-24 w-24">
+        </fm-avatar>
         <div class="mt-2">{{ user.username }}</div>
       </nuxt-link>
     </div>

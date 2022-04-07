@@ -1,6 +1,6 @@
 <template>
 <div>
-  <slot v-bind="slotProps"></slot>
+  <slot v-bind="{ ...slotProps, show, hide }"></slot>
 </div>
 </template>
 
@@ -13,13 +13,11 @@ const registerClickOutside = function(el) {
       el.dispatchEvent(new MouseEvent('click-outside', event));
     }
   };
-  document.body.addEventListener('mouseup', el.clickOutsideEvent);
-  document.body.addEventListener('touchend', el.clickOutsideEvent);
+  document.body.addEventListener('pointerup', el.clickOutsideEvent);
 };
 
 const unregisterClickOutside = function(el) {
-  document.body.removeEventListener('mouseup', el.clickOutsideEvent);
-  document.body.removeEventListener('touchend', el.clickOutsideEvent);
+  document.body.removeEventListener('pointerup', el.clickOutsideEvent);
   delete el.clickOutsideEvent;
 };
 
@@ -91,10 +89,11 @@ export default {
 
       const showEvents = ['focus'];
       const hideEvents = ['blur'];
+      let useClickOutside = false;
       if (this.toggleOnClick) {
-        registerClickOutside(reference);
+        registerClickOutside(this.$el);
         showEvents.push('click');
-        hideEvents.push('click-outside');
+        useClickOutside = true;
       } else {
         showEvents.push('mouseenter');
         hideEvents.push('mouseleave');
@@ -110,6 +109,10 @@ export default {
         reference.addEventListener(event, () => {
           this.slotProps.isVisible = false;
         });
+      });
+
+      if (useClickOutside) this.$el.addEventListener('click-outside', () => {
+        this.slotProps.isVisible = false;
       });
     },
 
@@ -151,8 +154,7 @@ export default {
 
     destroy() {
       if (!this.popper) return;
-      const { reference } = this.getElements();
-      if (reference) unregisterClickOutside(reference);
+      if (this.$el) unregisterClickOutside(this.$el);
       this.popper.destroy();
     }
   }
