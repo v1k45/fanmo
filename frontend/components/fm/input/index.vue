@@ -7,6 +7,8 @@
   </label>
   <!-- label end -->
 
+  <slot name="after-label"></slot>
+
   <!-- field start -->
   <div class="relative">
 
