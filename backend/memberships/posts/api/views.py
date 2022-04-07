@@ -23,7 +23,7 @@ class PostViewSet(
     def get_queryset(self):
         queryset = super().get_queryset()
         queryset = queryset.select_related("content", "author_user").prefetch_related(
-            "reactions"
+            "reactions", "allowed_tiers"
         )
 
         username = self.request.query_params.get("username")
