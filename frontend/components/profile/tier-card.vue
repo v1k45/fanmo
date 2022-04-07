@@ -1,5 +1,11 @@
 <template>
-<div class="border border-gray-300 rounded-xl overflow-hidden relative" :class="{ 'min-h-[350px]': !hasGoodEnoughContent, 'border-2 border-fm-success-600': tier.is_recommended }">
+<div
+  class="border bg-white border-gray-300 rounded-xl overflow-hidden relative"
+  :class="{
+    'min-h-[350px]': !hasGoodEnoughContent,
+    'border-4 border-fm-success-600': tier.is_recommended,
+    'border-2': !tier.is_recommended
+  }">
 
   <!-- cover start -->
   <figure v-if="tier.cover" class="w-full h-36 relative">
@@ -43,7 +49,7 @@
       <fm-button v-else type="primary" class="w-48" :loading="loading" @click="$emit('subscribe-click')">Join</fm-button>
     </div>
 
-    <fm-read-more-height max-height="175" class="mt-4">
+    <fm-read-more-height max-height="200" class="mt-4">
       <div>{{ tier.description }}</div>
 
       <div class="mt-4">
