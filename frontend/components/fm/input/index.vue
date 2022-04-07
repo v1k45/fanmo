@@ -69,7 +69,8 @@
 
     <!-- textarea start -->
     <template v-else-if="type === 'textarea'">
-      <textarea ref="input" v-model="model" class="fm-input__input" v-bind="$attrs"></textarea>
+      <!-- TODO: forward event listeners to other inputs eventually as the need arises -->
+      <textarea ref="input" v-model="model" class="fm-input__input" v-bind="$attrs" v-on="listeners"></textarea>
     </template>
     <!-- textarea end -->
 
@@ -132,6 +133,14 @@ export default {
       set(val) {
         this.$emit('input', val);
       }
+    },
+    listeners() {
+      const RESERVED_EVENTS = ['input'];
+      const listeners = { ...this.$listeners };
+      RESERVED_EVENTS.forEach(evt => {
+        delete listeners[evt];
+      });
+      return listeners;
     },
     computedError() {
       if (this.error) return this.error;
