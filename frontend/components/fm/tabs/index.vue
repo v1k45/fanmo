@@ -75,6 +75,7 @@ export default {
 }
 .fm-tabs__header-item {
   @apply px-4 sm:px-6 py-3 font-medium text-gray-400 text-lg cursor-pointer hover:bg-gray-100 rounded-t-lg select-none;
+  @apply basis-0 flex-grow md:flex-grow-0 md:basis-auto text-center;
 }
 .fm-tabs__header-item--active {
   @apply relative text-black cursor-default hover:bg-inherit;
@@ -82,8 +83,5 @@ export default {
     content: '';
     @apply absolute left-0 bottom-0 w-full h-1 bg-fm-success;
   }
-}
-.fm-tabs__content {
-  @apply pt-6;
 }
 </style>
