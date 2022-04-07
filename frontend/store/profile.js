@@ -129,6 +129,7 @@ export const actions = {
     });
     if (err) return ERRORED;
     err = await dispatch('fetchProfileUser', state.user.username);
+    dispatch('refreshUser', null, { root: true });
     return !!err;
   },
 
