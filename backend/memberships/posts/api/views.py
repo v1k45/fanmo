@@ -10,7 +10,7 @@ from memberships.posts.api.serializers import (
     PostReactionSerializer,
     PostSerializer,
 )
-from memberships.posts.models import Comment, Post, Reaction
+from memberships.posts.models import Comment, Post, annotate_post_permissions
 
 
 class PostViewSet(
@@ -21,27 +21,6 @@ class PostViewSet(
     queryset = Post.objects.filter(is_published=True)
 
     def get_queryset(self):
-        """
-        who can see posts?
-
-        public posts:
-            - everyone
-
-        supportor-only posts (non mvp):
-            - authenticated user has donated to the author
-            - gets 30 days access from last donation
-            - qs.filter(author__supporters__sender=self.request.user)
-            - qs.filter(author__supporters__created_at=self.request.user)
-
-        member-only posts (non mvp - covered by min-tier):
-            - authenticated user who has an active subscription with author
-            - qs.filter(author__subscriptions__subscriber=self.request.user)
-
-        min-tier posts:
-            - authenticated user who is an active member of minimum tier amount
-            - qs.filter(author__subscribers=self.request.user)
-            - qs.filter(author__subscribers__plan__amount__gte=F('minimum_tier_level__amount'))
-        """
         queryset = super().get_queryset()
         queryset = queryset.select_related("content", "author_user").prefetch_related(
             "reactions"
@@ -50,9 +29,15 @@ class PostViewSet(
         username = self.request.query_params.get("username")
         if username:
             queryset = queryset.filter(author_user__username=username)
+        return queryset
 
-        queryset = queryset.with_permissions(self.request.user)
-        return queryset.distinct()
+    def paginate_queryset(self, queryset):
+        object_list = super().paginate_queryset(queryset)
+        return annotate_post_permissions(object_list, self.request.user)
+
+    def get_object(self):
+        post = super().get_object()
+        return annotate_post_permissions([post], self.request.user)[0]
 
     def get_serializer_class(self):
         if self.action == "create":

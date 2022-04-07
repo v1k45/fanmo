@@ -6,67 +6,52 @@ from micawber.providers import bootstrap_oembed
 from micawber.exceptions import ProviderException
 from versatileimagefield.fields import VersatileImageField
 
-from memberships.subscriptions.models import Membership, Subscription, Tier
+from memberships.subscriptions.models import Membership
 from memberships.utils.models import BaseModel
 
 
-class PostQuerySet(models.QuerySet):
-    def with_permissions(self, fan_user):
-        fan_user_id = fan_user.pk
-        qs = (
-            # Find the active membership between post author and fan
-            self.annotate(
-                membership_tier=models.FilteredRelation(
-                    "author_user__members__tier",
-                    condition=models.Q(
-                        author_user__members__fan_user_id=fan_user_id,
-                        author_user__members__is_active=True,
-                    ),
-                ),
-                can_access=models.Case(
-                    # Author can always access their own posts.
-                    models.When(author_user_id=fan_user_id, then=True),
-                    # Everyone can access public posts.
-                    models.When(visibility=self.model.Visiblity.PUBLIC, then=True),
-                    # Everyone can access public posts.
-                    models.When(visibility=self.model.Visiblity.PUBLIC, then=True),
-                    # Only members can access "all member" content.
-                    models.When(
-                        visibility=self.model.Visiblity.ALL_MEMBERS,
-                        membership_tier__isnull=False,
-                        then=True,
-                    ),
-                    # Only members can members with certian tier can access "allowed tiers" content.
-                    models.When(
-                        visibility=self.model.Visiblity.ALLOWED_TIERS,
-                        allowed_tiers=models.F("membership_tier"),
-                        then=True,
-                    ),
-                    default=False,
-                    output_field=models.BooleanField(),
-                ),
-                can_comment=models.Case(
-                    models.When(author_user_id=fan_user_id, then=True),
-                    # ony members can interact with a post, even if the post is public
-                    models.When(
-                        visibility=self.model.Visiblity.PUBLIC,
-                        membership_tier__isnull=False,
-                        then=True,
-                    ),
-                    models.When(
-                        can_access=True,
-                        visibility__in=[
-                            self.model.Visiblity.ALL_MEMBERS,
-                            self.model.Visiblity.ALLOWED_TIERS,
-                        ],
-                        then=True,
-                    ),
-                    default=False,
-                    output_field=models.BooleanField(),
-                ),
-            )
+def annotate_post_permissions(object_list, fan_user):
+    """
+    Annotate `can_access` and `can_comment` attributes to post objects based on the fan user.
+    """
+    membership_map = {
+        membership.creator_user_id: membership.tier_id
+        for membership in Membership.objects.filter(
+            fan_user_id=fan_user.pk, is_active=True
         )
-        return qs
+    }
+
+    posts = []
+    for post in object_list:
+        subscribed_tier_id = membership_map.get(post.author_user_id)
+        # post authors can access and comment
+        if post.author_user_id == fan_user.pk:
+            can_access = True
+            can_comment = True
+        # public posts can be seen by anyone, but commented by members
+        elif post.visibility == Post.Visiblity.PUBLIC:
+            can_access = True
+            can_comment = subscribed_tier_id is not None
+        # member posts can be seen by members, and commented by members
+        elif post.visibility == Post.Visiblity.ALL_MEMBERS:
+            can_access = subscribed_tier_id is not None
+            can_comment = can_access
+        # select member posts can be seen select members, and commented by select members
+        elif post.visibility == Post.Visiblity.ALLOWED_TIERS:
+            can_access = any(
+                (tier.id == subscribed_tier_id for tier in post.allowed_tiers.all())
+            )
+            can_comment = can_access
+        else:
+            can_access = False
+            can_comment = False
+
+        post.can_access = can_access
+        post.can_comment = can_comment
+
+        posts.append(post)
+
+    return posts
 
 
 class Post(BaseModel):
@@ -87,8 +72,6 @@ class Post(BaseModel):
     allowed_tiers = models.ManyToManyField("subscriptions.Tier")
 
     is_published = models.BooleanField(default=True)
-
-    objects = PostQuerySet.as_manager()
 
 
 class Content(BaseModel):
