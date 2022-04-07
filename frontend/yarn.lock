@@ -3568,6 +3568,11 @@ daisyui@^1.14.2:
   resolved "https://registry.yarnpkg.com/daisyui/-/daisyui-1.19.0.tgz#fb8c1c1b45f093e539ad1651756f6fffee8f2e43"
   integrity sha512-SaKe2acN734KVtrrCvxXFnrl1BOQzXqQybHbUZnXz3kK5h903mK/kKHWx+423Y03+DikWJbuGYWgcYHTQk3dwQ==
 
+dayjs@^1.11.0:
+  version "1.11.0"
+  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.11.0.tgz#009bf7ef2e2ea2d5db2e6583d2d39a4b5061e805"
+  integrity sha512-JLC809s6Y948/FuCZPm5IX8rRhQwOiyMb2TfVVQEixG7P8Lm/gt5S7yoQZmC8x1UehI9Pb7sksEt4xx14m+7Ug==
+
 de-indent@^1.0.2:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/de-indent/-/de-indent-1.0.2.tgz#b2038e846dc33baa5796128d0804b455b8c1e21d"
