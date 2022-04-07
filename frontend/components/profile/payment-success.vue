@@ -8,21 +8,19 @@
   <!-- creator's avatar end -->
 
   <!-- support {creator} & support-type success start -->
-  <div class="mt-4 text-black font-bold text-xl flex justify-center">
-    <div class="mr-3">
+  <div class="mt-4 text-black font-bold text-xl text-center">
+    <span class="mr-2">
       <icon-check-circle class="inline-block text-fm-success h-7 w-7 stroke-[3]"></icon-check-circle>
-    </div>
-    <div v-if="supportType === 'membership'">
+    </span>
+    <span v-if="supportType === 'membership'">
       You have successfully joined <span class="text-fm-primary">{{ tier.name }}</span>.
-    </div>
-    <!-- TODO: hook donationAmount -->
-    <div v-else-if="supportType === 'donation'">
-      Your one-time payment of <span class="text-fm-primary">₹{{ donationAmount }}</span> was successful.
-    </div>
+    </span>
+    <span v-else-if="supportType === 'donation'">
+      Your one-time payment of <span class="text-fm-primary">{{ $currency(donationData.amount) }}</span> was successful.
+    </span>
   </div>
 
-  <!-- TODO: set welcomeMessage -->
-  <div class="mt-4 text-center whitespace-pre-line">{{ 'Thanks, man!' || welcomeMessage }}</div>
+  <div class="mt-4 text-center whitespace-pre-line">{{ successMessage }}</div>
   <!-- support {creator} & support-type success end -->
 
   <!-- buttons start -->
@@ -61,7 +59,8 @@ export default {
   props: {
     value: { type: Boolean, default: true },
     tier: { type: Object, default: null },
-    donationAmount: { type: Number, default: null },
+    successMessage: { type: String, default: null },
+    donationData: { type: Object, default: null },
     supportType: { type: String, default: 'membership', validator: val => ['membership', 'donation'].includes(val) }
   },
   data() {
