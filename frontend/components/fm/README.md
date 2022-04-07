@@ -8,7 +8,7 @@ This folder contains `fm-` prefixed UI components.
 2. [x] Text input
 3. [x] Password input
 4. [x] Button
-5. [ ] Avatar
+5. [x] Avatar with initials support
 6. [ ] Image (handle responsive variants using srcset based on the response structure)
 7. [x] Read More
 9. [x] Dropdown (not Select input)
