@@ -7,8 +7,6 @@
 
   <div class="max-w-sm mx-auto">
 
-    <fm-alert v-if="sent" type="success" class="mt-4">Password reset instructions were sent to your email.</fm-alert>
-
     <fm-form :errors="errors" class="mt-8" @submit.prevent="resetPassword">
 
       <fm-input v-model="form.email" uid="email" type="email" placeholder="Email address" required autofocus></fm-input>
@@ -27,7 +25,6 @@
 
 <script>
 const initialState = () => ({
-  sent: false,
   form: {
     email: ''
   },
@@ -47,12 +44,10 @@ export default {
       try {
         await this.$axios.$post('/api/auth/password/reset/', this.form);
         const email = this.form.email;
-        this.sent = true;
         this.form.email = '';
         this.errors = {};
-        setTimeout(() => {
-          this.$router.push({ name: 'set-password', query: { email } });
-        }, 3000);
+        this.$toast.success('Password reset instructions were sent to your email.');
+        this.$router.push({ name: 'set-password', query: { email } });
       } catch (err) {
         this.errors = err.response.data;
       }
