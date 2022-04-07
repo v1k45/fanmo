@@ -75,7 +75,13 @@
 
     <!-- default input start -->
     <template v-else>
-      <input ref="input" v-model="model" v-bind="$attrs" :type="type" class="fm-input__input">
+      <div v-if="$slots.prepend" class="flex">
+        <div class="fm-input__prepend">
+          <slot name="prepend"></slot>
+        </div>
+        <input ref="input" v-model="model" v-bind="$attrs" :type="type" class="fm-input__input">
+      </div>
+      <input v-else ref="input" v-model="model" v-bind="$attrs" :type="type" class="fm-input__input">
     </template>
     <!-- default input end -->
 
@@ -200,15 +206,22 @@ export default {
   }
 }
 
+.fm-input__prepend {
+  @apply flex items-center px-5 rounded-l-lg bg-gray-100 border border-gray-300 border-r-0;
+  + .fm-input__input[type] {
+    @apply rounded-l-none;
+  }
+}
 
-.fm-input--vertical ~ .fm-input--vertical {
+
+.fm-input--vertical + .fm-input--vertical {
   @apply mt-6;
 }
 
 .fm-input--horizontal {
   @apply inline-block;
 
-  & ~ .fm-input--horizontal {
+  & + .fm-input--horizontal {
     @apply ml-6;
   }
 }
