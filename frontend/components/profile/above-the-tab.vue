@@ -41,11 +41,7 @@
         'lg:-mt-16': user.cover && !user.one_liner && !isSelfProfile,
         'lg:-mt-12': isSelfProfile || (user.cover && user.one_liner)
       }">
-      <div class="w-24 h-24 lg:w-32 lg:h-32 rounded-full relative overflow-hidden">
-        <img v-if="user.avatar" :src="user.avatar.medium" class="h-full w-full object-cover">
-        <img v-else src="~/assets/avatar-placeholder.png" class="h-full w-full object-cover">
-
-      </div>
+      <fm-avatar :src="user.avatar && user.avatar.medium" :name="user.name" :username="user.username" size="w-24 h-24 lg:w-32 lg:h-32"></fm-avatar>
 
       <!-- actions icon start -->
       <div v-if="isSelfProfile" class="absolute bottom-4 -right-2">

@@ -29,10 +29,11 @@
         }">
           <template v-if="$auth.loggedIn">
             <li class="flex items-center">
-              <div class="rounded-full overflow-hidden w-8 h-8">
-                <img v-if="$auth.user.avatar" :src="$auth.user.avatar.small" class="h-full w-full object-cover">
-                <img v-else src="~/assets/avatar-placeholder.png" class="h-full w-full object-cover">
-              </div>
+              <fm-avatar
+                :src="$auth.user.avatar && $auth.user.avatar.small"
+                :name="$auth.user.name" :username="$auth.user.username"
+                size="w-10 h-10">
+              </fm-avatar>
               <div class="ml-2">{{ $auth.user.username }}</div>
             </li>
             <li>
