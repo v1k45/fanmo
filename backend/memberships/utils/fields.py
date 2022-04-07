@@ -1,4 +1,5 @@
 from django_fsm import FSMFieldMixin
+from rest_framework import serializers
 from model_utils.fields import StatusField as ModelUtilsStatusField
 from versatileimagefield.serializers import (
     VersatileImageFieldSerializer as BaseVersatileImageFieldSerializer,
@@ -16,3 +17,11 @@ class VersatileImageFieldSerializer(BaseVersatileImageFieldSerializer):
 
     def to_representation(self, value):
         return super().to_representation(value) or None
+
+
+class FileField(serializers.FileField):
+    def to_representation(self, value):
+        data = super().to_representation(value)
+        if data:
+            return {"url": data}
+        return None

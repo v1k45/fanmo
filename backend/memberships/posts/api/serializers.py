@@ -1,23 +1,50 @@
-from collections import defaultdict
-
-from drf_extra_fields.fields import Base64ImageField
+from drf_extra_fields.fields import Base64ImageField, Base64FileField
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
-from memberships.posts.models import Comment, Content, Post, Reaction
+from memberships.posts.models import Comment, Content, ContentFile, Post, Reaction
 from memberships.users.api.serializers import UserPreviewSerializer
-from memberships.utils.fields import VersatileImageFieldSerializer
+from memberships.utils.fields import VersatileImageFieldSerializer, FileField
+
+
+class ContentFileSerializer(serializers.ModelSerializer):
+    image = VersatileImageFieldSerializer("post_image", read_only=True)
+    image_base64 = Base64ImageField(write_only=True, required=False, source="image")
+    attachment = FileField(read_only=True)
+    attachment_base64 = Base64FileField(write_only=True, required=False, source="file")
+
+    class Meta:
+        model = ContentFile
+        fields = ["type", "image", "image_base64", "attachment", "attachment_base64"]
+        read_only_files = ["image", "attachment"]
+
+    def validate(self, attrs):
+        if attrs["type"] == ContentFile.Type.IMAGE and "image" not in attrs:
+            raise serializers.ValidationError(
+                "Image field is required.", "invalid_file"
+            )
+        if attrs["type"] == ContentFile.Type.ATTACHMENT and "attachment" not in attrs:
+            raise serializers.ValidationError(
+                "Attachment field is required.", "invalid_file"
+            )
+        if "image" in attrs and "attachment" in attrs:
+            raise serializers.ValidationError(
+                "Only one of image or attachment can be submitted.", "invalid_file"
+            )
+        return super().validate(attrs)
 
 
 class ContentSerializer(serializers.ModelSerializer):
     image = VersatileImageFieldSerializer("post_image", read_only=True)
     image_base64 = Base64ImageField(write_only=True, required=False, source="image")
+    files = ContentFileSerializer(many=True, required=False)
 
     class Meta:
         model = Content
         fields = [
             "type",
             "text",
+            "files",
             "image",
             "image_base64",
             "link",
@@ -25,6 +52,45 @@ class ContentSerializer(serializers.ModelSerializer):
             "link_embed",
         ]
         read_only_fields = ["link_og", "link_embed", "image"]
+
+    def validate(self, attrs):
+        """
+        Validate content type with its actual content.
+        """
+        type = attrs["type"]
+        if type == Content.Type.TEXT and not attrs.get("text"):
+            raise serializers.ValidationError("Post content is required.")
+
+        if type == Content.Type.LINK and not attrs.get("link"):
+            raise serializers.ValidationError("Post link is required.")
+
+        if type == Content.Type.IMAGES:
+            if not attrs.get("files"):
+                raise serializers.ValidationError("Post files cannot be empty.")
+
+            all_files_are_images = all(
+                (
+                    content_file["type"] == ContentFile.Type.IMAGE
+                    for content_file in attrs["files"]
+                )
+            )
+            if not all_files_are_images:
+                raise serializers.ValidationError("All post files must be images.")
+
+        if type == Content.Type.ATTACHMENTS:
+            if not attrs.get("files"):
+                raise serializers.ValidationError("Post files cannot be empty.")
+
+            all_files_are_attachments = all(
+                (
+                    content_file["type"] == ContentFile.Type.ATTACHMENT
+                    for content_file in attrs["files"]
+                )
+            )
+            if not all_files_are_attachments:
+                raise serializers.ValidationError("All post files must be attachments.")
+
+        return super().validate(attrs)
 
 
 class PostReactionSummarySerializer(serializers.Serializer):
@@ -68,6 +134,7 @@ class PostSerializer(serializers.ModelSerializer):
     def is_create_action(self):
         return self.context["view"].action == "create"
 
+    @extend_schema_field(ContentSerializer())
     def get_content(self, post):
         if self.is_create_action or post.can_access:
             return ContentSerializer(post.content, context=self.context).data
@@ -125,8 +192,15 @@ class PostCreateSerializer(PostSerializer):
         pass
 
     def create(self, validated_data):
-        content: Content = Content.objects.create(**validated_data["content"])
+        content_payload = validated_data["content"]
+        files_payload = content_payload.pop("files", [])
+
+        content: Content = Content.objects.create(**content_payload)
         content.update_link_metadata()
+
+        # create each file separately so that the created_at time is consistent
+        for file_payload in files_payload:
+            ContentFile.objects.create(content=content, **file_payload)
 
         validated_data["content"] = content
         validated_data["author_user"] = self.context["request"].user

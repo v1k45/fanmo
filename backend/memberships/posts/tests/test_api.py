@@ -32,6 +32,7 @@ class TestPostAPIForAnonymousUsers:
             "type": "text",
             "text": "I've come to see you again.",
             "image": None,
+            "files": [],
             "link": "",
             "link_embed": None,
             "link_og": None,
@@ -59,6 +60,7 @@ class TestPostAPIForAnonymousUsers:
             "type": "text",
             "text": "I've come to see you again.",
             "image": None,
+            "files": [],
             "link": "",
             "link_embed": None,
             "link_og": None,
@@ -89,6 +91,7 @@ class TestPostAPIForAnonymousUsers:
             "type": "link",
             "text": "",
             "image": None,
+            "files": [],
             "link": "https://google.com/",
             "link_embed": {"hello": "world"},
             "link_og": {"world": "hello"},
@@ -418,3 +421,42 @@ class TestPostCreateAPI:
         assert data["content"]["link_embed"] is None
         assert data["content"]["link_og"] == {"og": "hello", "page": "world"}
         request_embed_mock.assert_called_with("https://google.com")
+
+    def test_create_images(self, creator_user, api_client):
+        api_client.force_authenticate(creator_user)
+
+        response = api_client.post(
+            "/api/posts/",
+            {
+                "title": "Episode #123 Script",
+                "content": {
+                    "type": "images",
+                    "text": "hello darkness my old friend",
+                    "files": [
+                        {
+                            # green.png
+                            "type": "image",
+                            "image_base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUGFdj0J0Y+B8ABA0CD2aRx64AAAAASUVORK5CYII=",
+                        },
+                        {
+                            # orange.png
+                            "type": "image",
+                            "image_base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAA1JREFUGFdjuD8x8D8ABtUCwenGWNgAAAAASUVORK5CYII=",
+                        },
+                    ],
+                },
+            },
+        )
+
+        assert response.status_code == 201
+        response_data = response.json()
+        files_data = response_data["content"]["files"]
+
+        assert len(files_data) == 2
+        assert files_data[0]["type"] == "image"
+        assert files_data[0]["image"] is not None
+        assert files_data[0]["attachment"] is None
+
+        assert files_data[1]["type"] == "image"
+        assert files_data[1]["image"] is not None
+        assert files_data[1]["attachment"] is None

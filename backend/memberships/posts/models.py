@@ -78,6 +78,8 @@ class Content(BaseModel):
     class Type(models.TextChoices):
         TEXT = "text"
         IMAGE = "image"
+        IMAGES = "images"
+        ATTACHMENTS = "attachments"
         LINK = "link"
 
     type = models.CharField(max_length=16, choices=Type.choices)
@@ -112,6 +114,19 @@ class Content(BaseModel):
             pass
 
         self.save()
+
+
+class ContentFile(BaseModel):
+    class Type(models.TextChoices):
+        IMAGE = "image"
+        ATTACHMENT = "attachment"
+
+    type = models.CharField(max_length=16, choices=Type.choices, default=Type.IMAGE)
+    content = models.ForeignKey(
+        "posts.Content", on_delete=models.CASCADE, related_name="files"
+    )
+    image = VersatileImageField(upload_to="uploads/content/", blank=True)
+    attachment = models.FileField(upload_to="uploads/content/", blank=True)
 
 
 class Comment(BaseModel):
