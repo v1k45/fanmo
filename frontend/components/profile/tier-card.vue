@@ -33,7 +33,7 @@
     <div class="text-center text-xl text-black font-bold truncate" :title="tier.name">{{ tier.name }}</div>
 
     <div class="text-center mt-2">
-      <span class="text-3xl font-bold text-black">₹{{ tier.amount }}</span>
+      <span class="text-3xl font-bold text-black">{{ $currency(tier.amount) }}</span>
       <span v-if="hasGoodEnoughContent" class="ml-0 text-sm">/ month</span>
       <div v-else class="mt-1 ml-0">per month</div>
     </div>
