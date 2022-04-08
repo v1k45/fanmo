@@ -2,7 +2,13 @@ from drf_extra_fields.fields import Base64ImageField, Base64FileField
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
-from memberships.posts.models import Comment, Content, ContentFile, Post, Reaction
+from memberships.posts.models import (
+    Comment,
+    Content,
+    ContentFile,
+    Post,
+    Reaction,
+)
 from memberships.users.api.serializers import UserPreviewSerializer
 from memberships.utils.fields import VersatileImageFieldSerializer, FileField
 
@@ -209,23 +215,41 @@ class PostCreateSerializer(PostSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     post_id = serializers.PrimaryKeyRelatedField(
-        source="post", queryset=Post.objects.all(), write_only=True
+        source="post", queryset=Post.objects.filter(is_published=True), write_only=True
+    )
+    parent_id = serializers.PrimaryKeyRelatedField(
+        source="parent",
+        queryset=Comment.objects.filter(is_published=True),
+        required=False,
+        allow_null=True,
+        write_only=True,
     )
     author_user = UserPreviewSerializer(read_only=True)
 
     class Meta:
         model = Comment
-        fields = ["id", "post_id", "body", "author_user"]
+        fields = ["id", "post_id", "parent_id", "body", "author_user", "children"]
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields["post_id"].queryset = Post.objects.filter(
-            is_published=True
-        ).with_permissions(self.context["request"].user)
+    def get_fields(self):
+        fields = super().get_fields()
+        fields["children"] = CommentSerializer(
+            many=True, read_only=True, source="get_children"
+        )
+        return fields
 
-    def validate_post(self, post):
+    def validate(self, attrs):
+        if attrs.get("parent") and attrs["parent"].post_id != attrs["post"].id:
+            raise serializers.ValidationError(
+                "Parent comment does not exists in the post."
+            )
+        return attrs
+
+    def validate_post_id(self, post):
+        post.annotate_permissions(self.context["request"].user)
         if not post.can_comment:
-            raise serializers.ValidationError("Only members can comment on this post.")
+            raise serializers.ValidationError(
+                "Only members can comment on this post.", "permission_denied"
+            )
         return post
 
     def create(self, validated_data):

@@ -3,6 +3,7 @@ from django.db.models import Q
 from rest_framework import mixins, permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from functools import lru_cache
 
 from memberships.posts.api.serializers import (
     CommentSerializer,
@@ -29,6 +30,9 @@ class PostViewSet(
         username = self.request.query_params.get("username")
         if username:
             queryset = queryset.filter(author_user__username=username)
+
+        if self.action == "destroy":
+            queryset = queryset.filter(author_user=self.request.user)
         return queryset
 
     def paginate_queryset(self, queryset):
@@ -37,7 +41,8 @@ class PostViewSet(
 
     def get_object(self):
         post = super().get_object()
-        return annotate_post_permissions([post], self.request.user)[0]
+        post.annotate_permissions(self.request.user)
+        return post
 
     def get_serializer_class(self):
         if self.action == "create":
@@ -72,13 +77,14 @@ class CommentViewSet(
     serializer_class = CommentSerializer
 
     def get_queryset(self):
-        base_qs = Comment.objects.filter(is_published=True)
-        # require post_id when listing comments.
+        base_qs = Comment.objects.filter(is_published=True).select_related(
+            "author_user"
+        )
         if self.action == "list":
-            post_id = self.request.query_params.get("post_id")
-            if post_id is not None:
-                return base_qs.filter(post_id=post_id)
-            raise ValidationError("post_id parameter is required.")
+            post = self.get_post()
+            if post.can_access:
+                return base_qs.filter(post=post).get_cached_trees()
+            return base_qs.none()
 
         # let comment and post authors delete the comment
         elif self.action == "destroy":
@@ -87,9 +93,20 @@ class CommentViewSet(
                 | Q(post__author_user=self.request.user)
             )
 
-        return super().get_queryset()
+        return base_qs
+
+    @lru_cache
+    def get_post(self):
+        try:
+            post: Post = Post.objects.get(
+                is_published=True, id=self.request.query_params.get("post_id")
+            )
+        except (Post.DoesNotExist, ValueError):
+            raise ValidationError("Invalid post_id.")
+
+        post.annotate_permissions(self.request.user)
+        return post
 
     def perform_destroy(self, instance):
-        # hard delete?
         instance.is_published = True
         instance.save()

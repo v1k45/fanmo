@@ -2,7 +2,7 @@ import pytest
 from decimal import Decimal
 from moneyed import Money, INR
 from micawber.exceptions import ProviderException
-from memberships.posts.models import Post, Content
+from memberships.posts.models import Post, Content, Comment
 from memberships.subscriptions.tests.factories import MembershipFactory, TierFactory
 
 pytestmark = pytest.mark.django_db
@@ -290,7 +290,7 @@ class TestPostAPIForUser:
         assert data["can_comment"]
 
 
-class TestPostCreateAPI:
+class TestPostCrudAPI:
     def test_create_public(self, creator_user, api_client):
         api_client.force_authenticate(creator_user)
 
@@ -460,3 +460,262 @@ class TestPostCreateAPI:
         assert files_data[1]["type"] == "image"
         assert files_data[1]["image"] is not None
         assert files_data[1]["attachment"] is None
+
+    def test_delete(self, api_client, creator_user, user):
+        post = Post.objects.create(
+            visibility=Post.Visiblity.PUBLIC,
+            author_user=creator_user,
+            content=Content.objects.create(type=Content.Type.TEXT, text="Hello world!"),
+        )
+
+        api_client.force_authenticate(user)
+        response = api_client.delete(f"/api/posts/{post.id}/")
+        assert response.status_code == 404
+
+        api_client.force_authenticate(creator_user)
+        response = api_client.delete(f"/api/posts/{post.id}/")
+        assert response.status_code == 204
+
+        response = api_client.delete(f"/api/posts/{post.id}/")
+        assert response.status_code == 404
+
+
+class TestCommentAPI:
+    def test_list_without_post_id(self, api_client):
+        response = api_client.get("/api/comments/")
+        assert response.status_code == 400
+
+    def test_list_with_post_id(self, api_client):
+        response = api_client.get("/api/comments/")
+        assert response.status_code == 400
+
+    def test_create_comment_anonymous(self, api_client, creator_user):
+        post = Post.objects.create(
+            visibility=Post.Visiblity.PUBLIC,
+            author_user=creator_user,
+            content=Content.objects.create(type=Content.Type.TEXT, text="Hello world!"),
+        )
+
+        response = api_client.post(
+            "/api/comments/",
+            {
+                "post_id": post.id,
+                "body": "nice pic, deer",
+            },
+        )
+        assert response.status_code == 403
+
+    def test_create_comment_non_member(self, api_client, creator_user, user):
+        post = Post.objects.create(
+            visibility=Post.Visiblity.PUBLIC,
+            author_user=creator_user,
+            content=Content.objects.create(type=Content.Type.TEXT, text="Hello world!"),
+        )
+
+        api_client.force_authenticate(user)
+        response = api_client.post(
+            "/api/comments/",
+            {
+                "post_id": post.id,
+                "body": "nice pic, deer",
+            },
+        )
+        assert response.status_code == 400
+        assert response.json()["post_id"][0]["code"] == "permission_denied"
+
+    def test_create_comment_by_author(self, api_client, creator_user):
+        post = Post.objects.create(
+            visibility=Post.Visiblity.PUBLIC,
+            author_user=creator_user,
+            content=Content.objects.create(type=Content.Type.TEXT, text="Hello world!"),
+        )
+
+        api_client.force_authenticate(creator_user)
+        response = api_client.post(
+            "/api/comments/",
+            {
+                "post_id": post.id,
+                "body": "nice pic, deer",
+            },
+        )
+        assert response.status_code == 201
+        response_data = response.json()
+
+        assert response_data["body"] == "nice pic, deer"
+        assert response_data["author_user"]["username"] == creator_user.username
+
+    def test_create_comment_member_on_public_post(self, api_client, active_membership):
+        post = Post.objects.create(
+            visibility=Post.Visiblity.PUBLIC,
+            author_user=active_membership.creator_user,
+            content=Content.objects.create(type=Content.Type.TEXT, text="Hello world!"),
+        )
+
+        api_client.force_authenticate(active_membership.fan_user)
+        response = api_client.post(
+            "/api/comments/",
+            {
+                "post_id": post.id,
+                "body": "nice pic, deer",
+            },
+        )
+        assert response.status_code == 201
+        response_data = response.json()
+
+        assert response_data["body"] == "nice pic, deer"
+        assert (
+            response_data["author_user"]["username"]
+            == active_membership.fan_user.username
+        )
+
+    def test_create_comment_member_on_members_only_post(
+        self, api_client, active_membership
+    ):
+        post = Post.objects.create(
+            visibility=Post.Visiblity.ALL_MEMBERS,
+            author_user=active_membership.creator_user,
+            content=Content.objects.create(type=Content.Type.TEXT, text="Hello world!"),
+        )
+
+        api_client.force_authenticate(active_membership.fan_user)
+        response = api_client.post(
+            "/api/comments/",
+            {
+                "post_id": post.id,
+                "body": "nice pic, deer",
+            },
+        )
+        assert response.status_code == 201
+        response_data = response.json()
+
+        assert response_data["body"] == "nice pic, deer"
+        assert (
+            response_data["author_user"]["username"]
+            == active_membership.fan_user.username
+        )
+
+    def test_create_comment_member_on_allowed_tiers_only_post(
+        self, api_client, active_membership
+    ):
+        post = Post.objects.create(
+            visibility=Post.Visiblity.ALLOWED_TIERS,
+            author_user=active_membership.creator_user,
+            content=Content.objects.create(type=Content.Type.TEXT, text="Hello world!"),
+        )
+        post.allowed_tiers.add(active_membership.tier)
+
+        api_client.force_authenticate(active_membership.fan_user)
+        response = api_client.post(
+            "/api/comments/",
+            {
+                "post_id": post.id,
+                "body": "nice pic, deer",
+            },
+        )
+        assert response.status_code == 201
+        response_data = response.json()
+
+        assert response_data["body"] == "nice pic, deer"
+        assert (
+            response_data["author_user"]["username"]
+            == active_membership.fan_user.username
+        )
+
+    def test_create_comment_member_on_disallowed_tiers_only_post(
+        self, api_client, membership_with_scheduled_change
+    ):
+        post = Post.objects.create(
+            visibility=Post.Visiblity.ALLOWED_TIERS,
+            author_user=membership_with_scheduled_change.creator_user,
+            content=Content.objects.create(type=Content.Type.TEXT, text="Hello world!"),
+        )
+        post.allowed_tiers.add(
+            membership_with_scheduled_change.scheduled_subscription.plan.tier
+        )
+
+        api_client.force_authenticate(membership_with_scheduled_change.fan_user)
+        response = api_client.post(
+            "/api/comments/",
+            {
+                "post_id": post.id,
+                "body": "nice pic, deer",
+            },
+        )
+        assert response.status_code == 400
+        assert response.json()["post_id"][0]["code"] == "permission_denied"
+
+    def test_create_comment_reply_member_on_public_post(
+        self, api_client, active_membership
+    ):
+        post = Post.objects.create(
+            visibility=Post.Visiblity.PUBLIC,
+            author_user=active_membership.creator_user,
+            content=Content.objects.create(type=Content.Type.TEXT, text="Hello world!"),
+        )
+        comment = Comment.objects.create(
+            post=post, author_user=active_membership.creator_user, body="hi"
+        )
+
+        api_client.force_authenticate(active_membership.fan_user)
+        response = api_client.post(
+            "/api/comments/",
+            {
+                "post_id": post.id,
+                "parent_id": comment.id,
+                "body": "nice pic, deer",
+            },
+        )
+        assert response.status_code == 201
+        response_data = response.json()
+
+        assert response_data["body"] == "nice pic, deer"
+        assert (
+            response_data["author_user"]["username"]
+            == active_membership.fan_user.username
+        )
+
+    def test_delete_as_creator(self, api_client, active_membership):
+        post = Post.objects.create(
+            visibility=Post.Visiblity.PUBLIC,
+            author_user=active_membership.creator_user,
+            content=Content.objects.create(type=Content.Type.TEXT, text="Hello world!"),
+        )
+        creator_comment = Comment.objects.create(
+            post=post, author_user=active_membership.creator_user, body="hi"
+        )
+        fan_comment = Comment.objects.create(
+            post=post,
+            author_user=active_membership.fan_user,
+            body="hi",
+            parent=creator_comment,
+        )
+
+        api_client.force_authenticate(active_membership.creator_user)
+        response = api_client.delete(f"/api/comments/{creator_comment.id}/")
+        assert response.status_code == 204
+
+        response = api_client.delete(f"/api/comments/{fan_comment.id}/")
+        assert response.status_code == 204
+
+    def test_delete_as_fan(self, api_client, active_membership):
+        post = Post.objects.create(
+            visibility=Post.Visiblity.PUBLIC,
+            author_user=active_membership.creator_user,
+            content=Content.objects.create(type=Content.Type.TEXT, text="Hello world!"),
+        )
+        creator_comment = Comment.objects.create(
+            post=post, author_user=active_membership.creator_user, body="hi"
+        )
+        fan_comment = Comment.objects.create(
+            post=post,
+            author_user=active_membership.fan_user,
+            body="hi",
+            parent=creator_comment,
+        )
+
+        api_client.force_authenticate(active_membership.fan_user)
+        response = api_client.delete(f"/api/comments/{creator_comment.id}/")
+        assert response.status_code == 404
+
+        response = api_client.delete(f"/api/comments/{fan_comment.id}/")
+        assert response.status_code == 204

@@ -26,6 +26,7 @@ bleach==4.1.0  # https://github.com/mozilla/bleach
 django-simple-history==3.0.0  # https://github.com/jazzband/django-simple-history
 django-filter==21.1  # https://github.com/carltongibson/django-filter
 django-notifs==4.0.0  # https://github.com/danidee10/django-notifs
+django-mptt==0.13.4  # https://github.com/django-mptt/django-mptt/
 
 # link metadata extraction
 micawber==0.5.4  # http://github.com/coleifer/micawber

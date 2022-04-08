@@ -2,12 +2,14 @@ import metadata_parser
 from django.db import models
 from django_extensions.db.fields import AutoSlugField
 from django.core.cache import cache
+from mptt.models import MPTTModel, TreeForeignKey, MPTTModelBase
 from micawber.providers import bootstrap_oembed
 from micawber.exceptions import ProviderException
 from versatileimagefield.fields import VersatileImageField
 
-from memberships.subscriptions.models import Membership
-from memberships.utils.models import BaseModel
+
+from memberships.subscriptions.models import Membership, Subscription, Tier
+from memberships.utils.models import BaseModel, BaseModelMeta
 
 
 def annotate_post_permissions(object_list, fan_user):
@@ -73,6 +75,9 @@ class Post(BaseModel):
 
     is_published = models.BooleanField(default=True)
 
+    def annotate_permissions(self, fan_user):
+        annotate_post_permissions([self], fan_user)
+
 
 class Content(BaseModel):
     class Type(models.TextChoices):
@@ -129,12 +134,21 @@ class ContentFile(BaseModel):
     attachment = models.FileField(upload_to="uploads/content/", blank=True)
 
 
-class Comment(BaseModel):
+class CommentModelMeta(type(BaseModel), type(MPTTModel)):
+    pass
+
+
+class Comment(BaseModel, MPTTModel, metaclass=CommentModelMeta):
     post = models.ForeignKey("posts.Post", on_delete=models.CASCADE)
+    parent = TreeForeignKey(
+        "self", on_delete=models.CASCADE, null=True, blank=True, related_name="children"
+    )
     body = models.TextField()
     author_user = models.ForeignKey("users.User", on_delete=models.CASCADE)
-
     is_published = models.BooleanField(default=True)
+
+    class MPTTMeta:
+        order_insertion_by = ["created_at"]
 
 
 class Reaction(BaseModel):

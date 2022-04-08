@@ -87,6 +87,7 @@ THIRD_PARTY_APPS = [
     "simple_history",
     "django_filters",
     "notifications",
+    "mptt",
     # "anymail",
 ]
 
