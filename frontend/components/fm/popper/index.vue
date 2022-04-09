@@ -37,7 +37,9 @@ export default {
       state: {
         referenceEl: null,
         popperEl: null
-      }
+      },
+      isInitialized: false,
+      useClickOutside: false
     };
   },
   computed: {
@@ -78,10 +80,6 @@ export default {
         if (this.state.referenceEl === reference && this.state.popperEl === popper) return;
         if (!reference || !popper) return;
       }
-      this.popper = createPopper(reference, popper, {
-        placement: this.placement,
-        modifiers: []
-      });
       this.state = {
         referenceEl: reference,
         popperEl: popper
@@ -89,11 +87,10 @@ export default {
 
       const showEvents = ['focus'];
       const hideEvents = ['blur'];
-      let useClickOutside = false;
+      this.useClickOutside = false;
       if (this.toggleOnClick) {
-        registerClickOutside(this.$el);
         showEvents.push('click');
-        useClickOutside = true;
+        this.useClickOutside = true;
       } else {
         showEvents.push('mouseenter');
         hideEvents.push('mouseleave');
@@ -111,7 +108,7 @@ export default {
         });
       });
 
-      if (useClickOutside) this.$el.addEventListener('click-outside', () => {
+      if (this.useClickOutside) this.$el.addEventListener('click-outside', () => {
         this.slotProps.isVisible = false;
       });
     },
@@ -125,8 +122,17 @@ export default {
     },
 
     show() {
-      if (!this.popper) return;
+      if (!this.isInitialized) {
+        this.popper = createPopper(this.state.referenceEl, this.state.popperEl, {
+          placement: this.placement,
+          modifiers: [
+            { name: 'eventListeners', enabled: false }
+          ]
+        });
+        this.isInitialized = true;
+      };
       // Enable the event listeners
+      if (this.useClickOutside && this.$el) registerClickOutside(this.$el);
       this.popper.setOptions((options) => ({
         ...options,
         modifiers: [
@@ -142,6 +148,7 @@ export default {
     hide() {
       if (!this.popper) return;
       // Disable the event listeners
+      if (this.useClickOutside && this.$el) unregisterClickOutside(this.$el);
       this.popper.setOptions((options) => ({
         ...options,
         modifiers: [
