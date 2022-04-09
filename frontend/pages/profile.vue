@@ -70,10 +70,11 @@
           <div v-if="donations && donations.length" class="col-12 order-2 lg:col-7 lg:order-1">
             <hr class="mt-6 mb-8 lg:hidden">
             <div class="text-xl font-bold mb-4">Recent donations ({{ donations.length }})</div>
-            <profile-donation
-              v-for="(donation, idx) in donations" :key="donation.id" :donation="donation"
-              :class="{ 'mb-4 lg:mb-6': idx !== donations.length - 1 }">
-            </profile-donation>
+            <fm-lazy v-for="(donation, idx) in donations" :key="donation.id"
+              :class="{ 'mb-4 lg:mb-6': idx !== donations.length - 1 }" min-height="100">
+              <profile-donation :donation="donation">
+              </profile-donation>
+            </fm-lazy>
             <div v-if="!donations.length" class="mt-8 text-gray-500">Nothing to see here yet.</div>
           </div>
           <div class="col-12 order-1 mb-6 sm:col-10 md:col-8 lg:col-5 lg:order-2 lg:mb-0">
