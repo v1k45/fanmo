@@ -1,0 +1,25 @@
+Confirm your email address
+
+Please confirm your email address in order to activate your account
+
+https://maizzle.com
+
+Hello {{ page.title }},
+Is it you we're looking for?
+Please confirm your email address by clicking the button below:
+
+Confirm email address →
+
+https://example.com
+
+‌
+
+Not sure why you received this email? Please let us knowhttps://example.com.
+Thanks, The Maizzle Team
+
+Powered by Maizzle
+The framework for rapid email prototyping
+
+Docs https://maizzle.com/docs/ •
+Github https://github.com/maizzle •
+Twitter https://twitter.com/maizzlejs

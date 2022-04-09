@@ -1,6 +1,7 @@
 from collections import namedtuple
 from typing import Any
 
+from django_otp.plugins.otp_email.models import EmailDevice
 from allauth.account.utils import setup_user_email, user_username
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
@@ -35,6 +36,9 @@ class AccountAdapter(DefaultAccountAdapter):
         animal = random.choice(animals)
         return f"{adjective} {animal}".title()
 
+    def format_email_subject(self, subject):
+        return subject
+
     def send_confirmation_mail(self, request, email_device, signup):
         # do not send confirmation email immediately on signup
         if signup:
@@ -45,7 +49,7 @@ class AccountAdapter(DefaultAccountAdapter):
             email_device.generate_token()
 
         self.send_mail(
-            "account/email/email_confirmation",
+            "maizzle/email_verification",
             email_device.user.email,
             {
                 "request": request,
@@ -60,12 +64,13 @@ class AccountAdapter(DefaultAccountAdapter):
         email_address.user.email_verified = True
         email_address.user.save()
 
-    def send_password_reset_mail(self, request, email_device):
+    def send_password_reset_mail(self, request, email_device, invite_intent=None):
         if email_device.valid_until < timezone.now():
             email_device.generate_token()
 
+        template = "password_reset" if invite_intent is None else "account_activate"
         self.send_mail(
-            "account/email/password_reset_key",
+            f"maizzle/{template}",
             email_device.user.email,
             {
                 "request": request,
@@ -82,7 +87,10 @@ class AccountAdapter(DefaultAccountAdapter):
         user = self.new_user(request)
         user = self.save_user(request, user, form)
         setup_user_email(request, user, [])
-        # todo: send welcome email
+
+        # send welcome email with OTP
+        email_device, _ = EmailDevice.objects.get_or_create(user=user)
+        self.send_password_reset_mail(request, email_device, invite_intent=True)
         return user
 
 

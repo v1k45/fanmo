@@ -1,0 +1,18 @@
+Welcome to Fanmo
+
+{{ otp }}
+is your verification code to activate your account on Fanmo.
+This code will expire in 5 minutes. If you wish to activate it later, you can request a new code by clicking the link below:
+
+Activate account→
+
+{{ settings.BASE_URL }}{% url 'account_invite' user.email_base64 %}
+
+‌
+
+Not sure why you received this email? Please let us knowhttps://example.com.
+
+Fanmo
+
+Support https://maizzle.com/docs/ •
+Website https://github.com/maizzle

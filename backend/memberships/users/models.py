@@ -1,3 +1,4 @@
+import base64
 from functools import cached_property
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
@@ -75,6 +76,9 @@ class User(BaseModel, AbstractUser):
         self.followers.remove(follower_user)
         self.follower_count = self.followers.count()
         self.save()
+
+    def email_base64(self):
+        return base64.urlsafe_b64encode(self.email.encode()).decode("utf-8")
 
 
 class SocialLink(models.Model):

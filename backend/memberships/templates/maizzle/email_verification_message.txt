@@ -1,0 +1,18 @@
+Confirm your email address
+
+{{ otp }}
+is your verification code to confirm your email address which you used to register on Fanmo.
+This code will expire in 5 minutes.
+
+Confirm email address →
+
+{{ settings.BASE_URL }}{% url 'email_verification' user.email_base64 %}
+
+‌
+
+Not sure why you received this email? Please let us knowhttps://example.com.
+
+Fanmo
+
+Support https://maizzle.com/docs/ •
+Website https://github.com/maizzle

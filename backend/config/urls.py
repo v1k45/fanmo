@@ -21,11 +21,14 @@ urlpatterns = [
     path("login/facebook/", index_view, name="facebook_callback"),
     path("login/google/", index_view, name="google_callback"),
     path("reset/confirm/<uidb36>/<token>/", index_view, name="password_reset_confirm"),
-    path("confirm/<key>", index_view, name="account_confirm_email"),
-    path("accept-invite/<key>", index_view, name="account_invite"),
+    path("reset-password/<key>/", index_view, name="password_reset"),
+    path("confirm/<key>/", index_view, name="email_verification"),
+    path("accept-invite/<key>/", index_view, name="account_invite"),
     # creator
     path("<username>/support", index_view, name="creator_support"),
     path("<username>/memberships", index_view, name="creator_memberships"),
+    # posts
+    path("<username>/p/<post_slug>/<post_id>/", index_view, name="post_detail"),
     path("<username>", index_view, name="creator_page"),
     # Your stuff: custom urls includes go here
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
