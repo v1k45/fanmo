@@ -4,6 +4,7 @@ from rest_framework import mixins, permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from functools import lru_cache
+from memberships.core.email import notify_new_post
 
 from memberships.posts.api.serializers import (
     CommentSerializer,
@@ -54,6 +55,10 @@ class PostViewSet(
     def perform_destroy(self, instance):
         instance.is_published = False
         instance.save()
+
+    def perform_create(self, serializer):
+        super().perform_create(serializer)
+        notify_new_post(serializer.instance)
 
     @action(
         detail=True, permission_classes=[permissions.IsAuthenticated], methods=["POST"]

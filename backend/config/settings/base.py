@@ -39,6 +39,8 @@ USE_TZ = True
 LOCALE_PATHS = [str(ROOT_DIR / "locale")]
 
 DOMAIN_NAME = env("DOMAIN_NAME")
+BASE_URL = f"https://{DOMAIN_NAME}"
+
 # DATABASES
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
