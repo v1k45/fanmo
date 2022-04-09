@@ -65,9 +65,17 @@ export default {
     calculateFontSize() {
       this.fontSize = '1em';
       if (!this.$el) return;
-      const scaleDownBy = 0.4;
-      const widthInPx = this.$el.clientWidth;
-      if (widthInPx) this.fontSize = `${(widthInPx * scaleDownBy).toFixed(2)}px`;
+
+      const observer = new IntersectionObserver((entries) => {
+        const dimensions = entries[0].boundingClientRect;
+        const scaleDownBy = 0.4;
+        const widthInPx = dimensions.width;
+        if (widthInPx) this.fontSize = `${(widthInPx * scaleDownBy).toFixed(2)}px`;
+
+        // Disconnect the observer to stop from running in the background
+        observer.disconnect();
+      });
+      observer.observe(this.$el);
     }
   }
 };

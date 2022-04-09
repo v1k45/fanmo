@@ -24,3 +24,5 @@ This folder contains `fm-` prefixed UI components.
 19. [x] Alert
 20. [ ] Tooltip
 21. [x] Stepper / Wizard
+22. [x] Lazy
+23. [ ] Uploader with drag and drop support
