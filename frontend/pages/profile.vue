@@ -3,45 +3,48 @@
   <profile-above-the-tab></profile-above-the-tab>
 
   <fm-tabs v-model="activeTab" centered class="mt-8">
-    <fm-tabs-pane :id="tabName.POSTS" lazy label="Posts" class="grid grid-cols-12 gap-5 pb-10 container">
-      <div class="col-span-12 md:col-span-7">
+    <fm-tabs-pane :id="tabName.POSTS" lazy label="Posts" class="bg-gray-50 pb-10">
+      <div class="container grid grid-cols-12 gap-5">
+        <div class="col-span-12 md:col-span-7">
 
-        <div class="mt-8">
-          <div class="flex flex-wrap items-center">
-            <h1 class="text-2xl font-bold mr-auto">Posts</h1>
-            <button v-if="$auth.loggedIn && user.username == $auth.user.username" class="mt-4 sm:mt-0 btn btn-wide btn-black" @click="isAddPostVisible = true;">
-              <IconPlus class="mr-1" :size="16"></IconPlus>
-              Add a post
-            </button>
-          </div>
-          <div v-if="posts && posts.count" class="mt-8">
-            <post v-for="post in posts.results" :key="post.id" :post="post" class="mb-6"></post>
+          <div class="mt-8">
+            <div class="flex flex-wrap items-center">
+              <h1 class="text-2xl font-bold mr-auto">Posts</h1>
+              <button v-if="$auth.loggedIn && user.username == $auth.user.username" class="mt-4 sm:mt-0 btn btn-wide btn-black" @click="isAddPostVisible = true;">
+                <IconPlus class="mr-1" :size="16"></IconPlus>
+                Add a post
+              </button>
+            </div>
+            <div v-if="posts && posts.count" class="mt-8">
+              <post v-for="post in posts.results" :key="post.id" :post="post" class="mb-6"></post>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="col-span-12 md:col-span-5 h-full">
-        <fm-card body-class="bg-gray-100 text-gray-600" class="overflow-hidden sticky top-20">
-          <fm-read-more v-if="user.about" lines="6" class="mb-4">
-            <p v-html="user.about"></p>
-          </fm-read-more>
-          <div class="flex justify-center space-x-4 text-gray-600">
-            <a v-if="user.social_links.website_url" class="unstyled hover:text-gray-800" title="Website" target="_blank" :href="user.social_links.website_url">
-              <icon-globe :size="24"></icon-globe>
-            </a>
-            <a v-if="user.social_links.twitter_url" class="unstyled hover:text-gray-800" title="Twitter" target="_blank" :href="user.social_links.twitter_url">
-              <icon-twitter :size="24"></icon-twitter>
-            </a>
-            <a v-if="user.social_links.youtube_url" class="unstyled hover:text-gray-800" title="Youtube" target="_blank" :href="user.social_links.youtube_url">
-              <icon-youtube :size="24"></icon-youtube>
-            </a>
-            <a v-if="user.social_links.instagram_url" class="unstyled hover:text-gray-800" title="Instagram" target="_blank" :href="user.social_links.instagram_url">
-              <icon-instagram :size="24"></icon-instagram>
-            </a>
-            <a v-if="user.social_links.facebook_url" class="unstyled hover:text-gray-800" title="Facebook" target="_blank" :href="user.social_links.facebook_url">
-              <icon-facebook :size="24"></icon-facebook>
-            </a>
-          </div>
-        </fm-card>
+        <div class="col-span-12 md:col-span-5 h-full">
+          <fm-card body-class="" class="overflow-hidden sticky top-20">
+            <div class="text-xl text-black font-bold mb-3">About me</div>
+            <fm-read-more v-if="user.about" lines="6" class="mb-4">
+              <p v-html="user.about"></p>
+            </fm-read-more>
+            <div class="flex justify-center space-x-4 text-gray-600">
+              <a v-if="user.social_links.website_url" class="unstyled hover:text-gray-800" title="Website" target="_blank" :href="user.social_links.website_url">
+                <icon-globe :size="24"></icon-globe>
+              </a>
+              <a v-if="user.social_links.twitter_url" class="unstyled hover:text-gray-800" title="Twitter" target="_blank" :href="user.social_links.twitter_url">
+                <icon-twitter :size="24"></icon-twitter>
+              </a>
+              <a v-if="user.social_links.youtube_url" class="unstyled hover:text-gray-800" title="Youtube" target="_blank" :href="user.social_links.youtube_url">
+                <icon-youtube :size="24"></icon-youtube>
+              </a>
+              <a v-if="user.social_links.instagram_url" class="unstyled hover:text-gray-800" title="Instagram" target="_blank" :href="user.social_links.instagram_url">
+                <icon-instagram :size="24"></icon-instagram>
+              </a>
+              <a v-if="user.social_links.facebook_url" class="unstyled hover:text-gray-800" title="Facebook" target="_blank" :href="user.social_links.facebook_url">
+                <icon-facebook :size="24"></icon-facebook>
+              </a>
+            </div>
+          </fm-card>
+        </div>
       </div>
     </fm-tabs-pane>
 
@@ -66,7 +69,7 @@
         <div class="row gx-0 lg:gx-4 max-w-6xl mx-auto justify-center">
           <div v-if="donations && donations.length" class="col-12 order-2 lg:col-7 lg:order-1">
             <hr class="mt-6 mb-8 lg:hidden">
-            <div class="text-xl font-bold mb-4">Recent donations</div>
+            <div class="text-xl font-bold mb-4">Recent donations ({{ donations.length }})</div>
             <profile-donation
               v-for="(donation, idx) in donations" :key="donation.id" :donation="donation"
               :class="{ 'mb-4 lg:mb-6': idx !== donations.length - 1 }">
