@@ -479,6 +479,57 @@ class TestPostCrudAPI:
         response = api_client.delete(f"/api/posts/{post.id}/")
         assert response.status_code == 404
 
+    def test_create_text_error(self, creator_user, api_client):
+        api_client.force_authenticate(creator_user)
+
+        response = api_client.post(
+            "/api/posts/",
+            {
+                "title": "Episode #123 Script",
+                "content": {
+                    "type": "text",
+                    "text": "",
+                },
+            },
+        )
+
+        assert response.status_code == 400
+        assert response.json()["content"]["text"][0]["code"] == "required"
+
+    def test_create_link_error(self, creator_user, api_client):
+        api_client.force_authenticate(creator_user)
+
+        response = api_client.post(
+            "/api/posts/",
+            {
+                "title": "Episode #123 Script",
+                "content": {
+                    "type": "link",
+                    "link": "",
+                },
+            },
+        )
+
+        assert response.status_code == 400
+        assert response.json()["content"]["link"][0]["code"] == "required"
+
+    def test_create_files_error(self, creator_user, api_client):
+        api_client.force_authenticate(creator_user)
+
+        response = api_client.post(
+            "/api/posts/",
+            {
+                "title": "Episode #123 Script",
+                "content": {
+                    "type": "images",
+                },
+            },
+        )
+
+        assert response.status_code == 400
+        print(response.json())
+        assert response.json()["content"]["files"][0]["code"] == "required"
+
 
 class TestCommentAPI:
     def test_list_without_post_id(self, api_client):

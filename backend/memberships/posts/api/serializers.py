@@ -59,20 +59,40 @@ class ContentSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["link_og", "link_embed", "image"]
 
+    # def __init__(self, *args, **kwargs):
+    #     super().__init__(*args, **kwargs)
+    #     content_type = self.initial.get('type')
+    #     self.fields['text'].required = content_type == Content.Type.TEXT
+    #     self.fields['text'].allow_blank = content_type != Content.Type.TEXT
+    #     self.fields['link'].required = content_type == Content.Type.LINK
+    #     self.fields['link'].allow_blank = content_type != Content.Type.LINK
+    #     self.fields['files'].required = content_type not in [Content.Type.ATTACHMENTS, Content.Type.IMAGES]
+    #     self.fields['files'].allow_empty = content_type not in [Content.Type.ATTACHMENTS, Content.Type.IMAGES]
+
     def validate(self, attrs):
         """
         Validate content type with its actual content.
         """
         type = attrs["type"]
         if type == Content.Type.TEXT and not attrs.get("text"):
-            raise serializers.ValidationError("Post content is required.")
+            raise serializers.ValidationError(
+                {"text": serializers.ErrorDetail("This field is required", "required")}
+            )
 
         if type == Content.Type.LINK and not attrs.get("link"):
-            raise serializers.ValidationError("Post link is required.")
+            raise serializers.ValidationError(
+                {"link": serializers.ErrorDetail("This field is required", "required")}
+            )
 
         if type == Content.Type.IMAGES:
             if not attrs.get("files"):
-                raise serializers.ValidationError("Post files cannot be empty.")
+                raise serializers.ValidationError(
+                    {
+                        "files": serializers.ErrorDetail(
+                            "This field is required", "required"
+                        )
+                    }
+                )
 
             all_files_are_images = all(
                 (
@@ -81,11 +101,23 @@ class ContentSerializer(serializers.ModelSerializer):
                 )
             )
             if not all_files_are_images:
-                raise serializers.ValidationError("All post files must be images.")
+                raise serializers.ValidationError(
+                    {
+                        "files": serializers.ErrorDetail(
+                            "All files must be images", "invalid_files"
+                        )
+                    }
+                )
 
         if type == Content.Type.ATTACHMENTS:
             if not attrs.get("files"):
-                raise serializers.ValidationError("Post files cannot be empty.")
+                raise serializers.ValidationError(
+                    {
+                        "files": serializers.ErrorDetail(
+                            "This field is required", "required"
+                        )
+                    }
+                )
 
             all_files_are_attachments = all(
                 (
@@ -94,7 +126,13 @@ class ContentSerializer(serializers.ModelSerializer):
                 )
             )
             if not all_files_are_attachments:
-                raise serializers.ValidationError("All post files must be attachments.")
+                raise serializers.ValidationError(
+                    {
+                        "files": serializers.ErrorDetail(
+                            "All files must be attachments", "invalid_file"
+                        )
+                    }
+                )
 
         return super().validate(attrs)
 
