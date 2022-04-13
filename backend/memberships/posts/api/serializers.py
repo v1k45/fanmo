@@ -60,16 +60,6 @@ class ContentSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["link_og", "link_embed", "image"]
 
-    # def __init__(self, *args, **kwargs):
-    #     super().__init__(*args, **kwargs)
-    #     content_type = self.initial.get('type')
-    #     self.fields['text'].required = content_type == Content.Type.TEXT
-    #     self.fields['text'].allow_blank = content_type != Content.Type.TEXT
-    #     self.fields['link'].required = content_type == Content.Type.LINK
-    #     self.fields['link'].allow_blank = content_type != Content.Type.LINK
-    #     self.fields['files'].required = content_type not in [Content.Type.ATTACHMENTS, Content.Type.IMAGES]
-    #     self.fields['files'].allow_empty = content_type not in [Content.Type.ATTACHMENTS, Content.Type.IMAGES]
-
     def validate(self, attrs):
         """
         Validate content type with its actual content.
