@@ -96,7 +96,7 @@ class Content(BaseModel):
     link_og = models.JSONField(default=None, null=True, blank=True)
     link_embed = models.JSONField(blank=True, null=True, default=None)
 
-    def update_link_metadata(self):
+    def update_link_metadata(self, commit=True):
         if self.type != self.Type.LINK:
             return
 
@@ -118,7 +118,8 @@ class Content(BaseModel):
         except metadata_parser.NotParsable:
             pass
 
-        self.save()
+        if commit:
+            self.save()
 
 
 class ContentFile(BaseModel):

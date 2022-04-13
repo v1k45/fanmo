@@ -527,8 +527,30 @@ class TestPostCrudAPI:
         )
 
         assert response.status_code == 400
-        print(response.json())
         assert response.json()["content"]["files"][0]["code"] == "required"
+
+    def test_link_preview(self, creator_user, mocker, api_client):
+        request_embed_mock = mocker.Mock(return_value={"foo": "bar"})
+        mocker.patch(
+            "memberships.posts.models.bootstrap_oembed",
+        ).return_value.request = request_embed_mock
+
+        mocker.patch(
+            "memberships.posts.models.metadata_parser.MetadataParser",
+            return_value=mocker.Mock(metadata={"og": "hello", "page": "world"}),
+        )
+
+        api_client.force_authenticate(creator_user)
+        response = api_client.post(
+            "/api/posts/link_preview/",
+            {"link": "https://www.youtube.com/watch?v=dQw4w9WgXcQ"},
+        )
+        assert response.status_code == 200
+        assert response.json() == {
+            "link": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            "link_og": {"og": "hello", "page": "world"},
+            "link_embed": {"foo": "bar"},
+        }
 
 
 class TestCommentAPI:

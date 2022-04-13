@@ -8,10 +8,12 @@ from memberships.core.email import notify_new_post
 
 from memberships.posts.api.serializers import (
     CommentSerializer,
+    LinkPreviewSerializer,
     PostCreateSerializer,
     PostReactionSerializer,
     PostSerializer,
 )
+from memberships.users.api.permissions import IsCreator
 from memberships.posts.models import Comment, Post, annotate_post_permissions
 
 
@@ -50,6 +52,8 @@ class PostViewSet(
             return PostCreateSerializer
         if self.action == "reactions":
             return PostReactionSerializer
+        if self.action == "link_preview":
+            return LinkPreviewSerializer
         return super().get_serializer_class()
 
     def perform_destroy(self, instance):
@@ -70,6 +74,16 @@ class PostViewSet(
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)
+
+    @action(
+        detail=False,
+        permission_classes=[permissions.IsAuthenticated, IsCreator],
+        methods=["POST"],
+    )
+    def link_preview(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=self.request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.validated_data)
 
 
 class CommentViewSet(

@@ -1,3 +1,4 @@
+import sre_compile
 from drf_extra_fields.fields import Base64ImageField, Base64FileField
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
@@ -293,3 +294,16 @@ class CommentSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data["author_user"] = self.context["request"].user
         return super().create(validated_data)
+
+
+class LinkPreviewSerializer(serializers.Serializer):
+    link = serializers.URLField()
+    link_embed = serializers.JSONField(write_only=True, required=False)
+    link_og = serializers.JSONField(write_only=True, required=False)
+
+    def validate(self, attrs):
+        content = Content(type=Content.Type.LINK, link=attrs["link"])
+        content.update_link_metadata(commit=False)
+        attrs["link_og"] = content.link_og
+        attrs["link_embed"] = content.link_embed
+        return attrs
