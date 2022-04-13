@@ -244,8 +244,8 @@ class PostCreateSerializer(PostSerializer):
         content.update_link_metadata()
 
         # create each file separately so that the created_at time is consistent
-        for file_payload in files_payload:
-            ContentFile.objects.create(content=content, **file_payload)
+        for idx, file_payload in enumerate(files_payload):
+            ContentFile.objects.create(content=content, order=idx, **file_payload)
 
         validated_data["content"] = content
         validated_data["author_user"] = self.context["request"].user

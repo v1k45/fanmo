@@ -134,6 +134,11 @@ class ContentFile(BaseModel):
     image = VersatileImageField(upload_to="uploads/content/", blank=True)
     attachment = models.FileField(upload_to="uploads/content/", blank=True)
 
+    order = models.PositiveSmallIntegerField(default=0)
+
+    class Meta:
+        ordering = ['order']
+
 
 class CommentModelMeta(type(BaseModel), type(MPTTModel)):
     pass
