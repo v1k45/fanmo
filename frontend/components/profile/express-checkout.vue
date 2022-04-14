@@ -52,8 +52,8 @@
 
   <!-- disclaimer start -->
   <div class="mt-3 mb-8 text-sm leading-relaxed text-gray-500">
-    By continuing, you agree to the <a href="#">Terms &amp; conditions</a>
-    and the <a href="#">Privacy policy</a>.
+    By continuing, you agree to the <nuxt-link to="/terms">Terms &amp; conditions</nuxt-link>
+    and the <nuxt-link to="/privacy">Privacy policy</nuxt-link>.
   </div>
   <!-- disclaimer end -->
 

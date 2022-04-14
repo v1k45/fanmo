@@ -15,8 +15,8 @@
       <fm-input v-model="signupForm.password" uid="password" type="password" placeholder="Password" required></fm-input>
 
       <div class="text-sm mt-6 leading-relaxed">
-        By creating an account, you agree to the <a href="#">Terms &amp; conditions</a>
-        and the <a href="#">Privacy policy</a>.
+        By creating an account, you agree to the <nuxt-link to="/terms">Terms &amp; conditions</nuxt-link>
+        and the <nuxt-link to="/privacy">Privacy policy</nuxt-link>.
       </div>
 
       <fm-button native-type="submit" type="primary" size="lg" class="mt-6" block>Create account</fm-button>

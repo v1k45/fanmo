@@ -96,9 +96,9 @@
         <p class="text-xs md:text-sm text-gray-500 mr-auto">Copyright &copy; {{ currentYear }}. All rights reserved.</p>
         <div class="mt-8 lg:mt-0 flex flex-wrap text-black text-sm md:text-base justify-center">
           <nuxt-link class="unstyled py-2 mr-4 hover:text-fm-primary" to="/pricing#faq">FAQ</nuxt-link>
-          <a class="unstyled p-2 mr-2 hover:text-fm-primary" href="#">Terms &amp; Conditions</a>
-          <a class="unstyled p-2 mr-2 hover:text-fm-primary" href="#">Privacy Policy</a>
-          <a class="unstyled p-2 hover:text-fm-primary" href="#">Cancellation policy</a>
+          <nuxt-link class="unstyled p-2 mr-2 hover:text-fm-primary" to="/terms">Terms &amp; Conditions</nuxt-link>
+          <nuxt-link class="unstyled p-2 mr-2 hover:text-fm-primary" to="/privacy">Privacy Policy</nuxt-link>
+          <nuxt-link class="unstyled p-2 hover:text-fm-primary" to="/refunds">Cancellation policy</nuxt-link>
         </div>
       </div>
     </div>
