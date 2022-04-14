@@ -1,0 +1,16 @@
+Hi {{ obj.creator_user.display_name }},
+{{ obj.fan_user.display_name }} joined {{ obj.tier.name }}.
+If you wish to contact {{ obj.fan_user.display_name }} directly, you can send email on {{ obj.fan_user.email }} mailto:{{ obj.fan_user.email }}
+
+View Members →
+
+{{ settings.BASE_URL }}{% url 'members' %}
+
+‌
+
+Not sure why you received this email? Please let us knowhttps://example.com.
+
+Fanmo
+
+Support https://maizzle.com/docs/ •
+Website https://github.com/maizzle
