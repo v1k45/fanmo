@@ -36,9 +36,28 @@
   </section>
   <!-- hero end -->
 
+  <!-- fee comparison start -->
+  <section class="py-24" style="background: linear-gradient(180deg, #F2F2FF 0%, rgba(241, 248, 255, 0) 79.31%);">
+    <div class="container">
+      <div class="lg:hidden text-center mb-12">
+        <h1 class="text-4xl md:text-5xl font-semibold font-title">Stop losing money</h1>
+        <div class="mt-4">Use the sliders to see how well Fanmo compares to other platforms in terms of platform fee.</div>
+      </div>
+
+      <marketing-fee-revenue-viz>
+        <template #above-controls>
+          <div class="hidden lg:block">
+            <h1 class="text-3xl md:text-4xl lg:text-5xl font-semibold font-title">Stop losing money</h1>
+            <div class="mt-4 text-lg">Use the sliders to see how Fanmo compares to other platforms in terms of platform fee.</div>
+          </div>
+        </template>
+      </marketing-fee-revenue-viz>
+    </div>
+  </section>
+  <!-- fee comparison end -->
 
   <!-- boasting start -->
-  <section class="py-24" style="background: linear-gradient(180deg, #F2F2FF 0%, rgba(241, 248, 255, 0) 79.31%);">
+  <section v-if="false" class="py-24" style="background: linear-gradient(180deg, #F2F2FF 0%, rgba(241, 248, 255, 0) 79.31%);">
     <div class="container text-center">
       <h2 class="text-3xl leading-snug sm:text-4xl lg:text-5xl font-title">Managing fans has never been <br> this easy</h2>
       <img src="~/assets/marketing/dashboard-illustration.png" alt="Illustrative layout of the platform" class="mx-auto">
@@ -122,26 +141,6 @@
     </div>
   </section>
   <!-- feature: posts & comments end -->
-
-  <!-- fee comparison start -->
-  <section class="py-24">
-    <div class="container">
-      <div class="lg:hidden text-center mb-12">
-        <h1 class="text-4xl md:text-5xl font-semibold font-title">Stop losing money</h1>
-        <div class="mt-4">Use the sliders to see how well Fanmo compares to other platforms in terms of platform fee.</div>
-      </div>
-
-      <marketing-fee-revenue-viz>
-        <template #above-controls>
-          <div class="hidden lg:block">
-            <h1 class="text-3xl md:text-4xl lg:text-5xl font-semibold font-title">Stop losing money</h1>
-            <div class="mt-4 text-lg">Use the sliders to see how Fanmo compares to other platforms in terms of platform fee.</div>
-          </div>
-        </template>
-      </marketing-fee-revenue-viz>
-    </div>
-  </section>
-  <!-- fee comparison end -->
 
   <!-- why fanmo start -->
   <section class="py-24 bg-fm-primary-50">
