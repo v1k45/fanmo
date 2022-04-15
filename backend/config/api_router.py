@@ -33,7 +33,6 @@ from memberships.posts.api.views import CommentViewSet, PostViewSet
 from memberships.subscriptions.api.views import (
     MembersViewSet,
     MembershipViewSet,
-    SubscriberViewSet,
     SubscriptionViewSet,
     TierViewSet,
 )
@@ -56,7 +55,6 @@ router.register("comments", CommentViewSet, basename="comments")
 router.register("members", MembersViewSet, basename="members")
 router.register("memberships", MembershipViewSet, basename="memberships")
 router.register("subscriptions", SubscriptionViewSet, basename="subscriptions")
-router.register("subscribers", SubscriberViewSet, basename="subscribers")
 router.register("donations", DonationViewSet, basename="donations")
 router.register("payments", PaymentViewSet, basename="payments")
 router.register("payouts", PayoutViewSet, basename="payouts")

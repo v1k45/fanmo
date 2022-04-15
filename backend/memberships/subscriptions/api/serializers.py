@@ -58,24 +58,6 @@ class TierPreviewSerializer(serializers.ModelSerializer):
         fields = ["id", "name", "amount", "amount_currency"]
 
 
-class SubscriberSerializer(serializers.ModelSerializer):
-    fan_user = UserPreviewSerializer()
-    amount = MoneyField(max_digits=7, decimal_places=2, source="plan.amount")
-    tier = TierPreviewSerializer(source="plan.tier")
-
-    class Meta:
-        model = Subscription
-        fields = [
-            "id",
-            "fan_user",
-            "amount",
-            "tier",
-            "status",
-            "cycle_end_at",
-            "is_active",
-        ]
-
-
 class RazorpayPayloadSerializer(serializers.ModelSerializer):
     key = serializers.SerializerMethodField()
     subscription_id = serializers.CharField(source="external_id")
@@ -123,7 +105,6 @@ class SubscriptionPaymentSerializer(serializers.ModelSerializer):
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
-    creator_user = UserPreviewSerializer()
     amount = MoneyField(max_digits=7, decimal_places=2, source="plan.amount")
     tier = TierPreviewSerializer(source="plan.tier")
     payment = SubscriptionPaymentSerializer(source="*")
@@ -132,11 +113,12 @@ class SubscriptionSerializer(serializers.ModelSerializer):
         model = Subscription
         fields = [
             "id",
-            "creator_user",
             "amount",
             "tier",
             "payment",
+            "payment_method",
             "status",
+            "cycle_start_at",
             "cycle_end_at",
             "is_active",
         ]

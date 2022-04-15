@@ -494,3 +494,45 @@ class TestMembershipFlow:
                 "notes": {"external_id": response_data["scheduled_subscription"]["id"]},
             }
         )
+
+
+class TestSubscriptionAPI:
+    def test_list(self, active_membership, api_client):
+        response = api_client.get("/api/subscriptions/")
+        assert response.status_code == 403
+
+        api_client.force_authenticate(active_membership.creator_user)
+        response = api_client.get("/api/subscriptions/")
+        assert response.status_code == 200
+        assert response.json()["count"] == 1
+        assert (
+            response.json()["results"][0]["id"]
+            == active_membership.active_subscription.id
+        )
+
+        api_client.force_authenticate(active_membership.fan_user)
+        response = api_client.get("/api/subscriptions/")
+        assert response.status_code == 200
+        assert response.json()["count"] == 1
+        assert (
+            response.json()["results"][0]["id"]
+            == active_membership.active_subscription.id
+        )
+
+        new_user = UserFactory()
+        api_client.force_authenticate(new_user)
+        response = api_client.get("/api/subscriptions/")
+        assert response.status_code == 200
+        assert response.json()["count"] == 0
+
+    def test_list_filter_membership_id(self, active_membership, api_client):
+        api_client.force_authenticate(active_membership.creator_user)
+        response = api_client.get(
+            f"/api/subscriptions/?membership_id={active_membership.id}"
+        )
+        assert response.status_code == 200
+        assert response.json()["count"] == 1
+        assert (
+            response.json()["results"][0]["id"]
+            == active_membership.active_subscription.id
+        )

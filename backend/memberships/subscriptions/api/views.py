@@ -1,3 +1,4 @@
+from django.db.models import Q
 from drf_spectacular.utils import extend_schema
 from rest_framework import mixins, permissions, viewsets
 from rest_framework.decorators import action
@@ -5,7 +6,6 @@ from rest_framework.decorators import action
 from memberships.subscriptions.api.serializers import (
     MemberSerializer,
     MembershipSerializer,
-    SubscriberSerializer,
     SubscriptionSerializer,
     TierSerializer,
 )
@@ -73,24 +73,19 @@ class MembershipViewSet(
 class SubscriptionViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = SubscriptionSerializer
+    queryset = Subscription.objects.exclude(status=Subscription.Status.CREATED)
 
     def get_queryset(self):
-        return self.request.user.subscriptions.exclude(
-            status=Subscription.Status.CREATED
+        # find subscriptions for or by the currently authenticated user
+        user = self.request.user
+        queryset = (
+            super()
+            .get_queryset()
+            .filter(Q(membership__creator_user=user) | Q(membership__fan_user=user))
         )
+        # filter by membership id
+        if membership_id := self.request.query_params.get("membership_id"):
+            queryset = queryset.filter(membership_id=membership_id)
 
-    @extend_schema(request=None)
-    @action(methods=["POST"], detail=True)
-    def cancel(self, request, *args, **kwargs):
-        subscription = self.get_object()
-        subscription.schedule_to_cancel()
-        subscription.save()
-        return self.retrieve(request, *args, **kwargs)
-
-
-class SubscriberViewSet(viewsets.ReadOnlyModelViewSet):
-    serializer_class = SubscriberSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        return self.request.user.subscribers.exclude(status=Subscription.Status.CREATED)
+        queryset = queryset.select_related("plan__tier")
+        return queryset
