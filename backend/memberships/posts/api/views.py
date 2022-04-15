@@ -30,9 +30,8 @@ class PostViewSet(
             "reactions", "allowed_tiers"
         )
 
-        username = self.request.query_params.get("username")
-        if username:
-            queryset = queryset.filter(author_user__username=username)
+        if creator_username := self.request.query_params.get("creator_username"):
+            queryset = queryset.filter(author_user__username=creator_username)
 
         if self.action == "destroy":
             queryset = queryset.filter(author_user=self.request.user)

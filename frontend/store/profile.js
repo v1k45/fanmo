@@ -121,13 +121,13 @@ export const actions = {
     return await dispatch('fetch', { url: `/api/users/${username}/`, mutation: 'setProfileUser' });
   },
   async fetchProfilePosts({ dispatch }, username) {
-    return await dispatch('fetch', { url: `/api/posts/?username=${username}`, mutation: 'setProfilePosts' });
+    return await dispatch('fetch', { url: `/api/posts/?creator_username=${username}`, mutation: 'setProfilePosts' });
   },
   async fetchProfileDonations({ dispatch }, username) {
     return await dispatch('fetch', { url: `/api/donations/?creator_username=${username}`, mutation: 'setProfileDonations' });
   },
   async fetchExistingMemberships({ dispatch }, username) {
-    return await dispatch('fetch', { url: `/api/memberships/?username=${username}`, mutation: 'setExistingMemberships' });
+    return await dispatch('fetch', { url: `/api/memberships/?creator_username=${username}`, mutation: 'setExistingMemberships' });
   },
 
   async fetchProfile({ dispatch }, username) {
