@@ -107,7 +107,7 @@ class Content(BaseModel):
             pass
 
         try:
-            self.link_og = {"og": None, "page": None}
+            self.link_og = {"og": None, "page": None, "meta": None}
             metadata = metadata_parser.MetadataParser(
                 url=self.link, support_malformed=True, search_head_only=False
             ).metadata
@@ -115,6 +115,8 @@ class Content(BaseModel):
                 self.link_og["og"] = metadata["og"]
             if metadata.get("page"):
                 self.link_og["page"] = metadata["page"]
+            if metadata.get("meta"):
+                self.link_og["meta"] = {key.lower(): value for key, value in metadata["meta"].items()}
         except metadata_parser.NotParsable:
             pass
 
