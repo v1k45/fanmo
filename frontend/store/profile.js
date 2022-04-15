@@ -124,7 +124,7 @@ export const actions = {
     return await dispatch('fetch', { url: `/api/posts/?username=${username}`, mutation: 'setProfilePosts' });
   },
   async fetchProfileDonations({ dispatch }, username) {
-    return await dispatch('fetch', { url: `/api/donations/?username=${username}`, mutation: 'setProfileDonations' });
+    return await dispatch('fetch', { url: `/api/donations/?creator_username=${username}`, mutation: 'setProfileDonations' });
   },
   async fetchExistingMemberships({ dispatch }, username) {
     return await dispatch('fetch', { url: `/api/memberships/?username=${username}`, mutation: 'setExistingMemberships' });

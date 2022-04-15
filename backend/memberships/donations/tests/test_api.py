@@ -135,6 +135,6 @@ class TestDonationAPI:
                 "is_hidden": True,
             },
         )
-        assert response.status_code == 400
+        assert response.status_code == 403
         response_data = response.json()
-        assert response_data["non_field_errors"][0]["code"] == "permission_denied"
+        assert response_data["detail"]["code"] == "permission_denied"

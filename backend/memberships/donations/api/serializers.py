@@ -126,11 +126,3 @@ class DonationUpdateSerializer(DonationSerializer):
             "status",
             "created_at",
         ]
-
-    def validate(self, attrs):
-        if self.context["request"].user != self.instance.creator_user:
-            raise serializers.ValidationError(
-                "You do not have permissions to perform this action.",
-                "permission_denied",
-            )
-        return attrs
