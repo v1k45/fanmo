@@ -6,17 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('posts', '0008_merge_0006_auto_20220407_0402_0007_contentfile_type'),
+        ("posts", "0008_merge_0006_auto_20220407_0402_0007_contentfile_type"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='contentfile',
-            options={'default_related_name': 'content_files', 'ordering': ['order']},
+            name="contentfile",
+            options={"default_related_name": "content_files", "ordering": ["order"]},
         ),
         migrations.AddField(
-            model_name='contentfile',
-            name='order',
+            model_name="contentfile",
+            name="order",
             field=models.PositiveSmallIntegerField(default=0),
         ),
     ]

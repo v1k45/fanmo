@@ -116,7 +116,9 @@ class Content(BaseModel):
             if metadata.get("page"):
                 self.link_og["page"] = metadata["page"]
             if metadata.get("meta"):
-                self.link_og["meta"] = {key.lower(): value for key, value in metadata["meta"].items()}
+                self.link_og["meta"] = {
+                    key.lower(): value for key, value in metadata["meta"].items()
+                }
         except metadata_parser.NotParsable:
             pass
 
@@ -139,7 +141,7 @@ class ContentFile(BaseModel):
     order = models.PositiveSmallIntegerField(default=0)
 
     class Meta:
-        ordering = ['order']
+        ordering = ["order"]
 
 
 class CommentModelMeta(type(BaseModel), type(MPTTModel)):
