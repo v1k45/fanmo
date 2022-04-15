@@ -2,7 +2,6 @@ from datetime import datetime
 from decimal import Decimal
 
 from django.db.transaction import atomic
-from django.utils import timezone
 from django_fsm import can_proceed
 from moneyed import Money, get_currency
 

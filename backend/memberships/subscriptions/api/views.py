@@ -6,7 +6,6 @@ from memberships.subscriptions.api.serializers import (
     MemberSerializer,
     MembershipSerializer,
     SubscriberSerializer,
-    SubscriptionCreateSerializer,
     SubscriptionSerializer,
     TierSerializer,
 )
@@ -53,13 +52,15 @@ class MembershipViewSet(
                 ]
             )
 
-        return queryset.select_related(
+        queryset = queryset.select_related(
             "fan_user",
             "creator_user",
             "tier",
             "active_subscription",
             "scheduled_subscription",
         )
+
+        return queryset
 
     @extend_schema(request=None)
     @action(detail=True, methods=["post"])
@@ -69,18 +70,14 @@ class MembershipViewSet(
         return self.retrieve(*args, **kwargs)
 
 
-class SubscriptionViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
+class SubscriptionViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
+    serializer_class = SubscriptionSerializer
 
     def get_queryset(self):
         return self.request.user.subscriptions.exclude(
             status=Subscription.Status.CREATED
         )
-
-    def get_serializer_class(self):
-        if self.action == "create":
-            return SubscriptionCreateSerializer
-        return SubscriptionSerializer
 
     @extend_schema(request=None)
     @action(methods=["POST"], detail=True)
@@ -91,11 +88,9 @@ class SubscriptionViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet
         return self.retrieve(request, *args, **kwargs)
 
 
-class SubscriberViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+class SubscriberViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = SubscriberSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return self.request.user.subscribers.exclude(
-            status=Subscription.Status.CREATED
-        ).all()
+        return self.request.user.subscribers.exclude(status=Subscription.Status.CREATED)
