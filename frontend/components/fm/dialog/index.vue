@@ -96,10 +96,10 @@ export default {
 }
 
 
-.fm-dialog--clamped .fm-dialog__container {
+.fm-dialog--clamped > .fm-dialog__container {
   @apply max-w-xl;
 }
-.fm-dialog--fullscreen .fm-dialog__container {
+.fm-dialog--fullscreen > .fm-dialog__container {
   @apply w-full h-full rounded-none max-h-[unset];
 }
 
