@@ -51,3 +51,7 @@
 a:not(.unstyled) {
   @apply text-fm-primary hover:text-fm-primary-600;
 }
+
+.lucide-icon {
+  @apply inline-block;
+}

@@ -2,7 +2,8 @@
 <div class="fm-tabs">
   <div class="fm-tabs__header" :class="{ 'fm-tabs__header--centered': centered }">
     <div v-for="tab in tabs" :key="tab.id" class="fm-tabs__header-item" :class="{
-      'fm-tabs__header-item--active': tab.id === localValue
+      'fm-tabs__header-item--active': tab.id === localValue,
+      'fm-tabs__header-item--stretched': stretched
     }" @click="localValue = tab.id;">
       {{ tab.header }}
     </div>
@@ -32,7 +33,8 @@ export default {
   },
   props: {
     value: { type: [String, Number], default: '' },
-    centered: { type: Boolean, default: false }
+    centered: { type: Boolean, default: false },
+    stretched: { type: Boolean, default: false }
   },
   data() {
     return {
@@ -76,6 +78,9 @@ export default {
 .fm-tabs__header-item {
   @apply px-4 sm:px-6 py-3 font-medium text-gray-400 text-lg cursor-pointer hover:bg-gray-100 rounded-t-lg select-none;
   @apply basis-0 flex-grow md:flex-grow-0 md:basis-auto text-center;
+}
+.fm-tabs__header-item--stretched {
+  @apply basis-0 flex-grow text-center;
 }
 .fm-tabs__header-item--active {
   @apply relative text-black cursor-default hover:bg-inherit;

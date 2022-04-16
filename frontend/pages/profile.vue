@@ -10,10 +10,10 @@
           <div class="mt-8">
             <div class="flex flex-wrap items-center">
               <h1 class="text-2xl font-bold mr-auto">Posts</h1>
-              <button v-if="$auth.loggedIn && user.username == $auth.user.username" class="mt-4 sm:mt-0 btn btn-wide btn-black" @click="isAddPostVisible = true;">
-                <IconPlus class="mr-1" :size="16"></IconPlus>
+              <fm-button v-if="isSelfProfile" type="info" @click="addPost.isVisible = true;">
+                <icon-plus class="mr-1" :size="16"></icon-plus>
                 Add a post
-              </button>
+              </fm-button>
             </div>
             <div v-if="posts && posts.count" class="mt-8">
               <post v-for="post in posts.results" :key="post.id" :post="post" class="mb-6"></post>
@@ -89,8 +89,6 @@
     </fm-tabs-pane>
   </fm-tabs>
 
-
-  <add-post v-model="isAddPostVisible" @created="prependPost"></add-post>
   <profile-express-checkout
     v-model="expressCheckout.isVisible"
     :tier="expressCheckout.tier"
@@ -111,6 +109,8 @@
     @unauthenticated-next-click="handlePaymentSuccessNext('unauthenticated-next')"
     @donation-close-click="handlePaymentSuccessNext('donation-close')">
   </profile-payment-success>
+
+  <profile-add-post v-model="addPost.isVisible"></profile-add-post>
 </div>
 </template>
 
@@ -145,7 +145,6 @@ export default {
     return {
       tabName,
       activeTab: null,
-      isAddPostVisible: false,
       isLoading: true, // NOT being used. Use it if profile loading becomes slow
       donationFormErrors: null,
       expressCheckout: {
@@ -160,6 +159,9 @@ export default {
         tier: null,
         donationData: null,
         supportType: null
+      },
+      addPost: {
+        isVisible: false
       },
       loadingTierId: null,
       donationLoading: false
@@ -282,7 +284,7 @@ export default {
           this.$alert.error(response, 'Error');
           return;
         }
-        this.$refs.donationWidget.reset();
+        if (this.$refs.donationWidget) this.$refs.donationWidget.reset();
         this.paymentSuccess = {
           isVisible: true,
           successMessage: response.message,
@@ -326,13 +328,6 @@ export default {
       else if (actionType === 'donation-close') {
         this.fetchProfile(this.user.username);
       }
-    },
-
-    prependPost(post) {
-      this.posts.results.unshift(post);
-    },
-    prependDonation(donation) {
-      this.donations.results.unshift(donation);
     }
   }
 };

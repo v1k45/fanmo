@@ -186,6 +186,17 @@ export const actions = {
     err = await dispatch('fetchProfileUser', state.user.username);
     return !!err;
   },
+  async createPost({ state, dispatch }, payload) {
+    const err = await dispatch('update', { url: '/api/posts/', payload });
+    if (err) return err;
+    dispatch('fetchProfilePosts', state.user.username);
+    return NO_ERROR;
+  },
+  async getLinkPreview({ state, dispatch }, link) {
+    const { error, response } = await dispatch('updateGeneric', { url: '/api/posts/link_preview/', payload: { link } });
+    if (error) return { success: false, data: response };
+    return { success: true, data: response };
+  },
 
   // MISC
   /*
