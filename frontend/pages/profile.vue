@@ -282,7 +282,7 @@ export default {
           this.$alert.error(response, 'Error');
           return;
         }
-        this.$refs.donationWidget.reset();
+        if (this.$refs.donationWidget) this.$refs.donationWidget.reset();
         this.paymentSuccess = {
           isVisible: true,
           successMessage: response.message,
