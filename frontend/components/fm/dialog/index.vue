@@ -8,11 +8,11 @@
           <slot name="header"></slot>
         </div>
 
-        <button v-if="showClose" class="fm-dialog__close" @click="close">
+        <button v-if="showClose" type="button" class="fm-dialog__close" @click="close">
           <icon-x class="h-5 w-5"></icon-x>
         </button>
 
-        <div class="fm-dialog__content">
+        <div class="fm-dialog__content" :class="{ 'fm-dialog__content--no-padding': noPadding }">
           <slot></slot>
         </div>
 
@@ -39,7 +39,8 @@ export default {
     alert: { type: Boolean, default: false },
     closeOnBackdropClick: { type: Boolean, default: true },
     dialogClass: { type: String, default: '' },
-    customWidth: { type: Boolean, default: false }
+    customWidth: { type: Boolean, default: false },
+    noPadding: { type: Boolean, default: false }
   },
   computed: {
     isVisible: {
@@ -86,6 +87,9 @@ export default {
 }
 .fm-dialog__content {
   @apply px-6 py-4 flex-grow overflow-auto;
+}
+.fm-dialog__content--no-padding {
+  @apply p-0;
 }
 .fm-dialog__footer {
   @apply px-6 py-3 border-t;
