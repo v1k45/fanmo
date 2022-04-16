@@ -14,20 +14,26 @@
 
     <!-- otp input start -->
     <template v-if="type === 'otp'">
-      <fm-input-otp ref="input" v-model="model" :block="block" @filled="$emit('filled', $event)"></fm-input-otp>
+      <fm-input-otp ref="input" v-model="model" :class="inputClass" :block="block" @filled="$emit('filled', $event)"></fm-input-otp>
     </template>
     <!-- otp input end -->
 
     <!-- rich input start -->
     <template v-else-if="type === 'rich'">
-      <fm-editor ref="input" v-model="model" :preset="preset"></fm-editor>
+      <fm-editor ref="input" v-model="model" v-bind="props" :preset="preset" :class="inputClass"></fm-editor>
     </template>
     <!-- rich input end -->
+
+    <!-- file input start -->
+    <template v-else-if="type === 'file'">
+      <fm-input-file ref="input" v-model="model" v-bind="{ ...$attrs, ...props }" :multiple="multiple" :class="inputClass"></fm-input-file>
+    </template>
+    <!-- file input end -->
 
     <!-- checkbox input start -->
     <template v-else-if="type === 'checkbox'">
       <label class="cursor-pointer inline-flex" :class="{ 'text-fm-primary': model }">
-        <input ref="input" v-model="model" v-bind="$attrs" :value="nativeValue" type="checkbox" class="fm-input__input">
+        <input ref="input" v-model="model" v-bind="$attrs" :value="nativeValue" type="checkbox" class="fm-input__input" :class="inputClass">
         <span v-if="$slots.default" class="ml-1">
           <slot></slot>
         </span>
@@ -38,7 +44,7 @@
     <!-- radio input start -->
     <template v-else-if="type === 'radio'">
       <label class="cursor-pointer inline-flex" :class="{ 'text-fm-primary': model === nativeValue }">
-        <input ref="input" v-model="model" v-bind="$attrs" :value="nativeValue" type="radio" class="fm-input__input">
+        <input ref="input" v-model="model" v-bind="$attrs" :value="nativeValue" type="radio" class="fm-input__input" :class="inputClass">
         <span v-if="$slots.default" class="ml-1">
           <slot></slot>
         </span>
@@ -48,7 +54,7 @@
 
     <!-- select start -->
     <template v-else-if="type === 'select'">
-      <select ref="input" v-model="model" v-bind="$attrs" type="select" class="fm-input__input">
+      <select ref="input" v-model="model" v-bind="$attrs" type="select" class="fm-input__input" :class="inputClass">
         <slot></slot>
       </select>
     </template>
@@ -58,7 +64,8 @@
     <template v-else-if="type === 'password'">
       <input
         ref="input" v-model="model" v-bind="$attrs"
-        :type="isPasswordVisible ? 'text' : 'password'" class="fm-input__input pr-8">
+        :type="isPasswordVisible ? 'text' : 'password'" class="fm-input__input pr-8"
+        :class="inputClass">
       <button
         class="absolute right-0 top-0 flex items-center justify-center h-full px-2" aria-hidden="true" type="button"
         :title="isPasswordVisible ? 'Hide password' : 'Show password'"
@@ -72,7 +79,7 @@
     <!-- textarea start -->
     <template v-else-if="type === 'textarea'">
       <!-- TODO: forward event listeners to other inputs eventually as the need arises -->
-      <textarea ref="input" v-model="model" class="fm-input__input" v-bind="$attrs" v-on="listeners"></textarea>
+      <textarea ref="input" v-model="model" class="fm-input__input" :class="inputClass" v-bind="$attrs" v-on="listeners"></textarea>
     </template>
     <!-- textarea end -->
 
@@ -82,9 +89,9 @@
         <div class="fm-input__prepend">
           <slot name="prepend"></slot>
         </div>
-        <input ref="input" v-model="model" v-bind="$attrs" :type="type" class="fm-input__input">
+        <input ref="input" v-model="model" v-bind="$attrs" :type="type" class="fm-input__input" :class="inputClass">
       </div>
-      <input v-else ref="input" v-model="model" v-bind="$attrs" :type="type" class="fm-input__input">
+      <input v-else ref="input" v-model="model" v-bind="$attrs" :type="type" class="fm-input__input" :class="inputClass">
     </template>
     <!-- default input end -->
 
@@ -113,14 +120,17 @@ export default {
   inheritAttrs: false,
   props: {
     uid: { type: String, default: '' }, // for injecting errors if an input is inside fm-form. accepts path
-    value: { type: [String, Number, Boolean], default: '' },
+    value: { type: [String, Number, Boolean, Array], default: '' },
+    inputClass: { type: [String, Object, Array], default: '' },
     nativeValue: { type: [String, Number, Boolean], default: '' }, // for radios and checkboxes
     type: { type: String, default: 'text' },
     label: { type: String, default: '' },
     error: { type: String, default: '' },
     horizontal: { type: Boolean, default: false },
     block: { type: Boolean, default: false },
-    preset: { type: String, default: undefined } // for fm-editor (type=rich)
+    preset: { type: String, default: undefined }, // for fm-editor (type=rich)
+    multiple: { type: Boolean, default: false }, // for file input
+    props: { type: Object, default: () => {} } // for any nested components like otp/editor
   },
   data() {
     return {
