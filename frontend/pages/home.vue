@@ -3,7 +3,7 @@
 
   <!-- hero start -->
   <section class="relative flex flex-wrap py-8 lg:py-24 xl:py-36 items-center min-h-[550px] 2xl:max-w-7xl mx-auto">
-    <img src="~/assets/marketing/bg.png" :class="{
+    <img src="~/assets/marketing/hero.svg" :class="{
       'w-auto mx-auto max-h-72': true,
       'md:max-h-80': true,
       'lg:absolute lg:top-1/2 lg:transform lg:-translate-y-1/2 lg:right-0 lg:max-w-[50%] lg:max-h-full -z-10': true
@@ -84,7 +84,7 @@
           </p>
         </div>
         <div class="col-8 sm:col-6 md:col-4 xl:offset-1 order-1 md:order-2" aria-hidden="true">
-          <img src="~/assets/marketing/memberships.png" class="mx-auto">
+          <img src="~/assets/marketing/memberships.svg" class="mx-auto">
         </div>
       </div>
     </div>
@@ -96,7 +96,7 @@
     <div class="container">
       <div class="row items-center justify-center">
         <div class="col-8 sm:col-6 md:col-4" aria-hidden="true">
-          <img src="~/assets/marketing/money.png" alt="" class="mx-auto">
+          <img src="~/assets/marketing/donations.svg" alt="" class="mx-auto">
         </div>
         <div class="col-12 md:col-8 xl:col-7 xl:offset-1 text-center md:text-left">
           <header>
@@ -135,7 +135,7 @@
           </p>
         </div>
         <div class="mb-8 md:mb-0 col-6 md:col-4 xl:offset-1 order-1 md:order-2" aria-hidden="true">
-          <img src="~/assets/marketing/posts.png" class="mx-auto max-h-48 lg:max-h-full">
+          <img src="~/assets/marketing/posts.svg" class="mx-auto max-h-48 lg:max-h-full">
         </div>
       </div>
     </div>
