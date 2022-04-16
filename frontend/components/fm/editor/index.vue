@@ -14,17 +14,17 @@
     <hr v-if="currentPreset.heading && (currentPreset.bold || currentPreset.italic || currentPreset.strike)">
 
     <button
-      v-if="currentPreset.bold" type="button"
+      v-if="currentPreset.bold" type="button" title="Bold"
       :class="{ 'is-active': editor.isActive('bold') }" @click="editor.chain().focus().toggleBold().run()">
       <icon-bold></icon-bold>
     </button>
     <button
-      v-if="currentPreset.italic" type="button"
+      v-if="currentPreset.italic" type="button" title="Italic"
       :class="{ 'is-active': editor.isActive('italic') }" @click="editor.chain().focus().toggleItalic().run()">
       <icon-italic></icon-italic>
     </button>
     <button
-      v-if="currentPreset.strike" type="button"
+      v-if="currentPreset.strike" type="button" title="Strikethrough"
       :class="{ 'is-active': editor.isActive('strike') }" @click="editor.chain().focus().toggleStrike().run()">
       <icon-strikethrough></icon-strikethrough>
     </button>
@@ -33,12 +33,12 @@
     <hr v-if="(currentPreset.heading || currentPreset.bold || currentPreset.italic || currentPreset.strike) && (currentPreset.bulletList || currentPreset.orderedList)">
 
     <button
-      v-if="currentPreset.bulletList" type="button"
+      v-if="currentPreset.bulletList" type="button" title="Bullet list"
       :class="{ 'is-active': editor.isActive('bulletList') }" @click="editor.chain().focus().toggleBulletList().run()">
       <icon-list></icon-list>
     </button>
     <button
-      v-if="currentPreset.orderedList" type="button"
+      v-if="currentPreset.orderedList" type="button"  title="Ordered list"
       :class="{ 'is-active': editor.isActive('orderedList') }" @click="editor.chain().focus().toggleOrderedList().run()">
       <icon-list-ordered></icon-list-ordered>
     </button>
@@ -46,24 +46,26 @@
     <hr v-if="(currentPreset.heading || currentPreset.bold || currentPreset.italic || currentPreset.strike || currentPreset.bulletList || currentPreset.orderedList) && (currentPreset.blockquote || currentPreset.link)">
 
     <button
-      v-if="currentPreset.blockquote" type="button"
+      v-if="currentPreset.blockquote" type="button" title="Quote"
       :class="{ 'is-active': editor.isActive('blockquote') }" @click="editor.chain().focus().toggleBlockquote().run()">
       <icon-quote></icon-quote>
     </button>
     <button
-      v-if="currentPreset.link" type="button"
+      v-if="currentPreset.link" type="button" title="Link (Coming soon)"
       disabled>
       <icon-link></icon-link>
     </button>
     <button
-      v-if="currentPreset.horizontalRule" type="button"
+      v-if="currentPreset.horizontalRule" type="button" title="Divider"
       @click="editor.chain().focus().setHorizontalRule().run()">
       <icon-separator-horizontal></icon-separator-horizontal>
     </button>
 
   </div>
 
-  <editor-content class="fm-editor__editor" :style="{ maxHeight }" :editor="editor"></editor-content>
+  <fm-markdown-styled>
+    <editor-content class="fm-editor__editor" :style="{ minHeight, maxHeight }" :editor="editor"></editor-content>
+  </fm-markdown-styled>
 </div>
 <div v-else>
   Loading...
@@ -153,6 +155,7 @@ export default {
   props: {
     value: { type: String, default: '' },
     preset: { type: String, default: 'basic', validator: val => Object.keys(preset).includes(val) },
+    minHeight: { type: String, default: '100px' },
     maxHeight: { type: String, default: '200px' }
   },
 
@@ -195,6 +198,10 @@ export default {
 italic, bold, strikethrough, list, paragraph, h1-h6, blockquote, hr
 
 <style lang="scss">
+.fm-editor {
+  @apply flex flex-col;
+}
+
 .fm-editor__toolbar {
   @apply flex border border-gray-300 rounded-lg rounded-b-none;
   button {
@@ -206,50 +213,23 @@ italic, bold, strikethrough, list, paragraph, h1-h6, blockquote, hr
       @apply text-gray-800;
     }
     &.is-active {
-      @apply bg-gray-500 text-white;
+      @apply bg-gray-100 text-black;
     }
   }
   hr {
-    @apply block h-auto border border-dashed;
+    @apply block h-auto border;
   }
   svg {
     @apply h-5 w-5;
   }
-  .is-active, > * {
+  .is-active > * {
     @apply stroke-[3px];
   }
 }
 .fm-editor__editor {
-  @apply border border-gray-300 border-t-0 rounded-lg rounded-t-none py-4 px-4 overflow-auto;
+  @apply border border-gray-300 border-t-0 rounded-lg rounded-t-none py-4 px-4 overflow-auto flex-grow flex;
   > .ProseMirror {
-    @apply min-h-[100px] outline-none;
-
-    > * + * {
-      margin-top: 0.75em;
-    }
-
-    ul,
-    ol {
-      @apply px-4;
-    }
-    ul {
-      @apply list-disc;
-    }
-    ol {
-      @apply list-decimal;
-    }
-
-    h3 {
-      @apply text-2xl;
-    }
-
-    blockquote {
-      @apply pl-4 border-l-2 border-gray-300 text-gray-500 ;
-    }
-
-    hr {
-      @apply border-0 border-gray-300 border-t my-4;
-    }
+    @apply min-h-[100px] h-max outline-none flex-grow;
   }
 }
 
@@ -260,6 +240,15 @@ italic, bold, strikethrough, list, paragraph, h1-h6, blockquote, hr
   }
   .fm-editor__toolbar hr {
     @apply border-fm-primary;
+  }
+}
+.fm-editor:focus-within {
+  .fm-editor__toolbar,
+  .fm-editor__editor {
+    @apply transition-colors ring-1 ring-gray-600 border-gray-600;
+  }
+  .fm-editor__toolbar hr {
+    @apply border-gray-600;
   }
 }
 </style>
