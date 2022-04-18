@@ -186,21 +186,16 @@ class PaymentProcessingSerializer(serializers.ModelSerializer):
 
 
 class PaymentSerializer(serializers.ModelSerializer):
-    creator_user = UserPreviewSerializer()
-    donation = DonationSerializer()
-    subscription = SubscriptionSerializer()
-
     class Meta:
         model = Payment
         fields = [
             "id",
             "type",
             "amount",
+            "amount_currency",
             "status",
             "method",
-            "creator_user",
-            "subscription",
-            "donation",
+            "external_id",
             "created_at",
         ]
 

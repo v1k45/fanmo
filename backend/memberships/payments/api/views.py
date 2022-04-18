@@ -1,3 +1,4 @@
+from django.db.models import Q
 from rest_framework import mixins, permissions, viewsets
 
 from memberships.payments.api.serializers import (
@@ -12,6 +13,7 @@ from memberships.payments.models import Payment, Payout
 class PaymentViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = PaymentSerializer
     permission_classes = [permissions.IsAuthenticated]
+    queryset = Payment.objects.filter(status=Payment.Status.CAPTURED)
 
     def get_permissions(self):
         # accept payments anonymously
@@ -20,8 +22,19 @@ class PaymentViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
         return super().get_permissions()
 
     def get_queryset(self):
-        # include recently failed?
-        return self.request.user.payments.filter(status=Payment.Status.CAPTURED)
+        queryset = (
+            super()
+            .get_queryset()
+            .filter(Q(creator_user=self.request.user) | Q(fan_user=self.request.user))
+        )
+
+        if membership_id := self.request.query_params.get("membership_id"):
+            queryset = queryset.filter(subscription__membership_id=membership_id)
+
+        if donor_username := self.request.query_params.get("donor_username"):
+            queryset = queryset.filter(donation__fan_user__username=donor_username)
+
+        return queryset
 
     def get_serializer_class(self):
         if self.action == "create":
