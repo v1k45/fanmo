@@ -302,6 +302,9 @@ class TestPostAPIForUser:
         # create comments
         Comment.objects.create(post=post, body="hello", author_user=creator_user)
         Comment.objects.create(post=post, body="world", author_user=creator_user)
+        Comment.objects.create(
+            post=post, body="word", author_user=creator_user, is_published=False
+        )
 
         # create reactions
         Reaction.objects.create(post=post, emoji=Reaction.Emoji.HEART, author_user=user)
