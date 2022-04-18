@@ -2,7 +2,7 @@ import pytest
 from decimal import Decimal
 from moneyed import Money, INR
 from micawber.exceptions import ProviderException
-from memberships.posts.models import Post, Content, Comment
+from memberships.posts.models import Post, Content, Comment, Reaction
 from memberships.subscriptions.tests.factories import MembershipFactory, TierFactory
 
 pytestmark = pytest.mark.django_db
@@ -288,6 +288,83 @@ class TestPostAPIForUser:
         assert data["id"] == post.id
         assert data["can_access"]
         assert data["can_comment"]
+
+    def test_detail_stats(self, creator_user, user, api_client):
+        api_client.force_authenticate(user)
+
+        post = Post.objects.create(
+            title="Hello Darkness",
+            content=Content.objects.create(
+                type=Content.Type.TEXT, text="I've come to see you again."
+            ),
+            author_user=creator_user,
+        )
+        # create comments
+        Comment.objects.create(post=post, body="hello", author_user=creator_user)
+        Comment.objects.create(post=post, body="world", author_user=creator_user)
+
+        # create reactions
+        Reaction.objects.create(post=post, emoji=Reaction.Emoji.HEART, author_user=user)
+
+        response = api_client.get(f"/api/posts/{post.id}/")
+        assert response.status_code == 200
+        data = response.json()["stats"]
+
+        assert data["comment_count"] == 2
+        assert data["reactions"] == [
+            {
+                "count": 1,
+                "is_reacted": True,
+                "emoji": Reaction.Emoji.HEART.value,
+            }
+        ]
+
+    def test_add_reactions(self, creator_user, user, api_client):
+        api_client.force_authenticate(user)
+
+        post = Post.objects.create(
+            title="Hello Darkness",
+            content=Content.objects.create(
+                type=Content.Type.TEXT, text="I've come to see you again."
+            ),
+            author_user=creator_user,
+        )
+
+        response = api_client.post(
+            f"/api/posts/{post.id}/reactions/",
+            {
+                "action": "add",
+                "emoji": "heart",
+            },
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data["reactions"] == [
+            {
+                "count": 1,
+                "is_reacted": True,
+                "emoji": Reaction.Emoji.HEART.value,
+            }
+        ]
+
+    def test_remove_reactions(self, creator_user, user, api_client):
+        api_client.force_authenticate(user)
+
+        post = Post.objects.create(
+            title="Hello Darkness",
+            content=Content.objects.create(
+                type=Content.Type.TEXT, text="I've come to see you again."
+            ),
+            author_user=creator_user,
+        )
+        Reaction.objects.create(author_user=user, emoji=Reaction.Emoji.HEART, post=post)
+
+        response = api_client.post(
+            f"/api/posts/{post.id}/reactions/", {"action": "remove", "emoji": "heart"}
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data["reactions"] == []
 
 
 class TestPostCrudAPI:
@@ -775,8 +852,9 @@ class TestCommentAPI:
         response = api_client.delete(f"/api/comments/{creator_comment.id}/")
         assert response.status_code == 204
 
+        # reply also gets unpublished
         response = api_client.delete(f"/api/comments/{fan_comment.id}/")
-        assert response.status_code == 204
+        assert response.status_code == 404
 
     def test_delete_as_fan(self, api_client, active_membership):
         post = Post.objects.create(

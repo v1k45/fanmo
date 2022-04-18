@@ -134,51 +134,13 @@ class PostReactionSummarySerializer(serializers.Serializer):
     is_reacted = serializers.BooleanField()
 
 
-class PostSerializer(serializers.ModelSerializer):
-    content = serializers.SerializerMethodField()
-    author_user = UserPreviewSerializer(read_only=True)
+class PostStatsSerializer(serializers.ModelSerializer):
     reactions = serializers.SerializerMethodField()
-    can_access = serializers.SerializerMethodField()
-    can_comment = serializers.SerializerMethodField()
+    comment_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
-        fields = [
-            "id",
-            "title",
-            "slug",
-            "content",
-            "reactions",
-            "visibility",
-            "allowed_tiers",
-            "can_access",
-            "can_comment",
-            "author_user",
-            "created_at",
-            "updated_at",
-        ]
-        read_only_fields = ["author_user", "slug"]
-        extra_kwargs = {
-            "allowed_tiers": {
-                "allow_empty": True,
-                "required": False,
-            }
-        }
-
-    @property
-    def is_create_action(self):
-        return self.context["view"].action == "create"
-
-    @extend_schema_field(ContentSerializer())
-    def get_content(self, post):
-        if self.is_create_action or post.can_access:
-            return ContentSerializer(post.content, context=self.context).data
-
-    def get_can_access(self, post):
-        return self.is_create_action or post.can_access
-
-    def get_can_comment(self, post):
-        return self.is_create_action or post.can_comment
+        fields = ["reactions", "comment_count"]
 
     @extend_schema_field(PostReactionSummarySerializer(many=True))
     def get_reactions(self, post):
@@ -195,17 +157,67 @@ class PostSerializer(serializers.ModelSerializer):
 
         return reaction_summary.values()
 
+    @extend_schema_field(serializers.IntegerField())
+    def get_comment_count(self, post):
+        return getattr(post, "comment_count", 0)
 
-class PostReactionSerializer(PostSerializer):
-    action = serializers.ChoiceField(
-        choices=["add", "remove"], default="add", write_only=True
-    )
-    emoji = serializers.ChoiceField(choices=Reaction.Emoji.choices, write_only=True)
+
+class PostSerializer(serializers.ModelSerializer):
+    content = serializers.SerializerMethodField()
+    author_user = UserPreviewSerializer(read_only=True)
+    stats = PostStatsSerializer(source="*", read_only=True)
+    can_access = serializers.SerializerMethodField()
+    can_comment = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
-        fields = ["reactions", "action", "emoji"]
-        read_only_fields = ["reactions"]
+        fields = [
+            "id",
+            "title",
+            "slug",
+            "content",
+            "stats",
+            "visibility",
+            "allowed_tiers",
+            "can_access",
+            "can_comment",
+            "author_user",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = ["author_user", "slug", "stats"]
+        extra_kwargs = {
+            "allowed_tiers": {
+                "allow_empty": True,
+                "required": False,
+            }
+        }
+
+    @property
+    def is_create_action(self):
+        return self.context["view"].action == "create"
+
+    @extend_schema_field(ContentSerializer())
+    def get_content(self, post):
+        if self.is_create_action or post.can_access:
+            return ContentSerializer(post.content, context=self.context).data
+
+    @extend_schema_field(serializers.BooleanField())
+    def get_can_access(self, post):
+        return self.is_create_action or post.can_access
+
+    @extend_schema_field(serializers.BooleanField())
+    def get_can_comment(self, post):
+        return self.is_create_action or post.can_comment
+
+
+class PostReactionSerializer(serializers.ModelSerializer):
+    action = serializers.ChoiceField(choices=["add", "remove"])
+    emoji = serializers.ChoiceField(choices=Reaction.Emoji.choices)
+
+    class Meta:
+        model = Post
+        fields = ["action", "emoji"]
 
     def update(self, instance, validated_data):
         user = self.context["request"].user

@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError
-from django.db.models import Q
-from rest_framework import mixins, permissions, viewsets
+from django.db.models import Q, Count
+from drf_spectacular.utils import extend_schema
+from rest_framework import mixins, permissions, viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from functools import lru_cache
@@ -12,6 +13,7 @@ from memberships.posts.api.serializers import (
     PostCreateSerializer,
     PostReactionSerializer,
     PostSerializer,
+    PostStatsSerializer,
 )
 from memberships.users.api.permissions import IsCreator
 from memberships.posts.models import Comment, Post, annotate_post_permissions
@@ -26,8 +28,10 @@ class PostViewSet(
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        queryset = queryset.select_related("content", "author_user").prefetch_related(
-            "reactions", "allowed_tiers"
+        queryset = (
+            queryset.select_related("content", "author_user")
+            .prefetch_related("reactions", "allowed_tiers", "content__files")
+            .annotate(comment_count=Count("comments", filter=Q(is_published=True)))
         )
 
         if creator_username := self.request.query_params.get("creator_username"):
@@ -63,6 +67,7 @@ class PostViewSet(
         super().perform_create(serializer)
         notify_new_post(serializer.instance)
 
+    @extend_schema(responses=PostStatsSerializer)
     @action(
         detail=True, permission_classes=[permissions.IsAuthenticated], methods=["POST"]
     )
@@ -72,7 +77,11 @@ class PostViewSet(
         )
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data)
+
+        response_serializer = PostStatsSerializer(
+            self.get_object(), context=self.get_serializer_context()
+        )
+        return Response(response_serializer.data)
 
     @action(
         detail=False,
@@ -126,5 +135,4 @@ class CommentViewSet(
         return post
 
     def perform_destroy(self, instance):
-        instance.is_published = True
-        instance.save()
+        instance.get_descendants(include_self=True).update(is_published=False)
