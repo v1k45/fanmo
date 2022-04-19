@@ -41,7 +41,7 @@ class PostViewSet(
 
         if self.action == "destroy":
             queryset = queryset.filter(author_user=self.request.user)
-        return queryset.order_by()
+        return queryset.order_by("-created_at")
 
     def paginate_queryset(self, queryset):
         object_list = super().paginate_queryset(queryset)
