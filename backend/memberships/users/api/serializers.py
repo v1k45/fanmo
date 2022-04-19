@@ -142,6 +142,7 @@ class PublicUserSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             "username",
+            "display_name",
             "name",
             "one_liner",
             "about",
@@ -176,6 +177,7 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             "username",
+            "display_name",
             "name",
             "one_liner",
             "email",
@@ -194,6 +196,7 @@ class UserSerializer(serializers.ModelSerializer):
             "is_following",
         ]
         read_only_fields = [
+            "display_name",
             "email",
             "tiers",
             "follower_count",
