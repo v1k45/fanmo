@@ -8,6 +8,7 @@ from memberships.users.api.serializers import UserPreviewSerializer
 from memberships.users.models import User
 from memberships.core.serializers import PaymentIntentSerializerMixin
 
+from drf_spectacular.utils import extend_schema_field
 from drf_extra_fields.fields import Base64ImageField
 from memberships.utils.fields import VersatileImageFieldSerializer
 
@@ -136,6 +137,7 @@ class MembershipSerializer(PaymentIntentSerializerMixin, serializers.ModelSerial
         source="tier",
         write_only=True,
     )
+    lifetime_amount = serializers.SerializerMethodField()
 
     class Meta:
         model = Membership
@@ -147,12 +149,17 @@ class MembershipSerializer(PaymentIntentSerializerMixin, serializers.ModelSerial
             "creator_username",
             "active_subscription",
             "scheduled_subscription",
+            "lifetime_amount",
             "email",
             "is_active",
             "created_at",
             "updated_at",
         ]
         read_only_fields = ["tier", "creator_user", "is_active"]
+
+    @extend_schema_field(serializers.DecimalField(max_digits=7, decimal_places=2))
+    def get_lifetime_amount(self, membership):
+        return getattr(membership, "lifetime_amount", 0)
 
     def validate(self, attrs):
         fan_user = self.get_fan_user(attrs.pop("email", None))
@@ -199,9 +206,26 @@ class MembershipSerializer(PaymentIntentSerializerMixin, serializers.ModelSerial
 
 
 class MemberSerializer(serializers.ModelSerializer):
-    tier = TierPreviewSerializer()
-    fan_user = UserPreviewSerializer()
+    tier = TierPreviewSerializer(read_only=True)
+    fan_user = UserPreviewSerializer(read_only=True)
+    active_subscription = SubscriptionSerializer(read_only=True)
+    scheduled_subscription = SubscriptionSerializer(read_only=True)
+    lifetime_amount = serializers.SerializerMethodField()
 
     class Meta:
         model = Membership
-        fields = ["id", "tier", "fan_user", "is_active", "created_at", "updated_at"]
+        fields = [
+            "id",
+            "tier",
+            "fan_user",
+            "active_subscripton",
+            "scheduled_subscription",
+            "lifetime_amount",
+            "is_active",
+            "created_at",
+            "updated_at",
+        ]
+
+    @extend_schema_field(serializers.DecimalField(max_digits=7, decimal_places=2))
+    def get_lifetime_amount(self, membership):
+        return getattr(membership, "lifetime_amount", 0)

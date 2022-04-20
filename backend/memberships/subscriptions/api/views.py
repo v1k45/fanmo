@@ -1,7 +1,8 @@
-from django.db.models import Q
+from django.db.models import Q, Sum
 from drf_spectacular.utils import extend_schema
 from rest_framework import mixins, permissions, viewsets
 from rest_framework.decorators import action
+from memberships.payments.models import Payment
 
 from memberships.subscriptions.api.serializers import (
     MemberSerializer,
@@ -28,7 +29,28 @@ class MembersViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = MemberSerializer
 
     def get_queryset(self):
-        return self.request.user.members.exclude(is_active__isnull=True)
+        queryset = self.request.user.members.exclude(is_active__isnull=True)
+        queryset = queryset.select_related(
+            "fan_user",
+            "creator_user",
+            "tier",
+            "active_subscription",
+            "scheduled_subscription",
+        )
+        queryset = queryset.annotate(
+            lifetime_amount=Sum(
+                "subscriptions__payments__amount",
+                filter=Q(subscriptions__payments__status=Payment.Status.CAPTURED),
+            )
+        )
+        return queryset
+
+    @extend_schema(request=None)
+    @action(detail=True, methods=["post"])
+    def cancel(self, *args, **kwargs):
+        membership = self.get_object()
+        membership.cancel()
+        return self.retrieve(*args, **kwargs)
 
 
 class MembershipViewSet(
@@ -41,12 +63,14 @@ class MembershipViewSet(
     serializer_class = MembershipSerializer
 
     def get_queryset(self):
-        if self.request.user.is_anonymous:
-            return Membership.objects.none()
-
-        queryset = self.request.user.memberships.all().exclude(is_active__isnull=True)
+        queryset = Membership.objects.exclude(is_active__isnull=True).filter(
+            Q(creator_user=self.request.user.pk) | Q(fan_user=self.request.user.pk)
+        )
         if creator_username := self.request.query_params.get("creator_username"):
             queryset = queryset.filter(creator_user__username__iexact=creator_username)
+
+        if fan_username := self.request.query_params.get("fan_username"):
+            queryset = queryset.filter(fan_user__username__iexact=fan_username)
 
         queryset = queryset.select_related(
             "fan_user",
@@ -55,7 +79,12 @@ class MembershipViewSet(
             "active_subscription",
             "scheduled_subscription",
         )
-
+        queryset = queryset.annotate(
+            lifetime_amount=Sum(
+                "subscriptions__payments__amount",
+                filter=Q(subscriptions__payments__status=Payment.Status.CAPTURED),
+            )
+        )
         return queryset
 
     @extend_schema(request=None)

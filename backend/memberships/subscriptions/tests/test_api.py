@@ -3,6 +3,7 @@ import pytest
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 from moneyed import Money, INR
+from memberships.payments.models import Payment
 
 from memberships.users.models import User
 from memberships.payments.tests.factories import BankAccountFactory
@@ -107,6 +108,35 @@ class TestMembershipFlow:
         membership.scheduled_subsription = None
         membership.save()
 
+        # payments
+        Payment.objects.create(
+            creator_user=membership.creator_user,
+            fan_user=membership.fan_user,
+            amount=Money(Decimal("500"), INR),
+            status=Payment.Status.CAPTURED,
+            method=Payment.Method.UPI,
+            type=Payment.Type.SUBSCRIPTION,
+            subscription=membership.active_subscription,
+        )
+        Payment.objects.create(
+            creator_user=membership.creator_user,
+            fan_user=membership.fan_user,
+            amount=Money(Decimal("500"), INR),
+            status=Payment.Status.CAPTURED,
+            method=Payment.Method.UPI,
+            type=Payment.Type.SUBSCRIPTION,
+            subscription=membership.active_subscription,
+        )
+        Payment.objects.create(
+            creator_user=membership.creator_user,
+            fan_user=membership.fan_user,
+            amount=Money(Decimal("5"), INR),
+            status=Payment.Status.REFUNDED,
+            method=Payment.Method.UPI,
+            type=Payment.Type.SUBSCRIPTION,
+            subscription=membership.active_subscription,
+        )
+
         # unconfirmed memberships don't show up.
         response = api_client.get("/api/memberships/")
         assert response.status_code == 200
@@ -118,6 +148,7 @@ class TestMembershipFlow:
             == membership.creator_user.username
         )
         assert membership_json["is_active"]
+        assert membership_json["lifetime_amount"] == 1000
 
     def test_create_anonymous(self, creator_user, api_client, mocker):
         rzp_plan_mock = mocker.patch(
