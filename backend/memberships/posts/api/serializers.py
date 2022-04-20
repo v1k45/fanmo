@@ -269,7 +269,15 @@ class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        fields = ["id", "post_id", "parent_id", "body", "author_user", "children", "created_at"]
+        fields = [
+            "id",
+            "post_id",
+            "parent_id",
+            "body",
+            "author_user",
+            "children",
+            "created_at",
+        ]
 
     def get_fields(self):
         fields = super().get_fields()

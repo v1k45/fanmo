@@ -21,6 +21,7 @@ class TestAuthenticationFlow:
         assert response.json() == {
             "username": "ashok",
             "name": "Ashok",
+            "display_name": "Ashok",
             "one_liner": "",
             "about": "",
             "email": "ashok@gmail.com",
@@ -86,6 +87,7 @@ class TestAuthenticationFlow:
         assert response.json() == {
             "username": user.username,
             "name": user.name,
+            "display_name": user.name,
             "one_liner": "",
             "about": "",
             "email": user.email,
@@ -157,6 +159,7 @@ class TestMeAPI:
         assert response.json() == {
             "username": user.username,
             "name": user.name,
+            "display_name": user.name,
             "one_liner": "",
             "about": "",
             "email": user.email,
@@ -469,6 +472,7 @@ class TestUserAPI:
         assert response.json() == {
             "username": creator_user.username,
             "name": creator_user.name,
+            "display_name": creator_user.name,
             "one_liner": "",
             "about": "",
             "avatar": None,
