@@ -127,6 +127,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
 class MembershipSerializer(PaymentIntentSerializerMixin, serializers.ModelSerializer):
     tier = TierPreviewSerializer(read_only=True)
+    fan_user = UserPreviewSerializer(read_only=True)
     creator_user = UserPreviewSerializer(read_only=True)
     active_subscription = SubscriptionSerializer(read_only=True)
     scheduled_subscription = SubscriptionSerializer(read_only=True)
@@ -144,6 +145,7 @@ class MembershipSerializer(PaymentIntentSerializerMixin, serializers.ModelSerial
         fields = [
             "id",
             "tier",
+            "fan_user",
             "creator_user",
             "tier_id",
             "creator_username",
@@ -155,7 +157,7 @@ class MembershipSerializer(PaymentIntentSerializerMixin, serializers.ModelSerial
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["tier", "creator_user", "is_active"]
+        read_only_fields = ["tier", "creator_user", "fan_user", "is_active"]
 
     @extend_schema_field(serializers.DecimalField(max_digits=7, decimal_places=2))
     def get_lifetime_amount(self, membership):
@@ -218,7 +220,7 @@ class MemberSerializer(serializers.ModelSerializer):
             "id",
             "tier",
             "fan_user",
-            "active_subscripton",
+            "active_subscription",
             "scheduled_subscription",
             "lifetime_amount",
             "is_active",
