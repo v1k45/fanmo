@@ -266,7 +266,14 @@ class UserPreviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["display_name", "username", "name", "avatar", "is_creator"]
+        fields = [
+            "display_name",
+            "username",
+            "name",
+            "avatar",
+            "is_creator",
+            "one_liner",
+        ]
 
 
 class RequestEmailVerificationSerializer(serializers.Serializer):

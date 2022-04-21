@@ -1,4 +1,3 @@
-import sre_compile
 from drf_extra_fields.fields import Base64ImageField, Base64FileField
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
@@ -10,7 +9,7 @@ from memberships.posts.models import (
     Post,
     Reaction,
 )
-from memberships.users.api.serializers import UserPreviewSerializer
+from memberships.users.api.serializers import PublicUserSerializer, UserPreviewSerializer
 from memberships.utils.fields import VersatileImageFieldSerializer, FileField
 
 
@@ -209,6 +208,10 @@ class PostSerializer(serializers.ModelSerializer):
     @extend_schema_field(serializers.BooleanField())
     def get_can_comment(self, post):
         return self.is_create_action or post.can_comment
+
+
+class PostDetailSerializer(PostSerializer):
+    author_user = PublicUserSerializer(read_only=True)
 
 
 class PostReactionSerializer(serializers.ModelSerializer):

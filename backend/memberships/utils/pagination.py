@@ -4,6 +4,7 @@ from rest_framework.utils.urls import remove_query_param, replace_query_param
 
 class PageNumberPagination(pagination.PageNumberPagination):
     """Custom pagination to allow page_size and relative next and prev url"""
+
     page_size = 25
     page_size_query_param = "page_size"
     max_page_size = 100

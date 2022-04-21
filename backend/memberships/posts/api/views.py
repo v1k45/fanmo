@@ -11,6 +11,7 @@ from memberships.posts.api.serializers import (
     CommentSerializer,
     LinkPreviewSerializer,
     PostCreateSerializer,
+    PostDetailSerializer,
     PostReactionSerializer,
     PostSerializer,
     PostStatsSerializer,
@@ -55,6 +56,8 @@ class PostViewSet(
     def get_serializer_class(self):
         if self.action == "create":
             return PostCreateSerializer
+        if self.action == "retrieve":
+            return PostDetailSerializer
         if self.action == "reactions":
             return PostReactionSerializer
         if self.action == "link_preview":
