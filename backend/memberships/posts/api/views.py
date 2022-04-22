@@ -29,6 +29,12 @@ class PostViewSet(
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        if creator_username := self.request.query_params.get("creator_username"):
+            queryset = queryset.filter(author_user__username=creator_username)
+
+        if self.action == "destroy":
+            queryset = queryset.filter(author_user=self.request.user)
+
         queryset = (
             queryset.select_related("content", "author_user")
             .prefetch_related("reactions", "allowed_tiers", "content__files")
@@ -36,12 +42,6 @@ class PostViewSet(
                 comment_count=Count("comments", filter=Q(comments__is_published=True))
             )
         )
-
-        if creator_username := self.request.query_params.get("creator_username"):
-            queryset = queryset.filter(author_user__username=creator_username)
-
-        if self.action == "destroy":
-            queryset = queryset.filter(author_user=self.request.user)
         return queryset.order_by("-created_at")
 
     def paginate_queryset(self, queryset):

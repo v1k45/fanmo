@@ -8,6 +8,7 @@ from django.forms import ValidationError
 from django_otp.plugins.otp_email.models import EmailDevice
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from drf_extra_fields.fields import Base64ImageField
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.exceptions import ErrorDetail
 from dj_rest_auth.registration.serializers import (
@@ -130,13 +131,36 @@ class UserOnboardingSerializer(serializers.ModelSerializer):
         return submit_for_review
 
 
-class PublicUserSerializer(serializers.ModelSerializer):
+class ComputedUserFieldSerializer(serializers.Serializer):
+    is_following = serializers.SerializerMethodField()
+    is_member = serializers.SerializerMethodField()
+
+    @extend_schema_field(serializers.BooleanField())
+    def get_is_following(self, user):
+        request_user = self.context["request"].user
+        if not request_user.is_authenticated:
+            return False
+
+        following_user = next(
+            (user for f_user in request_user.followings.all() if f_user.id == user.id),
+            None,
+        )
+        return following_user is not None
+
+    @extend_schema_field(serializers.BooleanField())
+    def get_is_member(self, user):
+        request_user = self.context["request"].user
+        if not request_user.is_authenticated:
+            return False
+        return request_user.get_membership(user.pk) is not None
+
+
+class PublicUserSerializer(ComputedUserFieldSerializer, serializers.ModelSerializer):
     tiers = UserTierSerializer(many=True, read_only=True, source="public_tiers")
     avatar = VersatileImageFieldSerializer("user_avatar")
     cover = VersatileImageFieldSerializer("user_cover")
     social_links = SocialLinkSerializer(read_only=True)
     preferences = UserPreferenceSerializer(source="user_preferences", read_only=True)
-    is_following = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -154,14 +178,11 @@ class PublicUserSerializer(serializers.ModelSerializer):
             "preferences",
             "is_creator",
             "is_following",
+            "is_member",
         ]
 
-    def get_is_following(self, user):
-        request = self.context["request"]
-        return user.followers.all().filter(id=request.user.id).exists()
 
-
-class UserSerializer(serializers.ModelSerializer):
+class UserSerializer(ComputedUserFieldSerializer, serializers.ModelSerializer):
     tiers = UserTierSerializer(many=True, read_only=True, source="public_tiers")
     social_links = SocialLinkSerializer()
     # TODO: ONLY EXPOSE IT TO OWN USER!!
@@ -171,7 +192,6 @@ class UserSerializer(serializers.ModelSerializer):
     avatar_base64 = Base64ImageField(write_only=True, source="avatar", required=False)
     cover = VersatileImageFieldSerializer("user_cover")
     cover_base64 = Base64ImageField(write_only=True, source="cover", required=False)
-    is_following = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -194,6 +214,7 @@ class UserSerializer(serializers.ModelSerializer):
             "subscriber_count",
             "is_creator",
             "is_following",
+            "is_member",
         ]
         read_only_fields = [
             "display_name",
@@ -256,12 +277,8 @@ class UserSerializer(serializers.ModelSerializer):
 
         return super().update(instance, validated_data)
 
-    def get_is_following(self, user):
-        request = self.context["request"]
-        return user.followers.all().filter(id=request.user.id).exists()
 
-
-class UserPreviewSerializer(serializers.ModelSerializer):
+class UserPreviewSerializer(ComputedUserFieldSerializer, serializers.ModelSerializer):
     avatar = VersatileImageFieldSerializer("user_avatar")
 
     class Meta:
@@ -271,8 +288,10 @@ class UserPreviewSerializer(serializers.ModelSerializer):
             "username",
             "name",
             "avatar",
-            "is_creator",
             "one_liner",
+            "is_creator",
+            "is_following",
+            "is_member",
         ]
 
 

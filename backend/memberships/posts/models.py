@@ -16,16 +16,14 @@ def annotate_post_permissions(object_list, fan_user):
     """
     Annotate `can_access` and `can_comment` attributes to post objects based on the fan user.
     """
-    membership_map = {
-        membership.creator_user_id: membership.tier_id
-        for membership in Membership.objects.filter(
-            fan_user_id=fan_user.pk, is_active=True
-        )
-    }
 
     posts = []
     for post in object_list:
-        subscribed_tier_id = membership_map.get(post.author_user_id)
+        membership = (
+            fan_user.get_membership(post.author_user_id)
+            if fan_user.is_authenticated
+            else None
+        )
         # post authors can access and comment
         if post.author_user_id == fan_user.pk:
             can_access = True
@@ -33,15 +31,15 @@ def annotate_post_permissions(object_list, fan_user):
         # public posts can be seen by anyone, but commented by members
         elif post.visibility == Post.Visiblity.PUBLIC:
             can_access = True
-            can_comment = subscribed_tier_id is not None
+            can_comment = membership is not None
         # member posts can be seen by members, and commented by members
         elif post.visibility == Post.Visiblity.ALL_MEMBERS:
-            can_access = subscribed_tier_id is not None
+            can_access = membership is not None
             can_comment = can_access
         # select member posts can be seen select members, and commented by select members
         elif post.visibility == Post.Visiblity.ALLOWED_TIERS:
-            can_access = any(
-                (tier.id == subscribed_tier_id for tier in post.allowed_tiers.all())
+            can_access = membership is not None and any(
+                (tier.id == membership.tier_id for tier in post.allowed_tiers.all())
             )
             can_comment = can_access
         else:

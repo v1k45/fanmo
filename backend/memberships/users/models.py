@@ -1,5 +1,5 @@
 import base64
-from functools import cached_property
+from functools import cached_property, lru_cache
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
@@ -79,6 +79,19 @@ class User(BaseModel, AbstractUser):
 
     def email_base64(self):
         return base64.urlsafe_b64encode(self.email.encode()).decode("utf-8")
+
+    @lru_cache
+    def get_membership(self, creator_user_id):
+        # PERF: assumes memberships are prefetched!
+        return next(
+            (
+                membership
+                for membership in self.memberships.all()
+                if membership.is_active
+                and membership.creator_user_id == creator_user_id
+            ),
+            None,
+        )
 
 
 class SocialLink(models.Model):

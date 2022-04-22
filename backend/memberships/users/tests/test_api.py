@@ -57,6 +57,7 @@ class TestAuthenticationFlow:
             "subscriber_count": 0,
             "is_creator": None,
             "is_following": False,
+            "is_member": False,
         }
         assert User.objects.get(username="ashok").email == "ashok@gmail.com"
 
@@ -123,6 +124,7 @@ class TestAuthenticationFlow:
             "subscriber_count": 0,
             "is_creator": None,
             "is_following": False,
+            "is_member": False,
         }
 
     def test_email_verification(self, user, api_client, mocker):
@@ -195,6 +197,7 @@ class TestMeAPI:
             "subscriber_count": 0,
             "is_creator": None,
             "is_following": False,
+            "is_member": False,
         }
 
     def test_update(self, user, api_client):
@@ -504,6 +507,7 @@ class TestUserAPI:
             "is_creator": True,
             "follower_count": 0,
             "is_following": False,
+            "is_member": False,
         }
 
     def test_follow(self, api_client, creator_user, user):
@@ -517,3 +521,11 @@ class TestUserAPI:
         response = api_client.post(f"/api/users/{creator_user.username}/unfollow/")
         assert response.status_code == 200
         assert not response.json()["is_following"]
+
+    def test_membership(self, api_client, active_membership):
+        api_client.force_authenticate(active_membership.fan_user)
+        response = api_client.get(
+            f"/api/users/{active_membership.creator_user.username}/"
+        )
+        assert response.status_code == 200
+        assert response.json()["is_member"]

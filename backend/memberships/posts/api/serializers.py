@@ -9,7 +9,10 @@ from memberships.posts.models import (
     Post,
     Reaction,
 )
-from memberships.users.api.serializers import PublicUserSerializer, UserPreviewSerializer
+from memberships.users.api.serializers import (
+    PublicUserSerializer,
+    UserPreviewSerializer,
+)
 from memberships.utils.fields import VersatileImageFieldSerializer, FileField
 
 
