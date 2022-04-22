@@ -354,7 +354,7 @@ REST_FRAMEWORK = {
         "rest_framework.parsers.JSONParser",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.SessionAuthentication",
+        "memberships.utils.authentication.SessionAuthentication",
     ),
     "DEFAULT_PAGINATION_CLASS": "memberships.utils.pagination.PageNumberPagination",
     "PAGE_SIZE": 25,

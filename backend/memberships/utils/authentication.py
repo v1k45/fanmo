@@ -2,6 +2,7 @@ from django.conf import settings
 from rest_framework import authentication, exceptions
 
 from memberships.users.models import User
+from django.db.models import prefetch_related_objects
 
 
 def create_auth_token(token_model, user, serializer):
@@ -28,3 +29,14 @@ class UsernameAuthentication(authentication.BaseAuthentication):
             raise exceptions.AuthenticationFailed("No such user")
 
         return (user, None)
+
+
+class SessionAuthentication(authentication.SessionAuthentication):
+    def authenticate(self, request):
+        value = super().authenticate(request)
+        if not value:
+            return None
+
+        user, token = value
+        prefetched_users = prefetch_related_objects([user], "memberships", "followings")
+        return (prefetched_users[0], token)
