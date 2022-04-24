@@ -69,9 +69,11 @@ export const actions = {
       return ERRORED;
     }
   },
-  async fetchMembers({ dispatch }, username) {
+  // eslint-disable-next-line camelcase
+  async fetchMembers({ dispatch }, { creator_username, is_active, search, ordering }) {
     return await dispatch('fetch', {
-      url: `/api/memberships/?creator_username=${username}`,
+      url: '/api/memberships/',
+      payload: { params: { creator_username, is_active, search, ordering } },
       mutation: 'setMembers'
     });
   },

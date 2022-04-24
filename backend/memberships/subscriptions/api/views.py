@@ -2,6 +2,8 @@ from django.db.models import Q, Sum
 from drf_spectacular.utils import extend_schema
 from rest_framework import mixins, permissions, viewsets
 from rest_framework.decorators import action
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
 from memberships.payments.models import Payment
 
 from memberships.subscriptions.api.serializers import (
@@ -12,6 +14,7 @@ from memberships.subscriptions.api.serializers import (
 )
 from memberships.subscriptions.models import Membership, Subscription
 from memberships.users.api.permissions import IsCreator
+from memberships.subscriptions.api.filters import MembershipFilter
 
 
 class TierViewSet(
@@ -61,16 +64,22 @@ class MembershipViewSet(
     """
 
     serializer_class = MembershipSerializer
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
+    filterset_class = MembershipFilter
+    ordering_fields = ["created_at", "lifetime_amount"]
+
+    @property
+    def search_fields(self):
+        if 'creator_username' in self.request.query_params:
+            return ["fan_user__name", "fan_user__email"]
+        elif 'fan_username' in self.request.query_params:
+            return ["creator_user__name", "creator_user__email"]
+        return []
 
     def get_queryset(self):
         queryset = Membership.objects.exclude(is_active__isnull=True).filter(
             Q(creator_user=self.request.user.pk) | Q(fan_user=self.request.user.pk)
         )
-        if creator_username := self.request.query_params.get("creator_username"):
-            queryset = queryset.filter(creator_user__username__iexact=creator_username)
-
-        if fan_username := self.request.query_params.get("fan_username"):
-            queryset = queryset.filter(fan_user__username__iexact=fan_username)
 
         queryset = queryset.select_related(
             "fan_user",

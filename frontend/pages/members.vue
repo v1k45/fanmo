@@ -1,13 +1,38 @@
-/* eslint-disable vue/attributes-order */
 <template>
 <div v-if="members != null">
+  <div>
+    <div class="mt-8 flex max-w-md">
+      <div class="flex-grow mr-2"><fm-input v-model="filter.search" placeholder="Search by name or email"></fm-input></div>
+      <div><fm-button type="primary" @click="loadMemberships">Search</fm-button></div>
+    </div>
+    <div class="mt-8 flex max-w-md items-center">
+      <div class="flex-grow mr-2">
+        <fm-input v-model="filter.isActive" type="select" label="Active Status">
+          <option value="null">All</option>
+          <option value="true">Active</option>
+          <option value="false">Inactive</option>
+        </fm-input>
+      </div>
+      <div><fm-button type="primary" @click="loadMemberships">Filter</fm-button></div>
+    </div>
+    <div class="mt-8 flex max-w-md items-center">
+      <div class="flex-grow mr-2">
+        <fm-input v-model="filter.orderBy" type="select" label="Sort by">
+          <option value="-created_at">Newest first</option>
+          <option value="created_at">Oldest first</option>
+          <option value="-lifetime_amount">Highest lifetime amount first</option>
+          <option value="lifetime_amount">Lowest lifetime amount first</option>
+        </fm-input>
+      </div>
+      <div><fm-button type="primary" @click="loadMemberships">Sort</fm-button></div>
+    </div>
+  </div>
   <table class="table table-auto">
     <thead>
       <tr>
         <th>Member</th>
         <th>Tier</th>
         <th>Active</th>
-        <th>Status</th>
         <th>Lifetime amount</th>
         <th>Next Renewal</th>
         <th></th>
@@ -18,7 +43,6 @@
         <td>{{ member.fan_user.display_name }}</td>
         <td>{{ member.tier.name }}</td>
         <td>{{ member.is_active }}</td>
-        <td>{{ member.status }}</td>
         <td>{{ member.lifetime_amount }}</td>
         <td>{{ member.active_subscription.cycle_end_at }}</td>
         <td><fm-button type="info" @click="viewMember(member)">view</fm-button></td>
@@ -34,7 +58,6 @@
         {{ activeMember.status }}
         <fm-button v-if="activeMember.status == 'active'" type="error" @click="cancelMembership(activeMember.id)">cancel</fm-button>
       </dd>
-      <!-- show cancel? -->
       <dt>Tier</dt>
       <dd>{{ activeMember.tier.name }}</dd>
       <dt>Next renewal</dt>
@@ -77,6 +100,11 @@ import { mapActions, mapState } from 'vuex';
 export default {
   data() {
     return {
+      filter: {
+        search: '',
+        isActive: null,
+        orderBy: '-created_at'
+      },
       showDialog: true,
       activeMember: null
     };
@@ -88,10 +116,20 @@ export default {
     ...mapState('memberships', ['members', 'payments'])
   },
   mounted() {
-    this.fetchMembers(this.$auth.user.username);
+    this.loadMemberships();
   },
   methods: {
     ...mapActions('memberships', ['fetchMembers', 'fetchMoreMembers', 'fetchPayments', 'fetchMorePayments', 'cancelMembership']),
+    loadMemberships() {
+      const params = { creator_username: this.$auth.user.username, ordering: this.filter.orderBy };
+      if (this.filter.search) {
+        params.search = this.filter.search;
+      }
+      if (this.filter.isActive != null) {
+        params.is_active = this.filter.isActive;
+      }
+      this.fetchMembers(params);
+    },
     viewMember(member) {
       this.activeMember = member;
       this.showDialog = true;
