@@ -80,6 +80,17 @@ export const actions = {
   async fetchMoreMembers({ dispatch }, nextUrl) {
     return await dispatch('fetch', { url: nextUrl, mutation: 'setMoreMembers' });
   },
+  // eslint-disable-next-line camelcase
+  async fetchMemberships({ dispatch }, { fan_username, is_active, search, ordering }) {
+    return await dispatch('fetch', {
+      url: '/api/memberships/',
+      payload: { params: { fan_username, is_active, search, ordering } },
+      mutation: 'setMemberships'
+    });
+  },
+  async fetchMoreMemberships({ dispatch }, nextUrl) {
+    return await dispatch('fetch', { url: nextUrl, mutation: 'setMoreMemberships' });
+  },
   async cancelMembership({ dispatch }, membershipId) {
     return await dispatch('update', {
       url: `/api/memberships/${membershipId}/cancel/`,
@@ -105,6 +116,13 @@ export const mutations = {
   setMoreMembers(state, members) {
     const results = [...state.members.results, ...members.results];
     state.members = { ...members, results };
+  },
+  setMemberships(state, memberships) {
+    state.memberships = memberships;
+  },
+  setMoreMemberships(state, memberships) {
+    const results = [...state.memberships.results, ...memberships.results];
+    state.memberships = { ...memberships, results };
   },
   cancelMembership(state, membership) {
     const results = [...state.members.results];
