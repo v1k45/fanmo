@@ -1,7 +1,9 @@
+from django.db import transaction
 from django_fsm import can_proceed
 from memberships.subscriptions.models import Membership, Subscription
 
 
+@transaction.atomic
 def refresh_membership(membership_id: int):
     """
     Refresh membership to reflect the correct states based on:
@@ -20,6 +22,9 @@ def refresh_membership(membership_id: int):
     )
     active_subscription: Subscription = membership.active_subscription
     scheduled_subscription: Subscription = membership.scheduled_subscription
+
+    if not active_subscription:
+        return
 
     if can_proceed(active_subscription.halt):
         active_subscription.halt()

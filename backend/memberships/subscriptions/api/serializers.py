@@ -139,6 +139,7 @@ class MembershipSerializer(PaymentIntentSerializerMixin, serializers.ModelSerial
         write_only=True,
     )
     lifetime_amount = serializers.SerializerMethodField()
+    status = serializers.SerializerMethodField()
 
     class Meta:
         model = Membership
@@ -152,6 +153,7 @@ class MembershipSerializer(PaymentIntentSerializerMixin, serializers.ModelSerial
             "active_subscription",
             "scheduled_subscription",
             "lifetime_amount",
+            "status",
             "email",
             "is_active",
             "created_at",
@@ -162,6 +164,23 @@ class MembershipSerializer(PaymentIntentSerializerMixin, serializers.ModelSerial
     @extend_schema_field(serializers.DecimalField(max_digits=7, decimal_places=2))
     def get_lifetime_amount(self, membership):
         return getattr(membership, "lifetime_amount", 0)
+
+    @extend_schema_field(
+        serializers.ChoiceField(
+            choices=Subscription.Status.values + ["scheduled_to_update"]
+        )
+    )
+    def get_status(self, membership):
+        if membership.scheduled_subscription and membership.active_subscription:
+            if (
+                membership.active_subscription.status
+                == Subscription.Status.SCHEDULED_TO_CANCEL
+                and membership.scheduled_subscription.status
+                == Subscription.Status.SCHEDULED_TO_ACTIVATE
+            ):
+                return "scheduled_to_update"
+        if membership.active_subscription:
+            return membership.active_subscription.status
 
     def validate(self, attrs):
         fan_user = self.get_fan_user(attrs.pop("email", None))
