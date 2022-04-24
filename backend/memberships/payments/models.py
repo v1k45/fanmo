@@ -152,7 +152,7 @@ class Payout(BaseModel):
         SCHEDULED = "scheduled"
         PROCESSED = "processed"
 
-    payment = models.ForeignKey("payments.Payment", on_delete=models.CASCADE)
+    payment = models.OneToOneField("payments.Payment", on_delete=models.CASCADE)
     status = models.CharField(
         max_length=16, choices=Status.choices, default=Status.SCHEDULED
     )

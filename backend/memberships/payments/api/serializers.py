@@ -9,6 +9,7 @@ from memberships.users.api.serializers import UserPreviewSerializer
 
 from memberships.utils import razorpay_client
 from razorpay.errors import SignatureVerificationError
+from drf_spectacular.utils import extend_schema_field
 
 
 class RazorpayResponseSerializer(serializers.Serializer):
@@ -185,7 +186,15 @@ class PaymentProcessingSerializer(serializers.ModelSerializer):
         return payment
 
 
+class PayoutSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Payout
+        fields = ["id", "amount", "amount_currency", "status", "external_id", "created_at"]
+
+
 class PaymentSerializer(serializers.ModelSerializer):
+    payout = serializers.SerializerMethodField(read_only=True)
     class Meta:
         model = Payment
         fields = [
@@ -195,9 +204,15 @@ class PaymentSerializer(serializers.ModelSerializer):
             "amount_currency",
             "status",
             "method",
+            "payout",
             "external_id",
             "created_at",
         ]
+
+    @extend_schema_field(PayoutSerializer())
+    def get_payout(self, payment):
+        if payment.creator_user_id == self.context["request"].user.id and hasattr(payment, 'payout'):
+            return PayoutSerializer(payment.payout, context=self.context).data
 
 
 class PaymentPreviewSerializer(serializers.ModelSerializer):
@@ -207,13 +222,6 @@ class PaymentPreviewSerializer(serializers.ModelSerializer):
         model = Payment
         fields = ["id", "amount", "method", "type", "fan_user", "created_at"]
 
-
-class PayoutSerializer(serializers.ModelSerializer):
-    payment = PaymentPreviewSerializer()
-
-    class Meta:
-        model = Payout
-        fields = ["id", "amount", "status", "payment", "created_at"]
 
 
 class BankAccountSerializer(serializers.ModelSerializer):
