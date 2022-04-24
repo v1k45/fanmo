@@ -187,14 +187,21 @@ class PaymentProcessingSerializer(serializers.ModelSerializer):
 
 
 class PayoutSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Payout
-        fields = ["id", "amount", "amount_currency", "status", "external_id", "created_at"]
+        fields = [
+            "id",
+            "amount",
+            "amount_currency",
+            "status",
+            "external_id",
+            "created_at",
+        ]
 
 
 class PaymentSerializer(serializers.ModelSerializer):
     payout = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = Payment
         fields = [
@@ -211,7 +218,9 @@ class PaymentSerializer(serializers.ModelSerializer):
 
     @extend_schema_field(PayoutSerializer())
     def get_payout(self, payment):
-        if payment.creator_user_id == self.context["request"].user.id and hasattr(payment, 'payout'):
+        if payment.creator_user_id == self.context["request"].user.id and hasattr(
+            payment, "payout"
+        ):
             return PayoutSerializer(payment.payout, context=self.context).data
 
 
@@ -221,7 +230,6 @@ class PaymentPreviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = ["id", "amount", "method", "type", "fan_user", "created_at"]
-
 
 
 class BankAccountSerializer(serializers.ModelSerializer):
