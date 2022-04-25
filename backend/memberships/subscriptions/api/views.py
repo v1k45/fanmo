@@ -70,9 +70,9 @@ class MembershipViewSet(
 
     @property
     def search_fields(self):
-        if 'creator_username' in self.request.query_params:
+        if "creator_username" in self.request.query_params:
             return ["fan_user__name", "fan_user__email"]
-        elif 'fan_username' in self.request.query_params:
+        elif "fan_username" in self.request.query_params:
             return ["creator_user__name", "creator_user__email"]
         return []
 

@@ -164,6 +164,10 @@ class Reaction(BaseModel):
         HEART = "heart"
 
     emoji = models.CharField(max_length=16, choices=Emoji.choices)
-    # support comments in future?
-    post = models.ForeignKey("posts.Post", on_delete=models.CASCADE)
+    post = models.ForeignKey(
+        "posts.Post", on_delete=models.CASCADE, null=True, blank=True
+    )
+    comment = models.ForeignKey(
+        "posts.Comment", on_delete=models.CASCADE, null=True, blank=True
+    )
     author_user = models.ForeignKey("users.User", on_delete=models.CASCADE)

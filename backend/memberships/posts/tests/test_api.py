@@ -881,3 +881,32 @@ class TestCommentAPI:
 
         response = api_client.delete(f"/api/comments/{fan_comment.id}/")
         assert response.status_code == 204
+
+    def test_add_reactions(self, creator_user, user, api_client):
+        api_client.force_authenticate(user)
+
+        post = Post.objects.create(
+            title="Hello Darkness",
+            content=Content.objects.create(
+                type=Content.Type.TEXT, text="I've come to see you again."
+            ),
+            author_user=creator_user,
+        )
+        comment = Comment.objects.create(post=post, author_user=creator_user, body="hi")
+
+        response = api_client.post(
+            f"/api/comments/{comment.id}/reactions/",
+            {
+                "action": "add",
+                "emoji": "heart",
+            },
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data["reactions"] == [
+            {
+                "count": 1,
+                "is_reacted": True,
+                "emoji": Reaction.Emoji.HEART.value,
+            }
+        ]

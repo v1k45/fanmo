@@ -238,6 +238,38 @@ class PostReactionSerializer(serializers.ModelSerializer):
         return instance
 
 
+class CommentReactionSerializer(serializers.ModelSerializer):
+    action = serializers.ChoiceField(choices=["add", "remove"])
+    emoji = serializers.ChoiceField(choices=Reaction.Emoji.choices)
+
+    class Meta:
+        model = Comment
+        fields = ["action", "emoji"]
+
+    def validate(self, attrs):
+        user = self.context["request"].user
+
+        post = self.instance.post
+        post.annotate_permissions(user)
+        if not post.can_access:
+            raise serializers.ValidationError(
+                "You do not have permission to perform this action", "permission_denied"
+            )
+        return super().validate(attrs)
+
+    def update(self, instance, validated_data):
+        user = self.context["request"].user
+        if validated_data["action"] == "add":
+            Reaction.objects.update_or_create(
+                comment=instance, author_user=user, emoji=validated_data["emoji"]
+            )
+        else:
+            Reaction.objects.filter(
+                comment=instance, author_user=user, emoji=validated_data["emoji"]
+            ).delete()
+        return instance
+
+
 class PostCreateSerializer(PostSerializer):
     content = ContentSerializer()
 
@@ -272,6 +304,7 @@ class CommentSerializer(serializers.ModelSerializer):
         write_only=True,
     )
     author_user = UserPreviewSerializer(read_only=True)
+    reactions = serializers.SerializerMethodField()
 
     class Meta:
         model = Comment
@@ -282,6 +315,7 @@ class CommentSerializer(serializers.ModelSerializer):
             "body",
             "author_user",
             "children",
+            "reactions",
             "created_at",
         ]
 
@@ -291,6 +325,21 @@ class CommentSerializer(serializers.ModelSerializer):
             many=True, read_only=True, source="get_children"
         )
         return fields
+
+    @extend_schema_field(CommentReactionSerializer(many=True))
+    def get_reactions(self, comment):
+        reaction_summary = {}
+        for reaction in comment.reactions.all():
+            reaction_summary.setdefault(
+                reaction.emoji,
+                {"count": 0, "is_reacted": False, "emoji": reaction.emoji},
+            )
+            reaction_summary[reaction.emoji]["count"] += 1
+
+            if reaction.author_user_id == self.context["request"].user.pk:
+                reaction_summary[reaction.emoji]["is_reacted"] = True
+
+        return reaction_summary.values()
 
     def validate(self, attrs):
         if attrs.get("parent") and attrs["parent"].post_id != attrs["post"].id:

@@ -8,6 +8,7 @@ from functools import lru_cache
 from memberships.core.email import notify_new_post
 
 from memberships.posts.api.serializers import (
+    CommentReactionSerializer,
     CommentSerializer,
     LinkPreviewSerializer,
     PostCreateSerializer,
@@ -109,8 +110,10 @@ class CommentViewSet(
     serializer_class = CommentSerializer
 
     def get_queryset(self):
-        base_qs = Comment.objects.filter(is_published=True).select_related(
-            "author_user"
+        base_qs = (
+            Comment.objects.filter(is_published=True)
+            .select_related("author_user")
+            .prefetch_related("reactions")
         )
         if self.action == "list":
             post = self.get_post()
@@ -127,6 +130,11 @@ class CommentViewSet(
 
         return base_qs
 
+    def get_serializer_class(self):
+        if self.action == "reactions":
+            return CommentReactionSerializer
+        return super().get_serializer_class()
+
     @lru_cache
     def get_post(self):
         try:
@@ -141,3 +149,19 @@ class CommentViewSet(
 
     def perform_destroy(self, instance):
         instance.get_descendants(include_self=True).update(is_published=False)
+
+    @extend_schema(responses=CommentSerializer)
+    @action(
+        detail=True, permission_classes=[permissions.IsAuthenticated], methods=["POST"]
+    )
+    def reactions(self, request, *args, **kwargs):
+        serializer = self.get_serializer(
+            data=self.request.data, instance=self.get_object()
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+
+        response_serializer = CommentSerializer(
+            self.get_object(), context=self.get_serializer_context()
+        )
+        return Response(response_serializer.data)
