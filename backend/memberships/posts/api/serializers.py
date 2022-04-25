@@ -13,6 +13,7 @@ from memberships.users.api.serializers import (
     PublicUserSerializer,
     UserPreviewSerializer,
 )
+from memberships.subscriptions.api.serializers import TierPreviewSerializer
 from memberships.utils.fields import VersatileImageFieldSerializer, FileField
 
 
@@ -170,6 +171,7 @@ class PostSerializer(serializers.ModelSerializer):
     stats = PostStatsSerializer(source="*", read_only=True)
     can_access = serializers.SerializerMethodField()
     can_comment = serializers.SerializerMethodField()
+    minimum_tier = serializers.SerializerMethodField()
 
     class Meta:
         model = Post
@@ -183,6 +185,7 @@ class PostSerializer(serializers.ModelSerializer):
             "allowed_tiers",
             "can_access",
             "can_comment",
+            "minimum_tier",
             "author_user",
             "created_at",
             "updated_at",
@@ -211,6 +214,11 @@ class PostSerializer(serializers.ModelSerializer):
     @extend_schema_field(serializers.BooleanField())
     def get_can_comment(self, post):
         return self.is_create_action or post.can_comment
+
+    @extend_schema_field(TierPreviewSerializer())
+    def get_minimum_tier(self, post):
+        if minimum_tier := getattr(post, "minimum_tier", None):
+            return TierPreviewSerializer(minimum_tier, context=self.context).data
 
 
 class PostDetailSerializer(PostSerializer):

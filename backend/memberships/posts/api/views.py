@@ -38,7 +38,9 @@ class PostViewSet(
 
         queryset = (
             queryset.select_related("content", "author_user")
-            .prefetch_related("reactions", "allowed_tiers", "content__files")
+            .prefetch_related(
+                "reactions", "allowed_tiers", "content__files", "author_user__tiers"
+            )
             .annotate(
                 comment_count=Count("comments", filter=Q(comments__is_published=True))
             )

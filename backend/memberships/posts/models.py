@@ -46,8 +46,35 @@ def annotate_post_permissions(object_list, fan_user):
             can_access = False
             can_comment = False
 
+        # find minimum tier required for write access.
+        if not can_comment and post.visibility in [
+            Post.Visiblity.PUBLIC,
+            Post.Visiblity.ALL_MEMBERS,
+        ]:
+            tiers = sorted(
+                filter(
+                    lambda t: t.is_public and t.is_active, post.author_user.tiers.all()
+                ),
+                key=lambda t: t.amount.amount,
+            )
+            minimum_tier = next(iter(tiers), None)
+        elif not can_comment and post.visibility == Post.Visiblity.ALLOWED_TIERS:
+            current_tier_id = membership.tier_id if membership else None
+            tiers = sorted(
+                filter(
+                    # tiers which are public, not already subscribed, and only selected
+                    lambda t: t.is_public and t.is_active and t.id != current_tier_id,
+                    post.allowed_tiers.all(),
+                ),
+                key=lambda t: t.amount.amount,
+            )
+            minimum_tier = next(iter(tiers), None)
+        else:
+            minimum_tier = None
+
         post.can_access = can_access
         post.can_comment = can_comment
+        post.minimum_tier = minimum_tier
 
         posts.append(post)
 

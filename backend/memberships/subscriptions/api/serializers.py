@@ -54,9 +54,11 @@ class TierSerializer(serializers.ModelSerializer):
 
 
 class TierPreviewSerializer(serializers.ModelSerializer):
+    cover = VersatileImageFieldSerializer("user_cover", read_only=True)
+
     class Meta:
         model = Tier
-        fields = ["id", "name", "amount", "amount_currency"]
+        fields = ["id", "name", "amount", "amount_currency", "cover"]
 
 
 class RazorpayPayloadSerializer(serializers.ModelSerializer):
