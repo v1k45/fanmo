@@ -268,7 +268,7 @@ export default {
     },
     async handleSubmit() {
       this.loading = true;
-      const payload = { ...this.form };
+      const payload = cloneDeep(this.form);
       if (this.contentType === 'images') {
         const base64s = await Promise.all(payload.content.files.map(file => this.getBase64(file)));
         payload.content.files = base64s.map(b64 => ({ type: 'image', image_base64: b64 }));
