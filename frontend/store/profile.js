@@ -26,6 +26,24 @@ export const state = () => ({
   existingMemberships: null
 });
 
+const handleGenericError = (err, handleAll = false) => {
+  if (process.env.NODE_ENV !== 'production') console.error(err);
+  if (err.response.status >= 500) {
+    console.error(err);
+    toast.error("Internal server error. It's not you, it's us. Please try again in a minute.");
+  } else if (err.response.status >= 400) {
+    if (handleAll) toast.error(err.response.data);
+    else return err.response.data;
+  } else if (get(err, 'response.data')) { // shouldn't come here
+    console.error(err);
+    toast.error(err.response.data);
+  } else {
+    console.error(err);
+    toast.error("We're sorry but an unknown error occurred. If this persists, please contact support.");
+  }
+  return ERRORED;
+};
+
 export const getters = {
   isSelfProfile(state, getters, rootState) {
     return !!(
@@ -77,20 +95,7 @@ export const actions = {
       if (mutation) commit(mutation, response);
       return NO_ERROR;
     } catch (err) {
-      if (err.response.status >= 500) {
-        console.error(err);
-        toast.error("Internal server error. It's not you, it's us. Please try again in a minute.");
-      } else if (err.response.status >= 400) {
-        if (handleAll) toast.error(err.response.data);
-        else return err.response.data;
-      } else if (get(err, 'response.data')) { // shouldn't come here
-        console.error(err);
-        toast.error(err.response.data);
-      } else {
-        console.error(err);
-        toast.error("We're sorry but an unknown error occurred. If this persists, please contact support.");
-      }
-      return ERRORED;
+      return handleGenericError(err, handleAll);
     }
   },
 
@@ -120,9 +125,6 @@ export const actions = {
   async fetchProfileUser({ dispatch }, username) {
     return await dispatch('fetch', { url: `/api/users/${username}/`, mutation: 'setProfileUser' });
   },
-  async fetchProfilePosts({ dispatch }, username) {
-    return await dispatch('fetch', { url: `/api/posts/?creator_username=${username}`, mutation: 'setProfilePosts' });
-  },
   async fetchProfileDonations({ dispatch }, username) {
     return await dispatch('fetch', { url: `/api/donations/?creator_username=${username}`, mutation: 'setProfileDonations' });
   },
@@ -132,8 +134,8 @@ export const actions = {
 
   async fetchProfile({ dispatch }, username) {
     const errors = await Promise.allSettled([
+      dispatch('posts/loadProfilePosts', username, { root: true }),
       dispatch('fetchProfileUser', username),
-      dispatch('fetchProfilePosts', username),
       dispatch('fetchProfileDonations', username),
       dispatch('fetchExistingMemberships', username)
     ]);
@@ -189,7 +191,7 @@ export const actions = {
   async createPost({ state, dispatch }, payload) {
     const err = await dispatch('update', { url: '/api/posts/', payload });
     if (err) return err;
-    dispatch('fetchProfilePosts', state.user.username);
+    dispatch('posts/loadProfilePosts', state.user.username, { root: true });
     return NO_ERROR;
   },
   async getLinkPreview({ state, dispatch }, link) {
