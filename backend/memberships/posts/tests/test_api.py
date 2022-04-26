@@ -28,6 +28,7 @@ class TestPostAPIForAnonymousUsers:
         assert data["results"][0]["slug"] == post.slug
         assert data["results"][0]["can_access"]
         assert not data["results"][0]["can_comment"]
+        assert data["results"][0]["minimum_tier"]["id"] == creator_user.tiers.first().id
         assert data["results"][0]["content"] == {
             "type": "text",
             "text": "I've come to see you again.",
@@ -56,6 +57,7 @@ class TestPostAPIForAnonymousUsers:
         assert data["slug"] == post.slug
         assert data["can_access"]
         assert not data["can_comment"]
+        assert data["minimum_tier"]["id"] == creator_user.tiers.first().id
         assert data["content"] == {
             "type": "text",
             "text": "I've come to see you again.",
@@ -87,6 +89,7 @@ class TestPostAPIForAnonymousUsers:
         assert data["slug"] == post.slug
         assert data["can_access"]
         assert not data["can_comment"]
+        assert data["minimum_tier"]["id"] == creator_user.tiers.first().id
         assert data["content"] == {
             "type": "link",
             "text": "",
@@ -114,6 +117,7 @@ class TestPostAPIForAnonymousUsers:
         assert data["id"] == post.id
         assert not data["can_access"]
         assert not data["can_comment"]
+        assert data["minimum_tier"]["id"] == creator_user.tiers.first().id
         assert data["content"] is None
 
     def test_detail_permissions_on_allowed_tiers_tier_post(
@@ -136,6 +140,7 @@ class TestPostAPIForAnonymousUsers:
         assert data["id"] == post.id
         assert not data["can_access"]
         assert not data["can_comment"]
+        assert data["minimum_tier"]["id"] == creator_user.tiers.first().id
         assert data["content"] is None
 
 
@@ -158,6 +163,7 @@ class TestPostAPIForUser:
         assert data["id"] == post.id
         assert data["can_access"]
         assert not data["can_comment"]
+        assert data["minimum_tier"]["id"] == creator_user.tiers.first().id
 
     def test_detail_all_members_without_access(self, creator_user, user, api_client):
         api_client.force_authenticate(user)
@@ -178,6 +184,7 @@ class TestPostAPIForUser:
         assert data["id"] == post.id
         assert not data["can_access"]
         assert not data["can_comment"]
+        assert data["minimum_tier"]["id"] == creator_user.tiers.first().id
 
     def test_detail_all_members_with_access(self, creator_user, user, api_client):
         api_client.force_authenticate(user)
@@ -205,6 +212,7 @@ class TestPostAPIForUser:
         assert data["id"] == post.id
         assert data["can_access"]
         assert data["can_comment"]
+        assert data["minimum_tier"] is None
 
     def test_detail_allowed_tiers_without_access(self, creator_user, user, api_client):
         api_client.force_authenticate(user)
@@ -226,8 +234,11 @@ class TestPostAPIForUser:
         assert data["id"] == post.id
         assert not data["can_access"]
         assert not data["can_comment"]
+        assert data["minimum_tier"]["id"] == creator_user.tiers.first().id
 
-    def test_detail_allowed_tiers_without_access(self, creator_user, user, api_client):
+    def test_detail_allowed_tiers_without_specific_access(
+        self, creator_user, user, api_client
+    ):
         api_client.force_authenticate(user)
 
         gold_tier = creator_user.tiers.first()
@@ -259,6 +270,7 @@ class TestPostAPIForUser:
         assert data["id"] == post.id
         assert not data["can_access"]
         assert not data["can_comment"]
+        assert data["minimum_tier"]["id"] == gold_tier.id
 
     def test_detail_allowed_tiers_with_access(self, creator_user, user, api_client):
         api_client.force_authenticate(user)
@@ -288,6 +300,7 @@ class TestPostAPIForUser:
         assert data["id"] == post.id
         assert data["can_access"]
         assert data["can_comment"]
+        assert data["minimum_tier"] is None
 
     def test_detail_stats(self, creator_user, user, api_client):
         api_client.force_authenticate(user)
