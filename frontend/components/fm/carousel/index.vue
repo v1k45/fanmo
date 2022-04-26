@@ -64,10 +64,9 @@ export default {
 
 <style lang="scss">
 .fm-carousel {
-  @apply rounded-lg;
 }
 .fm-carousel__items {
-  @apply relative overflow-hidden rounded-t-lg;
+  @apply relative overflow-hidden;
 }
 .fm-carousel-items-translator {
   @apply h-full transition-transform;
@@ -94,7 +93,7 @@ export default {
 }
 
 .fm-carousel__index {
-  @apply flex flex-wrap justify-center border border-t-0 rounded-b-lg bg-gray-100;
+  @apply flex flex-wrap justify-center border border-t-0 bg-gray-100;
 }
 .fm-carousel__index-item {
   @apply relative w-1/12 cursor-pointer;
