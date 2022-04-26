@@ -72,7 +72,7 @@ export default {
     hideViewportScroll() {
       if (!document || !document.body) return;
       if (this.isVisible) document.body.classList.add('overflow-hidden');
-      else if (this.$el && !this.$el.parentElement.closest('.fm-dialog')) document.body.classList.remove('overflow-hidden');
+      else if (this.$el && this.$el.parentElement && !this.$el.parentElement.closest('.fm-dialog')) document.body.classList.remove('overflow-hidden');
     },
     close() {
       this.isVisible = false;
