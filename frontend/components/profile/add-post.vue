@@ -71,7 +71,7 @@
                 size="w-10 h-10 flex-shrink-0">
               </fm-avatar>
               <div class="ml-3 mr-auto min-w-0">
-                <div class="text-lg md:text-xl font-medium truncate" :title="$auth.user.name || $auth.user.username">
+                <div class="font-bold truncate" :title="$auth.user.name || $auth.user.username">
                   {{ $auth.user.name || $auth.user.username }}
                 </div>
                 <div class="flex">
@@ -80,9 +80,8 @@
               </div>
             </div>
 
-            <div class="text-xl font-bold mt-4">
+            <div class="text-xl text-black font-bold mt-4">
               <template v-if="form.title">{{ form.title }}</template>
-              <div v-else class="text-gray-400">Enter a title</div>
             </div>
 
             <fm-read-more-height v-if="form.content.text" max-height="200" class="mt-3">
@@ -113,7 +112,6 @@
                   <div class="text-gray-500 text-sm mt-2">{{ linkPreviewComputed.hostname }}</div>
                 </div>
               </div>
-              <div v-else>TBD - Show the link</div>
             </template>
 
 
@@ -151,6 +149,7 @@
 <script>
 import dayjs from 'dayjs';
 import get from 'lodash/get';
+import cloneDeep from 'lodash/cloneDeep';
 import { mapActions } from 'vuex';
 
 const contentPreset = () => ({
@@ -212,7 +211,7 @@ export default {
       if (this.contentType !== 'link' || !this.linkPreview.link || !this.form.content.link) return null;
       // eslint-disable-next-line camelcase
       const { link, link_og } = this.linkPreview;
-      const title = get(link_og, 'og.title') || get(link_og, 'meta.twitter:title') || link_og.page.title;
+      const title = get(link_og, 'og.title') || get(link_og, 'meta.twitter:title') || get(link_og, 'page.title');
       const description = get(link_og, 'og.description') || get(link_og, 'meta.twitter:description') || get(link_og, 'meta.description') || '';
       const image = get(link_og, 'og.image') || get(link_og, 'meta.og:image') || '';
       return {
