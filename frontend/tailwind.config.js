@@ -130,7 +130,7 @@ module.exports = {
       },
       textColor: {
         title: colors.black,
-        body: colors.gray['700']
+        body: colors.gray['800']
       },
       colors: {
         inherit: 'inherit',

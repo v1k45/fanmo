@@ -52,6 +52,7 @@ a:not(.unstyled) {
   @apply text-fm-primary hover:text-fm-primary-600;
 }
 
+// TODO: fix broken icons - mainly circular icons
 .lucide-icon {
   @apply inline-block;
 }
