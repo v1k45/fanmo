@@ -13,7 +13,7 @@ export default {
 <style lang="scss">
 .fm-markdown-styled {
   margin: 0;
-  font-size: 1rem;
+  font-size: 1em;
   line-height: 1.5;
   word-wrap: break-word;
 
