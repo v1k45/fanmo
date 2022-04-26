@@ -4,46 +4,53 @@
 
   <fm-tabs v-model="activeTab" centered class="mt-8">
     <fm-tabs-pane :id="tabName.POSTS" lazy label="Posts" class="bg-gray-50 pb-10">
-      <div class="container grid grid-cols-12 gap-5">
-        <div class="col-span-12 md:col-span-7">
+      <div class="container">
+        <div class="max-w-6xl grid grid-cols-12 gap-5 mx-auto">
+          <div class="col-span-12 md:col-span-7">
 
-          <div class="mt-8">
-            <div class="flex flex-wrap items-center">
-              <h1 class="text-2xl font-bold mr-auto">Posts</h1>
-              <fm-button v-if="isSelfProfile" type="info" @click="addPost.isVisible = true;">
-                <icon-plus class="mr-1" :size="16"></icon-plus>
-                Add a post
-              </fm-button>
-            </div>
-            <div v-if="posts && posts.count" class="mt-8">
-              <post v-for="post in posts.results" :key="post.id" :post="post" class="mb-6"></post>
+            <div class="mt-8">
+              <div class="flex flex-wrap items-center">
+                <h1 class="text-2xl font-bold mr-auto">Posts</h1>
+                <fm-button v-if="isSelfProfile" type="info" @click="addPost.isVisible = true;">
+                  <icon-plus class="mr-1" :size="16"></icon-plus>
+                  Add a post
+                </fm-button>
+              </div>
+              <div v-if="profilePosts.results.length" class="mt-8">
+                <profile-post
+                  v-for="post in profilePosts.results" :key="post.id" :post="post"
+                  class="mb-12" @share-click="handleShareClick"></profile-post>
+              </div>
+              <div v-if="profilePosts.next" class="text-center mt-4">
+                <fm-button :loading="nextPostsLoading" @click="loadNextPostsLocal">Load more</fm-button>
+              </div>
             </div>
           </div>
-        </div>
-        <div class="col-span-12 md:col-span-5 h-full">
-          <fm-card body-class="" class="overflow-hidden sticky top-20">
-            <div class="text-xl text-black font-bold mb-3">About me</div>
-            <fm-read-more v-if="user.about" lines="6" class="mb-4">
-              <p v-html="user.about"></p>
-            </fm-read-more>
-            <div class="flex justify-center space-x-4 text-gray-600">
-              <a v-if="user.social_links.website_url" class="unstyled hover:text-gray-800" title="Website" target="_blank" :href="user.social_links.website_url">
-                <icon-globe :size="24"></icon-globe>
-              </a>
-              <a v-if="user.social_links.twitter_url" class="unstyled hover:text-gray-800" title="Twitter" target="_blank" :href="user.social_links.twitter_url">
-                <icon-twitter :size="24"></icon-twitter>
-              </a>
-              <a v-if="user.social_links.youtube_url" class="unstyled hover:text-gray-800" title="Youtube" target="_blank" :href="user.social_links.youtube_url">
-                <icon-youtube :size="24"></icon-youtube>
-              </a>
-              <a v-if="user.social_links.instagram_url" class="unstyled hover:text-gray-800" title="Instagram" target="_blank" :href="user.social_links.instagram_url">
-                <icon-instagram :size="24"></icon-instagram>
-              </a>
-              <a v-if="user.social_links.facebook_url" class="unstyled hover:text-gray-800" title="Facebook" target="_blank" :href="user.social_links.facebook_url">
-                <icon-facebook :size="24"></icon-facebook>
-              </a>
-            </div>
-          </fm-card>
+          <div class="col-span-12 md:col-span-5 h-full">
+            <fm-card body-class="" class="overflow-hidden sticky top-20">
+              <div class="text-xl text-black font-bold mb-3">About me</div>
+              <fm-read-more v-if="user.about" lines="6" class="mb-4">
+                <p v-html="user.about"></p>
+              </fm-read-more>
+              <div class="flex justify-center space-x-4 text-gray-600">
+                <a v-if="user.social_links.website_url" class="unstyled hover:text-gray-800" title="Website" target="_blank" :href="user.social_links.website_url">
+                  <icon-globe :size="24"></icon-globe>
+                </a>
+                <a v-if="user.social_links.twitter_url" class="unstyled hover:text-gray-800" title="Twitter" target="_blank" :href="user.social_links.twitter_url">
+                  <icon-twitter :size="24"></icon-twitter>
+                </a>
+                <a v-if="user.social_links.youtube_url" class="unstyled hover:text-gray-800" title="Youtube" target="_blank" :href="user.social_links.youtube_url">
+                  <icon-youtube :size="24"></icon-youtube>
+                </a>
+                <a v-if="user.social_links.instagram_url" class="unstyled hover:text-gray-800" title="Instagram" target="_blank" :href="user.social_links.instagram_url">
+                  <icon-instagram :size="24"></icon-instagram>
+                </a>
+                <a v-if="user.social_links.facebook_url" class="unstyled hover:text-gray-800" title="Facebook" target="_blank" :href="user.social_links.facebook_url">
+                  <icon-facebook :size="24"></icon-facebook>
+                </a>
+              </div>
+            </fm-card>
+          </div>
         </div>
       </div>
     </fm-tabs-pane>
@@ -110,7 +117,9 @@
     @donation-close-click="handlePaymentSuccessNext('donation-close')">
   </profile-payment-success>
 
-  <profile-add-post v-model="addPost.isVisible"></profile-add-post>
+  <profile-add-post v-if="isSelfProfile" v-model="addPost.isVisible"></profile-add-post>
+
+  <profile-share v-model="sharePost.isVisible" :text="sharePost.text" :url="sharePost.url"></profile-share>
 </div>
 </template>
 
@@ -128,8 +137,7 @@ export default {
   components: {
     IconPlus
   },
-  layout:
-    'default-no-container',
+  layout: 'default-no-container',
   props: {
     username: {
       type: String,
@@ -164,7 +172,14 @@ export default {
         isVisible: false
       },
       loadingTierId: null,
-      donationLoading: false
+      donationLoading: false,
+      nextPostsLoading: false,
+
+      sharePost: {
+        isVisible: false,
+        url: null,
+        text: null
+      }
     };
   },
   async fetch() {
@@ -179,13 +194,15 @@ export default {
   },
   computed: {
     ...mapState('profile', ['user', 'donations', 'posts']),
-    ...mapGetters('profile', ['isSelfProfile', 'currentUserHasActiveSubscription'])
+    ...mapGetters('profile', ['isSelfProfile', 'currentUserHasActiveSubscription']),
+    ...mapGetters('posts', ['profilePosts'])
   },
   mounted() {
     loadRazorpay();
   },
   methods: {
     ...mapActions('profile', ['fetchProfile', 'createOrGetMembership', 'createDonation', 'processPayment']),
+    ...mapActions('posts', ['loadNextProfilePosts']),
 
     // logic is documented in createOrGetMembership
     async handleSubscribeClick(tier) {
@@ -328,6 +345,20 @@ export default {
       else if (actionType === 'donation-close') {
         this.fetchProfile(this.user.username);
       }
+    },
+
+    async loadNextPostsLocal() {
+      this.nextPostsLoading = true;
+      await this.loadNextProfilePosts();
+      this.nextPostsLoading = false;
+    },
+
+    handleShareClick(post) {
+      this.sharePost = {
+        isVisible: true,
+        url: post.slug,
+        text: post.title
+      };
     }
   }
 };
