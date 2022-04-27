@@ -3,20 +3,20 @@
   <fm-avatar
     :src="comment.author_user.avatar && comment.author_user.avatar.small"
     :name="comment.author_user.display_name"
-    size="w-8 h-8 flex-shrink-0">
+    size="w-6 h-6 sm:w-8 sm:h-8 flex-shrink-0">
   </fm-avatar>
-  <div class="ml-3 mr-auto flex-grow min-w-0">
+  <div class="ml-1 sm:ml-3 mr-auto flex-grow min-w-0 text-sm sm:text-base">
     <fm-read-more-height max-height="200">
       <div
         class="font-bold max-w-[75%] truncate float-left"
-        :class="{ 'bg-fm-primary text-white px-3 rounded-xl font-normal': post.author_user.username === comment.author_user.username }"
+        :class="{ 'bg-fm-primary text-white px-2 sm:px-3 rounded-xl font-normal': post.author_user.username === comment.author_user.username }"
         :title="comment.author_user.name || comment.author_user.username">
         {{ comment.author_user.name || comment.author_user.username }}
       </div>
-      <span class="ml-3 clear-both whitespace-pre-wrap">{{ comment.body }}</span>
+      <span class="ml-2 sm:ml-3 clear-both whitespace-pre-wrap">{{ comment.body }}</span>
     </fm-read-more-height>
 
-    <div class="mt-1 flex items-center text-gray-500">
+    <div class="mt-1 flex items-end sm:items-center text-gray-500">
       <button type="link" class="inline-flex items-center mr-4" @click="toggleReaction('heart')">
         <icon-heart
           class="inline mr-2 h-em w-em animatecss"
@@ -28,13 +28,14 @@
         <template v-if="reaction.heart.count">{{ reaction.heart.count }}</template>
         <template v-else>Like</template>
       </button>
-      <button v-if="!isNested" class="mr-4" @click="handleReplyClick">
+      <button v-if="!isNested" class="mr-4 flex-shrink-0" @click="handleReplyClick">
         Reply <template v-if="comment.children.length">({{ comment.children.length }})</template>
       </button>
-      <button v-if="canDelete" class="text-fm-error mr-4" @click="deleteCommentLocal">
-        Delete
+      <button v-if="canDelete" class="text-fm-error flex-shrink-0 mr-4" @click="deleteCommentLocal">
+        <span class="hidden sm:inline">Delete</span>
+        <icon-trash class="sm:hidden h-em w-em"></icon-trash>
       </button>
-      <span class="text-sm">{{ dayjs(comment.created_at).format('D MMM, YYYY hh:mma') }}</span>
+      <span class="text-xs sm:text-sm truncate">{{ dayjs(comment.created_at).format('D MMM, YYYY hh:mma') }}</span>
     </div>
 
 
