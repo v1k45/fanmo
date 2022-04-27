@@ -1,6 +1,6 @@
 <template>
 <div>
-  <fm-form v-if="$auth.loggedIn" class="mt-4 pt-4 border-t-2 post-body" :errors="commentErrors" @submit.prevent="createCommentLocal">
+  <fm-form v-if="post.can_comment" class="mt-4 pt-4 border-t-2 post-body" :errors="commentErrors" @submit.prevent="createCommentLocal">
     <div class="flex">
       <fm-avatar
         v-if="$auth.loggedIn"
@@ -17,9 +17,15 @@
       <fm-button type="primary" native-type="submit">Comment</fm-button>
     </div>
   </fm-form>
+  <div v-else-if="$auth.loggedIn" class="post-body mt-4 mb-8">
+    <div class="py-4 bg-gray-100 text-center rounded-xl">
+      <!-- TODO: sub-route and redirect to memberships tab and open the minimum_membership tier -->
+      <!-- <fm-button @click="$router.push({ name: 'login' })">Become a member to comment</fm-button> -->
+    </div>
+  </div>
   <div v-else class="post-body mt-4 mb-8">
     <div class="py-4 bg-gray-100 text-center rounded-xl">
-      <!-- TODO: sub-route and redirect to memberships tab -->
+      <!-- TODO: sub-route and redirect to memberships tab and open the minimum_membership tier -->
       <fm-button @click="$router.push({ name: 'login' })">Become a member to comment</fm-button>
     </div>
   </div>
