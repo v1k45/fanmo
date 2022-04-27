@@ -357,7 +357,7 @@ REST_FRAMEWORK = {
         "memberships.utils.authentication.SessionAuthentication",
     ),
     "DEFAULT_PAGINATION_CLASS": "memberships.utils.pagination.PageNumberPagination",
-    "PAGE_SIZE": 25,
+    "PAGE_SIZE": 10,
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "EXCEPTION_HANDLER": "memberships.utils.exception_handlers.handle_drf_exception",
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
