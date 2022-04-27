@@ -148,7 +148,7 @@ class TestMembershipFlow:
             == membership.creator_user.username
         )
         assert membership_json["is_active"]
-        assert membership_json["lifetime_amount"] == 1000
+        assert membership_json["lifetime_amount"] == "1000.00"
 
     def test_create_anonymous(self, creator_user, api_client, mocker):
         rzp_plan_mock = mocker.patch(

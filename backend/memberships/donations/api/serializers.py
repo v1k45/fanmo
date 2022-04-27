@@ -110,7 +110,9 @@ class DonationSerializer(serializers.ModelSerializer):
 
     @extend_schema_field(serializers.DecimalField(max_digits=7, decimal_places=2))
     def get_lifetime_amount(self, donation):
-        return getattr(donation, "lifetime_amount", 0)
+        return serializers.DecimalField(
+            max_digits=7, decimal_places=2
+        ).to_representation(getattr(donation, "lifetime_amount", 0))
 
 
 class DonationUpdateSerializer(DonationSerializer):

@@ -73,16 +73,16 @@ class TestDonationAPI:
         )
 
         response = api_client.get(f"/api/donations/{donation.id}/")
-        assert response.json()["lifetime_amount"] == 250
+        assert response.json()["lifetime_amount"] == "250.00"
 
         response = api_client.get(f"/api/donations/{donation_2.id}/")
-        assert response.json()["lifetime_amount"] == 250
+        assert response.json()["lifetime_amount"] == "250.00"
 
         response = api_client.get(f"/api/donations/{donation_3.id}/")
-        assert response.json()["lifetime_amount"] == 100
+        assert response.json()["lifetime_amount"] == "100.00"
 
         response = api_client.get(f"/api/donations/{donation_4.id}/")
-        assert response.json()["lifetime_amount"] == 50
+        assert response.json()["lifetime_amount"] == "50.00"
 
     def test_create_anonymous(self, api_client, creator_user, mocker):
         mocker.patch(

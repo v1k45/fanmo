@@ -165,7 +165,9 @@ class MembershipSerializer(PaymentIntentSerializerMixin, serializers.ModelSerial
 
     @extend_schema_field(serializers.DecimalField(max_digits=7, decimal_places=2))
     def get_lifetime_amount(self, membership):
-        return getattr(membership, "lifetime_amount", 0)
+        return serializers.DecimalField(
+            max_digits=7, decimal_places=2
+        ).to_representation(getattr(membership, "lifetime_amount", 0))
 
     @extend_schema_field(
         serializers.ChoiceField(
