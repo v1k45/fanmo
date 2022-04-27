@@ -203,7 +203,7 @@ italic, bold, strikethrough, list, paragraph, h1-h6, blockquote, hr
 }
 
 .fm-editor__toolbar {
-  @apply flex border border-gray-300 rounded-lg rounded-b-none;
+  @apply flex border border-gray-300 rounded-lg rounded-b-none overflow-auto;
   button {
     @apply rounded-lg my-1 mx-3 p-2;
     & + button {
