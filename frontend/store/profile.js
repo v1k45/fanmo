@@ -128,16 +128,16 @@ export const actions = {
   async fetchProfileDonations({ dispatch }, username) {
     return await dispatch('fetch', { url: `/api/donations/?creator_username=${username}`, mutation: 'setProfileDonations' });
   },
-  async fetchExistingMemberships({ dispatch }, username) {
-    return await dispatch('fetch', { url: `/api/memberships/?creator_username=${username}`, mutation: 'setExistingMemberships' });
+  async fetchExistingMemberships({ dispatch }, { creatorUsername, fanUsername }) {
+    return await dispatch('fetch', { url: '/api/memberships/', payload: { params: { creator_username: creatorUsername, fan_username: fanUsername } }, mutation: 'setExistingMemberships' });
   },
 
-  async fetchProfile({ dispatch }, username) {
+  async fetchProfile({ dispatch, rootState }, username) {
     const errors = await Promise.allSettled([
       dispatch('posts/loadProfilePosts', username, { root: true }),
       dispatch('fetchProfileUser', username),
       dispatch('fetchProfileDonations', username),
-      dispatch('fetchExistingMemberships', username)
+      dispatch('fetchExistingMemberships', { creatorUsername: username, fanUsername: get(rootState, 'auth.user.username') })
     ]);
     return errors.some(err => !!err) ? ERRORED : NO_ERROR;
   },
