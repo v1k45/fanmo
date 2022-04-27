@@ -4,32 +4,35 @@
 
   <fm-tabs v-model="activeTab" centered class="mt-8">
     <fm-tabs-pane :id="tabName.POSTS" lazy label="Posts" class="bg-gray-50 pb-10">
-      <div class="container">
-        <div class="max-w-6xl grid grid-cols-12 gap-5 mx-auto">
-          <div class="col-span-12 md:col-span-7">
+      <div class="container min-h-[300px]">
+        <div class="max-w-6xl row gx-0 lg:gx-4 mx-auto flex-wrap-reverse">
+          <div class="col-12 lg:col-7">
 
-            <div class="mt-8">
-              <div class="flex flex-wrap items-center">
-                <h1 class="text-2xl font-bold mr-auto">Posts</h1>
-                <fm-button v-if="isSelfProfile" type="info" @click="addPost.isVisible = true;">
+            <div class="mt-6">
+              <div v-if="isSelfProfile" class="text-right mb-6">
+                <fm-button type="info" @click="addPost.isVisible = true;">
                   <icon-plus class="mr-1" :size="16"></icon-plus>
                   Add a post
                 </fm-button>
               </div>
-              <div v-if="profilePosts.results.length" class="mt-8">
+              <div v-if="profilePosts.results.length">
                 <profile-post
                   v-for="post in profilePosts.results" :key="post.id" :post="post"
-                  class="mb-12" @share-click="handleShareClick"></profile-post>
+                  class="mb-6 md:mb-8" @share-click="handleShareClick"></profile-post>
               </div>
               <div v-if="profilePosts.next" class="text-center mt-4">
                 <fm-button :loading="nextPostsLoading" @click="loadNextPostsLocal">Load more</fm-button>
               </div>
             </div>
           </div>
-          <div class="col-span-12 md:col-span-5 h-full">
-            <fm-card body-class="" class="overflow-hidden sticky top-20">
+          <div class="col-12 lg:col-5">
+            <fm-card body-class="" class="overflow-hidden sticky top-20 mt-6">
               <div class="text-xl text-black font-bold mb-3">About me</div>
-              <fm-read-more v-if="user.about" lines="6" class="mb-4">
+              <!-- TODO: remove duplication once breakpoint service is available -->
+              <fm-read-more v-if="user.about" lines="2" class="lg:hidden mb-4">
+                <p v-html="user.about"></p>
+              </fm-read-more>
+              <fm-read-more v-if="user.about" lines="6" class="hidden lg:block mb-4">
                 <p v-html="user.about"></p>
               </fm-read-more>
               <div class="flex justify-center space-x-4 text-gray-600">
@@ -56,7 +59,7 @@
     </fm-tabs-pane>
 
     <fm-tabs-pane :id="tabName.TIERS" lazy label="Memberships" class="pb-10 bg-gray-50">
-      <div class="container">
+      <div class="container min-h-[300px]">
         <div class="max-w-6xl mx-auto">
           <div class="row justify-center mt-2 gy-4 px-4">
             <div v-for="tier in user.tiers" :key="tier.id" class="col-12 md:col-6 lg:col-4">
@@ -72,7 +75,7 @@
     </fm-tabs-pane>
 
     <fm-tabs-pane :id="tabName.DONATION" lazy label="Donations" class="bg-gray-50 pb-10">
-      <div class="container">
+      <div class="container min-h-[300px]">
         <div class="row gx-0 lg:gx-4 max-w-6xl mx-auto justify-center">
           <div v-if="donations && donations.length" class="col-12 order-2 lg:col-7 lg:order-1">
             <hr class="mt-6 mb-8 lg:hidden">
