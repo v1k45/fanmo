@@ -1,6 +1,6 @@
 <template>
 <div class="fm-carousel">
-  <div class="fm-carousel__items" :style="{ height }">
+  <div class="fm-carousel__items" :class="height">
     <div class="fm-carousel-items-translator" :style="{ transform: `translateX(-${currentItem * 100}%)` }">
       <div
         v-for="(image, idx) in images" :key="idx" class="fm-carousel__item"
@@ -36,7 +36,7 @@
 <script>
 export default {
   props: {
-    height: { type: String, default: '300px' },
+    height: { type: String, default: 'h-[300px] lg:h-[400px]' },
     images: { type: Array, default: () => [] }
   },
   data() {
@@ -96,7 +96,7 @@ export default {
   @apply flex flex-wrap justify-center border border-t-0 bg-gray-100;
 }
 .fm-carousel__index-item {
-  @apply relative w-1/12 cursor-pointer;
+  @apply relative w-[12.5%] sm:w-1/12 cursor-pointer;
   &:after {
     @apply block pb-[100%] relative;
     content: '';
