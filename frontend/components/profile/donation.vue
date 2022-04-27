@@ -4,10 +4,10 @@
     <fm-avatar
       :src="donation.fan_user.avatar && donation.fan_user.avatar.small"
       :name="donation.fan_user.name" :username="donation.fan_user.username"
-      size="w-10 h-10 flex-shrink-0">
+      size="w-8 h-8 flex-shrink-0">
     </fm-avatar>
     <div class="ml-3 mr-auto min-w-0">
-      <div class="text-lg md:text-xl font-medium truncate" :title="donation.fan_user.display_name">
+      <div class="font-bold truncate" :title="donation.fan_user.display_name">
         {{ donation.fan_user.display_name }}
       </div>
       <div class="flex">
