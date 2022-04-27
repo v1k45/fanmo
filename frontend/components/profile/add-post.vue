@@ -1,12 +1,12 @@
 <template>
-<fm-dialog v-model="isVisible" fullscreen>
+<fm-dialog v-model="isVisible" fullscreen no-padding>
   <template #header>
     <div class="container">Create post</div>
   </template>
 
-  <div class="container">
+  <div class="container py-6">
     <div class="row">
-      <div class="col-6">
+      <div class="col-12 lg:col-6">
         <fm-form id="createPostForm" :errors="errors" @submit.prevent="handleSubmit">
           <fm-tabs v-model="contentType" stretched>
             <!-- text only post start -->
@@ -36,7 +36,7 @@
                 <fm-input v-model="form.content.text" uid="content.text" label="Description (optional)" type="textarea"></fm-input>
               </template>
             </fm-tabs-pane>
-          <!-- text+link post end -->
+            <!-- text+link post end -->
           </fm-tabs>
 
           <!-- visibility start -->
@@ -54,13 +54,13 @@
               {{ tier.name }}
             </fm-input>
           </div>
-        <!-- visibility end -->
+          <!-- visibility end -->
 
         </fm-form>
-
       </div>
-      <div class="col-6">
+      <div class="hidden lg:block col-6">
         <div class="bg-gray-50 min-h-full rounded-lg px-6 py-4">
+          <!-- TODO: once breakpoint service is available, add a preview tab for phones -->
           <div class="text-lg font-bold mb-4">Preview</div>
           <!-- preview card start -->
           <fm-card>
@@ -92,7 +92,9 @@
             </fm-carousel>
 
             <template v-if="contentType === 'link' && form.content.link">
-              <a :href="form.content.link" target="_blank" class="block mt-4">{{ form.content.link }}</a>
+              <fm-markdown-styled class="mt-4">
+                <a :href="form.content.link" target="_blank" class="mt-4">{{ form.content.link }}</a>
+              </fm-markdown-styled>
               <div
                 v-if="(linkPreview.link && linkPreview.link.toString()) !== form.content.link"
                 class="p-16 rounded-lg mt-4 bg-gray-100 text-center" @click="getPreview">
@@ -100,18 +102,19 @@
               </div>
               <div v-else-if="linkPreview.link_embed" class="mt-4 aspect-w-16 aspect-h-9" v-html="linkPreview.link_embed.html">
               </div>
-              <div v-else-if="linkPreview.link_og && linkPreviewComputed" class="border rounded-lg flex bg-gray-50 mt-3">
-                <div v-if="linkPreviewComputed.image" class="w-1/4">
-                  <img :src="linkPreviewComputed.image" class="w-full max-h-full object-contain" alt="">
+              <a
+                v-else-if="linkPreview.link_og && linkPreviewComputed"
+                class="unstyled block border overflow-hidden rounded-lg bg-gray-50 mt-3"
+                :href="linkPreviewComputed.link" target="_blank" rel="noopener noreferrer nofollow">
+                <div v-if="linkPreviewComputed.image" class="overflow-hidden flex-none">
+                  <img :src="linkPreviewComputed.image" class="w-full max-h-48 object-cover" alt="">
                 </div>
-                <div class="p-4 pt-3 w-full">
-                  <div class="text-lg font-bold truncate max-w-full">
-                    <a :href="linkPreviewComputed.link" target="_blank">{{ linkPreviewComputed.title }}</a>
-                  </div>
-                  <div v-if="linkPreviewComputed.description" class="mt-1">{{ linkPreviewComputed.description }}</div>
-                  <div class="text-gray-500 text-sm mt-2">{{ linkPreviewComputed.hostname }}</div>
+                <div class="p-4 pt-3 flex-grow overflow-hidden">
+                  <div class="block font-bold max-w-full">{{ linkPreviewComputed.title }}</div>
+                  <div v-if="linkPreviewComputed.description" class="mt-1 text-sm">{{ linkPreviewComputed.description }}</div>
+                  <div class="text-gray-500 text-sm mt-1">{{ linkPreviewComputed.hostname }}</div>
                 </div>
-              </div>
+              </a>
             </template>
 
 
