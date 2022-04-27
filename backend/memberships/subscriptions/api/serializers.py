@@ -187,7 +187,15 @@ class MembershipSerializer(PaymentIntentSerializerMixin, serializers.ModelSerial
     def validate(self, attrs):
         fan_user = self.get_fan_user(attrs.pop("email", None))
 
-        if self.instance:
+        if (
+            self.instance
+            and self.instance.fan_user_id != self.context["request"].user.pk
+        ):
+            raise serializers.ValidationError(
+                "You do not have permissions to perform this action.",
+                "permission_denied",
+            )
+        elif self.instance:
             creator_user = self.instance.creator_user
         else:
             creator_user = attrs["creator_user"]

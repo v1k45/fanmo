@@ -526,6 +526,21 @@ class TestMembershipFlow:
             }
         )
 
+    def test_update_disallowed_for_creator(self, api_client, active_membership, mocker):
+        api_client.force_authenticate(active_membership.creator_user)
+
+        new_tier = TierFactory(
+            name="Gold Members",
+            creator_user=active_membership.creator_user,
+            amount=Money(Decimal("500"), INR),
+        )
+
+        response = api_client.patch(
+            f"/api/memberships/{active_membership.id}/", {"tier_id": new_tier.id}
+        )
+        assert response.status_code == 400
+        assert response.json()["non_field_errors"][0]["code"] == "permission_denied"
+
 
 class TestSubscriptionAPI:
     def test_list(self, active_membership, api_client):
