@@ -4,11 +4,86 @@ from memberships.donations.models import Donation
 from decimal import Decimal
 from moneyed import Money, INR
 
+from memberships.payments.models import Payment
+
 
 pytestmark = pytest.mark.django_db
 
 
 class TestDonationAPI:
+    def test_lifetime_donation(self, api_client, creator_user, user):
+        donation = Donation.objects.create(
+            creator_user=creator_user,
+            fan_user=user,
+            amount=Money(Decimal("100"), INR),
+            status=Donation.Status.SUCCESSFUL,
+        )
+        Payment.objects.create(
+            donation=donation,
+            type=Payment.Type.DONATION,
+            status=Payment.Status.CAPTURED,
+            creator_user=creator_user,
+            fan_user=user,
+            amount=donation.amount,
+        )
+
+        donation_2 = Donation.objects.create(
+            creator_user=creator_user,
+            fan_user=user,
+            amount=Money(Decimal("150"), INR),
+            status=Donation.Status.SUCCESSFUL,
+        )
+        Payment.objects.create(
+            donation=donation_2,
+            type=Payment.Type.DONATION,
+            status=Payment.Status.CAPTURED,
+            creator_user=creator_user,
+            fan_user=user,
+            amount=donation_2.amount,
+        )
+
+        donation_3 = Donation.objects.create(
+            creator_user=creator_user,
+            fan_user=creator_user,
+            amount=Money(Decimal("100"), INR),
+            status=Donation.Status.SUCCESSFUL,
+        )
+        Payment.objects.create(
+            donation=donation_3,
+            type=Payment.Type.DONATION,
+            status=Payment.Status.CAPTURED,
+            creator_user=creator_user,
+            fan_user=creator_user,
+            amount=donation_3.amount,
+        )
+
+        donation_4 = Donation.objects.create(
+            creator_user=user,
+            fan_user=user,
+            amount=Money(Decimal("50"), INR),
+            status=Donation.Status.SUCCESSFUL,
+        )
+        Payment.objects.create(
+            donation=donation_4,
+            type=Payment.Type.DONATION,
+            status=Payment.Status.CAPTURED,
+            creator_user=user,
+            fan_user=user,
+            amount=donation_4.amount,
+        )
+
+        response = api_client.get(f"/api/donations/{donation.id}/")
+        assert response.json()["lifetime_amount"] == 250
+
+        response = api_client.get(f"/api/donations/{donation_2.id}/")
+        assert response.json()["lifetime_amount"] == 250
+
+        response = api_client.get(f"/api/donations/{donation_3.id}/")
+        assert response.json()["lifetime_amount"] == 100
+
+        response = api_client.get(f"/api/donations/{donation_4.id}/")
+        assert response.json()["lifetime_amount"] == 50
+
     def test_create_anonymous(self, api_client, creator_user, mocker):
         mocker.patch(
             "memberships.donations.models.razorpay_client.order.create",

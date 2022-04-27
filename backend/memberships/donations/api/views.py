@@ -1,4 +1,5 @@
 from rest_framework import mixins, viewsets
+from django.db.models import Sum, Q, F
 
 from memberships.donations.api.serializers import (
     DonationCreateSerializer,
@@ -6,6 +7,7 @@ from memberships.donations.api.serializers import (
     DonationUpdateSerializer,
 )
 from memberships.donations.models import Donation
+from memberships.payments.models import Payment
 
 
 class DonationViewSet(
@@ -16,6 +18,17 @@ class DonationViewSet(
         # filter by creator username
         if creator_username := self.request.query_params.get("creator_username"):
             queryset = queryset.filter(creator_user__username__iexact=creator_username)
+
+        queryset = queryset.annotate(
+            lifetime_amount=Sum(
+                "fan_user__payments__amount",
+                filter=Q(
+                    fan_user__payments__status=Payment.Status.CAPTURED,
+                    fan_user__payments__type=Payment.Type.DONATION,
+                    fan_user__payments__creator_user_id=F("creator_user_id"),
+                ),
+            )
+        )
         return queryset
 
     def check_object_permissions(self, request, obj):

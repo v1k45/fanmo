@@ -1,4 +1,5 @@
 from django.conf import settings
+from drf_spectacular.utils import extend_schema_field
 from djmoney.contrib.django_rest_framework.fields import MoneyField
 from rest_framework import serializers
 
@@ -83,6 +84,7 @@ class DonationCreateSerializer(
 class DonationSerializer(serializers.ModelSerializer):
     fan_user = UserPreviewSerializer()
     message = serializers.SerializerMethodField()
+    lifetime_amount = serializers.SerializerMethodField()
 
     class Meta:
         model = Donation
@@ -92,6 +94,7 @@ class DonationSerializer(serializers.ModelSerializer):
             "message",
             "amount",
             "is_hidden",
+            "lifetime_amount",
             "status",
             "created_at",
         ]
@@ -104,6 +107,10 @@ class DonationSerializer(serializers.ModelSerializer):
         ):
             return None
         return donation.message
+
+    @extend_schema_field(serializers.DecimalField(max_digits=7, decimal_places=2))
+    def get_lifetime_amount(self, donation):
+        return getattr(donation, "lifetime_amount", 0)
 
 
 class DonationUpdateSerializer(DonationSerializer):
