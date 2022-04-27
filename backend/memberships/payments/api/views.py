@@ -29,10 +29,21 @@ class PaymentViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
         )
 
         if membership_id := self.request.query_params.get("membership_id"):
-            queryset = queryset.filter(subscription__membership_id=membership_id)
+            queryset = queryset.filter(
+                type=Payment.Type.SUBSCRIPTION,
+                subscription__membership_id=membership_id,
+            )
 
         if fan_username := self.request.query_params.get("fan_username"):
-            queryset = queryset.filter(donation__fan_user__username=fan_username)
+            queryset = queryset.filter(
+                type=Payment.Type.DONATION, donation__fan_user__username=fan_username
+            )
+
+        if creator_username := self.request.query_params.get("creator_username"):
+            queryset = queryset.filter(
+                type=Payment.Type.DONATION,
+                donation__creator_user__username=creator_username,
+            )
 
         return queryset
 

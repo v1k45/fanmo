@@ -72,6 +72,7 @@ class TestDonationAPI:
             amount=donation_4.amount,
         )
 
+        api_client.force_authenticate(creator_user)
         response = api_client.get(f"/api/donations/{donation.id}/")
         assert response.json()["lifetime_amount"] == "250.00"
 
@@ -81,6 +82,7 @@ class TestDonationAPI:
         response = api_client.get(f"/api/donations/{donation_3.id}/")
         assert response.json()["lifetime_amount"] == "100.00"
 
+        api_client.force_authenticate(user)
         response = api_client.get(f"/api/donations/{donation_4.id}/")
         assert response.json()["lifetime_amount"] == "50.00"
 
