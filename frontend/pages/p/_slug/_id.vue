@@ -10,15 +10,22 @@
       </div>
     </div>
     <div v-else class="max-w-6xl grid grid-cols-12 gap-5 mx-auto">
-      <div class="col-span-12 md:col-span-7">
+      <div class="col-span-12 lg:col-span-7">
+        <!-- TODO: showCreatorInfo on phone [needs breakpoint service] -->
         <profile-post v-if="post" :post="post" @share-click="sharePost.isVisible = true;" @deleted="handleDeleted">
           <template #bottom>
             <profile-comments v-bind="{ post, comments }"></profile-comments>
           </template>
         </profile-post>
       </div>
-      <div v-if="user" class="col-span-12 md:col-span-5 h-full">
-        <fm-card body-class="" class="overflow-hidden sticky top-20">
+      <div v-if="user" class="col-span-12 lg:col-span-5 h-full">
+        <div class="lg:hidden">
+          <hr class="my-4">
+          <div class="text-lg font-bold mb-4">
+            About the creator
+          </div>
+        </div>
+        <fm-card class="overflow-hidden sticky top-20">
 
           <nuxt-link class="flex flex-wrap items-center" :to="`/${user.username}/`">
             <!-- avatar start -->
