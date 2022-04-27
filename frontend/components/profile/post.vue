@@ -25,22 +25,24 @@
         </template>
 
         <nuxt-link :to="{ name: 'p-slug-id', params: { slug: post.slug, id: post.id } }" class="w-full basis-auto">
-          <div class="text-xl text-black font-bold w-full" :class="{ 'mt-4': showCreatorInfo }">{{ post.title }}</div>
+          <div class="text-lg md:text-xl text-black font-bold w-full" :class="{ 'mt-4': showCreatorInfo }">{{ post.title }}</div>
           <div v-if="!showCreatorInfo" class="flex items-center mt-1 text-xs">
-            <div class="text-gray-500">{{ createdAt }}</div>
+            <div class="text-gray-500 flex-shrink-0">{{ createdAt }}</div>
             <!-- TODO: show post visibility information for members too -->
-            <div v-if="isSelfProfile" class="flex items-center text-gray-500">
+            <div v-if="isSelfProfile" class="flex items-center text-gray-500 overflow-hidden">
               <span class="mx-2">&bull;</span>
               <icon-lock v-if="post.visibility !== 'public'" class="h-em w-em mr-1"></icon-lock>
-              <template v-if="post.visibility === 'public'">Public</template>
-              <template v-else-if="post.visibility === 'all_members'">All members</template>
-              <template v-else-if="post.visibility === 'allowed_tiers'">
-                {{
-                  post.allowed_tiers
-                    .map(tierId => $auth.user.tiers.find(tier => tier.id === tierId))
-                    .filter(tier => !!tier).map(tier => tier.name).join(', ')
-                }}
-              </template>
+              <div class="truncate">
+                <template v-if="post.visibility === 'public'">Public</template>
+                <template v-else-if="post.visibility === 'all_members'">All members</template>
+                <template v-else-if="post.visibility === 'allowed_tiers'">
+                  {{
+                    post.allowed_tiers
+                      .map(tierId => $auth.user.tiers.find(tier => tier.id === tierId))
+                      .filter(tier => !!tier).map(tier => tier.name).join(', ')
+                  }}
+                </template>
+              </div>
             </div>
           </div>
         </nuxt-link>
@@ -73,30 +75,35 @@
     <fm-carousel v-if="images.length" :images="images" class="mt-4"></fm-carousel>
 
     <div v-if="post.content.type === 'link'" class="post-body">
-      <a :href="post.content.link" target="_blank" class="block mt-4">{{ post.content.link }}</a>
+      <fm-markdown-styled class="mt-4">
+        <a :href="post.content.link" target="_blank" rel="noopener noreferrer nofollow">{{ post.content.link }}</a>
+      </fm-markdown-styled>
       <div v-if="post.content.link_embed" class="mt-4 aspect-w-16 aspect-h-9" v-html="post.content.link_embed.html">
       </div>
-      <div v-else-if="post.content.link_og && linkPreviewOGComputed" class="border rounded-lg flex bg-gray-50 mt-3">
-        <div v-if="linkPreviewOGComputed.image" class="w-1/4 flex-none">
-          <img :src="linkPreviewOGComputed.image" class="w-full max-h-full object-contain" alt="">
+      <a
+        v-else-if="post.content.link_og && linkPreviewOGComputed"
+        class="unstyled block border overflow-hidden rounded-lg bg-gray-50 mt-3"
+        :href="linkPreviewOGComputed.link" target="_blank" rel="noopener noreferrer nofollow">
+        <div v-if="linkPreviewOGComputed.image" class="overflow-hidden flex-none">
+          <img :src="linkPreviewOGComputed.image" class="w-full max-h-48 object-cover" alt="">
         </div>
         <div class="p-4 pt-3 flex-grow overflow-hidden">
-          <a :href="linkPreviewOGComputed.link" target="_blank" :title="linkPreviewOGComputed.title" class="block text-lg font-bold truncate max-w-full">{{ linkPreviewOGComputed.title }}</a>
-          <div v-if="linkPreviewOGComputed.description" class="mt-1">{{ linkPreviewOGComputed.description }}</div>
-          <div class="text-gray-500 text-sm mt-2">{{ linkPreviewOGComputed.hostname }}</div>
+          <div class="block font-bold max-w-full">{{ linkPreviewOGComputed.title }}</div>
+          <div v-if="linkPreviewOGComputed.description" class="mt-1 text-sm">{{ linkPreviewOGComputed.description }}</div>
+          <div class="text-gray-500 text-sm mt-1">{{ linkPreviewOGComputed.hostname }}</div>
         </div>
-      </div>
+      </a>
     </div>
   </template>
-  <div v-else-if="post.minimum_tier" class="mt-6 min-h-[300px] bg-gray-900 flex items-center justify-center">
+  <div v-else-if="post.minimum_tier" class="mt-6 min-h-[300px] bg-gradient-to-tr from-fm-primary-400 to-fm-primary-700 flex items-center justify-center">
     <div class="text-center text-white">
       <icon-lock class="h-16 w-16 animatecss animatecss-shake animatecss-delay-3s"></icon-lock>
       <div class="mt-4 px-4">
         Join <strong>{{ post.minimum_tier.name }}</strong> to unlock this post now!
       </div>
-      <div class="px-4 py-3 mt-6 bg-white rounded-l-full rounded-r-full">
+      <div class="mt-6 rounded-l-full rounded-r-full">
         <fm-button
-          type="primary" block @click="$router.push(`/${post.author_user.username}`)">
+          type="" class="text-body" block @click="$router.push(`/${post.author_user.username}`)">
           Join now for {{ $currency(post.minimum_tier.amount) }}/month
         </fm-button>
       </div>
