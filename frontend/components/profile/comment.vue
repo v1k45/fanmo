@@ -52,14 +52,10 @@
           placeholder="Leave a comment" :rows="(isCommentTextareaFocused || commentForm.body) ? 3 : 1"
           @focus="isCommentTextareaFocused = true;" @blur="isCommentTextareaFocused = false;"></fm-input>
       </div>
-      <div v-if="commentForm.body" class="text-right mt-3">
+      <div v-if="commentForm.body || isCommentTextareaFocused" class="text-right mt-3">
         <fm-button type="primary" native-type="submit">Comment</fm-button>
       </div>
     </fm-form>
-
-    <div v-if="!post.can_comment">
-
-    </div>
 
     <div v-if="!isNested" class="pt-2">
       <profile-comment

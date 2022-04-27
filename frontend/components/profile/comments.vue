@@ -11,9 +11,9 @@
       <fm-avatar v-else size="w-12 h-12 flex-shrink-0 mr-6"></fm-avatar>
       <fm-input
         v-model="commentForm.body" uid="body" type="textarea" class="flex-grow"
-        rows="2" placeholder="Leave a comment"></fm-input>
+        rows="2" placeholder="Leave a comment" @focus="isCommentBoxFocused = true;" @blur="isCommentBoxFocused = false;"></fm-input>
     </div>
-    <div v-if="commentForm.body" class="text-right mt-3">
+    <div v-if="commentForm.body || isCommentBoxFocused" class="text-right mt-3">
       <fm-button type="primary" native-type="submit">Comment</fm-button>
     </div>
   </fm-form>
@@ -47,6 +47,7 @@ export default {
   },
   data() {
     return {
+      isCommentBoxFocused: false,
       nextCommentsLoading: false,
       commentErrors: {},
       commentForm: {
