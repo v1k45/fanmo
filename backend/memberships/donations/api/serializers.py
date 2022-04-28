@@ -83,6 +83,7 @@ class DonationCreateSerializer(
 
 class DonationSerializer(serializers.ModelSerializer):
     fan_user = UserPreviewSerializer()
+    creator_user = UserPreviewSerializer()
     message = serializers.SerializerMethodField()
     lifetime_amount = serializers.SerializerMethodField()
 
@@ -91,6 +92,7 @@ class DonationSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "fan_user",
+            "creator_user",
             "message",
             "amount",
             "is_hidden",
