@@ -1,11 +1,12 @@
 from django.core.exceptions import ValidationError
 from django.db.models import Q, Count
 from drf_spectacular.utils import extend_schema
-from rest_framework import mixins, permissions, viewsets, status
+from rest_framework import mixins, permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from functools import lru_cache
 from memberships.core.email import notify_new_post
+from mptt.utils import get_cached_trees
 
 from memberships.posts.api.serializers import (
     CommentReactionSerializer,
@@ -112,7 +113,7 @@ class CommentViewSet(
     serializer_class = CommentSerializer
 
     def get_queryset(self):
-        base_qs = (
+        queryset = (
             Comment.objects.filter(is_published=True)
             .select_related("author_user")
             .prefetch_related("reactions")
@@ -120,17 +121,17 @@ class CommentViewSet(
         if self.action == "list":
             post = self.get_post()
             if post.can_access:
-                return base_qs.filter(post=post).get_cached_trees()
-            return base_qs.none()
-
+                return queryset.filter(post=post).get_cached_trees()
+            else:
+                return queryset.none()
         # let comment and post authors delete the comment
         elif self.action == "destroy":
-            return base_qs.filter(
+            return queryset.filter(
                 Q(author_user=self.request.user)
                 | Q(post__author_user=self.request.user)
             )
 
-        return base_qs
+        return queryset
 
     def get_serializer_class(self):
         if self.action == "reactions":
@@ -157,13 +158,15 @@ class CommentViewSet(
         detail=True, permission_classes=[permissions.IsAuthenticated], methods=["POST"]
     )
     def reactions(self, request, *args, **kwargs):
-        serializer = self.get_serializer(
-            data=self.request.data, instance=self.get_object()
-        )
+        comment = self.get_object()
+        serializer = self.get_serializer(data=self.request.data, instance=comment)
         serializer.is_valid(raise_exception=True)
         serializer.save()
 
+        comment_trees = get_cached_trees(
+            comment.get_descendants(include_self=True).filter(is_published=True)
+        )
         response_serializer = CommentSerializer(
-            self.get_object(), context=self.get_serializer_context()
+            comment_trees[0], context=self.get_serializer_context()
         )
         return Response(response_serializer.data)
