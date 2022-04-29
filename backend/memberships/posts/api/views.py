@@ -7,6 +7,9 @@ from rest_framework.response import Response
 from functools import lru_cache
 from memberships.core.email import notify_new_post
 from mptt.utils import get_cached_trees
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
+from memberships.posts.api.filters import PostFilter
 
 from memberships.posts.api.serializers import (
     CommentReactionSerializer,
@@ -28,12 +31,11 @@ class PostViewSet(
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = PostSerializer
     queryset = Post.objects.filter(is_published=True)
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = PostFilter
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        if creator_username := self.request.query_params.get("creator_username"):
-            queryset = queryset.filter(author_user__username=creator_username)
-
         if self.action == "destroy":
             queryset = queryset.filter(author_user=self.request.user)
 

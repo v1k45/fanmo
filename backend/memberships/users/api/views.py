@@ -6,7 +6,7 @@ from django.http.response import HttpResponse
 from django.conf import settings
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from drf_spectacular.utils import extend_schema
-from rest_framework import generics, mixins, status, viewsets
+from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import GenericAPIView, RetrieveUpdateAPIView
@@ -14,6 +14,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.parsers import JSONParser, FormParser
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
+from memberships.users.api.filters import UserFilter
 
 from memberships.users.models import User
 
@@ -41,17 +44,8 @@ class UserViewSet(ReadOnlyModelViewSet):
     serializer_class = PublicUserSerializer
     queryset = User.objects.filter(is_active=True)
     lookup_field = "username"
-
-    def get_queryset(self):
-        base_qs = super().get_queryset()
-        following_username = self.request.query_params.get("following_username")
-        if following_username:
-            return base_qs.filter(followings__username=following_username)
-        if self.request.query_params.get("creator"):
-            return base_qs.filter(
-                user_preferences__is_accepting_payments=True
-            ).order_by("-follower_count")
-        return base_qs
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = UserFilter
 
     @extend_schema(request=None)
     @action(detail=True, methods=["POST"], permission_classes=[IsAuthenticated])
