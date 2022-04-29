@@ -29,17 +29,16 @@
           <div v-if="!showCreatorInfo" class="flex items-center mt-1 text-xs">
             <div class="text-gray-500 flex-shrink-0">{{ createdAt }}</div>
             <!-- TODO: show post visibility information for members too -->
-            <div v-if="isSelfProfile" class="flex items-center text-gray-500 overflow-hidden">
+            <div class="flex items-center text-gray-500 overflow-hidden">
               <span class="mx-2">&bull;</span>
               <icon-lock v-if="post.visibility !== 'public'" class="h-em w-em mr-1"></icon-lock>
+              <icon-globe v-if="post.visibility === 'public'" class="h-em w-em mr-1"></icon-globe>
               <div class="truncate">
                 <template v-if="post.visibility === 'public'">Public</template>
                 <template v-else-if="post.visibility === 'all_members'">All members</template>
                 <template v-else-if="post.visibility === 'allowed_tiers'">
                   {{
-                    post.allowed_tiers
-                      .map(tierId => $auth.user.tiers.find(tier => tier.id === tierId))
-                      .filter(tier => !!tier).map(tier => tier.name).join(', ')
+                    post.allowed_tiers.map(tier => tier.name).join(', ')
                   }}
                 </template>
               </div>

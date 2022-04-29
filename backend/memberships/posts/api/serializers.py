@@ -13,6 +13,7 @@ from memberships.users.api.serializers import (
     PublicUserSerializer,
     UserPreviewSerializer,
 )
+from memberships.subscriptions.models import Tier
 from memberships.subscriptions.api.serializers import TierPreviewSerializer
 from memberships.utils.fields import VersatileImageFieldSerializer, FileField
 
@@ -172,6 +173,15 @@ class PostSerializer(serializers.ModelSerializer):
     can_access = serializers.SerializerMethodField()
     can_comment = serializers.SerializerMethodField()
     minimum_tier = serializers.SerializerMethodField()
+    allowed_tiers = TierPreviewSerializer(many=True, read_only=True)
+    allowed_tiers_ids = serializers.PrimaryKeyRelatedField(
+        many=True,
+        write_only=True,
+        allow_empty=True,
+        required=False,
+        queryset=Tier.objects.filter(is_public=True),
+        source="allowed_tiers",
+    )
 
     class Meta:
         model = Post
@@ -183,6 +193,7 @@ class PostSerializer(serializers.ModelSerializer):
             "stats",
             "visibility",
             "allowed_tiers",
+            "allowed_tiers_ids",
             "can_access",
             "can_comment",
             "minimum_tier",
@@ -190,13 +201,14 @@ class PostSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["author_user", "slug", "stats"]
-        extra_kwargs = {
-            "allowed_tiers": {
-                "allow_empty": True,
-                "required": False,
-            }
-        }
+        read_only_fields = ["author_user", "slug", "stats", "allowed_tiers"]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        tiers_qs = self.fields["allowed_tiers_ids"].child_relation.queryset
+        self.fields["allowed_tiers_ids"].child_relation.queryset = tiers_qs.filter(
+            creator_user=self.context["request"].user.pk
+        )
 
     @property
     def is_create_action(self):

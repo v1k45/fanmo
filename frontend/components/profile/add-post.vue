@@ -49,7 +49,7 @@
           <div v-if="form.visibility == 'allowed_tiers'" class="mt-4">
             <label class="mb-3 block">Select levels</label>
             <fm-input
-              v-for="tier in $auth.user.tiers" :key="tier.id" v-model="form.allowed_tiers"
+              v-for="tier in $auth.user.tiers" :key="tier.id" v-model="form.allowed_tiers_ids"
               name="selected-tiers" type="checkbox" :native-value="tier.id" class="!mt-1">
               {{ tier.name }}
             </fm-input>
@@ -186,7 +186,7 @@ export default {
         title: '',
         content: contents.text,
         visibility: 'public',
-        allowed_tiers: []
+        allowed_tiers_ids: []
       },
       errors: {},
       linkPreview: {
@@ -249,7 +249,7 @@ export default {
           title: '',
           content: contents.text,
           visibility: 'public',
-          allowed_tiers: []
+          allowed_tiers_ids: []
         },
         errors: {},
         linkPreview: {

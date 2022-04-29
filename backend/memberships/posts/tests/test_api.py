@@ -432,14 +432,14 @@ class TestPostCrudAPI:
                 "title": "Episode #123 Script",
                 "content": {"type": "text", "text": "hello darkness my old friend"},
                 "visibility": "allowed_tiers",
-                "allowed_tiers": [creator_user.tiers.first().id],
+                "allowed_tiers_ids": [creator_user.tiers.first().id],
             },
         )
         assert response.status_code == 201
         data = response.json()
 
         assert data["visibility"] == "allowed_tiers"
-        assert data["allowed_tiers"] == [creator_user.tiers.first().id]
+        assert data["allowed_tiers"][0]["id"] == creator_user.tiers.first().id
         assert data["can_access"]
         assert data["can_comment"]
 
