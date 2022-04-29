@@ -34,7 +34,7 @@
 
         <!-- TODO: figure out how this is supposed to work -->
         <div class="flex space-x-4">
-          <fm-button size="lg" class="mt-4 flex items-center justify-center" block disabled>
+          <fm-button size="lg" class="mt-4 flex items-center justify-center" block @click="handleGoogleLogin">
             <img src="~/assets/marketing/google.svg" class="h-6 inline-block mr-2" alt="Google G logo"> Google
           </fm-button>
           <fm-button size="lg" class="mt-4 flex items-center justify-center" block disabled>
@@ -98,7 +98,6 @@ export default {
   },
   methods: {
     ...mapActions('profile', ['fetchProfile', 'createOrGetMembership', 'createDonation']),
-
     async handleSubmit() {
       this.loading = true;
       if (this.supportType === 'membership') {
@@ -127,6 +126,17 @@ export default {
       }
       this.loading = false;
       this.errors = {};
+    },
+    handleGoogleLogin() {
+      // todo: show a loading indicator in checkout form while login is being completed?
+      // todo: remove listener?
+      window.onmessage = async () => {
+        // todo: filter messages?
+        // handle case where login fails or is abandoned for some reason?
+        await this.$auth.fetchUser();
+        await this.handleSubmit();
+      };
+      window.open('/auth/google/');
     }
   }
 };

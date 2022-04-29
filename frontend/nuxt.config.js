@@ -69,6 +69,12 @@ export default {
   },
 
   auth: {
+    redirect: {
+      login: '/login',
+      logout: '/',
+      callback: '/auth/callback',
+      home: '/'
+    },
     strategies: {
       cookie: {
         endpoints: {
