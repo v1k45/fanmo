@@ -94,7 +94,7 @@ class LoginViewMixin:
         if settings.DEBUG and "redirect_uri" in self.request.data:
             self.callback_url = self.request.data.get("redirect_uri")
         else:
-            self.callback_url = f"https://{settings.DOMAIN_NAME}/login"
+            self.callback_url = f"https://{settings.DOMAIN_NAME}/auth/callback"
 
     def get_response_serializer(self):
         return UserSerializer
