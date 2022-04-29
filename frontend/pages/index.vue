@@ -73,22 +73,59 @@
   </div>
 
   <h1 class="text-2xl font-bold my-8">Posts</h1>
-  <div v-if="posts.count" class="mt-8 max-w-lg">
-    <post v-for="post in posts.results" :key="post.id" :post="post" class="mb-6"></post>
+  <div v-if="feedPosts.results.length" class="mt-8 max-w-lg">
+    <profile-post
+      v-for="post in feedPosts.results" :key="post.id" :post="post"
+      class="mb-6 md:mb-8" @share-click="handleShareClick"></profile-post>
   </div>
+  <div v-if="feedPosts.next" class="text-center mt-4">
+    <fm-button :loading="nextPostsLoading" @click="loadNextPostsLocal">Load more</fm-button>
+  </div>
+  <profile-share v-model="sharePost.isVisible" :text="sharePost.text" :url="sharePost.url"></profile-share>
 </div>
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex';
 export default {
   auth: false,
   async asyncData({ $axios }) {
-    const creators = await $axios.$get('/api/users/?creator=true');
-    const posts = await $axios.$get('/api/posts/');
-    return { creators, posts };
+    const creators = await $axios.$get('/api/users/?is_creator=true');
+    return { creators };
+  },
+  data() {
+    return {
+      nextPostsLoading: false,
+      sharePost: {
+        isVisible: false,
+        url: null,
+        text: null
+      }
+    };
   },
   head: {
     title: 'Home'
+  },
+  computed: {
+    ...mapGetters('posts', ['feedPosts'])
+  },
+  mounted() {
+    this.loadFeedPosts();
+  },
+  methods: {
+    ...mapActions('posts', ['loadFeedPosts', 'loadNextFeedPosts']),
+    async loadNextPostsLocal() {
+      this.nextPostsLoading = true;
+      await this.loadNextFeedPosts();
+      this.nextPostsLoading = false;
+    },
+    handleShareClick(post) {
+      this.sharePost = {
+        isVisible: true,
+        url: post.slug,
+        text: post.title
+      };
+    }
   }
 };
 </script>

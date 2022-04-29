@@ -13,9 +13,9 @@
         <div class="hidden 2xl:inline-block">2XL</div>
       </div>
 
-      <a href="/" class="mr-auto">
+      <nuxt-link to="/" class="mr-auto">
         <logo circle class="h-11"></logo>
-      </a>
+      </nuxt-link>
 
       <nav>
         <button class="p-3 md:hidden text-fm-primary" @click="isNavVisibleMobile = !isNavVisibleMobile;">

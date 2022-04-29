@@ -18,7 +18,10 @@ export const state = () => ({
 
   // profile page
   currentProfileUsername: null, // username for which the data is loaded
-  profilePosts_raw: null // { previous, next, postIds }
+  profilePosts_raw: null, // { previous, next, postIds }
+
+  // feed page
+  feedPosts_raw: null // { previous, next, postIds }
 });
 
 const handleGenericError = (err, handleAll = false) => {
@@ -53,6 +56,17 @@ export const getters = {
       results: (state.profilePosts_raw.postIds || []).map(postId => state.postsById[postId]).filter(post => !!post)
     };
   },
+  feedPosts(state) {
+    if (!state.feedPosts_raw) return {
+      previous: null,
+      next: null,
+      results: []
+    };
+    return {
+      ...state.feedPosts_raw, // previous, next
+      results: (state.feedPosts_raw.postIds || []).map(postId => state.postsById[postId]).filter(post => !!post)
+    };
+  },
   currentPost(state) {
     const post = state.postsById[state.currentPostId];
     if (!post) return null;
@@ -81,6 +95,26 @@ export const actions = {
     try {
       const posts = await this.$axios.$get(state.profilePosts_raw.next);
       commit('setNextProfilePosts', { posts });
+      return SUCCESS(posts);
+    } catch (err) {
+      handleGenericError(err, true);
+      return ERROR(err.response.data);
+    }
+  },
+  async loadFeedPosts({ commit }) {
+    try {
+      const posts = await this.$axios.$get('/api/posts/?is_following=true');
+      commit('setFeedPosts', { posts });
+      return SUCCESS(posts);
+    } catch (err) {
+      handleGenericError(err, true);
+      return ERROR(err.response.data);
+    }
+  },
+  async loadNextFeedPosts({ commit, state }) {
+    try {
+      const posts = await this.$axios.$get(state.feedPosts_raw.next);
+      commit('setNextFeedPosts', { posts });
       return SUCCESS(posts);
     } catch (err) {
       handleGenericError(err, true);
@@ -196,6 +230,25 @@ export const mutations = {
       state.profilePosts_raw.postIds.push(post.id);
     });
     Object.assign(state.profilePosts_raw, { previous, next });
+  },
+  setFeedPosts(state, { posts }) {
+    const { previous, next, results } = posts;
+    results.forEach(post => {
+      Vue.set(state.postsById, post.id, post);
+    });
+    state.feedPosts_raw = {
+      previous,
+      next,
+      postIds: results.map(p => p.id)
+    };
+  },
+  setNextFeedPosts(state, { posts }) {
+    const { previous, next, results } = posts;
+    results.forEach(post => {
+      Vue.set(state.postsById, post.id, post);
+      state.feedPosts_raw.postIds.push(post.id);
+    });
+    Object.assign(state.feedPosts_raw, { previous, next });
   },
   setCurrentPost(state, { post }) {
     state.currentPostId = post.id;
