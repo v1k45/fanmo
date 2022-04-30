@@ -1,6 +1,10 @@
 from django.db.models import Q
 from rest_framework import mixins, permissions, viewsets
 
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
+from memberships.payments.api.filters import PaymentFilter
+
 from memberships.payments.api.serializers import (
     BankAccountSerializer,
     PaymentProcessingSerializer,
@@ -14,6 +18,10 @@ class PaymentViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
     serializer_class = PaymentSerializer
     permission_classes = [permissions.IsAuthenticated]
     queryset = Payment.objects.filter(status=Payment.Status.CAPTURED)
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
+    filterset_class = PaymentFilter
+    ordering_fields = ["created_at", "amount"]
+    search_fields = ["fan_user__email", "fan_user__name"]
 
     def get_permissions(self):
         # accept payments anonymously
@@ -27,24 +35,6 @@ class PaymentViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
             .get_queryset()
             .filter(Q(creator_user=self.request.user) | Q(fan_user=self.request.user))
         )
-
-        if membership_id := self.request.query_params.get("membership_id"):
-            queryset = queryset.filter(
-                type=Payment.Type.SUBSCRIPTION,
-                subscription__membership_id=membership_id,
-            )
-
-        if fan_username := self.request.query_params.get("fan_username"):
-            queryset = queryset.filter(
-                type=Payment.Type.DONATION, donation__fan_user__username=fan_username
-            )
-
-        if creator_username := self.request.query_params.get("creator_username"):
-            queryset = queryset.filter(
-                type=Payment.Type.DONATION,
-                donation__creator_user__username=creator_username,
-            )
-
         return queryset
 
     def get_serializer_class(self):

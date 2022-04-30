@@ -200,6 +200,7 @@ class PayoutSerializer(serializers.ModelSerializer):
 
 
 class PaymentSerializer(serializers.ModelSerializer):
+    fan_user = UserPreviewSerializer()
     payout = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
@@ -207,6 +208,7 @@ class PaymentSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "type",
+            "fan_user",
             "amount",
             "amount_currency",
             "status",
