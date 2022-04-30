@@ -7,7 +7,6 @@ const ERRORED = true;
 const NO_ERROR = false;
 
 export const state = () => ({
-  donations: null,
   payments: null
 });
 
@@ -33,29 +32,10 @@ export const actions = {
       return ERRORED;
     }
   },
-  // eslint-disable-next-line camelcase
-  async fetchReceivedDonations({ dispatch }, { creator_username, search, ordering }) {
-    return await dispatch('fetch', {
-      url: '/api/donations/',
-      payload: { params: { creator_username, search, ordering } },
-      mutation: 'setDonations'
-    });
-  },
-  async fetchMoreDonations({ dispatch }, nextUrl) {
-    return await dispatch('fetch', { url: nextUrl, mutation: 'setMoreDonations' });
-  },
-  // eslint-disable-next-line camelcase
-  async fetchSentDonations({ dispatch }, { fan_username, search, ordering }) {
-    return await dispatch('fetch', {
-      url: '/api/donations/',
-      payload: { params: { fan_username, search, ordering } },
-      mutation: 'setDonations'
-    });
-  },
-  async fetchPayments({ dispatch }, { creatorUsername, fanUsername, relatedDonationId }) {
+  async fetchPayments({ dispatch }, { creatorUsername, fanUsername, search, type, ordering }) {
     return await dispatch('fetch', {
       url: '/api/payments/',
-      payload: { params: { creator_username: creatorUsername, fan_username: fanUsername, related_donation_id: relatedDonationId } },
+      payload: { params: { creator_username: creatorUsername, fan_username: fanUsername, search, type, ordering } },
       mutation: 'setPayments'
     });
   },
@@ -65,13 +45,6 @@ export const actions = {
 };
 
 export const mutations = {
-  setDonations(state, donations) {
-    state.donations = donations;
-  },
-  setMoreDonations(state, donations) {
-    const results = [...state.donations.results, ...donations.results];
-    state.donations = { ...donations, results };
-  },
   setPayments(state, payments) {
     state.payments = payments;
   },

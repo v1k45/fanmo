@@ -114,7 +114,7 @@ export default {
     viewDonation(donation) {
       this.activeDonation = donation;
       this.showDialog = true;
-      this.fetchPayments({ fanUsername: donation.fan_user.username });
+      this.fetchPayments({ relatedDonationId: donation.id });
     }
   }
 };
