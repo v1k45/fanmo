@@ -89,6 +89,7 @@
 import { mapActions, mapGetters } from 'vuex';
 export default {
   auth: false,
+  layout: 'with-sidebar',
   async asyncData({ $axios }) {
     const creators = await $axios.$get('/api/users/?is_creator=true');
     return { creators };
