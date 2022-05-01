@@ -10,6 +10,7 @@ from mptt.utils import get_cached_trees
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from memberships.posts.api.filters import PostFilter
+from django_q.tasks import async_task
 
 from memberships.posts.api.serializers import (
     CommentReactionSerializer,
@@ -76,7 +77,7 @@ class PostViewSet(
 
     def perform_create(self, serializer):
         super().perform_create(serializer)
-        notify_new_post(serializer.instance)
+        async_task(notify_new_post, serializer.instance.pk)
 
     @extend_schema(responses=PostStatsSerializer)
     @action(

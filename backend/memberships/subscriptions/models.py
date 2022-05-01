@@ -13,6 +13,7 @@ from memberships.subscriptions.querysets import SubscriptionQuerySet
 from memberships.core.email import notify_new_membership
 from memberships.utils import razorpay_client
 from memberships.utils.models import BaseModel
+from django_q.tasks import async_task
 
 
 class Tier(BaseModel):
@@ -157,7 +158,7 @@ class Membership(BaseModel):
         self.tier = self.active_subscription.plan.tier
         self.is_active = True
         self.save()
-        notify_new_membership(self)
+        async_task(notify_new_membership, self.pk)
 
 
 class Plan(BaseModel):

@@ -1,8 +1,8 @@
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils import timezone
 from django_fsm import FSMField, can_proceed
 from djmoney.models.fields import MoneyField
+from django_q.tasks import async_task
 
 from memberships.donations.models import Donation
 from memberships.subscriptions.models import Subscription
@@ -143,7 +143,7 @@ class Payment(BaseModel):
                 ),
             },
         )
-        notify_donation(donation)
+        async_task(notify_donation, donation.pk)
         return payment
 
 

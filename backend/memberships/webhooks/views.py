@@ -1,5 +1,5 @@
 import json
-from secrets import compare_digest
+from django_q.tasks import async_task
 
 from django.conf import settings
 from django.db.transaction import non_atomic_requests
@@ -37,5 +37,5 @@ def razorpay_webhook(request):
         external_id=event_id,
         payload=payload,
     )
-    process_razorpay_webhook(webhook_message.pk)
+    async_task(process_razorpay_webhook, webhook_message.pk)
     return HttpResponse("Ok.", content_type="text/plain")

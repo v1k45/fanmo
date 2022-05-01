@@ -2,7 +2,11 @@ from django.db.models import Q
 from notifications.utils import notify
 
 
-def notify_new_membership(membership):
+def notify_new_membership(membership_id):
+    from memberships.subscriptions.models import Membership
+
+    membership = Membership.objects.get(id=membership_id)
+
     notify(
         recipient=membership.creator_user,
         obj=membership,
@@ -26,7 +30,11 @@ def notify_new_membership(membership):
     )
 
 
-def notify_donation(donation):
+def notify_donation(donation_id):
+    from memberships.donations.models import Donation
+
+    donation = Donation.objects.get(id=donation_id)
+
     notify(
         recipient=donation.creator_user,
         obj=donation,
@@ -46,8 +54,11 @@ def notify_donation(donation):
     )
 
 
-def notify_new_post(post):
+def notify_new_post(post_id):
     from memberships.users.models import User
+    from memberships.posts.models import Post
+
+    post = Post.objects.get(id=post_id)
 
     creator_user = post.author_user
     recipients = (

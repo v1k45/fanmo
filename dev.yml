@@ -23,6 +23,13 @@ services:
       - "8801:8000"
     command: /start
 
+  qcluster:
+    <<: *django
+    image: memberships_local_qcluster
+    container_name: memberships_qcluster
+    ports: []
+    command: /qcluster
+
   postgres:
     build:
       context: .

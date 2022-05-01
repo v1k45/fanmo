@@ -166,6 +166,18 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+# CACHES
+# ------------------------------------------------------------------------------
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": env("REDIS_URL"),
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+    }
+}
+
 # STATIC
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#static-root
@@ -298,6 +310,17 @@ LOGGING = {
         }
     },
     "root": {"level": "INFO", "handlers": ["console"]},
+}
+
+# Background Task Runner Configuration
+# -----------------------------------------------------------------------------
+# https://django-q.readthedocs.io/en/latest/configure.html#redis-configuration
+Q_CLUSTER = {
+    'name': 'taskrunner',
+    'workers': 4,
+    'timeout': 90,
+    'retry': 120,
+    'django_redis': 'default'
 }
 
 # django-allauth
