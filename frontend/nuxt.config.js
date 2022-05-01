@@ -52,7 +52,8 @@ export default {
     '@nuxtjs/eslint-module',
     // https://go.nuxtjs.dev/tailwindcss
     '@nuxt/postcss8',
-    'lucide-vue/nuxt'
+    'lucide-vue/nuxt',
+    '@nuxtjs/svg'
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
