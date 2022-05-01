@@ -1,8 +1,8 @@
 <template>
-<div class="flex flex-col min-h-screen">
+<div class="fm-layout fm-layout--default bg-gray-50" :class="{ 'fm-layout--with-sidebar': sidebar }">
 
   <!-- header start -->
-  <header class="sticky top-0 z-20 py-2 bg-white shadow-sm">
+  <header class="fm-layout__header z-20 py-2 bg-white shadow-sm" :class="{ 'hidden md:block': $auth.loggedIn }">
     <div class="container flex items-center">
       <div v-if="0" class="inline-block text-xl font-bold">
         <div class="sm:hidden">XS</div>
@@ -14,7 +14,7 @@
       </div>
 
       <nuxt-link to="/" class="mr-auto">
-        <logo circle class="h-11"></logo>
+        <logo class="h-6"></logo>
       </nuxt-link>
 
       <nav>
@@ -28,19 +28,8 @@
           'hidden': !isNavVisibleMobile,
         }">
           <template v-if="$auth.loggedIn">
-            <li class="flex items-center">
-              <fm-avatar
-                :src="$auth.user.avatar && $auth.user.avatar.small"
-                :name="$auth.user.name" :username="$auth.user.username"
-                size="w-10 h-10">
-              </fm-avatar>
-              <div class="ml-2">{{ $auth.user.username }}</div>
-            </li>
             <li>
-              <button class="text-fm-error" title="Log out" @click="$auth.logout('cookie')">
-                <IconPower class="inline-block" :stroke-width="3" :size="18"></IconPower>
-                <span class="sr-only">Log out</span>
-              </button>
+              <layout-navigation type="hamburger"></layout-navigation>
             </li>
           </template>
           <template v-else>
@@ -61,16 +50,22 @@
   </header>
   <!-- header end -->
 
-  <slot v-if="custom"></slot>
-  <template v-else>
-    <main v-if="container" class="container py-8 flex-grow">
-      <Nuxt></Nuxt>
-    </main>
-    <Nuxt v-else></Nuxt>
-  </template>
+  <div class="fm-layout__content">
+    <div v-if="sidebar" class="fm-layout__sidebar">
+      <layout-navigation class="m-4 mt-12" type="sidebar"></layout-navigation>
+    </div>
+
+    <slot v-if="custom"></slot>
+    <template v-else>
+      <main v-if="container" class="container py-8 flex-grow">
+        <Nuxt></Nuxt>
+      </main>
+      <Nuxt v-else></Nuxt>
+    </template>
+  </div>
 
   <!-- footer start -->
-  <footer class="py-12 mt-auto bg-white border-t">
+  <footer class="fm-layout__footer py-12 mt-auto bg-white border-t">
     <div class="container">
       <div class="flex items-center">
         <div class="mr-auto">
@@ -104,6 +99,10 @@
     </div>
   </footer>
   <!-- footer end -->
+
+  <div v-if="$auth.loggedIn" class="fm-layout__bottom-pane z-20 py-2 bg-white shadow border-t">
+    <layout-navigation type="bottom-pane"></layout-navigation>
+  </div>
 </div>
 </template>
 
@@ -122,6 +121,7 @@ export default {
   },
   props: {
     container: { type: Boolean, default: true },
+    sidebar: { type: Boolean, default: false },
     custom: { type: Boolean, default: false }
   },
   data() {
@@ -132,3 +132,81 @@ export default {
   }
 };
 </script>
+<style lang="scss">
+.fm-layout {
+  @apply grid;
+}
+
+.fm-layout--default {
+  @apply min-h-screen max-w-full;
+  grid-template-areas:
+    'header'
+    'content'
+    'footer'
+    'bottom-pane';
+  grid-template-rows: auto 1fr auto;
+  grid-template-columns: minmax(0, 1fr);
+}
+.fm-layout--with-sidebar {
+  .fm-layout__content {
+    @apply flex mx-auto;
+    width: 100%;
+    max-width: 1280px;
+  }
+  .fm-layout__sidebar {
+    @apply flex-shrink-0 overflow-auto sticky mr-4 hidden md:block;
+    width: 250px;
+    height: calc(100vh - 60px);
+    top: 60px;
+    + * {
+      flex-grow: 1;
+    }
+  }
+}
+.fm-layout--with-minimal-branding {}
+
+.fm-layout--with-bottom-pane {}
+
+
+.fm-layout__header {
+  grid-area: header;
+  height: 60px;
+  @apply sticky top-0;
+}
+.fm-layout__content {
+  grid-area: content;
+}
+.fm-layout__footer {
+  grid-area: footer;
+}
+.fm-layout__bottom-pane {
+  grid-area: bottom-pane;
+  height: 78px;
+  @apply sticky bottom-0 md:hidden;
+}
+
+// TODO: delete this comment after all the pages are implemented
+/*
+  For creator:
+    Dashboard
+    Members
+      List view
+      Tier management
+    Donations
+      List view
+      Settings (thank you message etc.)
+    Payment history
+    Profile
+    Settings
+
+    Feed (Supporter dashboard)
+    My memberships
+    My donations
+  For supporter
+    Dashboard
+    My memberships
+    My donations
+    My account
+*/
+
+</style>
