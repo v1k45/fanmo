@@ -58,6 +58,7 @@
 import { mapActions, mapState } from 'vuex';
 
 export default {
+  layout: 'with-sidebar',
   data() {
     return {
       filter: {

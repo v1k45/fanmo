@@ -125,33 +125,33 @@ export default {
         creator: [
           { id: 'creator-pages', label: 'Creator pages' },
           { id: 'dashboard', label: 'Dashboard', icon: Home, url: '/' },
-          { id: 'members', label: 'Members', icon: Users, url: '/404/' },
-          { id: 'creator-donations', label: 'Donations', icon: Coins, url: '/404/' },
-          { id: 'earnings', label: 'Earnings', icon: Wallet, url: '/404/' },
+          { id: 'members', label: 'Members', icon: Users, url: '/members/' },
+          { id: 'creator-donations', label: 'Donations', icon: Coins, url: '/received-donations/' },
+          { id: 'earnings', label: 'Earnings', icon: Wallet, url: '/earnings/' },
           { id: 'profile', label: 'Profile', icon: LayoutTemplate, url: { name: 'profile' } },
           { id: 'settings', label: 'Settings', icon: Sliders, url: '/404/' },
 
           { id: 'supporter-pages', label: 'Supporter pages' },
-          { id: 'feed', label: 'Feed', icon: LayoutList, url: '/404/' },
-          { id: 'memberships', label: 'Memberships', icon: UserCheck, url: '/404/' },
-          { id: 'supporter-donations', label: 'Donations', icon: Coins, url: '/404/' }
+          { id: 'feed', label: 'Feed', icon: LayoutList, url: '/' },
+          { id: 'memberships', label: 'Memberships', icon: UserCheck, url: '/memberships/' },
+          { id: 'supporter-donations', label: 'Donations', icon: Coins, url: '/sent-donations/' }
         ],
         supporter: [
           { id: 'dashboard', label: 'Dashboard', icon: Home, url: '/' },
-          { id: 'memberships', label: 'Memberships', icon: UserCheck, url: '/404/' },
-          { id: 'donations', label: 'Donations', icon: Coins, url: '/404/' }
+          { id: 'memberships', label: 'Memberships', icon: UserCheck, url: '/memberships/' },
+          { id: 'donations', label: 'Donations', icon: Coins, url: '/sent-donations/' }
         ]
       },
       bottomNav: {
         creator: [
-          { id: 'members', label: 'Members', icon: Users, url: '/404/' },
-          { id: 'donations', label: 'Donations', icon: Coins, url: '/404/' },
+          { id: 'members', label: 'Members', icon: Users, url: '/members/' },
+          { id: 'donations', label: 'Donations', icon: Coins, url: '/received-donations/' },
           { id: 'home', label: 'Home', url: '/' }, // has special behavior based on the label
-          { id: 'earnings', label: 'Earnings', icon: Wallet, url: '/404/' }
+          { id: 'earnings', label: 'Earnings', icon: Wallet, url: '/earnings/' }
         ],
         supporter: [
-          { id: 'memberships', label: 'Memberships', icon: UserCheck, url: '/404/' },
-          { id: 'donations', label: 'Donations', icon: Coins, url: '/404/' },
+          { id: 'memberships', label: 'Memberships', icon: UserCheck, url: '/memberships/' },
+          { id: 'donations', label: 'Donations', icon: Coins, url: '/sent-donations/' },
           { id: 'home', label: 'Home', url: '/' }, // has special behavior based on the label
           { id: 'settings', label: 'Settings', icon: Sliders, url: '/404/' }
         ]
