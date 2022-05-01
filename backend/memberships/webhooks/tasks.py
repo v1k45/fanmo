@@ -10,6 +10,7 @@ from memberships.payments.models import Payment, Payout
 from memberships.subscriptions.models import Subscription
 from memberships.subscriptions.tasks import refresh_membership
 from memberships.webhooks.models import WebhookMessage
+from django.utils import timezone
 
 
 @atomic
@@ -48,7 +49,7 @@ def subscription_charged(payload):
     if can_proceed(subscription.activate):
         subscription.activate()
     elif can_proceed(subscription.renew):
-        cycle_end_at = datetime.fromtimestamp(subscription_payload["current_end"])
+        cycle_end_at = timezone.make_aware(datetime.fromtimestamp(subscription_payload["current_end"]))
         subscription.renew(cycle_end_at)
     subscription.save()
 

@@ -94,7 +94,7 @@ class MembershipViewSet(
                 filter=Q(subscriptions__payments__status=Payment.Status.CAPTURED),
             )
         )
-        return queryset
+        return queryset.order_by("-created_at")
 
     @extend_schema(request=None)
     @action(detail=True, methods=["post"])
