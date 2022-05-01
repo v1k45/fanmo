@@ -1,6 +1,7 @@
 <template>
 <button class="fm-dropdown__item" :class="{
-  'fm-dropdown__item--error': type === 'error'
+  'fm-dropdown__item--error': type === 'error',
+  'fm-dropdown__item--static': $props.static
 }" v-on="$listeners">
   <slot></slot>
 </button>
@@ -9,6 +10,7 @@
 <script>
 export default {
   props: {
+    static: { type: Boolean, default: false },
     type: { type: String, default: '', validator: val => !val || ['error'].includes(val) }
   }
 };
@@ -26,5 +28,8 @@ export default {
   &:hover {
     @apply bg-fm-error text-white;
   }
+}
+.fm-dropdown__item--static {
+  @apply cursor-auto pointer-events-none;
 }
 </style>
