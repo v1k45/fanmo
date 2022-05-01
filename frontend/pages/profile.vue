@@ -1,5 +1,5 @@
 <template>
-<div v-if="user">
+<div v-if="user" class="bg-white">
   <profile-above-the-tab></profile-above-the-tab>
 
   <fm-tabs v-model="activeTab" centered class="mt-8">
