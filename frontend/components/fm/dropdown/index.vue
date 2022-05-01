@@ -31,6 +31,6 @@ export default {
   @apply p-2;
 }
 .fm-dropdown__content {
-  @apply bg-white rounded-lg overflow-hidden border min-w-max shadow-lg;
+  @apply bg-white rounded-lg border min-w-max shadow-lg max-h-[80vh] overflow-auto;
 }
 </style>
