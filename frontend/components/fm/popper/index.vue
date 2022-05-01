@@ -98,6 +98,10 @@ export default {
 
       showEvents.forEach((event) => {
         reference.addEventListener(event, () => {
+          if (this.toggleOnClick && this.slotProps.isVisible) {
+            this.slotProps.isVisible = false;
+            return;
+          }
           this.slotProps.isVisible = true;
         });
       });
