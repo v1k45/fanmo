@@ -4,7 +4,10 @@ from djmoney.contrib.django_rest_framework.fields import MoneyField
 from rest_framework import serializers
 
 from memberships.donations.models import Donation
-from memberships.users.api.serializers import UserPreviewSerializer
+from memberships.users.api.serializers import (
+    UserPreviewSerializer,
+    FanUserPreviewSerializer,
+)
 from memberships.core.serializers import PaymentIntentSerializerMixin
 
 
@@ -82,7 +85,7 @@ class DonationCreateSerializer(
 
 
 class DonationSerializer(serializers.ModelSerializer):
-    fan_user = UserPreviewSerializer()
+    fan_user = FanUserPreviewSerializer()
     creator_user = UserPreviewSerializer()
     message = serializers.SerializerMethodField()
     lifetime_amount = serializers.SerializerMethodField()
@@ -115,6 +118,10 @@ class DonationSerializer(serializers.ModelSerializer):
         return serializers.DecimalField(
             max_digits=7, decimal_places=2
         ).to_representation(getattr(donation, "lifetime_amount", 0))
+
+
+class PublicDonationSerializer(serializers.ModelSerializer):
+    fan_user = UserPreviewSerializer()
 
 
 class DonationUpdateSerializer(DonationSerializer):

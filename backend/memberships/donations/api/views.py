@@ -8,6 +8,7 @@ from memberships.donations.api.serializers import (
     DonationCreateSerializer,
     DonationSerializer,
     DonationUpdateSerializer,
+    PublicDonationSerializer,
 )
 from memberships.donations.models import Donation
 from memberships.payments.models import Payment
@@ -73,4 +74,6 @@ class DonationViewSet(
             return DonationCreateSerializer
         elif self.action in ["update", "partial_update"]:
             return DonationUpdateSerializer
+        elif self.action == "recent":
+            return PublicDonationSerializer
         return DonationSerializer
