@@ -295,6 +295,20 @@ class UserPreviewSerializer(ComputedUserFieldSerializer, serializers.ModelSerial
         ]
 
 
+class FanUserPreviewSerializer(serializers.ModelSerializer):
+    avatar = VersatileImageFieldSerializer("user_avatar")
+
+    class Meta:
+        model = User
+        fields = [
+            "display_name",
+            "username",
+            "name",
+            "avatar",
+            "email",
+        ]
+
+
 class RequestEmailVerificationSerializer(serializers.Serializer):
     def validate(self, attrs):
         # get or create is used so that the endpoint handles users created through system

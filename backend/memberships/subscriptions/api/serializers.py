@@ -4,7 +4,10 @@ from rest_framework import serializers
 
 from allauth.account.adapter import get_adapter
 from memberships.subscriptions.models import Membership, Plan, Subscription, Tier
-from memberships.users.api.serializers import UserPreviewSerializer
+from memberships.users.api.serializers import (
+    UserPreviewSerializer,
+    FanUserPreviewSerializer,
+)
 from memberships.users.models import User
 from memberships.core.serializers import PaymentIntentSerializerMixin
 
@@ -129,7 +132,7 @@ class SubscriptionSerializer(serializers.ModelSerializer):
 
 class MembershipSerializer(PaymentIntentSerializerMixin, serializers.ModelSerializer):
     tier = TierPreviewSerializer(read_only=True)
-    fan_user = UserPreviewSerializer(read_only=True)
+    fan_user = FanUserPreviewSerializer(read_only=True)
     creator_user = UserPreviewSerializer(read_only=True)
     active_subscription = SubscriptionSerializer(read_only=True)
     scheduled_subscription = SubscriptionSerializer(read_only=True)

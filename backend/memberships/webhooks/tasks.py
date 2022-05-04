@@ -49,7 +49,9 @@ def subscription_charged(payload):
     if can_proceed(subscription.activate):
         subscription.activate()
     elif can_proceed(subscription.renew):
-        cycle_end_at = timezone.make_aware(datetime.fromtimestamp(subscription_payload["current_end"]))
+        cycle_end_at = timezone.make_aware(
+            datetime.fromtimestamp(subscription_payload["current_end"])
+        )
         subscription.renew(cycle_end_at)
     subscription.save()
 
