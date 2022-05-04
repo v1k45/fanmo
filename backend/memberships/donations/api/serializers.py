@@ -120,7 +120,7 @@ class DonationSerializer(serializers.ModelSerializer):
         ).to_representation(getattr(donation, "lifetime_amount", 0))
 
 
-class PublicDonationSerializer(serializers.ModelSerializer):
+class PublicDonationSerializer(DonationSerializer):
     fan_user = UserPreviewSerializer()
 
 
