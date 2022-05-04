@@ -1,6 +1,7 @@
-from django.db.models import Q, Sum
+from django.db.models import Q, Sum, Count
 from drf_spectacular.utils import extend_schema
 from rest_framework import mixins, permissions, viewsets
+from rest_framework.response import Response
 from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -9,6 +10,7 @@ from memberships.payments.models import Payment
 from memberships.subscriptions.api.serializers import (
     MemberSerializer,
     MembershipSerializer,
+    MemebershipStatsSerializer,
     SubscriptionSerializer,
     TierSerializer,
 )
@@ -102,6 +104,25 @@ class MembershipViewSet(
         membership = self.get_object()
         membership.cancel()
         return self.retrieve(*args, **kwargs)
+
+    @extend_schema(responses={"200": MemebershipStatsSerializer})
+    @action(
+        detail=False,
+        methods=["get"],
+        permission_classes=[permissions.IsAuthenticated, IsCreator],
+    )
+    def stats(self, *args, **kwargs):
+        agg_stats = (
+            self.get_queryset()
+            .filter(creator_user=self.request.user.pk)
+            .aggregate(
+                total=Count("id"),
+                active=Count("id", filter=Q(is_active=True)),
+                inactive=Count("id", filter=Q(is_active=False)),
+                total_payment=Sum("lifetime_amount"),
+            )
+        )
+        return Response(agg_stats)
 
 
 class SubscriptionViewSet(viewsets.ReadOnlyModelViewSet):
