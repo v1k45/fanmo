@@ -38,7 +38,7 @@
       <icon-list></icon-list>
     </button>
     <button
-      v-if="currentPreset.orderedList" type="button"  title="Ordered list"
+      v-if="currentPreset.orderedList" type="button" title="Ordered list"
       :class="{ 'is-active': editor.isActive('orderedList') }" @click="editor.chain().focus().toggleOrderedList().run()">
       <icon-list-ordered></icon-list-ordered>
     </button>
