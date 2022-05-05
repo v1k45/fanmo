@@ -104,3 +104,17 @@ export const copy = (() => {
 
   return copyTextToClipboard;
 })();
+
+export const STATUS_TEXT_MAP = {
+  created: 'Created',
+  authenticated: 'Authenticated',
+  active: 'Active', // charged successfully
+  scheduled_to_activate: 'Scheduled to activate', // will be activated in next cycle
+  pending: 'Pending', // renewing at end of cycle
+  halted: 'Halted',
+  scheduled_to_cancel: 'Scheduled to cancel', // used when updating current subscription
+  cancelled: 'Cancelled',
+  paused: 'Paused',
+  expired: 'Expired',
+  completed: 'Completed'
+};
