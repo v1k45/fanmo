@@ -144,3 +144,10 @@ class DonationUpdateSerializer(DonationSerializer):
             "status",
             "created_at",
         ]
+
+
+class DonationStatsSerializer(serializers.Serializer):
+    total = serializers.IntegerField()
+    total_with_message = serializers.IntegerField()
+    total_without_message = serializers.IntegerField()
+    total_payment = serializers.DecimalField(max_digits=9, decimal_places=2)

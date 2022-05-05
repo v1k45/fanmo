@@ -1,15 +1,18 @@
-from rest_framework import mixins, viewsets
+from rest_framework import mixins, viewsets, permissions
 from rest_framework.decorators import action
-from django.db.models import Sum, Q, F
+from django.db.models import Q, Sum, Count, F
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
+from rest_framework.response import Response
 
 from memberships.donations.api.serializers import (
     DonationCreateSerializer,
     DonationSerializer,
+    DonationStatsSerializer,
     DonationUpdateSerializer,
     PublicDonationSerializer,
 )
+from memberships.users.api.permissions import IsCreator
 from memberships.donations.models import Donation
 from memberships.payments.models import Payment
 from memberships.donations.api.filters import DonationFilter
@@ -47,6 +50,17 @@ class DonationViewSet(
             return qs[:30]
         return qs
 
+    def get_serializer_class(self):
+        if self.action == "create":
+            return DonationCreateSerializer
+        elif self.action in ["update", "partial_update"]:
+            return DonationUpdateSerializer
+        elif self.action == "recent":
+            return PublicDonationSerializer
+        elif self.action == "stats":
+            return DonationStatsSerializer
+        return DonationSerializer
+
     @property
     def search_fields(self):
         if self.action == "recent":
@@ -57,10 +71,6 @@ class DonationViewSet(
             return ["creator_user__name", "creator_user__email"]
         return []
 
-    @action(methods=["get"], detail=False)
-    def recent(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
-
     def check_object_permissions(self, request, obj):
         super().check_object_permissions(request, obj)
         if (
@@ -69,11 +79,24 @@ class DonationViewSet(
         ):
             self.permission_denied(request)
 
-    def get_serializer_class(self):
-        if self.action == "create":
-            return DonationCreateSerializer
-        elif self.action in ["update", "partial_update"]:
-            return DonationUpdateSerializer
-        elif self.action == "recent":
-            return PublicDonationSerializer
-        return DonationSerializer
+    @action(methods=["get"], detail=False)
+    def recent(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    @action(
+        detail=False,
+        methods=["get"],
+        permission_classes=[permissions.IsAuthenticated, IsCreator],
+    )
+    def stats(self, *args, **kwargs):
+        agg_stats = (
+            self.get_queryset()
+            .filter(creator_user=self.request.user.pk)
+            .aggregate(
+                total=Count("id"),
+                total_with_message=Count("id", filter=Q(message="")),
+                total_without_message=Count("id", filter=~Q(message="")),
+                total_payment=Sum("lifetime_amount"),
+            )
+        )
+        return Response(self.get_serializer(agg_stats).data)
