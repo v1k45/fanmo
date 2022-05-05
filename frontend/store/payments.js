@@ -7,7 +7,8 @@ const ERRORED = true;
 const NO_ERROR = false;
 
 export const state = () => ({
-  payments: null
+  payments: null,
+  stats: null
 });
 
 export const actions = {
@@ -32,6 +33,9 @@ export const actions = {
       return ERRORED;
     }
   },
+  async fetchStats({ dispatch }) {
+    return await dispatch('fetch', { url: '/api/payments/stats/', mutation: 'setStats' });
+  },
   async fetchPayments({ dispatch }, { creatorUsername, fanUsername, search, type, ordering }) {
     return await dispatch('fetch', {
       url: '/api/payments/',
@@ -45,6 +49,9 @@ export const actions = {
 };
 
 export const mutations = {
+  setStats(state, stats) {
+    state.stats = stats;
+  },
   setPayments(state, payments) {
     state.payments = payments;
   },
