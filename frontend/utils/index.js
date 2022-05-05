@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 const currencyFormatter = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' });
 const currencyFormatterInteger = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 0 });
 
@@ -5,6 +7,15 @@ export const toCurrency = val => {
   // Number constructor converts null, false, true, empty strings, etc. values to their corresponding numeric values, which we don't want.
   if (!['string', 'number'].includes(typeof val) || val === '') return val;
   return (val % 1 === 0 ? currencyFormatterInteger : currencyFormatter).format(val);
+};
+
+export const toDatetime = val => {
+  if (!['string', 'number'].includes(typeof val) || val === '') return val;
+  return dayjs(val).format('D MMM, YYYY hh:mma');
+};
+export const toDate = val => {
+  if (!['string', 'number'].includes(typeof val) || val === '') return val;
+  return dayjs(val).format('D MMM, YYYY');
 };
 
 export const delay = (ms = 0) => new Promise(resolve => setTimeout(resolve, ms));
