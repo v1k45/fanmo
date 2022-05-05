@@ -23,11 +23,11 @@
 
 <!-- bottom pane nav items & hamburger start -->
 <div v-else-if="type === 'bottom-pane'" class="h-full">
-  <ul class="flex items-center h-full max-w-full sm:max-w-md md:max-w-lg mx-auto justify-around">
+  <ul class="flex items-center h-full max-w-full sm:max-w-md md:max-w-lg mx-2 sm:mx-auto justify-around">
     <template v-for="(item) in ($auth.user.is_creator ? bottomNav.creator : bottomNav.supporter)">
       <li :key="item.label" class="text-center text-xs sm:text-sm font-medium flex-1 min-w-0">
         <nuxt-link
-          :to="item.url" class="unstyled rounded-xl hover:bg-fm-primary-100 inline-block px-2 py-2 w-full"
+          :to="item.url" class="unstyled rounded-xl hover:bg-fm-primary-100 focus:bg-fm-primary focus:text-white inline-block px-2 py-2 w-full"
           exact-active-class="text-white bg-fm-primary pointer-events-none">
 
           <logo
@@ -84,7 +84,7 @@
         size="w-9 h-9 mx-auto">
       </fm-avatar>
       <span class="font-medium ml-2 max-w-[300px] truncate">{{ $auth.user.display_name }}</span>
-      <icon-menu class="ml-2 w-5"></icon-menu>
+      <icon-menu class="ml-2 mr-2 w-5"></icon-menu>
     </button>
     <template #items>
       <template v-for="(item) in ($auth.user.is_creator ? nav.creator : nav.supporter)">
@@ -132,7 +132,7 @@ export default {
           { id: 'settings', label: 'Settings', icon: Sliders, url: '/404/' },
 
           { id: 'supporter-pages', label: 'Supporter pages' },
-          { id: 'feed', label: 'Feed', icon: LayoutList, url: '/' },
+          { id: 'feed', label: 'Feed', icon: LayoutList, url: '/feed/' },
           { id: 'memberships', label: 'Memberships', icon: UserCheck, url: '/memberships/' },
           { id: 'supporter-donations', label: 'Donations', icon: Coins, url: '/sent-donations/' }
         ],
