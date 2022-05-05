@@ -9,7 +9,7 @@ export default {
 </script>
 
 <style>
-.fm-dropdown__item {
+.fm-dropdown__divider {
   @apply py-1;
 }
 </style>
