@@ -64,3 +64,8 @@ confirmService.info = (message, title, options = {}) => dialog({ message, title,
 confirmService.warning = (message, title, options = {}) => dialog({ message, title, ...options, type: 'warning', returnPromise: true, dialogType: 'confirm' });
 confirmService.error = (message, title, options = {}) => dialog({ message, title, ...options, type: 'error', returnPromise: true, dialogType: 'confirm' });
 confirmService.success = (message, title, options = {}) => dialog({ message, title, ...options, type: 'success', returnPromise: true, dialogType: 'confirm' });
+
+export default {
+  alertService,
+  confirmService
+};
