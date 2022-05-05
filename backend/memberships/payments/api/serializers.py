@@ -5,7 +5,10 @@ from memberships.donations.models import Donation
 from memberships.payments.models import BankAccount, Payment, Payout
 from memberships.subscriptions.api.serializers import SubscriptionSerializer
 from memberships.subscriptions.models import Subscription
-from memberships.users.api.serializers import FanUserPreviewSerializer, UserPreviewSerializer
+from memberships.users.api.serializers import (
+    FanUserPreviewSerializer,
+    UserPreviewSerializer,
+)
 
 from memberships.utils import razorpay_client
 from razorpay.errors import SignatureVerificationError
@@ -269,6 +272,6 @@ class BankAccountSerializer(serializers.ModelSerializer):
 
 class PaymentStatsSerializer(serializers.Serializer):
     total = serializers.IntegerField()
-    total_amount = serializers.DecimalField(max_digits=7, decimal_places=2)
-    total_payout_scheduled = serializers.DecimalField(max_digits=7, decimal_places=2)
-    total_payout_processed = serializers.DecimalField(max_digits=7, decimal_places=2)
+    total_amount = serializers.DecimalField(max_digits=9, decimal_places=2)
+    total_payout_scheduled = serializers.DecimalField(max_digits=9, decimal_places=2)
+    total_payout_processed = serializers.DecimalField(max_digits=9, decimal_places=2)

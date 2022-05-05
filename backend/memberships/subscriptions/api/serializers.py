@@ -271,4 +271,4 @@ class MemebershipStatsSerializer(serializers.Serializer):
     total = serializers.IntegerField()
     active = serializers.IntegerField()
     inactive = serializers.IntegerField()
-    total_payment = serializers.DecimalField(max_digits=7, decimal_places=2)
+    total_payment = serializers.DecimalField(max_digits=9, decimal_places=2)
