@@ -275,7 +275,7 @@
           <div class="block h-em w-em rounded-full bg-fm-warning mr-1"></div> Payout is being processed.
         </div>
         <div class="inline-flex items-center mt-1 mr-6">
-          <div class="block h-em w-em rounded-full bg-fm-success mr-1"></div> Payout was successfully sent to your account.
+          <div class="block h-em w-em rounded-full bg-fm-success mr-1"></div> Payout was successfully sent to your bank account.
         </div>
       </div>
       <!-- legend end -->
