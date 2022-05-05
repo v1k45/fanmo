@@ -5,7 +5,7 @@ from memberships.donations.models import Donation
 from memberships.payments.models import BankAccount, Payment, Payout
 from memberships.subscriptions.api.serializers import SubscriptionSerializer
 from memberships.subscriptions.models import Subscription
-from memberships.users.api.serializers import UserPreviewSerializer
+from memberships.users.api.serializers import FanUserPreviewSerializer, UserPreviewSerializer
 
 from memberships.utils import razorpay_client
 from razorpay.errors import SignatureVerificationError
@@ -200,7 +200,7 @@ class PayoutSerializer(serializers.ModelSerializer):
 
 
 class PaymentSerializer(serializers.ModelSerializer):
-    fan_user = UserPreviewSerializer()
+    fan_user = FanUserPreviewSerializer()
     payout = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
