@@ -20,6 +20,7 @@ const BUTTON_TYPE_CLASSNAME_MAP = {
 };
 
 const BUTTON_SIZE_CLASSNAME_MAP = {
+  sm: 'fm-button--sm',
   lg: 'fm-button--lg'
 };
 
@@ -109,6 +110,9 @@ export default {
   @apply w-full;
 }
 
+.fm-button--sm {
+  @apply py-1 px-4 text-xs;
+}
 .fm-button--lg {
   @apply py-3 text-base;
 }
