@@ -97,6 +97,9 @@ export default {
 }
 .fm-dialog__close {
   @apply absolute right-3 top-3 rounded-full flex-shrink-0 text-gray-500 hover:bg-gray-200 p-2 active:scale-90 transition-transform;
+  svg {
+    @apply block;
+  }
 }
 .fm-dialog__content {
   @apply px-6 py-4 flex-grow overflow-auto;
