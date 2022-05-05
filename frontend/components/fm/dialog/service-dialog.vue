@@ -8,7 +8,7 @@
     <div v-if="type" class="fm-service-dialog__icon">
       <icon-info v-if="type === 'info'"></icon-info>
       <icon-alert-triangle v-else-if="type === 'warning'"></icon-alert-triangle>
-      <icon-x-circle v-else-if="type === 'error'"></icon-x-circle>
+      <icon-alert-triangle v-else-if="type === 'error'"></icon-alert-triangle>
       <icon-check-circle-2 v-else-if="type === 'success'"></icon-check-circle-2>
     </div>
     <!-- icon end -->
