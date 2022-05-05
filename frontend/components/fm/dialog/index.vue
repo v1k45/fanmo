@@ -2,7 +2,9 @@
 <transition enter-active-class="animatecss-fadeIn" leave-to-class="animatecss-fadeOut" @after-leave="$emit('hidden')">
   <div v-show="isVisible" class="fm-dialog animatecss" :class="classes">
     <div class="fm-dialog__backdrop" @click="closeOnBackdropClick ? close() : () => {}"></div>
-    <transition enter-active-class="animatecss-zoomIn" leave-to-class="animatecss-zoomOut">
+    <transition
+      :enter-active-class="drawer ? ' animatecss-slideInRight' : 'animatecss-zoomIn'"
+      :leave-to-class="drawer ? ' animatecss-slideOutRight' : 'animatecss-zoomOut'">
       <div v-show="isVisible" class="fm-dialog__container animatecss" :class="dialogClass">
         <div v-if="$slots.header" class="fm-dialog__header">
           <slot name="header"></slot>
@@ -40,7 +42,8 @@ export default {
     closeOnBackdropClick: { type: Boolean, default: true },
     dialogClass: { type: String, default: '' },
     customWidth: { type: Boolean, default: false },
-    noPadding: { type: Boolean, default: false }
+    noPadding: { type: Boolean, default: false },
+    drawer: { type: Boolean, default: false }
   },
   computed: {
     isVisible: {
@@ -52,11 +55,12 @@ export default {
       }
     },
     classes() {
-      const { fullscreen, alert, customWidth } = this;
+      const { fullscreen, alert, customWidth, drawer } = this;
       return {
         'fm-dialog--alert': alert,
         'fm-dialog--clamped': !customWidth && !fullscreen,
-        'fm-dialog--fullscreen': !customWidth && fullscreen
+        'fm-dialog--fullscreen': !customWidth && fullscreen,
+        'fm-dialog--drawer': drawer
       };
     }
   },
@@ -82,7 +86,7 @@ export default {
 </script>
 <style lang="scss">
 .fm-dialog {
-  @apply z-20 fixed top-0 left-0 h-screen w-screen flex items-end md:items-center justify-center;
+  @apply z-30 fixed top-0 left-0 h-screen w-screen flex items-end md:items-center justify-center;
   animation-duration: 200ms;
 }
 .fm-dialog__backdrop {
@@ -117,6 +121,15 @@ export default {
 }
 .fm-dialog--fullscreen > .fm-dialog__container {
   @apply w-full h-full rounded-none max-h-[unset];
+}
+
+.fm-dialog--drawer {
+  @apply justify-end;
+  animation-duration: 100ms;
+  .fm-dialog__container {
+    @apply h-full max-h-[unset] rounded-r-none;
+    animation-duration: 100ms;
+  }
 }
 
 
