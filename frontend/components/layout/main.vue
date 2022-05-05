@@ -3,8 +3,7 @@
 
   <!-- header start -->
   <header class="fm-layout__header z-20 py-2 bg-white shadow-sm" :class="{ 'hidden md:block': $auth.loggedIn }">
-    <div class="container flex items-center">
-      <div v-if="0" class="inline-block text-xl font-bold">
+    <div class="max-w-[1390px] container-fluid flex items-center">
         <div class="sm:hidden">XS</div>
         <div class="hidden sm:inline-block md:hidden">SM</div>
         <div class="hidden md:inline-block lg:hidden">MD</div>
@@ -144,22 +143,23 @@ export default {
     'content'
     'footer'
     'bottom-pane';
-  grid-template-rows: auto 1fr auto;
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
   grid-template-columns: minmax(0, 1fr);
 }
 .fm-layout--with-sidebar {
   .fm-layout__content {
     @apply flex mx-auto;
     width: 100%;
-    max-width: 1280px;
+    max-width: 250px + 1140px;
   }
   .fm-layout__sidebar {
-    @apply flex-shrink-0 overflow-auto sticky mr-4 hidden md:block;
+    @apply flex-shrink-0 overflow-auto sticky mr-4 hidden lg:block;
     width: 250px;
     height: calc(100vh - 60px);
     top: 60px;
     + * {
       flex-grow: 1;
+      min-width: 0;
     }
   }
 }
