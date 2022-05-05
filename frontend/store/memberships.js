@@ -22,7 +22,8 @@ const HTTP_METHOD_AXIOS_MAP = {
 export const state = () => ({
   memberships: null,
   members: null,
-  payments: null
+  payments: null,
+  stats: null // { total, active, inactive, total_payment }
 });
 
 export const actions = {
@@ -69,6 +70,9 @@ export const actions = {
       return ERRORED;
     }
   },
+  async fetchStats({ dispatch }) {
+    return await dispatch('fetch', { url: '/api/memberships/stats/', mutation: 'setStats' });
+  },
   // eslint-disable-next-line camelcase
   async fetchMembers({ dispatch }, { creator_username, is_active, search, ordering }) {
     return await dispatch('fetch', {
@@ -110,6 +114,9 @@ export const actions = {
 };
 
 export const mutations = {
+  setStats(state, stats) {
+    state.stats = stats;
+  },
   setMembers(state, members) {
     state.members = members;
   },
