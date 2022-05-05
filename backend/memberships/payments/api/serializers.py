@@ -265,3 +265,10 @@ class BankAccountSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data["beneficiary_user"] = self.context["request"].user
         return super().create(validated_data)
+
+
+class PaymentStatsSerializer(serializers.Serializer):
+    total = serializers.IntegerField()
+    total_amount = serializers.DecimalField(max_digits=7, decimal_places=2)
+    total_payout_scheduled = serializers.DecimalField(max_digits=7, decimal_places=2)
+    total_payout_processed = serializers.DecimalField(max_digits=7, decimal_places=2)

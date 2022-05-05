@@ -98,6 +98,11 @@ class MembershipViewSet(
         )
         return queryset.order_by("-created_at")
 
+    def get_serializer_class(self):
+        if self.action == "stats":
+            return MemebershipStatsSerializer
+        return super().get_serializer_class()
+
     @extend_schema(request=None)
     @action(detail=True, methods=["post"])
     def cancel(self, *args, **kwargs):
@@ -105,7 +110,6 @@ class MembershipViewSet(
         membership.cancel()
         return self.retrieve(*args, **kwargs)
 
-    @extend_schema(responses={"200": MemebershipStatsSerializer})
     @action(
         detail=False,
         methods=["get"],
@@ -122,7 +126,7 @@ class MembershipViewSet(
                 total_payment=Sum("lifetime_amount"),
             )
         )
-        return Response(agg_stats)
+        return Response(self.get_serializer(agg_stats).data)
 
 
 class SubscriptionViewSet(viewsets.ReadOnlyModelViewSet):
