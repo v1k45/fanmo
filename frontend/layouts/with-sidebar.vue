@@ -1,3 +1,3 @@
 <template>
-<layout-main sidebar></layout-main>
+<layout-main sidebar :container="false"></layout-main>
 </template>
