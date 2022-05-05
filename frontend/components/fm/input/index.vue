@@ -54,7 +54,7 @@
 
     <!-- select start -->
     <template v-else-if="type === 'select'">
-      <select ref="input" v-model="model" v-bind="$attrs" type="select" class="fm-input__input" :class="inputClass">
+      <select ref="input" v-model="model" v-bind="$attrs" type="select" class="fm-input__input" :class="inputClass" v-on="listeners">
         <slot></slot>
       </select>
     </template>
