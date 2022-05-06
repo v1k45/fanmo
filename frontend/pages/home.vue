@@ -2,7 +2,7 @@
 <main>
 
   <!-- hero start -->
-  <section class="relative flex flex-wrap py-8 lg:py-24 xl:py-36 items-center min-h-[550px] 2xl:max-w-7xl mx-auto">
+  <section class="relative flex flex-wrap py-8 lg:py-24 xl:py-36 items-center min-h-[550px] 2xl:max-w-7xl mx-auto z-0">
     <img src="~/assets/marketing/hero.svg" :class="{
       'w-auto mx-auto max-h-72': true,
       'md:max-h-80': true,
