@@ -1,3 +1,3 @@
 <template>
-<layout-main :container="false"></layout-main>
+<layout-main :container="false" marketing></layout-main>
 </template>

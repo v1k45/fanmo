@@ -28,6 +28,10 @@
           'hidden': !isNavVisibleMobile,
         }">
           <template v-if="$auth.loggedIn">
+            <template v-if="marketing">
+              <li><nuxt-link class="unstyled" to="/pricing">Pricing</nuxt-link></li>
+              <li><nuxt-link class="unstyled" to="/pricing#comparison">Comparison</nuxt-link></li>
+            </template>
             <li>
               <layout-navigation type="hamburger"></layout-navigation>
             </li>
@@ -122,7 +126,8 @@ export default {
   props: {
     container: { type: Boolean, default: true },
     sidebar: { type: Boolean, default: false },
-    custom: { type: Boolean, default: false }
+    custom: { type: Boolean, default: false },
+    marketing: { type: Boolean, default: false }
   },
   data() {
     return {
