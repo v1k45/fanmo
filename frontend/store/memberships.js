@@ -85,6 +85,13 @@ export const actions = {
     return await dispatch('fetch', { url: nextUrl, mutation: 'setMoreMembers' });
   },
   // eslint-disable-next-line camelcase
+  async giveawayMembership({ dispatch }, { tier_id, email }) {
+    return await dispatch('update', {
+      url: '/api/memberships/giveaway/',
+      payload: { tier_id, email }
+    });
+  },
+  // eslint-disable-next-line camelcase
   async fetchMemberships({ dispatch }, { fan_username, is_active, search, ordering }) {
     return await dispatch('fetch', {
       url: '/api/memberships/',

@@ -1,3 +1,5 @@
+from moneyed import Money, INR
+from decimal import Decimal
 from dateutil.relativedelta import relativedelta
 from django.contrib.postgres.fields import ArrayField
 from django.db import models
@@ -9,6 +11,7 @@ from djmoney.models.fields import MoneyField
 from simple_history.models import HistoricalRecords
 from versatileimagefield.fields import VersatileImageField
 
+from memberships.payments.models import Payment, Payout
 from memberships.subscriptions.querysets import SubscriptionQuerySet
 from memberships.core.email import notify_new_membership
 from memberships.utils import razorpay_client
@@ -95,6 +98,47 @@ class Membership(BaseModel):
 
         self.scheduled_subscription = subscription
         self.save()
+
+    def giveaway(self, tier):
+        # TODO: Send different email for giveaway
+        plan = Plan.objects.create(
+            name=f"{tier.name} - {self.creator_user.name}",
+            tier=tier,
+            amount=Money(Decimal(0), INR),
+        )
+
+        subscription = Subscription.objects.create(
+            plan=plan,
+            membership=self,
+            status=Subscription.Status.CREATED,
+            creator_user=self.creator_user,
+            fan_user=self.fan_user,
+            cycle_start_at=timezone.now(),
+            cycle_end_at=timezone.now() + relativedelta(months=1),
+        )
+
+        payment = Payment.objects.create(
+            subscription=subscription,
+            type=Payment.Type.SUBSCRIPTION,
+            status=Payment.Status.CAPTURED,
+            creator_user=self.creator_user,
+            fan_user=self.fan_user,
+            amount=plan.amount,
+            method="giveaway",
+            external_id="giveaway",
+        )
+
+        Payout.objects.create(
+            payment=payment,
+            status=Payout.Status.PROCESSED,
+            bank_account=self.creator_user.bank_accounts.first(),
+            amount=plan.amount,
+            external_id="giveaway",
+        )
+
+        subscription.authenticate()
+        subscription.activate()
+        subscription.save()
 
     def update(self, tier):
         """Update membership with active subscription to a new tier"""

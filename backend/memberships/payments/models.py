@@ -4,8 +4,6 @@ from django_fsm import FSMField, can_proceed
 from djmoney.models.fields import MoneyField
 from django_q.tasks import async_task
 
-from memberships.donations.models import Donation
-from memberships.subscriptions.models import Subscription
 from memberships.utils import razorpay_client
 from memberships.utils.models import BaseModel
 from memberships.utils.money import deduct_platform_fee, money_from_sub_unit
@@ -68,6 +66,8 @@ class Payment(BaseModel):
 
     @classmethod
     def authenticate_subscription(cls, payload):
+        from memberships.subscriptions.models import Subscription
+
         # only usable for "created" subscription
         razorpay_client.utility.verify_payment_signature(payload)
 
@@ -118,6 +118,8 @@ class Payment(BaseModel):
 
     @classmethod
     def capture_donation(cls, payload):
+        from memberships.donations.models import Donation
+
         razorpay_client.utility.verify_payment_signature(payload)
 
         donation = Donation.objects.get(external_id=payload["razorpay_order_id"])

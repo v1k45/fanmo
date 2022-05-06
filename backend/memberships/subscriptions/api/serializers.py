@@ -226,6 +226,15 @@ class MembershipSerializer(PaymentIntentSerializerMixin, serializers.ModelSerial
                 "membership_exists",
             )
 
+        if attrs["tier"].creator_user_id != creator_user.id:
+            raise serializers.ValidationError(
+                {
+                    "tier_id": serializers.ErrorDetail(
+                        f"{creator_user.display_name} does not have this tier."
+                    )
+                }
+            )
+
         attrs["fan_user"] = fan_user
         return attrs
 
@@ -239,6 +248,38 @@ class MembershipSerializer(PaymentIntentSerializerMixin, serializers.ModelSerial
         tier = validated_data.pop("tier")
         instance.update(tier)
         return instance
+
+
+class MembershipGiveawaySerializer(serializers.ModelSerializer):
+    tier_id = serializers.PrimaryKeyRelatedField(
+        queryset=Tier.objects.filter(is_active=True, creator_user__is_creator=True),
+        source="tier",
+        write_only=True,
+    )
+    email = serializers.EmailField(required=False, allow_blank=True, write_only=True)
+
+    class Meta:
+        model = Membership
+        fields = ["id", "tier_id", "email"]
+
+    def validate_tier(self, tier):
+        if tier.creator_user_id != self.context["request"].user.pk:
+            raise serializers.ValidationError("Could not find this tier.")
+        return tier
+
+    def create(self, validated_data):
+        request = self.context["request"]
+        email = validated_data["email"]
+        fan_user = User.objects.filter(email__iexact=email).first()
+        if not fan_user:
+            adapter = get_adapter(request)
+            fan_user = adapter.invite(request._request, email)
+
+        membership, _ = Membership.objects.get_or_create(
+            creator_user=request.user, fan_user=fan_user
+        )
+        membership.giveaway(validated_data["tier"])
+        return membership
 
 
 class MemberSerializer(serializers.ModelSerializer):

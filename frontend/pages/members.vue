@@ -30,6 +30,10 @@
       </div>
     </div>
 
+    <div>
+      <fm-button @click="dialogs.giveaway = true">Giveaway Membership</fm-button>
+    </div>
+
     <!-- filters start -->
     <div class="flex flex-wrap w-full">
 
@@ -139,7 +143,7 @@
   <!-- container end -->
 
   <!-- dialogs start -->
-  <fm-dialog v-model="showDialog" drawer>
+  <fm-dialog v-model="dialogs.detail" drawer>
     <template #header>
       <div v-if="activeMember" class="text-base">
         Membership details for {{ activeMember.fan_user.display_name }}
@@ -282,6 +286,23 @@
     </template>
   </fm-dialog>
   <!-- dialogs end -->
+  <fm-dialog v-model="dialogs.giveaway">
+    <template #header>Giveaway a membership</template>
+    <p>giveaway 1 month free membership access to fans</p>
+    <fm-form id="giveawayForm" :errors="giveawayFormErrors" @submit.prevent="submitGiveaway">
+      <fm-input v-model="giveawayForm.email" uid="email" label="Email" :required="true" type="email" placeholder="name@example.com"></fm-input>
+      <fm-input v-model="giveawayForm.tier_id" uid="tier_id" label="Tier" type="select" :required="true">
+        <option v-for="tier in $auth.user.tiers" :key="tier.id" :value="tier.id">{{ tier.name }}</option>
+      </fm-input>
+    </fm-form>
+    <template #footer>
+      <div class="text-right">
+        <fm-button @click="dialogs.giveaway = false;">Cancel</fm-button>
+        <fm-button native-type="primary" form="giveawayForm">Submit</fm-button>
+      </div>
+    </template>
+  </fm-dialog>
+
 </div>
 </template>
 
@@ -300,7 +321,16 @@ export default {
         isActive: null,
         orderBy: '-created_at'
       },
-      showDialog: false,
+      giveawayForm: {
+        tier_id: '',
+        email: ''
+      },
+      giveawayFormErrors: {
+      },
+      dialogs: {
+        detail: false,
+        giveaway: false
+      },
       activeMember: null,
       isNextMembersLoading: false,
       isNextPaymentsLoading: false
@@ -321,7 +351,7 @@ export default {
   },
   methods: {
     ...mapActions('memberships', [
-      'fetchMembers', 'fetchMoreMembers', 'fetchPayments', 'fetchMorePayments', 'cancelMembership', 'fetchStats'
+      'fetchMembers', 'fetchMoreMembers', 'fetchPayments', 'fetchMorePayments', 'cancelMembership', 'fetchStats', 'giveawayMembership'
     ]),
     loadMemberships() {
       const params = { creator_username: this.$auth.user.username, ordering: this.filter.orderBy };
@@ -338,7 +368,7 @@ export default {
     }, 250),
     viewMember(member) {
       this.activeMember = member;
-      this.showDialog = true;
+      this.dialogs.detail = true;
       this.fetchPayments(member.id);
     },
     async cancelMembershipLocal(userId) {
@@ -359,6 +389,17 @@ export default {
       this.isNextPaymentsLoading = true;
       await this.fetchMorePayments(url);
       this.isNextPaymentsLoading = false;
+    },
+    async submitGiveaway() {
+      const error = await this.giveawayMembership(this.giveawayForm);
+      if (error) {
+        this.formErrors = error;
+        this.loading = false;
+        return;
+      }
+      this.$toast.success('Membership invitation sent.');
+      this.dialogs.giveaway = false;
+      this.loadMemberships();
     }
   }
 };

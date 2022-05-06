@@ -541,6 +541,27 @@ class TestMembershipFlow:
         assert response.status_code == 400
         assert response.json()["non_field_errors"][0]["code"] == "permission_denied"
 
+    def test_giveaway_membership(self, api_client, creator_user, mocker):
+        assert not Membership.objects.exists()
+
+        api_client.force_authenticate(creator_user)
+        response = api_client.post(
+            "/api/memberships/giveaway/",
+            {
+                "tier_id": creator_user.tiers.get().pk,
+                "email": "foo.bar@chu.com",
+            }
+        )
+        assert response.status_code == 201
+
+        membership = Membership.objects.get(id=response.json()["id"])
+        assert membership.creator_user == creator_user
+        assert membership.fan_user.email == "foo.bar@chu.com"
+        assert membership.tier.id == creator_user.tiers.get().pk
+        assert membership.active_subscription.status == "active"
+        assert membership.active_subscription.cycle_end_at.date() == (timezone.now() + relativedelta(months=1)).date()
+        assert membership.is_active
+
 
 class TestSubscriptionAPI:
     def test_list(self, active_membership, api_client):

@@ -9,6 +9,7 @@ from memberships.payments.models import Payment
 
 from memberships.subscriptions.api.serializers import (
     MemberSerializer,
+    MembershipGiveawaySerializer,
     MembershipSerializer,
     MemebershipStatsSerializer,
     SubscriptionSerializer,
@@ -101,7 +102,13 @@ class MembershipViewSet(
     def get_serializer_class(self):
         if self.action == "stats":
             return MemebershipStatsSerializer
+        elif self.action == "giveaway":
+            return MembershipGiveawaySerializer
         return super().get_serializer_class()
+
+    @action(detail=False, permission_classes=(permissions.IsAuthenticated, IsCreator), methods=["post"])
+    def giveaway(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
     @extend_schema(request=None)
     @action(detail=True, methods=["post"])
