@@ -2,6 +2,7 @@
 <div class="fm-layout fm-layout--default bg-gray-50" :class="{ 'fm-layout--with-sidebar': sidebar }">
 
   <!-- header start -->
+  <!-- TODO: always show for marketing pages and remove bottom pane -->
   <header class="fm-layout__header z-20 py-2 bg-white shadow-sm" :class="{ 'hidden md:block': $auth.loggedIn }">
     <div class="max-w-[1390px] container-fluid flex items-center">
       <div v-if="0" class="inline-block text-xl font-bold">
