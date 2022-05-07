@@ -11,7 +11,7 @@
   <!-- container start -->
   <div v-if="members" class="container mt-5 pt-6 pb-16 md:px-8 rounded-xl border bg-white">
 
-    <div v-if="stats" class="flex text-center max-w-2xl mb-6">
+    <div v-if="stats" class="flex flex-wrap text-center mb-6">
       <div>
         <div class="text-lg sm:text-3xl font-bold">{{ stats.total }}</div>
         <div class="text-xs sm:text-sm text-gray-600">total members</div>
@@ -28,10 +28,13 @@
         <div class="text-lg sm:text-3xl font-bold">{{ $currency(stats.total_payment) }}</div>
         <div class="text-xs sm:text-sm text-gray-600">total payment</div>
       </div>
-    </div>
 
-    <div>
-      <fm-button @click="dialogs.giveaway = true">Giveaway Membership</fm-button>
+      <div class="lg:block xl:hidden w-full mb-4"></div>
+      <div class="ml-auto">
+        <fm-button class="flex" type="primary" @click="dialogs.giveaway = true">
+          <icon-gift class="w-4 h-4 mr-2"></icon-gift> Gift memberships
+        </fm-button>
+      </div>
     </div>
 
     <!-- filters start -->
@@ -285,23 +288,47 @@
       <!-- legend end -->
     </template>
   </fm-dialog>
-  <!-- dialogs end -->
+
   <fm-dialog v-model="dialogs.giveaway">
-    <template #header>Giveaway a membership</template>
-    <p>giveaway 1 month free membership access to fans</p>
-    <fm-form id="giveawayForm" :errors="giveawayFormErrors" @submit.prevent="submitGiveaway">
-      <fm-input v-model="giveawayForm.email" uid="email" label="Email" :required="true" type="email" placeholder="name@example.com"></fm-input>
-      <fm-input v-model="giveawayForm.tier_id" uid="tier_id" label="Tier" type="select" :required="true">
-        <option v-for="tier in $auth.user.tiers" :key="tier.id" :value="tier.id">{{ tier.name }}</option>
-      </fm-input>
+    <template #header>
+      <div class="flex items-center">
+        <icon-gift class="text-fm-primary h-8 w-8 mt-0 mr-2"></icon-gift>
+        <div>
+          Gift membership
+
+          <div class="text-sm text-gray-600 font-normal">Gift a 1 month free membership to your fans</div>
+        </div>
+      </div>
+    </template>
+
+    <fm-form
+      v-for="(giveaway, idx) in giveawayForm" :key="idx" :errors="giveawayFormErrors[idx]"
+      class="flex space-x-3 mb-6" @submit.prevent>
+      <div class="flex-1">
+        <fm-input v-model="giveaway.email" uid="email" label="Email" required type="email" placeholder="name@example.com"></fm-input>
+      </div>
+      <div class="flex-1">
+        <fm-input v-model="giveaway.tier_id" uid="tier_id" label="Tier" type="select" required>
+          <option v-for="tier in $auth.user.tiers" :key="tier.id" :value="tier.id">{{ tier.name }}</option>
+        </fm-input>
+      </div>
+      <div v-if="giveawayForm.length > 1" class="self-end mb-2">
+        <fm-button size="sm" circle @click="addOrRemoveGiveawayForm(idx)">
+          <icon-x class="w-4 h-4 text-fm-error"></icon-x>
+        </fm-button>
+      </div>
     </fm-form>
+    <div class="text-right mb-3">
+      <fm-button size="sm" @click="addOrRemoveGiveawayForm">Add another</fm-button>
+    </div>
     <template #footer>
       <div class="text-right">
         <fm-button @click="dialogs.giveaway = false;">Cancel</fm-button>
-        <fm-button native-type="primary" form="giveawayForm">Submit</fm-button>
+        <fm-button type="primary" @click="submitGiveaway">Send invites</fm-button>
       </div>
     </template>
   </fm-dialog>
+  <!-- dialogs end -->
 
 </div>
 </template>
@@ -321,12 +348,10 @@ export default {
         isActive: null,
         orderBy: '-created_at'
       },
-      giveawayForm: {
-        tier_id: '',
-        email: ''
-      },
-      giveawayFormErrors: {
-      },
+      giveawayForm: [
+        { tier_id: '', email: '' }
+      ],
+      giveawayFormErrors: [],
       dialogs: {
         detail: false,
         giveaway: false
@@ -390,15 +415,23 @@ export default {
       await this.fetchMorePayments(url);
       this.isNextPaymentsLoading = false;
     },
+    addOrRemoveGiveawayForm(idx = null) {
+      if (Number.isInteger(idx)) {
+        this.giveawayForm.splice(idx, 1);
+      } else {
+        this.giveawayForm.push({ tier_id: '', email: '' });
+      }
+    },
     async submitGiveaway() {
       const error = await this.giveawayMembership(this.giveawayForm);
       if (error) {
-        this.formErrors = error;
+        this.giveawayFormErrors = error;
         this.loading = false;
         return;
       }
-      this.$toast.success('Membership invitation sent.');
+      this.$toast.success('Membership invitations were sent successfully.');
       this.dialogs.giveaway = false;
+      this.giveawayForm = [{ tier_id: '', email: '' }];
       this.loadMemberships();
     }
   }

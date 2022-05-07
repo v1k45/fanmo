@@ -85,10 +85,10 @@ export const actions = {
     return await dispatch('fetch', { url: nextUrl, mutation: 'setMoreMembers' });
   },
   // eslint-disable-next-line camelcase
-  async giveawayMembership({ dispatch }, { tier_id, email }) {
+  async giveawayMembership({ dispatch }, payload) {
     return await dispatch('update', {
       url: '/api/memberships/giveaway/',
-      payload: [{ tier_id, email }]
+      payload
     });
   },
   // eslint-disable-next-line camelcase
