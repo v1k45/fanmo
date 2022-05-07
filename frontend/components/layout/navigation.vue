@@ -139,7 +139,8 @@ export default {
         supporter: [
           { id: 'dashboard', label: 'Dashboard', icon: Home, url: '/' },
           { id: 'memberships', label: 'Memberships', icon: UserCheck, url: '/memberships/' },
-          { id: 'donations', label: 'Donations', icon: Coins, url: '/sent-donations/' }
+          { id: 'donations', label: 'Donations', icon: Coins, url: '/sent-donations/' },
+          { id: 'settings', label: 'Settings', icon: Sliders, url: '/404/' }
         ]
       },
       bottomNav: {
