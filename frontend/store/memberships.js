@@ -88,7 +88,7 @@ export const actions = {
   async giveawayMembership({ dispatch }, { tier_id, email }) {
     return await dispatch('update', {
       url: '/api/memberships/giveaway/',
-      payload: { tier_id, email }
+      payload: [{ tier_id, email }]
     });
   },
   // eslint-disable-next-line camelcase

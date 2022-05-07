@@ -368,7 +368,11 @@ class Subscription(BaseModel):
     def authenticate(self):
         # schedule current subscription to cancel
         active_subscription = self.membership.active_subscription
-        if active_subscription and active_subscription.external_id != self.external_id and can_proceed(active_subscription.schedule_to_cancel):
+        if (
+            active_subscription
+            and active_subscription.external_id != self.external_id
+            and can_proceed(active_subscription.schedule_to_cancel)
+        ):
             active_subscription.schedule_to_cancel()
             active_subscription.save()
 

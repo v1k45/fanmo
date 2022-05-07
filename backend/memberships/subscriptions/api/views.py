@@ -106,6 +106,11 @@ class MembershipViewSet(
             return MembershipGiveawaySerializer
         return super().get_serializer_class()
 
+    def get_serializer(self, *args, **kwargs):
+        if self.action == "giveaway":
+            kwargs.update({"many": True})
+        return super().get_serializer(*args, **kwargs)
+
     @action(
         detail=False,
         permission_classes=(permissions.IsAuthenticated, IsCreator),
