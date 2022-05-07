@@ -37,13 +37,15 @@ export default {
     },
     block: { type: Boolean, default: false },
     size: { type: String, default: '', validator: val => !val || !!BUTTON_SIZE_CLASSNAME_MAP[val] },
-    loading: { type: Boolean, default: false }
+    loading: { type: Boolean, default: false },
+    circle: { type: Boolean, default: false }
   },
   computed: {
     classes() {
       return {
         [BUTTON_TYPE_CLASSNAME_MAP[this.type] || 'fm-button--default']: true,
         [BUTTON_SIZE_CLASSNAME_MAP[this.size] || '']: true,
+        'fm-button--circle': this.circle,
         'fm-button--block': this.block,
         'fm-button--loading': this.loading
       };
@@ -115,6 +117,16 @@ export default {
 }
 .fm-button--lg {
   @apply py-3 text-base;
+}
+
+.fm-button--circle {
+  @apply rounded-full h-12 w-12 p-0;
+  &.fm-button--sm {
+    @apply h-8 w-8;
+  }
+  .fm-button--lg {
+    @apply h-12 w-12;
+  }
 }
 
 .fm-button--loading {
