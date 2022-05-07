@@ -1,5 +1,5 @@
 <template>
-<div class="fm-layout fm-layout--default bg-gray-50" :class="{ 'fm-layout--with-sidebar': sidebar }">
+<div class="fm-layout fm-layout--default bg-gray-50" :class="{ 'fm-layout--with-sidebar': sidebar && $auth.loggedIn }">
 
   <!-- header start -->
   <!-- TODO: always show for marketing pages and remove bottom pane -->
@@ -56,7 +56,7 @@
   <!-- header end -->
 
   <div class="fm-layout__content">
-    <div v-if="sidebar" class="fm-layout__sidebar">
+    <div v-if="sidebar && $auth.loggedIn" class="fm-layout__sidebar">
       <layout-navigation class="m-4 mt-12" type="sidebar"></layout-navigation>
     </div>
 
