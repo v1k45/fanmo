@@ -6,7 +6,7 @@ from django.db import models
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.conf import settings
-from django_fsm import FSMField, transition
+from django_fsm import FSMField, transition, can_proceed
 from djmoney.models.fields import MoneyField
 from simple_history.models import HistoricalRecords
 from versatileimagefield.fields import VersatileImageField
@@ -105,6 +105,7 @@ class Membership(BaseModel):
             name=f"{tier.name} - {self.creator_user.name}",
             tier=tier,
             amount=Money(Decimal(0), INR),
+            external_id="giveaway",
         )
 
         subscription = Subscription.objects.create(
@@ -115,6 +116,7 @@ class Membership(BaseModel):
             fan_user=self.fan_user,
             cycle_start_at=timezone.now(),
             cycle_end_at=timezone.now() + relativedelta(months=1),
+            external_id="giveaway",
         )
 
         payment = Payment.objects.create(
@@ -355,6 +357,9 @@ class Subscription(BaseModel):
         self.external_id = external_subscription["id"]
         self.save()
 
+    def is_giveaway(self):
+        return self.external_id == "giveaway"
+
     @transition(
         field=status,
         source=Status.CREATED,
@@ -363,7 +368,7 @@ class Subscription(BaseModel):
     def authenticate(self):
         # schedule current subscription to cancel
         active_subscription = self.membership.active_subscription
-        if active_subscription and active_subscription.external_id != self.external_id:
+        if active_subscription and active_subscription.external_id != self.external_id and can_proceed(active_subscription.schedule_to_cancel):
             active_subscription.schedule_to_cancel()
             active_subscription.save()
 
@@ -391,8 +396,22 @@ class Subscription(BaseModel):
     def schedule_to_activate(self):
         pass
 
-    @transition(field=status, source="*", target=Status.SCHEDULED_TO_CANCEL)
+    @transition(
+        field=status,
+        source=[
+            Status.CREATED,
+            Status.AUTHENTICATED,
+            Status.ACTIVE,
+            Status.PENDING,
+            Status.SCHEDULED_TO_ACTIVATE,
+            Status.PAUSED,
+        ],
+        target=Status.SCHEDULED_TO_CANCEL,
+    )
     def schedule_to_cancel(self):
+        if self.is_giveaway():
+            return
+
         razorpay_client.subscription.cancel(
             self.external_id, {"cancel_at_cycle_end": 1}
         )

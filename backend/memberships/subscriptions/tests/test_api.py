@@ -550,7 +550,7 @@ class TestMembershipFlow:
             {
                 "tier_id": creator_user.tiers.get().pk,
                 "email": "foo.bar@chu.com",
-            }
+            },
         )
         assert response.status_code == 201
 
@@ -559,7 +559,10 @@ class TestMembershipFlow:
         assert membership.fan_user.email == "foo.bar@chu.com"
         assert membership.tier.id == creator_user.tiers.get().pk
         assert membership.active_subscription.status == "active"
-        assert membership.active_subscription.cycle_end_at.date() == (timezone.now() + relativedelta(months=1)).date()
+        assert (
+            membership.active_subscription.cycle_end_at.date()
+            == (timezone.now() + relativedelta(months=1)).date()
+        )
         assert membership.is_active
 
 

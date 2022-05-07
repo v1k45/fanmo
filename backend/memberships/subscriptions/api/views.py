@@ -106,7 +106,11 @@ class MembershipViewSet(
             return MembershipGiveawaySerializer
         return super().get_serializer_class()
 
-    @action(detail=False, permission_classes=(permissions.IsAuthenticated, IsCreator), methods=["post"])
+    @action(
+        detail=False,
+        permission_classes=(permissions.IsAuthenticated, IsCreator),
+        methods=["post"],
+    )
     def giveaway(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
