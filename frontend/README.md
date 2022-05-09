@@ -76,3 +76,27 @@ More information about the usage of this directory in [the documentation](https:
 - [ ] Sane width presets for dialog
 - [ ] Remove all faker imports
 - [ ] Login/Signup add loading to buttons
+
+
+### Final audit TODOs
+
+For each page, test it in the following states
+
+- Desktop
+  1. Unauthenticated
+  2. As a creator
+  3. As a supporter
+  4. With data
+  5. Without data
+- Phone
+  1. Unauthenticated
+  2. As a creator
+  3. As a supporter
+  4. With data
+  5. Without data
+
+Everything from above but in Safari and Firefox
+
+For each page, check these things
+
+1. Title
