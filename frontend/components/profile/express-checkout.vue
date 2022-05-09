@@ -97,7 +97,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('profile', ['fetchProfile', 'createOrGetMembership', 'createDonation']),
+    ...mapActions('profile', ['createOrGetMembership', 'createDonation']),
     async handleSubmit() {
       this.loading = true;
       if (this.supportType === 'membership') {

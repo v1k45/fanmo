@@ -294,7 +294,7 @@
       <div class="flex items-center">
         <icon-gift class="text-fm-primary h-8 w-8 mt-0 mr-2"></icon-gift>
         <div>
-          Gift membership
+          Gift memberships
 
           <div class="text-sm text-gray-600 font-normal">Gift a 1 month free membership to your fans</div>
         </div>
