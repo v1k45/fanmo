@@ -1,102 +1,118 @@
 <template>
-<div>
-  <div v-if="false" class="row row-cols-5 g-4">
-    <div>
-      <nuxt-link to="/" class="flex flex-col border items-center shadow-md bg-white rounded-lg p-8 hover:scale-105 transition-transform transform">
-        <IconHome :size="36"></IconHome>
-        <div class="mt-2">Home</div>
-      </nuxt-link>
-    </div>
-    <div>
-      <nuxt-link to="/profile" class="flex flex-col border items-center shadow-md bg-white rounded-lg p-8 hover:scale-105 transition-transform transform">
-        <icon-layout :size="36"></icon-layout>
-        <div class="mt-2">Profile</div>
-      </nuxt-link>
-    </div>
-    <div>
-      <nuxt-link to="/subscriptions" class="flex flex-col border items-center text-center shadow-md bg-white rounded-lg p-8 hover:scale-105 transition-transform transform">
-        <icon-user-plus :size="36"></icon-user-plus>
-        <div class="mt-2">Subscriptions</div>
-      </nuxt-link>
-    </div>
-    <div>
-      <nuxt-link to="/subscribers" class="flex flex-col border items-center text-center shadow-md bg-white rounded-lg p-8 hover:scale-105 transition-transform transform">
-        <icon-users :size="36"></icon-users>
-        <div class="mt-2">Subscribers</div>
-      </nuxt-link>
-    </div>
-    <div>
-      <nuxt-link to="/payments" class="flex flex-col border items-center text-center shadow-md bg-white rounded-lg p-8 hover:scale-105 transition-transform transform">
-        <icon-wallet :size="36"></icon-wallet>
-        <div class="mt-2">Payments</div>
-      </nuxt-link>
-    </div>
-    <div>
-      <nuxt-link to="/payouts" class="flex flex-col border items-center text-center shadow-md bg-white rounded-lg p-8 hover:scale-105 transition-transform transform">
-        <icon-indian-rupee :size="36"></icon-indian-rupee>
-        <div class="mt-2">Payouts</div>
-      </nuxt-link>
-    </div>
-    <div>
-      <nuxt-link to="/tiers" class="flex flex-col border items-center text-center shadow-md bg-white rounded-lg p-8 hover:scale-105 transition-transform transform">
-        <IconListMinus :size="36"></IconListMinus>
-        <div class="mt-2">Manage tiers</div>
-      </nuxt-link>
-    </div>
-    <div>
-      <nuxt-link to="/settings" class="flex flex-col border items-center text-center shadow-md bg-white rounded-lg p-8 hover:scale-105 transition-transform transform">
-        <icon-settings :size="36"></icon-settings>
-        <div class="mt-2">Settings</div>
-      </nuxt-link>
+<div class="mt-6 lg:my-12 lg:mx-4">
+
+  <div class="container sm:pl-0 pb-16  rounded-xl">
+    <div class="row xl:gx-5">
+      <!-- posts start -->
+      <div class="col-12 md:col-auto md:max-w-2xl md:flex-grow lg:col-8 lg:max-w-none lg:flex-grow-0 xl:col-auto xl:max-w-2xl xl:flex-grow mx-auto">
+        <div class="text-2xl text-black font-bold">Posts</div>
+        <div class="mt-1 text-gray-600 mb-5">Posts from all the creators you follow or subscribe to.</div>
+        <template v-if="feedPosts">
+          <profile-post
+            v-for="post in feedPosts.results" :key="post.id" :post="post"
+            class="mb-6 md:mb-8" show-creator-info @share-click="handleShareClick">
+          </profile-post>
+        </template>
+        <div v-if="feedPosts && feedPosts.next" class="text-center mt-4">
+          <fm-button :loading="nextPostsLoading" @click="loadNextPostsLocal">Load more</fm-button>
+        </div>
+        <div v-if="feedPosts && !feedPosts.results.length" class="text-sm text-gray-500">
+          No posts to show here yet.
+        </div>
+      </div>
+      <!-- posts end -->
+
+      <!-- following users start -->
+      <div class="hidden lg:block col-12 lg:col overflow-hidden">
+        <div class="text-xl text-black font-bold">Following <template v-if="following.results.length">({{ following.results.length }})</template></div>
+        <div class="mt-1 text-gray-600 mb-5">Creators you follow.</div>
+
+        <template v-if="following">
+          <nuxt-link
+            v-for="(user, idx) in following.results" :key="user.id" :to="`/${user.username}`"
+            class="flex items-center border-l border-t border-r bg-white px-4 py-3 hover:bg-gray-200" :class="{
+              'rounded-t-xl': idx === 0,
+              'rounded-b-xl border-b': idx === following.results.length - 1
+            }">
+            <fm-avatar
+              :src="user.avatar && user.avatar.small"
+              :name="user.display_name" :username="user.username"
+              size="w-8 h-8 mr-2 inline-block flex-shrink-0">
+            </fm-avatar>
+            <div class="overflow-hidden">
+              <div class="truncate text-base text-black font-medium" :title="user.display_name">{{ user.display_name }}</div>
+              <div v-if="user.one_liner" :title="user.one_liner" class="truncate text-sm text-gray-500">{{ user.one_liner }}</div>
+            </div>
+          </nuxt-link>
+        </template>
+        <div v-if="following.next" class="text-center mt-4">
+          <fm-button size="sm" :loading="nextFollowingUsersLoading" @click="loadNextFollowingUsersLocal">Load more</fm-button>
+        </div>
+        <div v-if="following && !following.results.length" class="text-sm text-gray-500">
+          You aren't following anyone yet.
+        </div>
+      </div>
+      <!-- following users end -->
     </div>
   </div>
 
-  <div v-if="false" class="text-center pt-16">
-    <div class="mb-6">
-      Sign up by clicking on the button below to get started!
-    </div>
-    <nuxt-link to="/register" class="btn px-10 animate-bounce">Sign up</nuxt-link>
+  <!-- following phone dialog start -->
+  <div v-if="following.results" class="fixed top-1/2 transform -translate-y-1/2 right-0 lg:hidden">
+    <button
+      class="py-4 px-2 border border-r-0 bg-white rounded-l-xl text-center hover:bg-fm-primary-100 hover:text-fm-primary"
+      @click="isFollowingDialogVisible = true;">
+      <span class="[writing-mode:vertical-rl] [text-orientation:mixed] font-medium text-sm">
+        Following <template v-if="following.results.length">({{ following.results.length }})</template>
+      </span>
+    </button>
   </div>
 
-  <h1 class="text-2xl font-bold my-4">Featured Creators</h1>
-  <div class="row row-cols-5 g-4">
-    <div v-for="user in creators.results" :key="user.id">
-      <nuxt-link :to="`/${user.username}`" class="flex flex-col border items-center shadow-md bg-white rounded-lg p-8 hover:scale-105 transition-transform transform">
+  <fm-dialog v-model="isFollowingDialogVisible" drawer no-padding>
+    <template #header>
+      <div class="text-base">
+        Following <template v-if="following.results.length">({{ following.results.length }})</template>
+      </div>
+    </template>
+    <template v-if="isFollowingDialogVisible && following">
+      <nuxt-link
+        v-for="(user) in following.results" :key="user.id" :to="`/${user.username}`"
+        class="flex items-center border-l border-b border-r bg-white px-4 py-3 hover:bg-gray-200">
         <fm-avatar
-          :src="user.avatar && user.avatar.medium"
-          :name="user.name" :username="user.username"
-          size="h-24 w-24">
+          :src="user.avatar && user.avatar.small"
+          :name="user.display_name" :username="user.username"
+          size="w-8 h-8 mr-2 inline-block flex-shrink-0">
         </fm-avatar>
-        <div class="mt-2">{{ user.username }}</div>
+        <div class="overflow-hidden">
+          <div class="truncate text-base text-black font-medium" :title="user.display_name">{{ user.display_name }}</div>
+          <div v-if="user.one_liner" :title="user.one_liner" class="truncate text-sm text-gray-500">{{ user.one_liner }}</div>
+        </div>
       </nuxt-link>
+      <div v-if="following.next" class="text-center mt-4">
+        <fm-button size="sm" :loading="nextFollowingUsersLoading" @click="loadNextFollowingUsersLocal">Load more</fm-button>
+      </div>
+    </template>
+    <div v-if="following && !following.results.length" class="text-sm text-gray-500 p-6 text-center">
+      You aren't following anyone yet.
     </div>
-  </div>
+  </fm-dialog>
+  <!-- following phone dialog end -->
 
-  <h1 class="text-2xl font-bold my-8">Posts</h1>
-  <div v-if="feedPosts.results.length" class="mt-8 max-w-lg">
-    <profile-post
-      v-for="post in feedPosts.results" :key="post.id" :post="post"
-      class="mb-6 md:mb-8" @share-click="handleShareClick"></profile-post>
-  </div>
-  <div v-if="feedPosts.next" class="text-center mt-4">
-    <fm-button :loading="nextPostsLoading" @click="loadNextPostsLocal">Load more</fm-button>
-  </div>
+  <!-- dialogs start -->
   <profile-share v-model="sharePost.isVisible" :text="sharePost.text" :url="sharePost.url"></profile-share>
+  <!-- dialogs end -->
 </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex';
 export default {
-  auth: false,
+  auth: true,
   layout: 'with-sidebar',
-  async asyncData({ $axios }) {
-    const creators = await $axios.$get('/api/users/?is_creator=true');
-    return { creators };
-  },
   data() {
     return {
       nextPostsLoading: false,
+      nextFollowingUsersLoading: false,
+      isFollowingDialogVisible: false,
       sharePost: {
         isVisible: false,
         url: null,
@@ -108,17 +124,25 @@ export default {
     title: 'Home'
   },
   computed: {
-    ...mapGetters('posts', ['feedPosts'])
+    ...mapGetters('posts', ['feedPosts']),
+    ...mapGetters('users', ['following'])
   },
   mounted() {
     this.loadFeedPosts();
+    this.loadFollowingUsers();
   },
   methods: {
     ...mapActions('posts', ['loadFeedPosts', 'loadNextFeedPosts']),
+    ...mapActions('users', ['loadFollowingUsers', 'loadNextFollowingUsers']),
     async loadNextPostsLocal() {
       this.nextPostsLoading = true;
       await this.loadNextFeedPosts();
       this.nextPostsLoading = false;
+    },
+    async loadNextFollowingUsersLocal() {
+      this.nextFollowingUsersLoading = true;
+      await this.loadNextFollowingUsers();
+      this.nextFollowingUsersLoading = false;
     },
     handleShareClick(post) {
       this.sharePost = {
