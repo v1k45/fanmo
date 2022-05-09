@@ -58,6 +58,7 @@ export const getters = {
   },
   feedPosts(state) {
     if (!state.feedPosts_raw) return {
+      notLoaded: true,
       previous: null,
       next: null,
       results: []

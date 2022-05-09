@@ -5,51 +5,66 @@
     <div class="row xl:gx-5">
       <!-- posts start -->
       <div class="col-12 md:col-auto md:max-w-2xl md:flex-grow lg:col-8 lg:max-w-none lg:flex-grow-0 xl:col-auto xl:max-w-2xl xl:flex-grow mx-auto">
-        <div class="text-2xl text-black font-bold">Posts</div>
-        <div class="mt-1 text-gray-600 mb-5">Posts from all the creators you follow or subscribe to.</div>
+        <div class="flex">
+          <div>
+            <div class="text-2xl text-black font-bold">Posts</div>
+            <div class="mt-1 text-gray-600 mb-5">Posts from all the creators you follow or subscribe to.</div>
+          </div>
+          <div class="ml-auto flex-shrink-0">
+            <fm-button size="sm" class="touch-manipulation" :loading="feedPostsLoading" @click="loadFeedPostsLocal">
+              <icon-refresh-cw class="h-em w-em"></icon-refresh-cw> Refresh
+            </fm-button>
+          </div>
+        </div>
         <template v-if="feedPosts">
-          <profile-post
-            v-for="post in feedPosts.results" :key="post.id" :post="post"
-            class="mb-6 md:mb-8" show-creator-info @share-click="handleShareClick">
-          </profile-post>
+          <fm-lazy v-for="post in feedPosts.results" :key="post.id" class="mb-6 md:mb-8" min-height="300">
+            <profile-post :post="post" show-creator-info @share-click="handleShareClick"></profile-post>
+          </fm-lazy>
         </template>
         <div v-if="feedPosts && feedPosts.next" class="text-center mt-4">
           <fm-button :loading="nextPostsLoading" @click="loadNextPostsLocal">Load more</fm-button>
         </div>
-        <div v-if="feedPosts && !feedPosts.results.length" class="text-sm text-gray-500">
+        <div v-if="!feedPosts.notLoaded && !feedPosts.results.length" class="text-sm text-gray-500">
           No posts to show here yet.
+        </div>
+        <div v-if="feedPosts.notLoaded && feedPostsLoading" class="text-sm text-gray-500 text-center">
+          Loading posts...
         </div>
       </div>
       <!-- posts end -->
 
       <!-- following users start -->
-      <div class="hidden lg:block col-12 lg:col overflow-hidden">
-        <div class="text-xl text-black font-bold">Following <template v-if="following.results.length">({{ following.results.length }})</template></div>
-        <div class="mt-1 text-gray-600 mb-5">Creators you follow.</div>
+      <div class="hidden lg:block col-12 lg:col">
+        <div class="sticky top-[76px]">
+          <div class="text-xl text-black font-bold">Following <template v-if="following.count">({{ following.count }})</template></div>
+          <div class="mt-1 text-gray-600 mb-5">Creators you follow.</div>
 
-        <template v-if="following">
-          <nuxt-link
-            v-for="(user, idx) in following.results" :key="user.id" :to="`/${user.username}`"
-            class="flex items-center border-l border-t border-r bg-white px-4 py-3 hover:bg-gray-200" :class="{
-              'rounded-t-xl': idx === 0,
-              'rounded-b-xl border-b': idx === following.results.length - 1
-            }">
-            <fm-avatar
-              :src="user.avatar && user.avatar.small"
-              :name="user.display_name" :username="user.username"
-              size="w-8 h-8 mr-2 inline-block flex-shrink-0">
-            </fm-avatar>
-            <div class="overflow-hidden">
-              <div class="truncate text-base text-black font-medium" :title="user.display_name">{{ user.display_name }}</div>
-              <div v-if="user.one_liner" :title="user.one_liner" class="truncate text-sm text-gray-500">{{ user.one_liner }}</div>
+          <div v-if="following.results.length" class="overflow-hidden rounded-xl border">
+            <div class="overflow-auto max-h-[75vh]">
+              <nuxt-link
+                v-for="(user, idx) in following.results"
+                :key="user.id" :to="`/${user.username}`"
+                class="flex items-center bg-white px-4 py-3 hover:bg-gray-200" :class="{
+                  'border-t': idx !== 0
+                }">
+                <fm-avatar
+                  :src="user.avatar && user.avatar.small"
+                  :name="user.display_name" :username="user.username"
+                  size="w-8 h-8 mr-2 inline-block flex-shrink-0">
+                </fm-avatar>
+                <div class="overflow-hidden">
+                  <div class="truncate text-base text-black font-medium" :title="user.display_name">{{ user.display_name }}</div>
+                  <div v-if="user.one_liner" :title="user.one_liner" class="truncate text-sm text-gray-500">{{ user.one_liner }}</div>
+                </div>
+              </nuxt-link>
             </div>
-          </nuxt-link>
-        </template>
-        <div v-if="following.next" class="text-center mt-4">
-          <fm-button size="sm" :loading="nextFollowingUsersLoading" @click="loadNextFollowingUsersLocal">Load more</fm-button>
-        </div>
-        <div v-if="following && !following.results.length" class="text-sm text-gray-500">
-          You aren't following anyone yet.
+          </div>
+          <div v-if="following.next" class="text-center mt-4">
+            <fm-button size="sm" :loading="nextFollowingUsersLoading" @click="loadNextFollowingUsersLocal">Load more</fm-button>
+          </div>
+          <div v-if="following && !following.results.length" class="text-sm text-gray-500">
+            You aren't following anyone yet.
+          </div>
         </div>
       </div>
       <!-- following users end -->
@@ -110,6 +125,7 @@ export default {
   layout: 'with-sidebar',
   data() {
     return {
+      feedPostsLoading: false,
       nextPostsLoading: false,
       nextFollowingUsersLoading: false,
       isFollowingDialogVisible: false,
@@ -128,12 +144,17 @@ export default {
     ...mapGetters('users', ['following'])
   },
   mounted() {
-    this.loadFeedPosts();
+    this.loadFeedPostsLocal();
     this.loadFollowingUsers();
   },
   methods: {
     ...mapActions('posts', ['loadFeedPosts', 'loadNextFeedPosts']),
     ...mapActions('users', ['loadFollowingUsers', 'loadNextFollowingUsers']),
+    async loadFeedPostsLocal() {
+      this.feedPostsLoading = true;
+      await this.loadFeedPosts();
+      this.feedPostsLoading = false;
+    },
     async loadNextPostsLocal() {
       this.nextPostsLoading = true;
       await this.loadNextFeedPosts();

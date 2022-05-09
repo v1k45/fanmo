@@ -7,7 +7,7 @@ const ERROR = (data) => ({ success: false, data });
 export const state = () => ({
   usersById: {}, // { [userId]: { ...user } }
   raw: {
-    following: null // { previous, next, userIds }
+    following: null // { previous, next, count, userIds }
   }
 });
 
@@ -47,22 +47,23 @@ export const actions = {
 
 export const mutations = {
   setFollowingUsers(state, { users }) {
-    const { previous, next, results } = users;
+    const { previous, next, count, results } = users;
     results.forEach(user => {
       Vue.set(state.usersById, user.id, user);
     });
     state.raw.following = {
       previous,
       next,
+      count,
       userIds: results.map(user => user.id)
     };
   },
   setNextFollowingUsers(state, { users }) {
-    const { previous, next, results } = users;
+    const { previous, next, count, results } = users;
     results.forEach(user => {
       Vue.set(state.usersById, user.id, user);
       state.raw.following.userIds.push(user.id);
     });
-    Object.assign(state.raw.following, { previous, next });
+    Object.assign(state.raw.following, { previous, next, count });
   }
 };
