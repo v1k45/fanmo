@@ -4,7 +4,7 @@
     class="rounded-lg border border-dashed" tabindex="0"
     :class="{ 'border-fm-primary bg-fm-primary-50': isDraggingOver, 'border-gray-300 bg-gray-100': !isDraggingOver }"
     @dragenter.prevent @dragover.prevent="dragover" @dragleave="dragleave" @drop.prevent="drop" @keyup.enter="$refs.file.click();">
-    <label class="p-12 relative block cursor-pointer text-center">
+    <label class="relative block cursor-pointer text-center" :class="{ 'p-12': multiple, 'p-6': !multiple }">
       <div>
         <template v-if="multiple">Click here to select files or drag them here.</template>
         <template v-else>Click here to select a file or drag it here.</template>
@@ -21,7 +21,7 @@
       <button
         class="absolute -top-1 -right-1 rounded-full bg-fm-error text-white p-0.5 hover:scale-105 transition-transform"
         type="button" title="Remove file" @click="remove(fileList.indexOf(file))">
-        <icon-x class="h-4 w-4"></icon-x>
+        <icon-x class="!block h-4 w-4"></icon-x>
       </button>
     </li>
   </ul>
@@ -69,7 +69,7 @@ export default {
         allFiles.items.add(file);
       });
       this.$refs.file.files = allFiles.files;
-      this.fileList.splice(i, 1);
+      this.onChange();
     },
     dragover(event) {
       this.isDraggingOver = true;
@@ -88,7 +88,11 @@ export default {
           allFiles.items.add(file);
         });
         this.$refs.file.files = allFiles.files;
-      } else this.$refs.file.files = event.dataTransfer.files[0];
+      } else {
+        const singleFile = new DataTransfer();
+        singleFile.items.add(event.dataTransfer.files[0]);
+        this.$refs.file.files = singleFile.files;
+      }
       this.onChange();
     },
     showFullSize(file, preview) {
