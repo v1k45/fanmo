@@ -17,7 +17,7 @@ from memberships.utils.fields import VersatileImageFieldSerializer
 
 
 class TierSerializer(serializers.ModelSerializer):
-    cover = VersatileImageFieldSerializer("user_cover", read_only=True)
+    cover = VersatileImageFieldSerializer("tier_cover", read_only=True)
     cover_base64 = Base64ImageField(write_only=True, source="cover", required=False)
 
     class Meta:
@@ -58,7 +58,7 @@ class TierSerializer(serializers.ModelSerializer):
 
 
 class TierPreviewSerializer(serializers.ModelSerializer):
-    cover = VersatileImageFieldSerializer("user_cover", read_only=True)
+    cover = VersatileImageFieldSerializer("tier_cover", read_only=True)
 
     class Meta:
         model = Tier
