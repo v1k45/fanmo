@@ -20,9 +20,18 @@ from django_q.tasks import async_task
 
 
 class Tier(BaseModel):
+    class CoverBackgroundStyle(models.TextChoices):
+        CONTAIN = "contain"
+        COVER = "cover"
+
     name = models.CharField(max_length=255)
     description = models.TextField(blank=True)
     cover = VersatileImageField(upload_to="uploads/covers/", blank=True)
+    cover_background_style = models.CharField(
+        max_length=16,
+        choices=CoverBackgroundStyle.choices,
+        default=CoverBackgroundStyle.CONTAIN,
+    )
     welcome_message = models.TextField(blank=True)
     benefits = ArrayField(models.CharField(max_length=50), size=8, default=list)
 

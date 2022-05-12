@@ -29,6 +29,7 @@ class TierSerializer(serializers.ModelSerializer):
             "description",
             "cover",
             "cover_base64",
+            "cover_background_style",
             "welcome_message",
             "benefits",
             "is_public",
@@ -61,7 +62,14 @@ class TierPreviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Tier
-        fields = ["id", "name", "amount", "amount_currency", "cover"]
+        fields = [
+            "id",
+            "name",
+            "amount",
+            "amount_currency",
+            "cover",
+            "cover_background_style",
+        ]
 
 
 class RazorpayPayloadSerializer(serializers.ModelSerializer):
