@@ -35,6 +35,11 @@ class TierSerializer(serializers.ModelSerializer):
             "is_public",
             "is_recommended",
         ]
+        extra_kwargs = {
+            "benefits": {
+                "allow_empty": True
+            }
+        }
 
     def validate_is_recommended(self, is_recommended):
         if not is_recommended:

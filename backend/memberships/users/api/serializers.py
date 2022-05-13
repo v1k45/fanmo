@@ -41,6 +41,8 @@ class RegisterSerializer(BaseRegisterSerializer):
 
 
 class UserTierSerializer(serializers.ModelSerializer):
+    cover = VersatileImageFieldSerializer("tier_cover")
+
     class Meta:
         model = Tier
         fields = [
