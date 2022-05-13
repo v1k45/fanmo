@@ -3,13 +3,15 @@
   class="border bg-white border-gray-300 rounded-xl overflow-hidden relative"
   :class="{
     'min-h-[350px]': !hasGoodEnoughContent,
-    'border-4 border-fm-success-600': tier.is_recommended,
-    'border-2': !tier.is_recommended
+    'border-4 border-fm-success-600': tier.is_recommended
   }">
 
   <!-- cover start -->
-  <figure v-if="tier.cover" class="w-full h-36 relative">
-    <img :src="tier.cover.medium" class="absolute object-cover h-full w-full" alt="Tier image">
+  <figure v-if="tier.cover" class="w-full h-36 relative" :class="{ 'mt-4': tier.cover_background_style === 'contain' }">
+    <img
+      :src="tier.cover.full"
+      class="absolute h-full w-full" alt="Tier image"
+      :class="{ 'object-contain': tier.cover_background_style === 'contain', 'object-cover': tier.cover_background_style === 'cover' }">
   </figure>
   <!-- cover end -->
 
@@ -38,7 +40,10 @@
       <div v-else class="mt-1 ml-0">per month</div>
     </div>
 
-    <div class="mt-4 text-center">
+    <div v-if="editMode" class="mt-4 text-center">
+      <fm-button class="w-48" @click="$emit('edit', tier)">Edit</fm-button>
+    </div>
+    <div v-else class="mt-4 text-center">
       <fm-button v-if="isAlreadySubscribed" type="success" class="w-48 pointer-events-none">
         <icon-check class="inline-block h-em w-em"></icon-check> Joined
       </fm-button>
@@ -49,7 +54,7 @@
       <fm-button v-else type="primary" class="w-48" :loading="loading" @click="$emit('subscribe-click')">Join</fm-button>
     </div>
 
-    <fm-read-more-height max-height="200" class="mt-4">
+    <fm-read-more-height :max-height="tier.cover ? 100 : 200" class="mt-4">
       <div>{{ tier.description }}</div>
 
       <div class="mt-4">
@@ -77,7 +82,8 @@ export default {
   },
   props: {
     tier: { type: Object, required: true },
-    loading: { type: Boolean, default: false }
+    loading: { type: Boolean, default: false },
+    editMode: { type: Boolean, default: false }
   },
   computed: {
     ...mapState('profile', ['user', 'existingMemberships']),
