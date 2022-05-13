@@ -65,8 +65,8 @@
         <label class="text-sm block font-bold mb-2">Payment type</label>
         <fm-input v-model="filter.type" type="select" @change="loadEarnings">
           <option value="">All</option>
-          <option value="donation">Donations</option>
-          <option value="subscription">Memberships</option>
+          <option value="donation">Donation</option>
+          <option value="subscription">Membership</option>
         </fm-input>
       </div>
       <!-- payment type filter end -->
@@ -77,9 +77,9 @@
     <!-- table start -->
     <fm-table class="mt-8 table-fixed lg:table-auto">
       <colgroup>
+        <col class="w-[100px] md:min-w-[200px]"> <!-- supporter -->
         <col class="min-w-[175px]"> <!-- next renewal -->
         <col class="min-w-[100px]"> <!-- amount -->
-        <col class="w-[100px] md:min-w-[200px]"> <!-- supporter -->
         <col> <!-- payout -->
         <col> <!-- type -->
         <col> <!-- method -->
@@ -87,9 +87,9 @@
       </colgroup>
       <thead>
         <tr class="text-xs uppercase">
+          <th>Supporter</th>
           <th>Date</th>
           <th class="!text-right">Amount</th>
-          <th>Supporter</th>
           <th>Payout</th>
           <th>Type</th>
           <th>Method</th>
@@ -99,8 +99,6 @@
       <tbody v-show="earnings.results.length" class="text-sm">
         <tr v-for="earning in earnings.results" :key="earning.id">
 
-          <td><span class="whitespace-nowrap">{{ $datetime(earning.created_at) }}</span></td>
-          <td class="text-right">{{ $currency(earning.amount) }}</td>
           <td>
             <div class="flex items-center">
               <fm-avatar
@@ -116,6 +114,8 @@
               </div>
             </div>
           </td>
+          <td><span class="whitespace-nowrap">{{ $datetime(earning.created_at) }}</span></td>
+          <td class="text-right">{{ $currency(earning.amount) }}</td>
           <td>
             <div class="flex items-center">
               <template v-if="earning.payout">
@@ -129,8 +129,8 @@
               </template>
             </div>
           </td>
-          <td>{{ earning.type }}</td>
-          <td>{{ earning.method }}</td>
+          <td>{{ earning.type === 'subscription' ? 'Membership' : 'Donation' }}</td>
+          <td>{{ METHOD_NAME_MAP[earning.method] || earning.method }}</td>
           <td><code class="text-xs">{{ earning.external_id }}</code></td>
         </tr>
       </tbody>
@@ -173,10 +173,19 @@
 import debounce from 'lodash/debounce';
 import { mapActions, mapState } from 'vuex';
 
+const METHOD_NAME_MAP = {
+  card: 'Card',
+  netbanking: 'Net Banking',
+  upi: 'UPI',
+  wallet: 'Wallet',
+  giveaway: 'Giveaway'
+};
+
 export default {
   layout: 'with-sidebar',
   data() {
     return {
+      METHOD_NAME_MAP,
       filter: {
         search: '',
         type: '',
