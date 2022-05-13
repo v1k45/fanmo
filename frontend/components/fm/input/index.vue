@@ -7,6 +7,13 @@
   </label>
   <!-- label end -->
 
+  <!-- description start -->
+  <div v-if="description || $slots.description" class="fm-input__description">
+    <slot v-if="$slots.description" name="description"></slot>
+    <template v-else-if="description">{{ description }}</template>
+  </div>
+  <!-- description end -->
+
   <slot name="after-label"></slot>
 
   <!-- field start -->
@@ -125,6 +132,7 @@ export default {
     nativeValue: { type: [String, Number, Boolean], default: '' }, // for radios and checkboxes
     type: { type: String, default: 'text' },
     label: { type: String, default: '' },
+    description: { type: String, default: '' },
     error: { type: String, default: '' },
     horizontal: { type: Boolean, default: false },
     block: { type: Boolean, default: false },
@@ -209,6 +217,9 @@ export default {
 }
 .fm-input__label {
   @apply block mb-2 text-black;
+}
+.fm-input__description {
+  @apply text-sm block text-gray-500 -mt-2 mb-2;
 }
 .fm-input__error {
   @apply absolute text-fm-error text-xs left-0 top-full mt-1 max-w-full;
