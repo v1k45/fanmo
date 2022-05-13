@@ -1,5 +1,5 @@
 <template>
-<fm-dialog v-model="isVisible" :close-on-backdrop-click="false" :show-close="false">
+<fm-dialog v-model="isVisible" :close-on-backdrop-click="false" :show-close="showClose">
   <!-- creator's avatar start -->
   <div class="w-24 h-24 lg:w-32 lg:h-32 rounded-full relative overflow-hidden mx-auto mt-4">
     <img v-if="user.avatar" :src="user.avatar.medium" class="h-full w-full object-cover">
@@ -48,7 +48,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
 import JSConfetti from 'js-confetti';
 import { CheckCircle as IconCheckCircle } from 'lucide-vue';
 
@@ -59,8 +58,10 @@ export default {
   props: {
     value: { type: Boolean, default: true },
     tier: { type: Object, default: null },
+    user: { type: Object, required: true },
     successMessage: { type: String, default: null },
     donationData: { type: Object, default: null },
+    showClose: { type: Boolean, default: false },
     supportType: { type: String, default: 'membership', validator: val => ['membership', 'donation'].includes(val) }
   },
   data() {
@@ -69,8 +70,6 @@ export default {
     };
   },
   computed: {
-    ...mapState('profile', ['user']),
-
     isVisible: {
       get() {
         return this.value;
