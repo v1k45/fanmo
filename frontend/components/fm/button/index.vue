@@ -1,14 +1,14 @@
 <template>
 <button :type="nativeType" class="fm-button" :class="classes" v-on="$listeners">
   <div v-if="loading" class="fm-button__loading">
-    <icon-loader></icon-loader>
+    <icon-loader-2></icon-loader-2>
   </div>
   <slot></slot>
 </button>
 </template>
 
 <script>
-import { Loader2 as IconLoader } from 'lucide-vue';
+import { Loader2 as IconLoader2 } from 'lucide-vue';
 
 const BUTTON_TYPE_CLASSNAME_MAP = {
   primary: 'fm-button--primary',
@@ -26,7 +26,7 @@ const BUTTON_SIZE_CLASSNAME_MAP = {
 
 export default {
   components: {
-    IconLoader
+    IconLoader2
   },
   props: {
     nativeType: { type: String, default: 'button' },
