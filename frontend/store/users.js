@@ -41,6 +41,16 @@ export const actions = {
       handleGenericError(err, true);
       return ERROR(err.response.data);
     }
+  },
+  async updateSelfUser({ dispatch, state }, payload) {
+    try {
+      const user = await this.$axios.$patch('/api/me/', payload);
+      await dispatch('refreshUser', null, { root: true });
+      return SUCCESS(user);
+    } catch (err) {
+      handleGenericError(err);
+      return ERROR(err.response.data);
+    }
   }
 };
 
