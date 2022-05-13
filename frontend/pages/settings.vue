@@ -22,6 +22,7 @@
 
 <script>
 export default {
+  layout: 'with-sidebar',
   data() {
     const tabName = {
       PROFILE: 'profile',
