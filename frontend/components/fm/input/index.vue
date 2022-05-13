@@ -120,7 +120,7 @@ export default {
   inheritAttrs: false,
   props: {
     uid: { type: String, default: '' }, // for injecting errors if an input is inside fm-form. accepts path
-    value: { type: [String, Number, Boolean, Array], default: '' },
+    value: { type: [String, Number, Boolean, Array, File], default: '' },
     inputClass: { type: [String, Object, Array], default: '' },
     nativeValue: { type: [String, Number, Boolean], default: '' }, // for radios and checkboxes
     type: { type: String, default: 'text' },
