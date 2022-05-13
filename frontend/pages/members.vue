@@ -11,7 +11,7 @@
   <!-- container start -->
   <div class="mt-5 pb-16 rounded-xl border bg-white">
 
-    <div class="flex mt-2 mb-8 border-b-2">
+    <div class="flex mt-2 mb-8 border-b-2 justify-center lg:justify-start">
       <nuxt-link
         v-for="item in nav" :key="item.id" :to="item.url" replace
         class="px-8 py-3 unstyled block relative font-medium text-black"
