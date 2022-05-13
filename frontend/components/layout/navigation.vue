@@ -12,7 +12,7 @@
     <li v-else :key="item.id" class="mb-1 font-medium">
       <nuxt-link
         :to="item.url" class="unstyled flex items-center py-2 px-4 rounded-xl hover:bg-fm-primary-100"
-        exact-active-class="text-white bg-fm-primary pointer-events-none">
+        active-class="text-white bg-fm-primary pointer-events-none">
         <component :is="item.icon" class="h-6 w-6 mr-3"></component>
         {{ item.label }}
       </nuxt-link>
@@ -31,7 +31,7 @@
           exact-active-class="text-white bg-fm-primary pointer-events-none">
 
           <logo
-            v-if="item.label === 'Home'" circle uncolored
+            v-if="item.id === 'home'" circle uncolored
             class="w-6 h-6 inline -ml-3 transform scale-125 text-inherit">
           </logo>
           <component :is="item.icon" v-else class="h-6 w-6"></component>
@@ -121,15 +121,20 @@ export default {
   },
   data() {
     return {
-      nav: {
+    };
+  },
+  computed: {
+    nav() {
+      const { user } = this.$auth;
+      return {
         creator: [
           { id: 'creator-pages', label: 'Creator pages' },
-          { id: 'dashboard', label: 'Dashboard', icon: Home, url: '/' },
+          { id: 'dashboard', label: 'Dashboard', icon: Home, url: '/dashboard/' },
           { id: 'members', label: 'Members', icon: Users, url: '/members/' },
           { id: 'creator-donations', label: 'Donations', icon: Coins, url: '/received-donations/' },
           { id: 'earnings', label: 'Earnings', icon: Wallet, url: '/earnings/' },
-          { id: 'profile', label: 'Profile', icon: LayoutTemplate, url: { name: 'profile' } },
-          { id: 'settings', label: 'Settings', icon: Sliders, url: '/404/' },
+          { id: 'profile', label: 'View page', icon: LayoutTemplate, url: `/${user.username}` },
+          { id: 'settings', label: 'Settings', icon: Sliders, url: '/settings/' },
 
           { id: 'supporter-pages', label: 'Supporter pages' },
           { id: 'feed', label: 'Feed', icon: LayoutList, url: '/feed/' },
@@ -137,27 +142,29 @@ export default {
           { id: 'supporter-donations', label: 'Donations', icon: Coins, url: '/sent-donations/' }
         ],
         supporter: [
-          { id: 'dashboard', label: 'Dashboard', icon: Home, url: '/' },
+          { id: 'feed', label: 'Feed', icon: LayoutList, url: '/feed/' },
           { id: 'memberships', label: 'Memberships', icon: UserCheck, url: '/memberships/' },
           { id: 'donations', label: 'Donations', icon: Coins, url: '/sent-donations/' },
-          { id: 'settings', label: 'Settings', icon: Sliders, url: '/404/' }
+          { id: 'settings', label: 'Settings', icon: Sliders, url: '/settings/' }
         ]
-      },
-      bottomNav: {
+      };
+    },
+    bottomNav() {
+      return {
         creator: [
           { id: 'members', label: 'Members', icon: Users, url: '/members/' },
           { id: 'donations', label: 'Donations', icon: Coins, url: '/received-donations/' },
-          { id: 'home', label: 'Home', url: '/' }, // has special behavior based on the label
+          { id: 'home', label: 'Home', url: '/dashboard/' }, // has special behavior based on the id
           { id: 'earnings', label: 'Earnings', icon: Wallet, url: '/earnings/' }
         ],
         supporter: [
           { id: 'memberships', label: 'Memberships', icon: UserCheck, url: '/memberships/' },
           { id: 'donations', label: 'Donations', icon: Coins, url: '/sent-donations/' },
-          { id: 'home', label: 'Home', url: '/' }, // has special behavior based on the label
-          { id: 'settings', label: 'Settings', icon: Sliders, url: '/404/' }
+          { id: 'home', label: 'Feed', url: '/feed/' }, // has special behavior based on the id
+          { id: 'settings', label: 'Settings', icon: Sliders, url: '/settings/' }
         ]
-      }
-    };
+      };
+    }
   }
 };
 </script>
