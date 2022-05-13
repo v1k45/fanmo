@@ -1,177 +1,202 @@
 <template>
-<div class="mt-6 lg:my-12 lg:mx-4">
+<main>
 
-  <div class="container sm:pl-0 pb-16  rounded-xl">
-    <div class="row xl:gx-5">
-      <!-- posts start -->
-      <div class="col-12 md:col-auto md:max-w-2xl md:flex-grow lg:col-8 lg:max-w-none lg:flex-grow-0 xl:col-auto xl:max-w-2xl xl:flex-grow mx-auto">
-        <div class="flex">
-          <div>
-            <div class="text-2xl text-black font-bold">Posts</div>
-            <div class="mt-1 text-gray-600 mb-5">Posts from all the creators you follow or subscribe to.</div>
-          </div>
-          <div class="ml-auto flex-shrink-0">
-            <fm-button size="sm" class="touch-manipulation" :loading="feedPostsLoading" @click="loadFeedPostsLocal">
-              <icon-refresh-cw class="h-em w-em"></icon-refresh-cw> Refresh
-            </fm-button>
-          </div>
+  <!-- hero start -->
+  <section class="relative flex flex-wrap py-8 lg:py-24 xl:py-36 items-center min-h-[550px] 2xl:max-w-7xl mx-auto z-0">
+    <img src="~/assets/marketing/hero.svg" :class="{
+      'w-auto mx-auto max-h-72': true,
+      'md:max-h-80': true,
+      'lg:absolute lg:top-1/2 lg:transform lg:-translate-y-1/2 lg:right-0 lg:max-w-[50%] lg:max-h-full -z-10': true
+    }" alt="Cheerful animated character representing a creator sitting in front of the computer">
+    <div class="container">
+      <div class="text-center lg:max-w-lg lg:text-left">
+        <h1 class="mb-6 text-4xl font-semibold leading-tight font-title sm:text-5xl lg:text-6xl">Home for your most passionate fans</h1>
+
+        <p class="mb-8 leading-relaxed sm:text-lg">Simplest way to offer memberships, accept donations and post member-exclusive content.</p>
+
+        <a href="#" class="unstyled inline-flex items-center px-10 py-4 mx-auto text-lg text-white transition-colors rounded-full lg:mx-0 bg-fm-primary hover:bg-fm-primary-600">
+          Register Now <icon-arrow-right class="inline-block ml-3"></icon-arrow-right>
+        </a>
+      </div>
+      <div class="flex flex-col items-center justify-center mt-12 mb-12 space-y-3 lg:justify-start sm:flex-row sm:space-y-0 sm:space-x-6 lg:mb-0">
+        <div class="flex items-center w-48 sm:w-auto">
+          <icon-verified :size="28" class="inline-block mr-1 fill-current text-fm-success-600 stroke-white"></icon-verified>
+          <div><span class="text-fm-success-600">4.9%</span> platform fee</div>
         </div>
-        <template v-if="feedPosts">
-          <fm-lazy v-for="post in feedPosts.results" :key="post.id" class="mb-6 md:mb-8" min-height="300">
-            <profile-post :post="post" show-creator-info @share-click="handleShareClick"></profile-post>
-          </fm-lazy>
+        <div class="flex items-center w-48 sm:w-auto">
+          <icon-verified :size="28" class="inline-block mr-1 fill-current text-fm-success-600 stroke-white"></icon-verified>
+          <div>No extra costs</div>
+        </div>
+        <div class="flex items-center w-48 sm:w-auto">
+          <icon-verified :size="28" class="inline-block mr-1 fill-current text-fm-success-600 stroke-white"></icon-verified>
+          <div>No processing fee</div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- hero end -->
+
+  <!-- fee comparison start -->
+  <section class="py-24" style="background: linear-gradient(180deg, #F2F2FF 0%, rgba(241, 248, 255, 0) 79.31%);">
+    <div class="container">
+      <div class="lg:hidden text-center mb-12">
+        <h1 class="text-4xl md:text-5xl font-semibold font-title">Stop losing money</h1>
+        <div class="mt-4">Use the sliders to see how well Fanmo compares to other platforms in terms of platform fee.</div>
+      </div>
+
+      <marketing-fee-revenue-viz>
+        <template #above-controls>
+          <div class="hidden lg:block">
+            <h1 class="text-3xl md:text-4xl lg:text-5xl font-semibold font-title">Stop losing money</h1>
+            <div class="mt-4 text-lg">Use the sliders to see how Fanmo compares to other platforms in terms of platform fee.</div>
+          </div>
         </template>
-        <div v-if="feedPosts && feedPosts.next" class="text-center mt-4">
-          <fm-button :loading="nextPostsLoading" @click="loadNextPostsLocal">Load more</fm-button>
-        </div>
-        <div v-if="!feedPosts.notLoaded && !feedPosts.results.length" class="text-sm text-gray-500">
-          No posts to show here yet.
-        </div>
-        <div v-if="feedPosts.notLoaded && feedPostsLoading" class="text-sm text-gray-500 text-center">
-          Loading posts...
-        </div>
-      </div>
-      <!-- posts end -->
-
-      <!-- following users start -->
-      <div class="hidden lg:block col-12 lg:col">
-        <div class="sticky top-[76px]">
-          <div class="text-xl text-black font-bold">Following <template v-if="following.count">({{ following.count }})</template></div>
-          <div class="mt-1 text-gray-600 mb-5">Creators you follow.</div>
-
-          <div v-if="following.results.length" class="overflow-hidden rounded-xl border">
-            <div class="overflow-auto max-h-[75vh]">
-              <nuxt-link
-                v-for="(user, idx) in following.results"
-                :key="user.id" :to="`/${user.username}`"
-                class="flex items-center bg-white px-4 py-3 hover:bg-gray-200" :class="{
-                  'border-t': idx !== 0
-                }">
-                <fm-avatar
-                  :src="user.avatar && user.avatar.small"
-                  :name="user.display_name" :username="user.username"
-                  size="w-8 h-8 mr-2 inline-block flex-shrink-0">
-                </fm-avatar>
-                <div class="overflow-hidden">
-                  <div class="truncate text-base text-black font-medium" :title="user.display_name">{{ user.display_name }}</div>
-                  <div v-if="user.one_liner" :title="user.one_liner" class="truncate text-sm text-gray-500">{{ user.one_liner }}</div>
-                </div>
-              </nuxt-link>
-            </div>
-          </div>
-          <div v-if="following.next" class="text-center mt-4">
-            <fm-button size="sm" :loading="nextFollowingUsersLoading" @click="loadNextFollowingUsersLocal">Load more</fm-button>
-          </div>
-          <div v-if="following && !following.results.length" class="text-sm text-gray-500">
-            You aren't following anyone yet.
-          </div>
-        </div>
-      </div>
-      <!-- following users end -->
+      </marketing-fee-revenue-viz>
     </div>
-  </div>
+  </section>
+  <!-- fee comparison end -->
 
-  <!-- following phone dialog start -->
-  <div v-if="following.results" class="fixed top-1/2 transform -translate-y-1/2 right-0 lg:hidden">
-    <button
-      class="py-4 px-2 border border-r-0 bg-white rounded-l-xl text-center hover:bg-fm-primary-100 hover:text-fm-primary"
-      @click="isFollowingDialogVisible = true;">
-      <span class="[writing-mode:vertical-rl] [text-orientation:mixed] font-medium text-sm">
-        Following <template v-if="following.results.length">({{ following.results.length }})</template>
-      </span>
-    </button>
-  </div>
-
-  <fm-dialog v-model="isFollowingDialogVisible" drawer no-padding>
-    <template #header>
-      <div class="text-base">
-        Following <template v-if="following.results.length">({{ following.results.length }})</template>
-      </div>
-    </template>
-    <template v-if="isFollowingDialogVisible && following">
-      <nuxt-link
-        v-for="(user) in following.results" :key="user.id" :to="`/${user.username}`"
-        class="flex items-center border-l border-b border-r bg-white px-4 py-3 hover:bg-gray-200">
-        <fm-avatar
-          :src="user.avatar && user.avatar.small"
-          :name="user.display_name" :username="user.username"
-          size="w-8 h-8 mr-2 inline-block flex-shrink-0">
-        </fm-avatar>
-        <div class="overflow-hidden">
-          <div class="truncate text-base text-black font-medium" :title="user.display_name">{{ user.display_name }}</div>
-          <div v-if="user.one_liner" :title="user.one_liner" class="truncate text-sm text-gray-500">{{ user.one_liner }}</div>
-        </div>
-      </nuxt-link>
-      <div v-if="following.next" class="text-center mt-4">
-        <fm-button size="sm" :loading="nextFollowingUsersLoading" @click="loadNextFollowingUsersLocal">Load more</fm-button>
-      </div>
-    </template>
-    <div v-if="following && !following.results.length" class="text-sm text-gray-500 p-6 text-center">
-      You aren't following anyone yet.
+  <!-- boasting start -->
+  <section v-if="false" class="py-24" style="background: linear-gradient(180deg, #F2F2FF 0%, rgba(241, 248, 255, 0) 79.31%);">
+    <div class="container text-center">
+      <h2 class="text-3xl leading-snug sm:text-4xl lg:text-5xl font-title">Managing fans has never been <br> this easy</h2>
+      <img src="~/assets/marketing/dashboard-illustration.png" alt="Illustrative layout of the platform" class="mx-auto">
+      <p class="mt-12 sm:text-xl lg:text-2xl leading-relaxed">Fanmo is refreshing and easy to use, yet <br> powerful enough for all your needs.</p>
     </div>
-  </fm-dialog>
-  <!-- following phone dialog end -->
+  </section>
+  <!-- boasting end -->
 
-  <!-- dialogs start -->
-  <profile-share v-model="sharePost.isVisible" :text="sharePost.text" :url="sharePost.url"></profile-share>
-  <!-- dialogs end -->
-</div>
+  <!-- feature: memberships start -->
+  <section class="pb-24">
+    <div class="container">
+      <div class="row items-center justify-center">
+        <div class="col-12 md:col-8 xl:col-7 order-2 md:order-1 text-center md:text-left">
+          <header>
+            <h2 class="font-bold mt-6 text-2xl leading-snug sm:text-3xl sm:leading-snug lg:text-4xl lg:leading-relaxed">
+              Make your fans feel special with
+              <span class="inline-block text-white px-3 rounded bg-fm-primary leading-snug">tiered memberships</span>
+              🌟
+            </h2>
+          </header>
+          <p class="text-base lg:text-xl mt-8">
+            Offer monthly memberships for different pricing tiers. Make a steady monthly income while offering exclusive content and experience based on
+            membership tiers.
+          </p>
+        </div>
+        <div class="col-8 sm:col-6 md:col-4 xl:offset-1 order-1 md:order-2" aria-hidden="true">
+          <img src="~/assets/marketing/memberships.svg" class="mx-auto">
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- feature: memberships end -->
+
+  <!-- feature: donations start -->
+  <section class="pb-24">
+    <div class="container">
+      <div class="row items-center justify-center">
+        <div class="col-8 sm:col-6 md:col-4" aria-hidden="true">
+          <img src="~/assets/marketing/donations.svg" alt="" class="mx-auto">
+        </div>
+        <div class="col-12 md:col-8 xl:col-7 xl:offset-1 text-center md:text-left">
+          <header>
+            <h2 class="font-bold mt-6 text-2xl leading-snug sm:text-3xl sm:leading-snug lg:text-4xl lg:leading-relaxed">
+              Let your fans support you in more ways with
+              <span class="inline-block text-white px-4 leading-snug rounded bg-fm-success-700">donations</span>
+              💸
+            </h2>
+          </header>
+          <p class="text-base lg:text-xl mt-8">
+            Let your fans show you some love by donating whatever amount they like. Showcase your fan donations and messages.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- feature: donations end -->
+
+  <!-- feature: posts & comments start -->
+  <section class="pb-24">
+    <div class="container">
+      <div class="row items-center justify-center">
+        <div class="col-12 md:col-8 xl:col-7 order-2 md:order-1 text-center md:text-left">
+          <header>
+
+            <h2 class="font-bold mt-6 text-2xl leading-snug sm:text-3xl sm:leading-snug lg:text-4xl lg:leading-relaxed">
+              Engage with your fans through
+              <span class="inline-block text-white px-4 leading-snug rounded bg-fm-error">
+                exclusive content
+              </span>
+              🎙️
+            </h2>
+          </header>
+          <p class="text-base lg:text-xl mt-8">
+            Post exclusive and private content of any type for your fans and keep in touch by interacting with them using comments.
+          </p>
+        </div>
+        <div class="mb-8 md:mb-0 col-6 md:col-4 xl:offset-1 order-1 md:order-2" aria-hidden="true">
+          <img src="~/assets/marketing/posts.svg" class="mx-auto max-h-48 lg:max-h-full">
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- feature: posts & comments end -->
+
+  <!-- why fanmo start -->
+  <section class="py-24 bg-fm-primary-50">
+    <div class="container">
+      <h2 class="mb-6 text-3xl leading-tight font-title text-center lg:text-left sm:text-4xl md:text-5xl lg:text-6xl">Why Fanmo?</h2>
+
+      <ul class="text-base md:text-lg lg:text-xl py-4 lg:py-8 space-y-4 lg:space-y-8">
+        <li class="flex items-center">
+          <icon-verified class="w-8 h-8 lg:w-12 lg:h-12 flex-shrink-0 inline-block mr-4 fill-current text-fm-success-600 stroke-white"></icon-verified>
+          <span>
+            <span class="font-bold text-title">Lowest platform fee.</span>
+            Without losing any features.
+          </span>
+        </li>
+        <li class="flex items-center">
+          <icon-verified class="w-8 h-8 lg:w-12 lg:h-12 flex-shrink-0 inline-block mr-4 fill-current text-fm-success-600 stroke-white"></icon-verified>
+          <span>
+            <span class="font-bold text-title">Fastest payouts.</span>
+            Get money in your bank account within 2 days of payment.
+          </span>
+        </li>
+        <li class="flex items-center">
+          <icon-verified class="w-8 h-8 lg:w-12 lg:h-12 flex-shrink-0 inline-block mr-4 fill-current text-fm-success-600 stroke-white"></icon-verified>
+          <span>
+            <span class="font-bold text-title">100% yours.</span>
+            Export all your data, any time you like.
+          </span>
+        </li>
+        <li class="flex items-center">
+          <icon-verified class="w-8 h-8 lg:w-12 lg:h-12 flex-shrink-0 inline-block mr-4 fill-current text-fm-success-600 stroke-white"></icon-verified>
+          <span>
+            <span class="font-bold text-title">Responsive support</span>
+            Get all the help and support you need, in any mode you prefer.
+          </span>
+        </li>
+      </ul>
+
+      <div class="text-center lg:text-left">
+        <a class="unstyled inline-flex items-center mt-8 px-10 py-4 mx-auto lg:text-lg text-white transition-colors rounded-full lg:mx-0 bg-fm-primary hover:bg-fm-primary-600">
+          Register Now <icon-arrow-right class="inline-block ml-3"></icon-arrow-right>
+        </a>
+      </div>
+    </div>
+  </section>
+  <!-- why fanmo end -->
+</main>
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { ArrowRight as IconArrowRight, Verified as IconVerified } from 'lucide-vue';
 export default {
-  auth: true,
-  layout: 'with-sidebar',
-  data() {
-    return {
-      feedPostsLoading: false,
-      nextPostsLoading: false,
-      nextFollowingUsersLoading: false,
-      isFollowingDialogVisible: false,
-      sharePost: {
-        isVisible: false,
-        url: null,
-        text: null
-      }
-    };
+  components: {
+    IconArrowRight,
+    IconVerified
   },
-  head: {
-    title: 'Home'
-  },
-  computed: {
-    ...mapGetters('posts', ['feedPosts']),
-    ...mapGetters('users', ['following'])
-  },
-  mounted() {
-    this.loadFeedPostsLocal();
-    this.loadFollowingUsers();
-  },
-  methods: {
-    ...mapActions('posts', ['loadFeedPosts', 'loadNextFeedPosts']),
-    ...mapActions('users', ['loadFollowingUsers', 'loadNextFollowingUsers']),
-    async loadFeedPostsLocal() {
-      this.feedPostsLoading = true;
-      await this.loadFeedPosts();
-      this.feedPostsLoading = false;
-    },
-    async loadNextPostsLocal() {
-      this.nextPostsLoading = true;
-      await this.loadNextFeedPosts();
-      this.nextPostsLoading = false;
-    },
-    async loadNextFollowingUsersLocal() {
-      this.nextFollowingUsersLoading = true;
-      await this.loadNextFollowingUsers();
-      this.nextFollowingUsersLoading = false;
-    },
-    handleShareClick(post) {
-      this.sharePost = {
-        isVisible: true,
-        url: post.slug,
-        text: post.title
-      };
-    }
-  }
+  layout: 'marketing',
+  auth: false
 };
 </script>
