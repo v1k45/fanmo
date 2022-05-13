@@ -2,9 +2,13 @@
 
 import get from 'lodash/get';
 import toast from '~/components/fm/alert/service';
+import { handleGenericError } from '~/utils';
 
 const ERRORED = true;
 const NO_ERROR = false;
+
+const SUCCESS = (data) => ({ success: true, data });
+const ERROR = (data) => ({ success: false, data });
 
 const HTTP_METHOD_AXIOS_MAP = {
   GET: '$get',
@@ -23,7 +27,8 @@ export const state = () => ({
   memberships: null,
   members: null,
   payments: null,
-  stats: null // { total, active, inactive, total_payment }
+  stats: null, // { total, active, inactive, total_payment }
+  tiers: null
 });
 
 export const actions = {
@@ -117,6 +122,36 @@ export const actions = {
   },
   async fetchMorePayments({ dispatch }, nextUrl) {
     return await dispatch('fetch', { url: nextUrl, mutation: 'setMorePayments' });
+  },
+
+  async fetchTiers({ commit }) {
+    try {
+      const tiers = await this.$axios.$get('/api/tiers/');
+      commit('setTiers', { tiers });
+      return SUCCESS(tiers);
+    } catch (err) {
+      handleGenericError(err, true);
+      return ERROR(err.response.data);
+    }
+  },
+  async createTier(context, payload) {
+    try {
+      const tier = await this.$axios.$post('/api/posts/', payload);
+      return SUCCESS(tier);
+    } catch (err) {
+      handleGenericError(err);
+      return ERROR(err.response.data);
+    }
+  },
+  async updateTier({ commit }, { tierId, payload }) {
+    try {
+      const tier = await this.$axios.$patch(`/api/tiers/${tierId}/`, payload);
+      commit('updateTier', { tierId, tier });
+      return SUCCESS(tier);
+    } catch (err) {
+      handleGenericError(err);
+      return ERROR(err.response.data);
+    }
   }
 };
 
@@ -149,5 +184,12 @@ export const mutations = {
   setMorePayments(state, payments) {
     const results = [...state.payments.results, ...payments.results];
     state.payments = { ...payments, results };
+  },
+  setTiers(state, { tiers }) {
+    state.tiers = tiers;
+  },
+  updateTier(state, { tierId, tier }) {
+    const tierIdx = state.tiers.results.findIndex(currTier => currTier.id === tierId);
+    state.tiers.results.splice(tierIdx, 1, tier);
   }
 };

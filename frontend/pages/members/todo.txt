@@ -1,0 +1,7 @@
+1. Supporter dashboard
+2. Manage tiers
+3. Donation settings
+4. Supporter settings
+5. Creator settings
+6. Creator dashboard
+7. Audit every single page and finish it off
