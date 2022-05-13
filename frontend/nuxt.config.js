@@ -74,7 +74,7 @@ export default {
       login: '/login',
       logout: '/',
       callback: '/auth/callback',
-      home: '/'
+      home: '/auth/'
     },
     strategies: {
       cookie: {
