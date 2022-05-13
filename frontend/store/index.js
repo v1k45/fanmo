@@ -34,7 +34,7 @@ export const actions = {
     }
   },
   async refreshUser({ dispatch }) {
-    const { error, data } = await dispatch('fetch', { url: '/api/me/', mutation: 'setProfileUser' });
+    const { error, data } = await dispatch('fetch', { url: '/api/me/' });
     if (error) return;
     this.$auth.setUser(data);
   }
