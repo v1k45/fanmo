@@ -1,6 +1,6 @@
 <template>
 <div>
-  <div class="max-w-lg">
+  <div class="max-w-lg mx-auto lg:mx-0">
     <fm-form :errors="errors" @submit.prevent="save">
       <fm-input
         v-model="form.donation_description" :disabled="loading"
