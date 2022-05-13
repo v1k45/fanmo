@@ -144,3 +144,12 @@ export const handleGenericError = (err, handleAll = false) => {
   }
   return true;
 };
+
+export const getBase64FromFile = async (file) => {
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  const fileReaderResult = await new Promise(resolve => {
+    reader.onload = loadEvent => resolve(loadEvent);
+  });
+  return fileReaderResult.target.result;
+};
