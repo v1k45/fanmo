@@ -86,7 +86,7 @@ export default {
 </script>
 <style lang="scss">
 .fm-dialog {
-  @apply z-30 fixed top-0 left-0 h-screen w-screen flex items-end md:items-center justify-center;
+  @apply z-30 fixed top-0 left-0 h-full w-screen flex items-end md:items-center justify-center;
   animation-duration: 200ms;
 }
 .fm-dialog__backdrop {
