@@ -51,6 +51,7 @@ class UserTierSerializer(serializers.ModelSerializer):
             "description",
             "amount",
             "cover",
+            "cover_background_style",
             "benefits",
             "is_recommended",
         ]
