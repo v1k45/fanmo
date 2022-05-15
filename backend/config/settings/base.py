@@ -90,6 +90,7 @@ THIRD_PARTY_APPS = [
     "django_filters",
     "notifications",
     "mptt",
+    "trackstats",
     # "anymail",
 ]
 
@@ -102,6 +103,7 @@ LOCAL_APPS = [
     "memberships.donations",
     "memberships.webhooks",
     "memberships.integrations",
+    "memberships.analytics",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

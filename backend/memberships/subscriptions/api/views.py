@@ -1,3 +1,6 @@
+from copy import deepcopy
+from telnetlib import DO
+from dateutil.relativedelta import relativedelta
 from django.db.models import Q, Sum, Count
 from drf_spectacular.utils import extend_schema
 from rest_framework import mixins, permissions, viewsets
@@ -5,7 +8,10 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
-from memberships.payments.models import Payment
+from memberships.donations.models import Donation
+from memberships.payments.models import Payment, Payout
+from django.utils import timezone
+from dateutil.rrule import rrule, DAILY
 
 from memberships.subscriptions.api.serializers import (
     MemberSerializer,
@@ -164,3 +170,141 @@ class SubscriptionViewSet(viewsets.ReadOnlyModelViewSet):
 
         queryset = queryset.select_related("plan__tier")
         return queryset
+
+
+class CreatorStatsAPIView(viewsets.GenericViewSet):
+    def list(self, *args, **kwargs):
+        now = timezone.now().replace(hour=23, minute=59, second=59)
+        then = now - relativedelta(days=7)
+        user = self.request.user
+
+        current_active_memberships = (
+            Subscription.objects.active_at(now).filter(creator_user=user).count()
+        )
+        last_active_memberships = (
+            Subscription.objects.active_at(then).filter(creator_user=user).count()
+        )
+
+        current_donation_count = Donation.objects.filter(
+            creator_user=user, status=Donation.Status.SUCCESSFUL, created_at__lte=now
+        ).count()
+        last_donation_count = Donation.objects.filter(
+            creator_user=user, status=Donation.Status.SUCCESSFUL, created_at__lte=then
+        ).count()
+
+        current_payment_amount = (
+            Payment.objects.filter(creator_user=user, status=Payment.Status.CAPTURED)
+            .filter(created_at__lte=now)
+            .aggregate(
+                total_amount=Sum("amount"),
+                donation_amount=Sum("amount", filter=Q(type=Payment.Type.DONATION)),
+                subscription_amount=Sum(
+                    "amount", filter=Q(type=Payment.Type.SUBSCRIPTION)
+                ),
+            )
+        )
+        last_payment_amount = (
+            Payment.objects.filter(creator_user=user, status=Payment.Status.CAPTURED)
+            .filter(created_at__lte=then)
+            .aggregate(
+                total_amount=Sum("amount"),
+                donation_amount=Sum("amount", filter=Q(type=Payment.Type.DONATION)),
+                subscription_amount=Sum(
+                    "amount", filter=Q(type=Payment.Type.SUBSCRIPTION)
+                ),
+            )
+        )
+
+        current_payout_amount = (
+            Payout.objects.filter(payment__creator_user=user)
+            .filter(created_at__lte=now)
+            .aggregate(
+                total_amount=Sum("amount"),
+                donation_amount=Sum(
+                    "amount", filter=Q(payment__type=Payment.Type.DONATION)
+                ),
+                subscription_amount=Sum(
+                    "amount", filter=Q(payment__type=Payment.Type.SUBSCRIPTION)
+                ),
+            )
+        )
+        last_payout_amount = (
+            Payout.objects.filter(payment__creator_user=user)
+            .filter(created_at__lte=then)
+            .aggregate(
+                total_amount=Sum("amount"),
+                donation_amount=Sum(
+                    "amount", filter=Q(payment__type=Payment.Type.DONATION)
+                ),
+                subscription_amount=Sum(
+                    "amount", filter=Q(payment__type=Payment.Type.SUBSCRIPTION)
+                ),
+            )
+        )
+
+    def get_stats(self, till_date, period):
+        summary_stats = {
+            "subscription_count": 0,
+            "donation_count": 0,
+            "total_payment_amount": 0,
+            "donation_payment_amount": 0,
+            "subscription_payment_amount": 0,
+            "total_payout_amount": 0,
+        }
+
+        user = self.request.user
+
+        stats_data_by_date = {}
+        for date in rrule.between(
+            till_date, till_date + relativedelta(weeks=1), inc=True
+        ):
+            stats_data_by_date.setdefault(date, deepcopy(summary_stats))
+
+        active_memberships = (
+            Subscription.objects.active_at(till_date)
+            .filter(creator_user=user)
+            .values("cycle_start_at", "cycle_end_at")
+        )
+        for active_membership in active_memberships:
+            current_date = active_membership["cycle_start_at"].date().isoformat()
+
+            for date in rrule(DAILY).between(
+                active_membership["cycle_end_at"],
+                active_membership["cycle_start_at"],
+                DAILY,
+                inc=True,
+            ):
+                stats_data_by_date.setdefault(
+                    date.date().isoformat(), deepcopy(summary_stats)
+                )
+
+        current_active_memberships = (
+            Subscription.objects.active_at(till_date).filter(creator_user=user).count()
+        )
+        current_donation_count = Donation.objects.filter(
+            creator_user=user, status=Donation.Status.SUCCESSFUL, created_at__lte=now
+        ).count()
+        current_payment_amount = (
+            Payment.objects.filter(creator_user=user, status=Payment.Status.CAPTURED)
+            .filter(created_at__lte=now)
+            .aggregate(
+                total_amount=Sum("amount"),
+                donation_amount=Sum("amount", filter=Q(type=Payment.Type.DONATION)),
+                subscription_amount=Sum(
+                    "amount", filter=Q(type=Payment.Type.SUBSCRIPTION)
+                ),
+            )
+        )
+        current_payout_amount = (
+            Payout.objects.filter(payment__creator_user=user)
+            .filter(created_at__lte=now)
+            .aggregate(
+                total_amount=Sum("amount"),
+                donation_amount=Sum(
+                    "amount", filter=Q(payment__type=Payment.Type.DONATION)
+                ),
+                subscription_amount=Sum(
+                    "amount", filter=Q(payment__type=Payment.Type.SUBSCRIPTION)
+                ),
+            )
+        )

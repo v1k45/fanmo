@@ -398,6 +398,8 @@ class Subscription(BaseModel):
         conditions=[can_activate],
     )
     def activate(self):
+        # todo: remove is_active field
+        self.is_active = True
         self.membership.activate(self)
         self.membership.save()
 

@@ -30,6 +30,7 @@ from memberships.users.api.views import (
     LoginView,
 )
 from memberships.posts.api.views import CommentViewSet, PostViewSet
+from memberships.analytics.api.views import AnalyticsAPIView
 from memberships.subscriptions.api.views import (
     MembersViewSet,
     MembershipViewSet,
@@ -92,6 +93,7 @@ urlpatterns = router.urls + [
     path("auth/", include(auth_patterns)),
     path("integrations/", include(integration_patterns)),
     path("webhooks/razorpay/", razorpay_webhook),
+    path("analytics/", AnalyticsAPIView.as_view(), name="analytics"),
     # docs
     path("", SpectacularSwaggerView.as_view(url_name="api:schema"), name="docs"),
     path("schema/", SpectacularAPIView.as_view(), name="schema"),

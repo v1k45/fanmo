@@ -27,6 +27,7 @@ django-simple-history==3.0.0  # https://github.com/jazzband/django-simple-histor
 django-filter==21.1  # https://github.com/carltongibson/django-filter
 django-notifs==4.0.0  # https://github.com/danidee10/django-notifs
 django-mptt==0.13.4  # https://github.com/django-mptt/django-mptt/
+django-trackstats==0.5.0  # http://github.com/pennersr/django-trackstats
 
 # link metadata extraction
 micawber==0.5.4  # http://github.com/coleifer/micawber
