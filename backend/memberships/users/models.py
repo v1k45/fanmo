@@ -136,6 +136,13 @@ class UserPreference(BaseModel):
         decimal_places=2, max_digits=3, default=settings.DEFAULT_PLATFORM_FEE_PERCENT
     )
 
+    notify_following_posts = models.BooleanField(default=True)
+    notify_comment_replies = models.BooleanField(default=True)
+    notify_post_comments = models.BooleanField(default=True)
+    notify_donations = models.BooleanField(default=True)
+    notify_memberships = models.BooleanField(default=True)
+    notify_marketing = models.BooleanField(default=True)
+
     history = HistoricalRecords()
 
 

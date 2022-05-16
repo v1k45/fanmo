@@ -69,6 +69,17 @@ class SocialLinkSerializer(serializers.ModelSerializer):
         ]
 
 
+class PublicUserPreferenceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserPreference
+        fields = [
+            "is_accepting_payments",
+            "minimum_amount",
+            "thank_you_message",
+            "donation_description",
+        ]
+
+
 class UserPreferenceSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserPreference
@@ -77,6 +88,12 @@ class UserPreferenceSerializer(serializers.ModelSerializer):
             "minimum_amount",
             "thank_you_message",
             "donation_description",
+            "notify_following_posts",
+            "notify_comment_replies",
+            "notify_post_comments",
+            "notify_donations",
+            "notify_memberships",
+            "notify_marketing",
         ]
 
 
@@ -163,7 +180,9 @@ class PublicUserSerializer(ComputedUserFieldSerializer, serializers.ModelSeriali
     avatar = VersatileImageFieldSerializer("user_avatar")
     cover = VersatileImageFieldSerializer("user_cover")
     social_links = SocialLinkSerializer(read_only=True)
-    preferences = UserPreferenceSerializer(source="user_preferences", read_only=True)
+    preferences = PublicUserPreferenceSerializer(
+        source="user_preferences", read_only=True
+    )
 
     class Meta:
         model = User
