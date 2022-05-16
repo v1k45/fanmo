@@ -51,6 +51,16 @@ export const actions = {
       handleGenericError(err);
       return ERROR(err.response.data);
     }
+  },
+  async updatePassword({ dispatch, state }, payload) {
+    try {
+      const user = await this.$axios.$post('/api/auth/password/change/', payload);
+      await dispatch('refreshUser', null, { root: true });
+      return SUCCESS(user);
+    } catch (err) {
+      handleGenericError(err);
+      return ERROR(err.response.data);
+    }
   }
 };
 
