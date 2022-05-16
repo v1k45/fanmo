@@ -142,12 +142,6 @@ export default {
     IconPlus
   },
   layout: 'default-no-container',
-  props: {
-    username: {
-      type: String,
-      default: null
-    }
-  },
   data() {
     const tabName = {
       POSTS: 'posts',
@@ -187,7 +181,7 @@ export default {
     };
   },
   async fetch() {
-    const username = this.username || this.$auth.user.username;
+    const username = this.$route.params.username;
     this.isLoading = true;
     await this.fetchProfile(username);
     this.activeTab = this.currentUserHasActiveSubscription ? this.tabName.POSTS : this.tabName.TIERS;
