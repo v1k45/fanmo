@@ -57,7 +57,7 @@ export default {
         this.$auth.setUser(user);
         Object.assign(this, initialState());
         if (this.$auth.user.is_creator || !this.isConfirmed) this.$router.push({ name: 'onboarding-verify' });
-        else this.$router.push('/');
+        else this.$router.push('/auth/');
       } catch (err) {
         this.errors = err.response.data;
       }

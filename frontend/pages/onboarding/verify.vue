@@ -72,7 +72,7 @@ export default {
       if (this.$auth.user.is_creator) {
         this.$router.replace({ name: 'onboarding-profile-info' });
       } else {
-        this.$router.replace('/');
+        this.$router.replace('/auth/');
       }
     },
     async resendOTP() {
@@ -99,7 +99,7 @@ export default {
     // TODO: redirect to last visited page
     skipForNow() {
       skipOnboarding.set(this.$auth.user.username);
-      this.$router.push('/');
+      this.$router.push('/auth/');
     }
   }
 };

@@ -160,14 +160,14 @@ export default {
         this.$auth.setUser(user);
         this.errors = {};
         this.$toast.success('Your information has been submitted. We will get back to you within 2 business days!');
-        this.$router.push('/');
+        this.$router.push('/auth/');
       } catch (err) {
         this.errors = err.response.data;
       }
     },
     skipForNow() {
       skipOnboarding.set(this.$auth.user.username);
-      this.$router.push('/');
+      this.$router.push('/auth/');
     }
   }
 };
