@@ -1,7 +1,8 @@
 1. Supporter dashboard
 2. Manage tiers
-3. Donation settings
-4. Supporter settings
-5. Creator settings
-6. Creator dashboard
+3. Donation settings (welcome message, minimum_amount)
+
+4. Supporter settings (Name, avatar, change password, change email, email notification settings -> every new post of followers, fanmo's marketing emails, comment replies)
+5. Creator settings (change email, change password, email notification settings -> everything + someone commented on post + someone donated + someone subscribed)
+6. Creator dashboard (no idea)
 7. Audit every single page and finish it off
