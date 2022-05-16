@@ -100,3 +100,6 @@ Everything from above but in Safari and Firefox
 For each page, check these things
 
 1. Title
+
+
+Also need skipped onboarding banner I think
