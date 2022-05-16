@@ -52,10 +52,10 @@
           <template v-for="(item) in ($auth.user.is_creator ? nav.creator : nav.supporter)">
             <fm-dropdown-item
               v-if="!item.url" :key="item.id" static
-              class="uppercase font-medium text-gray-600 text-sm min-w-[200px]">
+              class="uppercase font-medium text-gray-600 text-sm">
               {{ item.label }}
             </fm-dropdown-item>
-            <fm-dropdown-item v-else :key="item.id" class="font-medium !p-0">
+            <fm-dropdown-item v-else :key="item.id" class="font-medium min-w-[200px] !p-0">
               <nuxt-link
                 :to="item.url" class="unstyled flex items-center p-3">
                 <component :is="item.icon" class="h-6 w-6 mr-3"></component>
@@ -90,10 +90,10 @@
       <template v-for="(item) in ($auth.user.is_creator ? nav.creator : nav.supporter)">
         <fm-dropdown-item
           v-if="!item.url" :key="item.id" static
-          class="uppercase font-medium text-gray-600 text-sm min-w-[200px]">
+          class="uppercase font-medium text-gray-600 text-sm">
           {{ item.label }}
         </fm-dropdown-item>
-        <fm-dropdown-item v-else :key="item.id" class="font-medium !p-0">
+        <fm-dropdown-item v-else :key="item.id" class="font-medium min-w-[200px] !p-0">
           <nuxt-link
             :to="item.url" class="unstyled flex items-center p-3">
             <component :is="item.icon" class="h-6 w-6 mr-3"></component>
