@@ -116,10 +116,10 @@ export default {
   },
   computed: {
     avatarUrl() {
-      return this.form.avatar_base64 || this.$auth.user.avatar.medium;
+      return this.form.avatar_base64 || (this.$auth.user.avatar && this.$auth.user.avatar.medium);
     },
     coverUrl() {
-      return this.form.cover_base64 || this.$auth.user.cover.medium;
+      return this.form.cover_base64 || (this.$auth.user.cover && this.$auth.user.cover.medium);
     }
   },
   methods: {
