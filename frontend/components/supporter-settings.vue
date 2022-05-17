@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="md:px-8 container">
 
   <!-- general form start -->
   <fm-form class="max-w-md mx-auto lg:mx-0 mt-6" :errors="generalErrors" @submit.prevent="handleGeneralSubmit">
