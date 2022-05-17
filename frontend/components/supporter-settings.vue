@@ -85,6 +85,24 @@
   </fm-form>
   <!-- email hypothetical form end -->
 
+  <hr class="my-8">
+
+  <div class="max-w-md">
+    <div class="text-xl font-medium text-black flex items-center mb-4">Become a creator</div>
+
+    <div class="mt-4"></div>
+
+    <fm-card class="max-w-lg overflow-hidden" body-class="bg-gray-100 text-center !pt-8 !pb-12">
+      <logo circle class="h-16 w-16 animatecss animatecss-tada inline-block mr-6"></logo>
+      <div class="mt-2">
+        Start offering memberships and accepting donations on Fanmo.
+        It takes less than 5 minutes to get started!
+      </div>
+      <fm-button type="primary" block class="mt-4" @click="restartOnboarding">Become a creator &rarr;</fm-button>
+    </fm-card>
+
+  </div>
+
 </div>
 </template>
 
@@ -92,7 +110,7 @@
 import cloneDeep from 'lodash/cloneDeep';
 import pick from 'lodash/pick';
 import { mapActions } from 'vuex';
-import { getBase64FromFile } from '~/utils';
+import { getBase64FromFile, skipOnboarding } from '~/utils';
 
 const initialFormState = (user = null) => ({
   general: {
@@ -193,6 +211,10 @@ export default {
       if (success) this.$toast.success('Your changes were saved successfully.');
       else this.notificationErrors = data;
       this.isNotificationLoading = false;
+    },
+    restartOnboarding() {
+      skipOnboarding.unset(this.$auth.user.id);
+      this.$router.push({ name: 'onboarding-role' });
     }
   }
 };
