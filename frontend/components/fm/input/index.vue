@@ -202,6 +202,14 @@ export default {
     &[disabled] {
       @apply cursor-not-allowed bg-gray-50 text-gray-400;
     }
+
+    &[readonly] {
+      @apply bg-gray-50;
+
+      option, optgroup {
+        @apply hidden;
+      }
+    }
   }
 
   .fm-input__input[type=checkbox], .fm-input__input[type=radio] {
