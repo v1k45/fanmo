@@ -4,7 +4,8 @@
 
 <script>
 export default {
-  auth: true
+  auth: true,
+  layout: 'with-sidebar'
 };
 </script>
 
