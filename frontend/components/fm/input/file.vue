@@ -25,7 +25,7 @@
       </button>
     </li>
   </ul>
-  <fm-dialog v-model="fullSize.isVisible">
+  <fm-dialog v-model="fullSize.isVisible" no-padding>
     <template #header>
       <div v-if="fullSize.isVisible" class="truncate">{{ fullSize.file.file.name || 'uploaded_file' }}</div>
     </template>
