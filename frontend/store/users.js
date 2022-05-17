@@ -8,7 +8,8 @@ export const state = () => ({
   usersById: {}, // { [userId]: { ...user } }
   raw: {
     following: null // { previous, next, count, userIds }
-  }
+  },
+  accounts: null // authenticated user's bank accounts
 });
 
 export const getters = {
@@ -37,6 +38,16 @@ export const actions = {
       const users = await this.$axios.$get(state.raw.following.next);
       commit('setNextFollowingUsers', { users });
       return SUCCESS(users);
+    } catch (err) {
+      handleGenericError(err, true);
+      return ERROR(err.response.data);
+    }
+  },
+  async loadAccounts({ commit, state }) {
+    try {
+      const accounts = await this.$axios.$get('/api/accounts/');
+      commit('setAccounts', { accounts });
+      return SUCCESS(accounts);
     } catch (err) {
       handleGenericError(err, true);
       return ERROR(err.response.data);
@@ -85,5 +96,8 @@ export const mutations = {
       state.raw.following.userIds.push(user.id);
     });
     Object.assign(state.raw.following, { previous, next, count });
+  },
+  setAccounts(state, { accounts }) {
+    state.accounts = accounts;
   }
 };
