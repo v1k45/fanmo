@@ -11,6 +11,8 @@ class UserFilter(filters.FilterSet):
         fields = ["is_creator", "is_following"]
 
     def filter_is_following(self, queryset, name, value):
-        if value:
+        if not value:
+            return queryset
+        if self.request.user.is_authenticated:
             return queryset.filter(followers=self.request.user.pk)
-        return queryset
+        return queryset.none()

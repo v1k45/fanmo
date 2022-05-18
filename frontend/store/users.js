@@ -80,20 +80,20 @@ export const mutations = {
   setFollowingUsers(state, { users }) {
     const { previous, next, count, results } = users;
     results.forEach(user => {
-      Vue.set(state.usersById, user.id, user);
+      Vue.set(state.usersById, user.username, user);
     });
     state.raw.following = {
       previous,
       next,
       count,
-      userIds: results.map(user => user.id)
+      userIds: results.map(user => user.username)
     };
   },
   setNextFollowingUsers(state, { users }) {
     const { previous, next, count, results } = users;
     results.forEach(user => {
-      Vue.set(state.usersById, user.id, user);
-      state.raw.following.userIds.push(user.id);
+      Vue.set(state.usersById, user.username, user);
+      state.raw.following.userIds.push(user.username);
     });
     Object.assign(state.raw.following, { previous, next, count });
   },

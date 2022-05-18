@@ -43,7 +43,7 @@
             <div class="overflow-auto max-h-[75vh]">
               <nuxt-link
                 v-for="(user, idx) in following.results"
-                :key="user.id" :to="`/${user.username}`"
+                :key="user.username" :to="`/${user.username}`"
                 class="flex items-center bg-white px-4 py-3 hover:bg-gray-200" :class="{
                   'border-t': idx !== 0
                 }">
@@ -90,7 +90,7 @@
     </template>
     <template v-if="isFollowingDialogVisible && following">
       <nuxt-link
-        v-for="(user) in following.results" :key="user.id" :to="`/${user.username}`"
+        v-for="(user) in following.results" :key="user.username" :to="`/${user.username}`"
         class="flex items-center border-l border-b border-r bg-white px-4 py-3 hover:bg-gray-200">
         <fm-avatar
           :src="user.avatar && user.avatar.small"
