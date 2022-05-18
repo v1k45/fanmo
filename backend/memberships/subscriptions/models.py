@@ -424,7 +424,7 @@ class Subscription(BaseModel):
         target=Status.SCHEDULED_TO_CANCEL,
     )
     def schedule_to_cancel(self):
-        if self.is_giveaway():
+        if self.is_giveaway() or self.can_cancel():
             return
 
         razorpay_client.subscription.cancel(
@@ -442,7 +442,9 @@ class Subscription(BaseModel):
     )
     def cancel(self):
         # hard cancel when the subscription is future not charged yet.
-        pass
+        self.is_active = False
+        self.membership.is_active = False
+        self.membership.save()
 
     def update(self, plan):
         # when using upi, subscription cannot be updated
@@ -529,5 +531,6 @@ class Subscription(BaseModel):
         conditions=[can_halt],
     )
     def halt(self):
+        self.is_active = False
         self.membership.is_active = False
         self.membership.save()
