@@ -2,7 +2,7 @@
 from django.contrib import admin
 from simple_history.admin import SimpleHistoryAdmin
 
-from .models import Plan, Subscription, Tier
+from .models import Plan, Subscription, Tier, Membership
 
 
 @admin.register(Tier)
@@ -25,6 +25,25 @@ class TierAdmin(SimpleHistoryAdmin):
         "is_public",
     )
     search_fields = ("name",)
+    date_hierarchy = "created_at"
+
+
+@admin.register(Membership)
+class MembershipAdmin(SimpleHistoryAdmin):
+    list_display = (
+        "id",
+        "creator_user",
+        "fan_user",
+        "tier",
+        "is_active",
+        "created_at",
+        "updated_at",
+    )
+    list_filter = (
+        "created_at",
+        "updated_at",
+        "tier",
+    )
     date_hierarchy = "created_at"
 
 
