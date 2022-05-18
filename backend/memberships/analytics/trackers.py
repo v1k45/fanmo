@@ -39,7 +39,8 @@ class ObjectTracker(ObjectsByDateAndObjectTracker):
             upto_date += timedelta(days=1)
 
     def track_lifetime_upto(self, qs, upto_date):
-        for value in self.filter_lifetime_queryset(qs, upto_date):
+        upto_dt = timezone.make_aware(datetime.combine(upto_date, time.max))
+        for value in self.filter_lifetime_queryset(qs, upto_dt):
             StatisticByDateAndObject.objects.record(
                 metric=self.metric,
                 value=value["ts_n"],
@@ -60,7 +61,6 @@ class ObjectTracker(ObjectsByDateAndObjectTracker):
         start_dt = timezone.make_aware(
             datetime.combine(start_date, time()) - timedelta(days=1)
         )
-        # TODO: Bulk create
         for value in self.filter_day_queryset(qs, start_dt):
             self.statistic_model.objects.record(
                 metric=self.metric,
@@ -107,16 +107,16 @@ class MembershipCountTracker(ObjectTracker):
 
     def filter_day_queryset(self, qs, start_dt):
         return (
-            qs.active_at_date(start_dt)
+            qs.active_at(start_dt)
             .annotate(ts_date=TruncDate(self.date_field))
             .values("ts_date", *self.get_track_values())
-            .annotate(ts_n=self.aggr_op)
             .order_by()
+            .annotate(ts_n=self.aggr_op)
         )
 
     def filter_lifetime_queryset(self, qs, upto_date):
         return (
-            qs.active_at(upto_date)
+            qs.active_before(upto_date)
             .values(self.object_field)
             .annotate(ts_n=self.aggr_op)
             .order_by()

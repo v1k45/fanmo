@@ -18,7 +18,7 @@ class SubscriptionQuerySet(models.QuerySet):
         return self.filter(cycle_start_at__lte=now, cycle_end_at__gte=now)
 
     def active_at(self, value):
-        return self.filter(cycle_start_at__lte=value, cycle_end_at__gte=value).exclude(
+        return self.filter(cycle_start_at__gte=value).exclude(
             status__in=[
                 self.model.Status.CREATED,
                 self.model.Status.AUTHENTICATED,
@@ -26,10 +26,8 @@ class SubscriptionQuerySet(models.QuerySet):
             ]
         )
 
-    def active_at_date(self, value):
-        return self.filter(
-            cycle_start_at__date__lte=value, cycle_end_at__date__gte=value
-        ).exclude(
+    def active_before(self, value):
+        return self.filter(cycle_start_at__lte=value, cycle_end_at__gte=value).exclude(
             status__in=[
                 self.model.Status.CREATED,
                 self.model.Status.AUTHENTICATED,
