@@ -4,14 +4,14 @@ from datetime import date, timedelta, datetime, time
 from django.utils import timezone
 
 from trackstats.trackers import ObjectsByDateAndObjectTracker
-from trackstats.models import (
-    Period,
-    StatisticByDateAndObject,
-)
+from trackstats.models import Period
 from memberships.users.models import User
+from memberships.analytics.models import StatisticByDateAndObject
 
 
 class ObjectTracker(ObjectsByDateAndObjectTracker):
+    statistic_model = StatisticByDateAndObject
+
     def track(self, qs):
         """
         Track stats from a queryset
@@ -24,6 +24,8 @@ class ObjectTracker(ObjectsByDateAndObjectTracker):
             self.track_lifetime(qs, start_date, to_date)
         elif self.period == Period.DAY:
             self.track_day(qs, start_date)
+        elif self.period == Period.WEEK:
+            self.track_week(qs, start_date)
         else:
             raise NotImplementedError
 
@@ -41,7 +43,7 @@ class ObjectTracker(ObjectsByDateAndObjectTracker):
     def track_lifetime_upto(self, qs, upto_date):
         upto_dt = timezone.make_aware(datetime.combine(upto_date, time.max))
         for value in self.filter_lifetime_queryset(qs, upto_dt):
-            StatisticByDateAndObject.objects.record(
+            self.statistic_model.objects.record(
                 metric=self.metric,
                 value=value["ts_n"],
                 date=upto_date,

@@ -96,7 +96,7 @@ class DonationViewSet(
                 total=Count("id"),
                 total_with_message=Count("id", filter=Q(message="")),
                 total_without_message=Count("id", filter=~Q(message="")),
-                total_payment=Sum("amount")
+                total_payment=Sum("amount"),
             )
         )
         return Response(self.get_serializer(agg_stats).data)
