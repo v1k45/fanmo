@@ -12,3 +12,12 @@ def deduct_platform_fee(money, creator_user):
     return money * (
         1 - Decimal(creator_user.user_preferences.platform_fee_percent / 100)
     )
+
+
+def percent_change(current, previous):
+    if current == previous:
+        return Decimal(0)
+    try:
+        return (abs(current - previous) / previous) * Decimal("100.0")
+    except ZeroDivisionError:
+        return None

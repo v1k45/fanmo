@@ -103,7 +103,7 @@ LOCAL_APPS = [
     "memberships.donations",
     "memberships.webhooks",
     "memberships.integrations",
-    "memberships.analytics",
+    "memberships.analytics.apps.AnalyticsConfig",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

@@ -10,6 +10,23 @@ from memberships.analytics.models import StatisticByDateAndObject
 
 
 class ObjectTracker(ObjectsByDateAndObjectTracker):
+    """
+    Helper class to scrape stats with day and lifetime period.
+
+    Day-wise period represents the total daily stat for the given metric.
+    For example, we might want to store how much total payment a creator processed on a certian day.
+
+    Lifetime period represents the total stat UPTO the day when the stat was recorded.
+    For example, we might want to store how much lifetime payment a creator processed till a certain date.
+
+    Ideally lifetime stat could be calculated using a simple WHERE on the actual model
+    but in some cases we need to store the data separately.
+    Memberships, for example, are calculated using a moving window where it is possible that a membership
+    is active for a month, but not in past or future.
+
+    Now, how the fuck do I take decrease in membership into account?
+    """
+
     statistic_model = StatisticByDateAndObject
 
     def track(self, qs):
@@ -24,8 +41,6 @@ class ObjectTracker(ObjectsByDateAndObjectTracker):
             self.track_lifetime(qs, start_date, to_date)
         elif self.period == Period.DAY:
             self.track_day(qs, start_date)
-        elif self.period == Period.WEEK:
-            self.track_week(qs, start_date)
         else:
             raise NotImplementedError
 

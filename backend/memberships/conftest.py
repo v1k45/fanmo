@@ -2,6 +2,7 @@ from decimal import Decimal
 import pytest
 from moneyed import Money, INR
 from rest_framework.test import APIClient
+from memberships.analytics.utils import register_metrics
 from memberships.subscriptions.models import Membership, Subscription
 
 from memberships.users.models import User
@@ -22,6 +23,11 @@ from django.utils import timezone
 @pytest.fixture(autouse=True)
 def media_storage(settings, tmpdir):
     settings.MEDIA_ROOT = tmpdir.strpath
+
+
+@pytest.fixture(autouse=True)
+def setup_metrics():
+    register_metrics()
 
 
 @pytest.fixture
