@@ -7,6 +7,7 @@ from memberships.subscriptions.models import Membership, Subscription
 
 from memberships.users.models import User
 from memberships.users.tests.factories import UserFactory
+from memberships.payments.models import BankAccount
 from memberships.donations.models import Donation
 
 from memberships.subscriptions.tests.factories import (
@@ -39,7 +40,15 @@ def user() -> User:
 def creator_user() -> User:
     user = UserFactory(is_creator=True)
     TierFactory(creator_user=user, welcome_message="Thanks!")
-    BankAccountFactory(beneficiary_user=user)
+
+    # mock internal approval.
+    user.user_onboarding.is_creator_approved = True
+    user.user_onboarding.save()
+
+    user.user_preferences.is_accepting_payments = True
+    user.user_preferences.save()
+
+    BankAccountFactory(beneficiary_user=user, status=BankAccount.Status.LINKED)
     return user
 
 

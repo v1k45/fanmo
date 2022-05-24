@@ -34,7 +34,7 @@ class PaymentIntentSerializerMixin(serializers.ModelSerializer):
             )
         return email
 
-    def validate_creator_user(self, creator_user):
+    def validate_creator_username(self, creator_user):
         if self.instance and self.instance.creator_user != creator_user:
             raise serializers.ValidationError(
                 "Creator cannot be changed. Please create a separate membership.",
