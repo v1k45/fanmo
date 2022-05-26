@@ -464,6 +464,12 @@ class TestPostCrudAPI:
         mocker.patch(
             "memberships.posts.models.bootstrap_oembed",
         ).return_value.request = request_embed_mock
+        mocker.patch(
+            "memberships.posts.models.metadata_parser.MetadataParser",
+            return_value=mocker.Mock(
+                metadata={"og": "hello", "page": "world", "meta": {"foo": "bar"}}
+            ),
+        )
 
         api_client.force_authenticate(creator_user)
 
