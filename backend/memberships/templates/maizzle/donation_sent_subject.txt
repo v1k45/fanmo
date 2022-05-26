@@ -1,0 +1,1 @@
+Thank you for supporting {{ obj.creator_user.display_name }}!

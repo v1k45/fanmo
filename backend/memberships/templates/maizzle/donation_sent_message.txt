@@ -1,0 +1,17 @@
+Hi {{ obj.fan_user.display_name }},
+You have sucessfully donated {{ obj.amount }} to {{ obj.creator_user.display_name }}.
+{% if obj.creator_user.user_preferences.thank_you_message %} {{ obj.creator_user.user_preferences.thank_you_message }} {% endif %}
+If you wish to contact {{ obj.creator_user.display_name }} directly, you can reply this email, or send email on {{ obj.creator_user.email }} mailto:{{ obj.creator_user.email }}
+
+View Donations →
+
+{{ settings.BASE_URL }}{% url 'sent-donations' %}
+
+‌
+
+Not sure why you received this email? Please let us knowhttps://example.com.
+
+Fanmo
+
+Support https://maizzle.com/docs/ •
+Website https://github.com/maizzle

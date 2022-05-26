@@ -1,0 +1,17 @@
+Hi {{ obj.fan_user.display_name }},
+{{ obj.tier.name }} has been scheduled to cancel on {{ obj.active_subscription.cycle_end_at|date:"d F Y" }}.
+You won't be charged on the next renewal.
+If you wish to contact {{ obj.creator_user.display_name }} directly, you can reply this email, or send email on {{ obj.creator_user.email }} mailto:{{ obj.creator_user.email }}
+
+View Memberships →
+
+{{ settings.BASE_URL }}{% url 'memberships' %}
+
+‌
+
+Not sure why you received this email? Please let us knowhttps://example.com.
+
+Fanmo
+
+Support https://maizzle.com/docs/ •
+Website https://github.com/maizzle
