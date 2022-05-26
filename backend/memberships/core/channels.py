@@ -30,7 +30,7 @@ class EmailNotificationChannel(BaseNotificationChannel):
     def render_template(self, suffix=None, **context):
         suffix = f"_{suffix}" if suffix else ""
         return render_to_string(
-            f"email/{self.notification.action}{suffix}.txt",
+            f"maizzle/{self.notification.action}{suffix}.txt",
             {
                 "notification": self.notification,
                 "obj": self.notification.obj,

@@ -10,10 +10,15 @@ from django_fsm import FSMField, transition, can_proceed
 from djmoney.models.fields import MoneyField
 from simple_history.models import HistoricalRecords
 from versatileimagefield.fields import VersatileImageField
+from memberships.core.notifications import (
+    notify_new_membership,
+    notify_membership_stop,
+    notify_membership_halted,
+    notify_membership_pending,
+)
 
 from memberships.payments.models import Payment, Payout
 from memberships.subscriptions.querysets import SubscriptionQuerySet
-from memberships.core.email import notify_new_membership
 from memberships.utils import razorpay_client
 from memberships.utils.models import BaseModel
 from django_q.tasks import async_task
@@ -204,6 +209,8 @@ class Membership(BaseModel):
 
         active_subscription.schedule_to_cancel()
         active_subscription.save()
+        # send cancellation email and create activity
+        async_task(notify_membership_stop, self.pk)
 
     def activate(self, subscription):
         # clear scheduled subscription
@@ -498,6 +505,7 @@ class Subscription(BaseModel):
         field=status,
         source=[
             Status.ACTIVE,
+            Status.PENDING,
         ],
         target=Status.PENDING,
         conditions=[can_start_renew],
@@ -506,7 +514,7 @@ class Subscription(BaseModel):
         """
         Subscription is past its end time, attempt renewal
         """
-        pass
+        async_task(notify_membership_pending, self.membership_id)
 
     @transition(
         field=status,
@@ -534,3 +542,4 @@ class Subscription(BaseModel):
         self.is_active = False
         self.membership.is_active = False
         self.membership.save()
+        async_task(notify_membership_halted, self.membership_id)

@@ -5,7 +5,7 @@ from rest_framework import mixins, permissions, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from functools import lru_cache
-from memberships.core.email import notify_new_post
+from memberships.core.notifications import notify_new_post
 from mptt.utils import get_cached_trees
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
