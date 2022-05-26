@@ -14,6 +14,7 @@ from rest_framework.exceptions import ErrorDetail
 from dj_rest_auth.registration.serializers import (
     RegisterSerializer as BaseRegisterSerializer,
 )
+from memberships.users.models import CreatorActivity
 
 from memberships.subscriptions.models import Tier
 from memberships.users.models import SocialLink, User, UserOnboarding, UserPreference
@@ -459,3 +460,35 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
         user.set_password(self.validated_data["new_password"])
         user.save()
         return user
+
+
+class CreatorActivitySerializer(serializers.ModelSerializer):
+    fan_user = FanUserPreviewSerializer(read_only=True)
+
+    class Meta:
+        model = CreatorActivity
+        fields = [
+            "id",
+            "type",
+            "message",
+            "data",
+            "fan_user",
+            "membership",
+            "donation",
+            "comment",
+            "created_at",
+        ]
+
+    def get_fields(self):
+        from memberships.subscriptions.api.serializers import (
+            MembershipPreviewSerializer,
+        )
+        from memberships.donations.api.serializers import DonationSerializer
+        from memberships.posts.api.serializers import CommentPreviewSerializer
+
+        fields = super().get_fields()
+        fields["membership"] = MembershipPreviewSerializer(read_only=True)
+        fields["donation"] = DonationSerializer(read_only=True)
+        fields["comment"] = CommentPreviewSerializer(read_only=True)
+
+        return fields

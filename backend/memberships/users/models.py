@@ -173,3 +173,45 @@ class UserOnboarding(BaseModel):
             "introduction": bool(self.full_name and self.introduction),
             "payment_setup": bool(self.is_bank_account_added),
         }
+
+
+class CreatorActivity(BaseModel):
+    class Type(models.TextChoices):
+        NEW_MEMBERSHIP = "new_membership"
+        MEMBERSHIP_UPDATE = "membership_update"
+        MEMBERSHIP_STOP = "membership_stop"
+        DONATION = "donation"
+        COMMENT = "comment"
+        COMMENT_REPLY = "comment_reply"
+        FOLLOWER = "follower"
+
+    creator_user = models.ForeignKey(
+        "users.User", on_delete=models.CASCADE, related_name="activities"
+    )
+    fan_user = models.ForeignKey(
+        "users.User", on_delete=models.CASCADE, related_name="fan_activities"
+    )
+    type = models.CharField(choices=Type.choices, max_length=32)
+
+    # human-readable representation of the notification, examples:
+    # new_membership: Salty Tiger joined Golden Retrievers
+    # membership_update: Satly Tiger updated membership tier from Golden Retrievers to King Cobras. The change will go live on 1 Jan 2022.
+    # membership_stop: Satly Tiger cancelled Gold Retrievers membership due to non-payment.
+    # donation: Salty Tiger donated $500.
+    # comment: Salty Tiger commented on Episode #110: How to train monkeys
+    # comment_reply: Salty Tiger replied your comment on Episode #110: How to train retarded monkeys
+    # follower: Salty Tiger followed you.
+    message = models.TextField()
+
+    membership = models.ForeignKey(
+        "subscriptions.Membership", on_delete=models.CASCADE, null=True, blank=True
+    )
+    donation = models.ForeignKey(
+        "donations.Donation", on_delete=models.CASCADE, null=True, blank=True
+    )
+    comment = models.ForeignKey(
+        "posts.Comment", on_delete=models.CASCADE, null=True, blank=True
+    )
+
+    # {tier: {id, name}, old_tier: {id, name}}
+    data = models.JSONField(default=dict)

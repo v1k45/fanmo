@@ -38,6 +38,7 @@ from memberships.subscriptions.api.views import (
     TierViewSet,
 )
 from memberships.users.api.views import (
+    CreatorActivityViewSet,
     LoginView,
     OwnUserAPIView,
     RegisterView,
@@ -50,6 +51,7 @@ from memberships.webhooks.views import razorpay_webhook
 
 router = ExtendedSimpleRouter()
 router.register("users", UserViewSet, basename="users")
+router.register("activities", CreatorActivityViewSet, basename="activities")
 router.register("tiers", TierViewSet, basename="tiers")
 router.register("posts", PostViewSet, basename="posts")
 router.register("comments", CommentViewSet, basename="comments")

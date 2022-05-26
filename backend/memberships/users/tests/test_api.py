@@ -1,6 +1,10 @@
 import pytest
+from decimal import Decimal
+from moneyed import Money, INR
 
-from memberships.users.models import User
+from memberships.users.models import User, CreatorActivity
+from memberships.donations.models import Donation
+from memberships.posts.models import Post, Comment, Content
 from django.conf import settings
 
 pytestmark = pytest.mark.django_db
@@ -560,3 +564,91 @@ class TestUserAPI:
         )
         assert response.status_code == 200
         assert response.json()["is_member"]
+
+
+class TestActivitiesAPI:
+    def test_list(self, creator_user, user, active_membership, api_client):
+
+        CreatorActivity.objects.create(
+            type=CreatorActivity.Type.MEMBERSHIP_UPDATE,
+            message="Foo changed Bar to Bam",
+            data={"foo": {"bar": "bam"}},
+            membership=active_membership,
+            creator_user=creator_user,
+            fan_user=user,
+        )
+
+        donation = Donation.objects.create(
+            creator_user=creator_user,
+            fan_user=user,
+            amount=Money(Decimal("100"), INR),
+            status=Donation.Status.SUCCESSFUL,
+        )
+        CreatorActivity.objects.create(
+            type=CreatorActivity.Type.DONATION,
+            message="Foo donated 100",
+            data={"foo": {"bar": "bam"}},
+            donation=donation,
+            creator_user=creator_user,
+            fan_user=user,
+        )
+
+        comment = Comment.objects.create(
+            post=Post.objects.create(
+                author_user=creator_user,
+                title="Sum ting wong",
+                content=Content.objects.create(type=Content.Type.TEXT),
+            ),
+            author_user=user,
+            body="ho lee fuk",
+        )
+        CreatorActivity.objects.create(
+            type=CreatorActivity.Type.COMMENT,
+            message="Foo commented on Sum ting wong",
+            comment=comment,
+            creator_user=creator_user,
+            fan_user=user,
+        )
+
+        api_client.force_authenticate(creator_user)
+
+        response = api_client.get("/api/activities/")
+        response_data = response.json()
+
+        assert response.status_code == 200
+        # one extra because an activity is created when membership is activated.
+        assert response_data["count"] == 4
+
+        assert response_data["results"][0]["type"] == CreatorActivity.Type.COMMENT
+        assert response_data["results"][0]["data"] == {}
+        assert response_data["results"][0]["comment"]["id"] == comment.id
+        assert response_data["results"][0]["fan_user"]["username"] == user.username
+
+        assert response_data["results"][1]["type"] == CreatorActivity.Type.DONATION
+        assert response_data["results"][1]["data"] == {"foo": {"bar": "bam"}}
+        assert response_data["results"][1]["donation"]["id"] == donation.id
+        assert response_data["results"][1]["fan_user"]["username"] == user.username
+
+        assert (
+            response_data["results"][2]["type"]
+            == CreatorActivity.Type.MEMBERSHIP_UPDATE
+        )
+        assert response_data["results"][2]["data"] == {"foo": {"bar": "bam"}}
+        assert response_data["results"][2]["membership"]["id"] == active_membership.id
+        assert response_data["results"][2]["fan_user"]["username"] == user.username
+
+        assert (
+            response_data["results"][3]["type"] == CreatorActivity.Type.NEW_MEMBERSHIP
+        )
+        assert response_data["results"][3]["data"] == {
+            "tier": {
+                "id": active_membership.tier.id,
+                "name": active_membership.tier.name,
+            }
+        }
+        assert (
+            response_data["results"][3]["message"]
+            == f"{active_membership.fan_user.display_name} joined {active_membership.tier.name}"
+        )
+        assert response_data["results"][3]["membership"]["id"] == active_membership.id
+        assert response_data["results"][3]["fan_user"]["username"] == user.username

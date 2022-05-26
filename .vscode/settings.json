@@ -1,4 +1,5 @@
 {
     "python.formatting.provider": "black",
-    "python.pythonPath": "venv/bin/python"
+    "python.pythonPath": "./backend/venv/bin/python",
+    "vim.vimrc.path": "~/.vimrc"
 }

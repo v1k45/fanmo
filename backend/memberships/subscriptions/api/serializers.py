@@ -259,6 +259,41 @@ class MembershipSerializer(PaymentIntentSerializerMixin, serializers.ModelSerial
         return instance
 
 
+class MembershipPreviewSerializer(serializers.ModelSerializer):
+    tier = TierPreviewSerializer(read_only=True)
+    fan_user = FanUserPreviewSerializer(read_only=True)
+    status = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Membership
+        fields = [
+            "id",
+            "tier",
+            "fan_user",
+            "status",
+            "is_active",
+            "created_at",
+            "updated_at",
+        ]
+
+    @extend_schema_field(
+        serializers.ChoiceField(
+            choices=Subscription.Status.values + ["scheduled_to_update"]
+        )
+    )
+    def get_status(self, membership):
+        if membership.scheduled_subscription and membership.active_subscription:
+            if (
+                membership.active_subscription.status
+                == Subscription.Status.SCHEDULED_TO_CANCEL
+                and membership.scheduled_subscription.status
+                == Subscription.Status.SCHEDULED_TO_ACTIVATE
+            ):
+                return "scheduled_to_update"
+        if membership.active_subscription:
+            return membership.active_subscription.status
+
+
 class MembershipGiveawaySerializer(serializers.ModelSerializer):
     tier_id = serializers.PrimaryKeyRelatedField(
         queryset=Tier.objects.filter(is_active=True, creator_user__is_creator=True),

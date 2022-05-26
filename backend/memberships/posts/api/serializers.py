@@ -237,6 +237,12 @@ class PostDetailSerializer(PostSerializer):
     author_user = PublicUserSerializer(read_only=True)
 
 
+class PostPreviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ["id", "slug", "title"]
+
+
 class PostReactionSerializer(serializers.ModelSerializer):
     action = serializers.ChoiceField(choices=["add", "remove"])
     emoji = serializers.ChoiceField(choices=Reaction.Emoji.choices)
@@ -379,6 +385,14 @@ class CommentSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data["author_user"] = self.context["request"].user
         return super().create(validated_data)
+
+
+class CommentPreviewSerializer(serializers.ModelSerializer):
+    post = PostPreviewSerializer(read_only=True)
+
+    class Meta:
+        model = Comment
+        fields = ["id", "parent_id", "post", "body"]
 
 
 class LinkPreviewSerializer(serializers.Serializer):

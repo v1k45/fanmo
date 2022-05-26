@@ -21,6 +21,7 @@ from memberships.users.api.filters import UserFilter
 from memberships.users.models import User
 
 from .serializers import (
+    CreatorActivitySerializer,
     RequestEmailVerificationSerializer,
     TOTPDeviceSerializer,
     UserSerializer,
@@ -68,6 +69,19 @@ class OwnUserAPIView(RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class CreatorActivityViewSet(ReadOnlyModelViewSet):
+    permission_classes = [IsAuthenticated]
+    serializer_class = CreatorActivitySerializer
+
+    def get_queryset(self):
+        return self.request.user.activities.all().select_related(
+            "membership__tier",
+            "membership__fan_user",
+            "membership__active_subscription",
+            "membership__scheduled_subscription",
+        )
 
 
 class RegisterView(BaseRegisterView):
