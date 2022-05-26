@@ -25,8 +25,10 @@ urlpatterns = [
     path("confirm/<key>/", index_view, name="email_verification"),
     path("accept-invite/<key>/", index_view, name="account_invite"),
     # creator
-    path("<username>/support", index_view, name="creator_support"),
-    path("<username>/memberships", index_view, name="creator_memberships"),
+    path("sent-donations", index_view, name="sent-donations"),
+    path("received-donations", index_view, name="received-donations"),
+    path("members", index_view, name="members"),
+    path("memberships", index_view, name="memberships"),
     # posts
     path("<username>/p/<post_slug>/<post_id>/", index_view, name="post_detail"),
     path("<username>", index_view, name="creator_page"),

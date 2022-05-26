@@ -48,5 +48,9 @@ RAZORPAY_KEY = "rzp_test_key"
 RAZORPAY_SECRET = "rzp_secret"
 RAZORPAY_WEBHOOK_SECRET = "rzp_webook_secret"
 
+# Django Q
+# ------------------------------------------------------------------------------
+Q_CLUSTER["sync"] = True
+
 # Your stuff...
 # ------------------------------------------------------------------------------
