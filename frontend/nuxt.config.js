@@ -98,9 +98,6 @@ export default {
           userInfo: '/api/me/',
           logout: ''
         },
-        // allowing openid scope somehow breaks routing
-        // fuck nuxt-auth
-        scope: ['profile', 'email'],
         // hack to make cookie auth look like jwt auth
         // makes nuxt-auth include Authorization: <type> <username> header instead of failing.
         // fuck nuxt-auth
