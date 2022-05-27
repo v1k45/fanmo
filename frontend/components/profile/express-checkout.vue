@@ -136,7 +136,7 @@ export default {
         await this.$auth.fetchUser();
         await this.handleSubmit();
       };
-      window.open('/auth/google/');
+      window.open('/auth/callback/google/');
     }
   }
 };

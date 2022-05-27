@@ -1,6 +1,6 @@
 <template>
 <div v-if="!$auth.loggedIn">
-  Logging you in...
+  Redirecting to Google...
 </div>
 <div v-else>
   You are already logged in
@@ -12,8 +12,8 @@ export default {
   auth: false,
   layout: 'empty',
   async mounted() {
-    if (!this.$auth.loggedIn && this.$route.params.callback !== 'callback') {
-      await this.$auth.loginWith(this.$route.params.callback);
+    if (!this.$auth.loggedIn) {
+      await this.$auth.loginWith('google');
     } else {
       // write better code?
       window.opener.postMessage('refresh_login', {});
