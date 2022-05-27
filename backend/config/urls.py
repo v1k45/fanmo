@@ -30,7 +30,7 @@ urlpatterns = [
     path("members", index_view, name="members"),
     path("memberships", index_view, name="memberships"),
     # posts
-    path("<username>/p/<post_slug>/<post_id>/", index_view, name="post_detail"),
+    path("p/<post_slug>/<post_id>/", index_view, name="post_detail"),
     path("<username>", index_view, name="creator_page"),
     # Your stuff: custom urls includes go here
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

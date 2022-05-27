@@ -671,6 +671,7 @@ class TestCommentAPI:
 
     def test_create_comment_anonymous(self, api_client, creator_user):
         post = Post.objects.create(
+            title="Hello darkness my old friend",
             visibility=Post.Visiblity.PUBLIC,
             author_user=creator_user,
             content=Content.objects.create(type=Content.Type.TEXT, text="Hello world!"),
@@ -687,6 +688,7 @@ class TestCommentAPI:
 
     def test_create_comment_non_member(self, api_client, creator_user, user):
         post = Post.objects.create(
+            title="Hello darkness my old friend",
             visibility=Post.Visiblity.PUBLIC,
             author_user=creator_user,
             content=Content.objects.create(type=Content.Type.TEXT, text="Hello world!"),
@@ -705,6 +707,7 @@ class TestCommentAPI:
 
     def test_create_comment_by_author(self, api_client, creator_user):
         post = Post.objects.create(
+            title="Hello darkness my old friend",
             visibility=Post.Visiblity.PUBLIC,
             author_user=creator_user,
             content=Content.objects.create(type=Content.Type.TEXT, text="Hello world!"),
@@ -726,6 +729,7 @@ class TestCommentAPI:
 
     def test_create_comment_member_on_public_post(self, api_client, active_membership):
         post = Post.objects.create(
+            title="Hello darkness my old friend",
             visibility=Post.Visiblity.PUBLIC,
             author_user=active_membership.creator_user,
             content=Content.objects.create(type=Content.Type.TEXT, text="Hello world!"),
@@ -752,6 +756,7 @@ class TestCommentAPI:
         self, api_client, active_membership
     ):
         post = Post.objects.create(
+            title="Hello darkness my old friend",
             visibility=Post.Visiblity.ALL_MEMBERS,
             author_user=active_membership.creator_user,
             content=Content.objects.create(type=Content.Type.TEXT, text="Hello world!"),
@@ -778,6 +783,7 @@ class TestCommentAPI:
         self, api_client, active_membership
     ):
         post = Post.objects.create(
+            title="Hello darkness my old friend",
             visibility=Post.Visiblity.ALLOWED_TIERS,
             author_user=active_membership.creator_user,
             content=Content.objects.create(type=Content.Type.TEXT, text="Hello world!"),
@@ -805,6 +811,7 @@ class TestCommentAPI:
         self, api_client, membership_with_scheduled_change
     ):
         post = Post.objects.create(
+            title="Hello darkness my old friend",
             visibility=Post.Visiblity.ALLOWED_TIERS,
             author_user=membership_with_scheduled_change.creator_user,
             content=Content.objects.create(type=Content.Type.TEXT, text="Hello world!"),
@@ -828,6 +835,7 @@ class TestCommentAPI:
         self, api_client, active_membership
     ):
         post = Post.objects.create(
+            title="Hello darkness my old friend",
             visibility=Post.Visiblity.PUBLIC,
             author_user=active_membership.creator_user,
             content=Content.objects.create(type=Content.Type.TEXT, text="Hello world!"),
@@ -856,6 +864,7 @@ class TestCommentAPI:
 
     def test_delete_as_creator(self, api_client, active_membership):
         post = Post.objects.create(
+            title="Hello darkness my old friend",
             visibility=Post.Visiblity.PUBLIC,
             author_user=active_membership.creator_user,
             content=Content.objects.create(type=Content.Type.TEXT, text="Hello world!"),
@@ -880,6 +889,7 @@ class TestCommentAPI:
 
     def test_delete_as_fan(self, api_client, active_membership):
         post = Post.objects.create(
+            title="Hello darkness my old friend",
             visibility=Post.Visiblity.PUBLIC,
             author_user=active_membership.creator_user,
             content=Content.objects.create(type=Content.Type.TEXT, text="Hello world!"),
