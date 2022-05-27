@@ -220,7 +220,6 @@ class Membership(BaseModel):
         self.tier = self.active_subscription.plan.tier
         self.is_active = True
         self.save()
-        async_task(notify_new_membership, self.pk)
 
 
 class Plan(BaseModel):
@@ -409,6 +408,7 @@ class Subscription(BaseModel):
         self.is_active = True
         self.membership.activate(self)
         self.membership.save()
+        async_task(notify_new_membership, self.membership_id)
 
     @transition(
         field=status,
@@ -525,6 +525,7 @@ class Subscription(BaseModel):
         """Subscription was renewned"""
         self.cycle_end_at = cycle_end_at
         self.membership.activate(self)
+        async_task(notify_new_membership, self.membership_id)
 
     def can_halt(self):
         halt_date = self.cycle_end_at + relativedelta(

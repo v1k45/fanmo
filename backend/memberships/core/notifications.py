@@ -40,6 +40,35 @@ def notify_new_membership(membership_id):
     )
 
 
+def notify_membership_renewed(membership_id):
+    from memberships.subscriptions.models import Membership
+    from memberships.users.models import CreatorActivity
+
+    membership = Membership.objects.get(id=membership_id)
+
+    CreatorActivity.objects.create(
+        type=CreatorActivity.Type.MEMBERSHIP_UPDATE,
+        membership=membership,
+        data={"tier": {"id": membership.tier.id, "name": membership.tier.name}},
+        message=f"{membership.fan_user.display_name} renewed {membership.tier.name}",
+        creator_user=membership.creator_user,
+        fan_user=membership.fan_user,
+    )
+
+    notify(
+        source=membership.creator_user,
+        recipient=membership.fan_user,
+        obj=membership,
+        action="membership_renew",
+        category="memberships",
+        silent=True,  # Don't persist to the database
+        channels=("email",),
+        extra_data={
+            "context": {"source_as_sender_name": True},
+        },
+    )
+
+
 def notify_membership_change(membership_id):
     from memberships.subscriptions.models import Membership
     from memberships.users.models import CreatorActivity
