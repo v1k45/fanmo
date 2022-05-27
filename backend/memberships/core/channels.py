@@ -5,7 +5,7 @@ from notifications.channels import BaseNotificationChannel
 
 class EmailNotificationChannel(BaseNotificationChannel):
     name = "email"
-    providers = ["console", "email"]
+    providers = ["console", "rich_email"]
 
     def build_payload(self, provider):
         if self.context.get("bulk"):
@@ -20,6 +20,9 @@ class EmailNotificationChannel(BaseNotificationChannel):
             "to": [recipient.email],
             "subject": self.render_template("subject", recipient=recipient),
             "body": self.render_template("message", recipient=recipient),
+            "body_html": self.render_template(
+                "message", format="html", recipient=recipient
+            ),
         }
         if self.context.get("source_as_sender_name"):
             email_label = self.notification.source.display_name
@@ -27,10 +30,9 @@ class EmailNotificationChannel(BaseNotificationChannel):
             payload["from_email"] = f"{email_label} {email_address}"
         return payload
 
-    def render_template(self, suffix=None, **context):
-        suffix = f"_{suffix}" if suffix else ""
+    def render_template(self, suffix, format="txt", **context):
         return render_to_string(
-            f"maizzle/{self.notification.action}{suffix}.txt",
+            f"maizzle/{self.notification.action}_{suffix}.txt",
             {
                 "notification": self.notification,
                 "obj": self.notification.obj,

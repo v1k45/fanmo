@@ -15,6 +15,7 @@ def refresh_all_metrics(creator_user_id):
 
 def refresh_metrics():
     from memberships.users.models import User
+
     for user in User.objects.filter(is_creator=True):
         async_task(refresh_all_metrics, user.id)
 

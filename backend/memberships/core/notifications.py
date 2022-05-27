@@ -69,7 +69,10 @@ def notify_membership_change(membership_id):
             "tier": {"id": old_tier.id, "name": old_tier.name},
             "new_tier": {"id": new_tier.id, "name": new_tier.name},
         },
-        message=f"{membership.fan_user.display_name} updated membership from {old_tier.name} to {new_tier.name}. The change will go live on {membership.active_subscription.cycle_end_at:%d %b %Y}",
+        message=(
+            f"{membership.fan_user.display_name} updated membership from {old_tier.name} to {new_tier.name}. "
+            f"The change will go live on {membership.active_subscription.cycle_end_at:%d %b %Y}"
+        ),
         creator_user=membership.creator_user,
         fan_user=membership.fan_user,
     )

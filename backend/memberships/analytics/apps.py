@@ -13,8 +13,8 @@ class AnalyticsConfig(AppConfig):
         try:
             register_metrics()
         except ProgrammingError:
-            print("Skipped metrics registration due to inconsitent DB state. This could likely happen during initial setup. The metrics will be registed post miration.")
-            post_migrate.connect(
-                lambda *_, **__: register_metrics(),
-                sender=self
+            print(
+                "Skipped metrics registration due to inconsitent DB state. "
+                "This could likely happen during initial setup. The metrics will be registed post miration."
             )
+            post_migrate.connect(lambda *_, **__: register_metrics(), sender=self)

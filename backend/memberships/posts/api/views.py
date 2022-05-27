@@ -140,7 +140,7 @@ class CommentViewSet(
         if self.action == "reactions":
             return CommentReactionSerializer
         return super().get_serializer_class()
-    
+
     def perform_create(self, serializer):
         super().perform_create(serializer)
         async_task(notify_comment, serializer.instance.pk)
