@@ -2,56 +2,56 @@ version: '3'
 
 volumes:
   production_postgres_data: {}
-  production_postgres_data_backups: {}
-  production_traefik: {}
 
 services:
   django: &django
     build:
       context: .
       dockerfile: ./compose/production/django/Dockerfile
-    image: memberships_production_django
+    image: fanmo_prod
     depends_on:
       - postgres
       - redis
     env_file:
-      - ./.envs/.production/.django
-      - ./.envs/.production/.postgres
+      - ./.envs/.local/.django
+      - ./.envs/.local/.postgres
+      - ./.envs/.prod/.django
     command: /start
 
-  postgres:
-    build:
-      context: .
-      dockerfile: ./compose/production/postgres/Dockerfile
-    image: memberships_production_postgres
-    volumes:
-      - production_postgres_data:/var/lib/postgresql/data:Z
-      - production_postgres_data_backups:/backups:z
-    env_file:
-      - ./.envs/.production/.postgres
+  taskrunner:
+    <<: *django
+    image: fanmo_prod
+    ports: []
+    command: /qcluster
 
-  traefik:
-    build:
-      context: .
-      dockerfile: ./compose/production/traefik/Dockerfile
-    image: memberships_production_traefik
+  nuxt:
+    <<: *django
+    image: fanmo_prod
+    ports: []
+    command: /qcluster
+
+  proxy:
+    image: "caddy:2.5.1"
+    restart: unless-stopped
     depends_on:
       - django
+      - nuxt
+    env_file: ./.envs/.local/.caddy
     volumes:
-      - production_traefik:/etc/traefik/acme:z
+      - ./Caddyfile.local:/etc/caddy/Caddyfile
+      - ./caddy/data:/data
+      - ./caddy/config:/config
+      - ./build:/var/www/html
     ports:
-      - "0.0.0.0:80:80"
-      - "0.0.0.0:443:443"
-      - "0.0.0.0:5555:5555"
+      - "80:80"
+      - "443:443"
 
   redis:
     image: redis:6
 
-  awscli:
-    build:
-      context: .
-      dockerfile: ./compose/production/aws/Dockerfile
-    env_file:
-      - ./.envs/.production/.django
+  postgres:
+    image: postgres:13.2
     volumes:
-      - production_postgres_data_backups:/backups:z
+      - production_postgres_data:/var/lib/postgresql/data:Z
+    env_file:
+      - ./.envs/.local/.postgres

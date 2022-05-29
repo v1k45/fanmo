@@ -7,4 +7,6 @@
 .pre-commit-config.yaml
 .readthedocs.yml
 .travis.yml
-venv
+backend/venv
+backend/htmlcov
+node_modules
