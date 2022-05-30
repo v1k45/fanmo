@@ -16,7 +16,7 @@ class TestMembershipTasks:
         subscription: Subscription = active_membership.active_subscription
         assert subscription.status == Subscription.Status.ACTIVE
 
-        time_machine.move_to(subscription.cycle_end_at - relativedelta(days=1))
+        time_machine.move_to(subscription.cycle_end_at - relativedelta(days=2))
         refresh_membership(active_membership.id)
         active_membership.refresh_from_db()
 
