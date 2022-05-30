@@ -4,6 +4,7 @@ from decimal import Decimal
 from django.db.transaction import atomic
 from django_fsm import can_proceed
 from moneyed import Money, get_currency
+from memberships.analytics.tasks import refresh_stats
 
 from memberships.donations.models import Donation
 from memberships.payments.models import Payment, Payout
@@ -74,6 +75,7 @@ def subscription_charged(payload):
 
     # send payout
     Payout.for_payment(payment)
+    refresh_stats(payment.creator_user_id)
 
 
 def subscription_cancelled(payload):
@@ -87,6 +89,7 @@ def subscription_cancelled(payload):
     )
     subscription.status = Subscription.Status.CANCELLED
     subscription.save()
+    refresh_stats(subscription.creator_user_id)
 
 
 def subscription_halted(payload):
@@ -100,6 +103,7 @@ def subscription_halted(payload):
         plan__external_id=subscription_payload["plan_id"],
     )
     refresh_membership(subscription.membership_id)
+    refresh_stats(subscription.creator_user_id)
 
 
 def subscription_pending(payload):
@@ -113,6 +117,7 @@ def subscription_pending(payload):
         plan__external_id=subscription_payload["plan_id"],
     )
     refresh_membership(subscription.membership_id)
+    refresh_stats(subscription.creator_user_id)
 
 
 def order_paid(payload):
@@ -143,13 +148,15 @@ def order_paid(payload):
 
     # send payout
     Payout.for_payment(payment)
+    refresh_stats(payment.creator_user_id)
 
 
 def transfer_processed(payload):
     transfer_id = payload["payload"]["transfer"]["entity"]["id"]
-    Payout.objects.filter(
+    payout = Payout.objects.filter(
         external_id=transfer_id, status=Payout.Status.SCHEDULED
     ).update(status=Payout.Status.PROCESSED)
+    refresh_stats(payout.payment.creator_user_id)
 
 
 def get_money_from_subunit(amount, currency_code):

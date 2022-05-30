@@ -1,5 +1,6 @@
 from django.db import transaction
 from django_fsm import can_proceed
+from memberships.analytics.tasks import refresh_stats
 from memberships.subscriptions.models import Membership, Subscription
 
 
@@ -41,3 +42,5 @@ def refresh_membership(membership_id: int):
     elif can_proceed(active_subscription.start_renewal):
         active_subscription.start_renewal()
         active_subscription.save()
+
+    refresh_stats(active_subscription.creator_user_id)

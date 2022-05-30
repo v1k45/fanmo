@@ -5,7 +5,7 @@ from memberships.subscriptions.models import Subscription
 from .trackers import MembershipCountTracker, PaymentAmountTracker, PayoutAmountTracker
 
 
-def refresh_all_metrics(creator_user_id):
+def refresh_stats(creator_user_id):
     refresh_total_payment_amount(creator_user_id)
     refresh_total_donation_amount(creator_user_id)
     refresh_total_membership_amount(creator_user_id)
@@ -13,11 +13,11 @@ def refresh_all_metrics(creator_user_id):
     refresh_new_membership_count(creator_user_id)
 
 
-def refresh_metrics():
+def refresh_all_stats():
     from memberships.users.models import User
 
     for user in User.objects.filter(is_creator=True):
-        async_task(refresh_all_metrics, user.id)
+        async_task(refresh_stats, user.id)
 
 
 def refresh_total_payment_amount(creator_user_id):
@@ -72,7 +72,7 @@ def refresh_total_payout_amount(creator_user_id):
 def refresh_new_membership_count(creator_user_id):
     MembershipCountTracker(
         period=Period.DAY,
-        metric=Metric.objects.NEW_MEMBERS_COUNT,
+        metric=Metric.objects.NEW_MEMBER_COUNT,
     ).track(
         Subscription.objects.filter(
             creator_user_id=creator_user_id,
