@@ -9,6 +9,7 @@ class AnalyticsConfig(AppConfig):
 
     def ready(self):
         from .utils import register_metrics
+        from memberships.core.tasks import register_scheduled_tasks
 
         try:
             register_metrics()
@@ -18,3 +19,5 @@ class AnalyticsConfig(AppConfig):
                 "This could likely happen during initial setup. The metrics will be registed post miration."
             )
             post_migrate.connect(lambda *_, **__: register_metrics(), sender=self)
+
+        register_scheduled_tasks()
