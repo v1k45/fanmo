@@ -7,6 +7,8 @@ volumes:
 services:
   django: &django
     image: v1k45/fanmo:dev-latest
+    volumes:
+      - ./backend/memberships/media:/app/memberships/media
     depends_on:
       - postgres
       - mailhog
