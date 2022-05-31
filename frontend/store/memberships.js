@@ -127,7 +127,7 @@ export const actions = {
   async fetchTiers({ commit }) {
     try {
       const tiers = await this.$axios.$get('/api/tiers/');
-      commit('setTiers', { tiers });
+      commit('setTiers', tiers);
       return SUCCESS(tiers);
     } catch (err) {
       handleGenericError(err, true);
@@ -136,7 +136,7 @@ export const actions = {
   },
   async createTier(context, payload) {
     try {
-      const tier = await this.$axios.$post('/api/posts/', payload);
+      const tier = await this.$axios.$post('/api/tiers/', payload);
       return SUCCESS(tier);
     } catch (err) {
       handleGenericError(err);
@@ -185,7 +185,7 @@ export const mutations = {
     const results = [...state.payments.results, ...payments.results];
     state.payments = { ...payments, results };
   },
-  setTiers(state, { tiers }) {
+  setTiers(state, tiers) {
     state.tiers = tiers;
   },
   updateTier(state, { tierId, tier }) {
