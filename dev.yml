@@ -6,18 +6,13 @@ volumes:
 
 services:
   django: &django
-    build:
-      context: .
-      dockerfile: ./compose/local/django/Dockerfile
-    image: memberships_local_django
-    container_name: memberships_django
+    image: v1k45/fanmo:dev-latest
     depends_on:
       - postgres
       - mailhog
-    volumes:
-      - ./backend:/app:z
     env_file:
       - ./.envs/.dev/.django
+      - ./.envs/.dev/.nuxt
       - ./.envs/.dev/.postgres
     ports:
       - "8801:8000"
@@ -25,10 +20,13 @@ services:
 
   qcluster:
     <<: *django
-    image: memberships_local_qcluster
-    container_name: memberships_qcluster
     ports: []
     command: /qcluster
+
+  nuxt:
+    <<: *django
+    ports: []
+    command: /nuxt
 
   postgres:
     build:
@@ -63,19 +61,6 @@ services:
       - ./Caddyfile.local:/etc/caddy/Caddyfile
       - ./caddy/data:/data
       - ./caddy/config:/config
-      - ./build:/var/www/html
     ports:
       - "7070:80"
       - "7777:443"
-
-  nuxt:
-    build:
-      context: .
-      dockerfile: ./compose/local/nuxt/Dockerfile
-    image: memberships_local_nuxt
-    container_name: memberships_nuxt
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    env_file:
-      - ./.envs/.dev/.nuxt
