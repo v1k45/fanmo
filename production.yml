@@ -5,9 +5,6 @@ volumes:
 
 services:
   django: &django
-    build:
-      context: .
-      dockerfile: ./compose/production/django/Dockerfile
     image: v1k45/fanmo:latest
     depends_on:
       - postgres
@@ -26,7 +23,7 @@ services:
   nuxt:
     <<: *django
     ports: []
-    command: /qcluster
+    command: /nuxt
 
   proxy:
     image: "caddy:2.5.1"

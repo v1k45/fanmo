@@ -79,6 +79,7 @@ RUN npm install --global yarn
 RUN yarn add nuxt-start 
 ENV PATH="$PATH:./node_modules/.bin"
 
+# Utilitiy scripts
 COPY --chown=django:django ./compose/production/django/entrypoint /entrypoint
 RUN sed -i 's/\r$//g' /entrypoint
 RUN chmod +x /entrypoint
@@ -86,6 +87,14 @@ RUN chmod +x /entrypoint
 COPY --chown=django:django ./compose/production/django/start /start
 RUN sed -i 's/\r$//g' /start
 RUN chmod +x /start
+
+COPY --chown=django:django ./compose/production/django/qcluster /qcluster
+RUN sed -i 's/\r$//g' /qcluster
+RUN chmod +x /qcluster
+
+COPY --chown=django:django ./compose/production/django/nuxt /nuxt
+RUN sed -i 's/\r$//g' /nuxt
+RUN chmod +x /nuxt
 
 # copy application code to WORKDIR
 COPY --chown=django:django ./frontend/nuxt.config.js ${APP_HOME}
