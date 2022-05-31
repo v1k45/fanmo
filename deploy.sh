@@ -3,5 +3,6 @@
 
 sudo docker-compose -f dev.yml stop
 git pull
+sudo docker-compose -f dev.yml pull
 sudo docker-compose -f dev.yml build
 sudo docker-compose -f dev.yml up -d
