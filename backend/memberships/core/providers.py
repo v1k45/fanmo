@@ -12,7 +12,6 @@ class EmailNotificationProvider(BaseNotificationProvider):
         for key, value in payload.items():
             if key == "body_html":
                 message.attach_alternative(value, "text/html")
-                message.content_subtype = "html"  # Main content is now text/html
             else:
                 setattr(message, key, value)
         return message

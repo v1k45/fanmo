@@ -32,7 +32,7 @@ class EmailNotificationChannel(BaseNotificationChannel):
 
     def render_template(self, suffix, format="txt", **context):
         return render_to_string(
-            f"maizzle/{self.notification.action}_{suffix}.txt",
+            f"maizzle/{self.notification.action}_{suffix}.{format}",
             {
                 "notification": self.notification,
                 "obj": self.notification.obj,
