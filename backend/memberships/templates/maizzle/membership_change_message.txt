@@ -1,6 +1,6 @@
 Hi {{ obj.fan_user.display_name }},
-Your {{ obj.tier.name }} membership has been successfully renewed.
-You were charged {{ obj.active_subscription.plan.amount }}. Your next renewal is on {{ obj.active_subscription.cycle_end_at }}.
+Your {{ obj.creator_user.display_name }} membership tier has been successfully updated to {{ obj.scheduled_subscription.plan.tier.name }}.
+You will be charged {{ obj.scheduled_subscription.plan.amount }} per month from {{ obj.scheduled_subscription.cycle_start_at }}.
 If you wish to contact {{ obj.creator_user.display_name }} directly, you can reply this email, or send email on {{ obj.creator_user.email }} mailto:{{ obj.creator_user.email }}
 
 View Memberships →
