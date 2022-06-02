@@ -1,0 +1,17 @@
+Hi {{ notification.recipient.display_name }},
+{{ obj.author_user.display_name }} replied your comment on {{ obj.post.title }}.
+
+{{ obj.body }}
+
+View Post →
+
+{{ settings.BASE_URL }}{% url 'post_detail' obj.post.slug obj.post.id %}
+
+‌
+
+Not sure why you received this email? Please let us knowhttps://example.com.
+
+Fanmo
+
+Support https://maizzle.com/docs/ •
+Website https://github.com/maizzle
