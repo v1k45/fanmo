@@ -32,7 +32,6 @@ from memberships.users.api.views import (
 from memberships.posts.api.views import CommentViewSet, PostViewSet
 from memberships.analytics.api.views import AnalyticsAPIView
 from memberships.subscriptions.api.views import (
-    MembersViewSet,
     MembershipViewSet,
     SubscriptionViewSet,
     TierViewSet,
@@ -55,7 +54,6 @@ router.register("activities", CreatorActivityViewSet, basename="activities")
 router.register("tiers", TierViewSet, basename="tiers")
 router.register("posts", PostViewSet, basename="posts")
 router.register("comments", CommentViewSet, basename="comments")
-router.register("members", MembersViewSet, basename="members")
 router.register("memberships", MembershipViewSet, basename="memberships")
 router.register("subscriptions", SubscriptionViewSet, basename="subscriptions")
 router.register("donations", DonationViewSet, basename="donations")
