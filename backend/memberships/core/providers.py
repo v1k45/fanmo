@@ -1,6 +1,7 @@
 from django.core.mail import get_connection, EmailMultiAlternatives
 
 from notifications.providers import BaseNotificationProvider
+from memberships.users.models import CreatorActivity
 
 
 class EmailNotificationProvider(BaseNotificationProvider):
@@ -24,3 +25,13 @@ class EmailNotificationProvider(BaseNotificationProvider):
         messages = (self._get_email_message(payload) for payload in payloads)
         connection = get_connection()
         connection.send_messages(messages)
+
+
+class CreatorActivityProvider(BaseNotificationProvider):
+    name = "creator_activity"
+
+    def send(self, payload):
+        payload.save()
+
+    def send_bulk(self, payloads):
+        CreatorActivity.objects.bulk_create(payloads)

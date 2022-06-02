@@ -1,8 +1,9 @@
 import pytest
 from decimal import Decimal
 from moneyed import Money, INR
+from memberships.core.models import NotificationType
 
-from memberships.users.models import User, CreatorActivity
+from memberships.users.models import User, CreatorActivity, UserPreference
 from memberships.donations.models import Donation
 from memberships.posts.models import Post, Comment, Content
 from django.conf import settings
@@ -652,3 +653,25 @@ class TestActivitiesAPI:
         )
         assert response_data["results"][3]["membership"]["id"] == active_membership.id
         assert response_data["results"][3]["fan_user"]["username"] == user.username
+
+
+class TestNotificationSettings:
+    @pytest.mark.parametrize("notification_type", NotificationType.values)
+    def test_can_send_email_notification_all_allowed(self, user, notification_type):
+        print(notification_type)
+        assert user.user_preferences.can_send_email_notification(notification_type)
+
+    @pytest.mark.parametrize("notification_type", NotificationType.values)
+    def test_can_send_email_notification_disallow_allowed(
+        self, user, notification_type
+    ):
+        prefs: UserPreference = user.user_preferences
+        prefs.notify_comment_replies = False
+        prefs.notify_post_comments = False
+        prefs.notify_following_posts = False
+        prefs.notify_donations = False
+        prefs.notify_memberships = False
+        prefs.notify_marketing = False
+        prefs.save()
+
+        assert not prefs.can_send_email_notification(notification_type)

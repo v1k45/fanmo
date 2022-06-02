@@ -11,6 +11,8 @@ from djmoney.models.fields import MoneyField
 from simple_history.models import HistoricalRecords
 from versatileimagefield.fields import VersatileImageField
 from memberships.core.notifications import (
+    notify_membership_change,
+    notify_membership_renewed,
     notify_new_membership,
     notify_membership_stop,
     notify_membership_halted,
@@ -187,6 +189,13 @@ class Membership(BaseModel):
         plan.create_external()
         self.scheduled_subscription = active_subscription.update(plan)
         self.save()
+
+        # membership change does not require further actions, safe to notify user now.
+        if (
+            self.scheduled_subscription.external_id
+            == self.active_subscription.external_id
+        ):
+            async_task(notify_membership_change, self.id)
 
     def cancel(self):
         active_subscription = self.active_subscription
@@ -416,7 +425,7 @@ class Subscription(BaseModel):
         target=Status.SCHEDULED_TO_ACTIVATE,
     )
     def schedule_to_activate(self):
-        pass
+        async_task(notify_membership_change, self.membership_id)
 
     @transition(
         field=status,
@@ -526,7 +535,7 @@ class Subscription(BaseModel):
         """Subscription was renewned"""
         self.cycle_end_at = cycle_end_at
         self.membership.activate(self)
-        async_task(notify_new_membership, self.membership_id)
+        async_task(notify_membership_renewed, self.membership_id)
 
     def can_halt(self):
         halt_date = self.cycle_end_at + relativedelta(

@@ -3,10 +3,19 @@ from functools import cached_property, lru_cache
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.core.serializers.json import DjangoJSONEncoder
 from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
 from versatileimagefield.fields import VersatileImageField
 from simple_history.models import HistoricalRecords
+from memberships.core.models import (
+    COMMENT_NOTIFICATIONS,
+    COMMENT_REPLY_NOTIFICATIONS,
+    DONATION_NOTIFICATIONS,
+    MARKETING_NOTIFICATIONS,
+    MEMBERSHIP_NOTIFICATIONS,
+    POST_NOTIFICATIONS,
+)
 
 from memberships.payments.models import BankAccount
 from memberships.utils.models import BaseModel
@@ -41,9 +50,6 @@ class User(BaseModel, AbstractUser):
     )
     subscriber_count = models.PositiveSmallIntegerField(default=0)
     follower_count = models.PositiveSmallIntegerField(default=0)
-
-    def get_absolute_url(self):
-        return reverse("users:detail", kwargs={"username": self.username})
 
     def public_tiers(self):
         return self.tiers.filter(is_public=True)
@@ -145,6 +151,20 @@ class UserPreference(BaseModel):
 
     history = HistoricalRecords()
 
+    def can_send_email_notification(self, email_type):
+        if email_type in POST_NOTIFICATIONS:
+            return self.notify_following_posts
+        elif email_type in COMMENT_NOTIFICATIONS:
+            return self.notify_post_comments
+        elif email_type in COMMENT_REPLY_NOTIFICATIONS:
+            return self.notify_comment_replies
+        elif email_type in DONATION_NOTIFICATIONS:
+            return self.notify_donations
+        elif email_type in MEMBERSHIP_NOTIFICATIONS:
+            return self.notify_memberships
+        elif email_type in MARKETING_NOTIFICATIONS:
+            return self.notify_marketing
+
 
 class UserOnboarding(BaseModel):
     class Status(models.TextChoices):
@@ -214,4 +234,4 @@ class CreatorActivity(BaseModel):
     )
 
     # {tier: {id, name}, old_tier: {id, name}}
-    data = models.JSONField(default=dict)
+    data = models.JSONField(default=dict, encoder=DjangoJSONEncoder)

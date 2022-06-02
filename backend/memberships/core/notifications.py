@@ -1,37 +1,25 @@
 from django.db.models import Q
 from notifications.utils import notify
-from django.utils import timezone
+from memberships.core.models import NotificationType
 
 
 def notify_new_membership(membership_id):
     from memberships.subscriptions.models import Membership
-    from memberships.users.models import CreatorActivity
 
     membership = Membership.objects.get(id=membership_id)
 
     notify(
         recipient=membership.creator_user,
         obj=membership,
-        action="new_member",
-        category="memberships",
+        action=NotificationType.NEW_MEMBER,
         silent=True,
-        channels=("email",),
+        channels=("email", "creator_activity"),
     )
-    CreatorActivity.objects.create(
-        type=CreatorActivity.Type.NEW_MEMBERSHIP,
-        membership=membership,
-        data={"tier": {"id": membership.tier.id, "name": membership.tier.name}},
-        message=f"{membership.fan_user.display_name} joined {membership.tier.name}",
-        creator_user=membership.creator_user,
-        fan_user=membership.fan_user,
-    )
-
     notify(
         source=membership.creator_user,
         recipient=membership.fan_user,
         obj=membership,
-        action="new_membership",
-        category="memberships",
+        action=NotificationType.NEW_MEMBERSHIP,
         silent=True,  # Don't persist to the database
         channels=("email",),
         extra_data={
@@ -42,25 +30,21 @@ def notify_new_membership(membership_id):
 
 def notify_membership_renewed(membership_id):
     from memberships.subscriptions.models import Membership
-    from memberships.users.models import CreatorActivity
 
     membership = Membership.objects.get(id=membership_id)
 
-    CreatorActivity.objects.create(
-        type=CreatorActivity.Type.MEMBERSHIP_UPDATE,
-        membership=membership,
-        data={"tier": {"id": membership.tier.id, "name": membership.tier.name}},
-        message=f"{membership.fan_user.display_name} renewed {membership.tier.name}",
-        creator_user=membership.creator_user,
-        fan_user=membership.fan_user,
+    notify(
+        recipient=membership.creator_user,
+        obj=membership,
+        action=NotificationType.MEMBER_RENEW,
+        silent=True,
+        channels=("creator_activity",),
     )
-
     notify(
         source=membership.creator_user,
         recipient=membership.fan_user,
         obj=membership,
-        action="membership_renew",
-        category="memberships",
+        action=NotificationType.MEMBERSHIP_RENEW,
         silent=True,  # Don't persist to the database
         channels=("email",),
         extra_data={
@@ -71,7 +55,6 @@ def notify_membership_renewed(membership_id):
 
 def notify_membership_change(membership_id):
     from memberships.subscriptions.models import Membership
-    from memberships.users.models import CreatorActivity
 
     membership = Membership.objects.get(id=membership_id)
     old_tier = membership.tier
@@ -80,10 +63,9 @@ def notify_membership_change(membership_id):
     notify(
         recipient=membership.creator_user,
         obj=membership,
-        action="member_change",
-        category="memberships",
+        action=NotificationType.MEMBER_CHANGE,
         silent=True,
-        channels=("email",),
+        channels=("creator_activity",),
         extra_data={
             "context": {
                 "old_tier": old_tier,
@@ -91,27 +73,11 @@ def notify_membership_change(membership_id):
             }
         },
     )
-    CreatorActivity.objects.create(
-        type=CreatorActivity.Type.MEMBERSHIP_UPDATE,
-        membership=membership,
-        data={
-            "tier": {"id": old_tier.id, "name": old_tier.name},
-            "new_tier": {"id": new_tier.id, "name": new_tier.name},
-        },
-        message=(
-            f"{membership.fan_user.display_name} updated membership from {old_tier.name} to {new_tier.name}. "
-            f"The change will go live on {membership.active_subscription.cycle_end_at:%d %b %Y}"
-        ),
-        creator_user=membership.creator_user,
-        fan_user=membership.fan_user,
-    )
-
     notify(
         source=membership.creator_user,
         recipient=membership.fan_user,
         obj=membership,
-        action="membership_change",
-        category="memberships",
+        action=NotificationType.MEMBERSHIP_CHANGE,
         silent=True,  # Don't persist to the database
         channels=("email",),
         extra_data={
@@ -122,28 +88,21 @@ def notify_membership_change(membership_id):
 
 def notify_membership_stop(membership_id):
     from memberships.subscriptions.models import Membership
-    from memberships.users.models import CreatorActivity
 
     membership = Membership.objects.get(id=membership_id)
 
-    message = f"{membership.fan_user.display_name} has cancelled {membership.tier.name} membership."
-    if membership.active_subscription.cycle_end_at > timezone.now():
-        message += f" The change will go live on {membership.active_subscription.cycle_end_at:%d %b %Y}."
-
-    CreatorActivity.objects.create(
-        type=CreatorActivity.Type.MEMBERSHIP_STOP,
-        membership=membership,
-        message=message,
-        creator_user=membership.creator_user,
-        fan_user=membership.fan_user,
+    notify(
+        recipient=membership.creator_user,
+        obj=membership,
+        action=NotificationType.MEMBER_CANCELLATION_SCHEDULED,
+        silent=True,
+        channels=("creator_activity",),
     )
-
     notify(
         source=membership.creator_user,
         recipient=membership.fan_user,
         obj=membership,
-        action="membership_cancellation_scheduled",
-        category="memberships",
+        action=NotificationType.MEMBERSHIP_CANCELLATION_SCHEDULED,
         silent=True,  # Don't persist to the database
         channels=("email",),
         extra_data={
@@ -154,24 +113,21 @@ def notify_membership_stop(membership_id):
 
 def notify_membership_pending(membership_id):
     from memberships.subscriptions.models import Membership
-    from memberships.users.models import CreatorActivity
 
     membership = Membership.objects.get(id=membership_id)
 
-    CreatorActivity.objects.create(
-        type=CreatorActivity.Type.MEMBERSHIP_STOP,
-        membership=membership,
-        message=f"{membership.fan_user.display_name}'s {membership.tier.name} membership renewal failed. It will be retried on next working day.",
-        creator_user=membership.creator_user,
-        fan_user=membership.fan_user,
+    notify(
+        recipient=membership.creator_user,
+        obj=membership,
+        action=NotificationType.MEMBER_PAYMENT_FAILED,
+        silent=True,
+        channels=("creator_activity",),
     )
-
     notify(
         source=membership.creator_user,
         recipient=membership.fan_user,
         obj=membership,
-        action="membership_payment_failed",
-        category="memberships",
+        action=NotificationType.MEMBERSHIP_PAYMENT_FAILED,
         silent=True,  # Don't persist to the database
         channels=("email",),
         extra_data={
@@ -182,23 +138,20 @@ def notify_membership_pending(membership_id):
 
 def notify_membership_halted(membership_id):
     from memberships.subscriptions.models import Membership
-    from memberships.users.models import CreatorActivity
 
     membership = Membership.objects.get(id=membership_id)
-    CreatorActivity.objects.create(
-        type=CreatorActivity.Type.MEMBERSHIP_STOP,
-        membership=membership,
-        message=f"{membership.fan_user.display_name}'s {membership.tier.name} membership was cancelled due to non-payment.",
-        creator_user=membership.creator_user,
-        fan_user=membership.fan_user,
+    notify(
+        recipient=membership.creator_user,
+        obj=membership,
+        action=NotificationType.MEMBER_HALTED,
+        silent=True,
+        channels=("creator_activity",),
     )
-
     notify(
         source=membership.creator_user,
         recipient=membership.fan_user,
         obj=membership,
-        action="membership_halted",
-        category="memberships",
+        action=NotificationType.MEMBERSHIP_HALTED,
         silent=True,  # Don't persist to the database
         channels=("email",),
         extra_data={
@@ -209,31 +162,20 @@ def notify_membership_halted(membership_id):
 
 def notify_donation(donation_id):
     from memberships.donations.models import Donation
-    from memberships.users.models import CreatorActivity
 
     donation = Donation.objects.get(id=donation_id)
 
     notify(
         recipient=donation.creator_user,
         obj=donation,
-        action="donation_received",
-        category="donations",
+        action=NotificationType.DONATION_RECEIVED,
         silent=True,
-        channels=("email",),
+        channels=("email", "creator_activity"),
     )
-    CreatorActivity.objects.create(
-        type=CreatorActivity.Type.DONATION,
-        donation=donation,
-        message=f"{donation.fan_user.display_name} donated {donation.amount}",
-        creator_user=donation.creator_user,
-        fan_user=donation.fan_user,
-    )
-
     notify(
         recipient=donation.fan_user,
         obj=donation,
-        action="donation_sent",
-        category="donations",
+        action=NotificationType.DONATION_SENT,
         silent=True,
         channels=("email",),
     )
@@ -259,8 +201,7 @@ def notify_new_post(post_id):
     notify(
         source=creator_user,
         obj=post,
-        action="new_post",
-        category="post",
+        action=NotificationType.NEW_POST,
         silent=True,
         channels=("email",),
         extra_data={
@@ -274,7 +215,6 @@ def notify_new_post(post_id):
 
 def notify_comment(comment_id):
     from memberships.posts.models import Comment
-    from memberships.users.models import CreatorActivity
 
     # do not send notification if the commentor is same as post author
     comment = Comment.objects.get(id=comment_id)
@@ -284,15 +224,16 @@ def notify_comment(comment_id):
     notify(
         recipient=comment.post.author_user,
         obj=comment,
-        action="comment",
-        category="post",
+        action=NotificationType.COMMENT,
         silent=True,
-        channels=("email",),
+        channels=("email", "creator_activity"),
     )
-    CreatorActivity.objects.create(
-        type=CreatorActivity.Type.COMMENT,
-        comment=comment,
-        message=f"{comment.author_user.display_name} commmented on {comment.post.title}",
-        creator_user=comment.post.author_user,
-        fan_user=comment.author_user,
-    )
+    parent_comment = comment.parent
+    if parent_comment and parent_comment.author_user_id != comment.author_user_id:
+        notify(
+            recipient=comment.author_user,
+            obj=comment,
+            action=NotificationType.COMMENT_REPLY,
+            silent=True,
+            channels=("email",),
+        )
