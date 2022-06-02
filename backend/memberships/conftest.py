@@ -2,6 +2,7 @@ from decimal import Decimal
 import pytest
 from moneyed import Money, INR
 from rest_framework.test import APIClient
+from memberships.core.tasks import register_scheduled_tasks
 from memberships.analytics.utils import register_metrics
 from memberships.subscriptions.models import Membership, Subscription
 
@@ -27,8 +28,9 @@ def media_storage(settings, tmpdir):
 
 
 @pytest.fixture(autouse=True)
-def setup_metrics():
+def initialize_helpers():
     register_metrics()
+    register_scheduled_tasks()
 
 
 @pytest.fixture
