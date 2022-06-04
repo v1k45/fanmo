@@ -8,7 +8,7 @@ def register_scheduled_tasks():
             "schedule_type": Schedule.HOURLY,
         },
         {
-            "func": "memberships.subscriptions.tasks.refresh_all_stats",
+            "func": "memberships.analytics.tasks.refresh_all_stats",
             "schedule_type": Schedule.HOURLY,
         },
     ]
