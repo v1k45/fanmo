@@ -29,6 +29,7 @@ class PlanFactory(DjangoModelFactory):
 
 class SubscriptionFactory(DjangoModelFactory):
     plan = SubFactory(PlanFactory)
+    payment_method = Subscription.PaymentMethod.CARD
     external_id = Faker("uuid4")
 
     class Meta:

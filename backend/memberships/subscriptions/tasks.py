@@ -1,5 +1,6 @@
 from django.db import transaction
 from django_fsm import can_proceed
+from django_q.tasks import async_task
 from memberships.analytics.tasks import refresh_stats
 from memberships.subscriptions.models import Membership, Subscription
 
@@ -44,3 +45,10 @@ def refresh_membership(membership_id: int):
         active_subscription.save()
 
     refresh_stats(active_subscription.creator_user_id)
+
+
+def refresh_creator_memberships(creator_user_id):
+    for membership_id in Membership.objects.filter(
+        creator_user_id=creator_user_id
+    ).values_list("id", flat=True):
+        async_task(refresh_membership, membership_id)
