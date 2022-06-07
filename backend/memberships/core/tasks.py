@@ -8,14 +8,14 @@ def register_scheduled_tasks():
             "defaults": {
                 "func": "memberships.subscriptions.tasks.refresh_all_memberships",
                 "schedule_type": Schedule.HOURLY,
-            }
+            },
         },
         {
             "name": "refresh_all_stats",
             "defaults": {
                 "func": "memberships.analytics.tasks.refresh_all_stats",
                 "schedule_type": Schedule.HOURLY,
-            }
+            },
         },
     ]
     for task in tasks:
