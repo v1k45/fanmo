@@ -276,3 +276,47 @@ class TestProcessRazorpayWebhook:
                 ]
             },
         )
+
+    def test_transfer_processed(self, creator_user, user, mocker):
+        donation = Donation.objects.create(
+            creator_user=creator_user,
+            fan_user=user,
+            amount=Money(Decimal("100"), INR),
+            external_id="don_123",
+            status=Donation.Status.SUCCESSFUL,
+        )
+        payment = Payment.objects.create(
+            type=Payment.Type.DONATION,
+            donation=donation,
+            creator_user=creator_user,
+            fan_user=user,
+            amount=Money(Decimal("100"), INR),
+            method=Payment.Status.CAPTURED,
+        )
+        payout = Payout.objects.create(
+            payment=payment,
+            status=Payout.Status.SCHEDULED,
+            amount=Money(Decimal("95.10"), INR),
+            bank_account=creator_user.bank_accounts.get(),
+            external_id="trf_123",
+        )
+        webhook_payload = {
+            "event": "transfer.processed",
+            "payload": {
+                "transfer": {
+                    "entity": {
+                        "id": payout.external_id,
+                    },
+                },
+            },
+        }
+        webhook_message = WebhookMessage.objects.create(
+            sender=WebhookMessage.Sender.RAZORPAY,
+            external_id="rzp_001",
+            payload=webhook_payload,
+        )
+
+        process_razorpay_webhook(webhook_message.id)
+
+        payout = Payout.objects.get(payment=payment)
+        assert payout.status == Payout.Status.PROCESSED

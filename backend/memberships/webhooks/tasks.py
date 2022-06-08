@@ -153,9 +153,9 @@ def order_paid(payload):
 
 def transfer_processed(payload):
     transfer_id = payload["payload"]["transfer"]["entity"]["id"]
-    payout = Payout.objects.filter(
-        external_id=transfer_id, status=Payout.Status.SCHEDULED
-    ).update(status=Payout.Status.PROCESSED)
+    payout = Payout.objects.get(external_id=transfer_id)
+    payout.status = Payout.Status.PROCESSED
+    payout.save()
     refresh_stats(payout.payment.creator_user_id)
 
 
