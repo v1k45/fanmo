@@ -88,13 +88,6 @@ class Payment(BaseModel):
         subscription.authenticate()
 
         razorpay_payment = razorpay_client.payment.fetch(payload["razorpay_order_id"])
-        if can_proceed(subscription.activate):
-            subscription.activate()
-        else:
-            subscription.schedule_to_activate()
-        subscription.payment_method = razorpay_payment["method"]
-        subscription.save()
-
         # TODO: figure out what to with authentication payments.
         # make sure payment is not already processed?
         # allow soft reprocessing if it is for real local subscription.
@@ -114,6 +107,12 @@ class Payment(BaseModel):
                 "method": razorpay_payment["method"],
             },
         )
+        subscription.payment_method = razorpay_payment["method"]
+        if can_proceed(subscription.activate):
+            subscription.activate()
+        else:
+            subscription.schedule_to_activate()
+        subscription.save()
         return payment
 
     @classmethod

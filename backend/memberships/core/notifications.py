@@ -7,6 +7,7 @@ def notify_new_membership(membership_id):
     from memberships.subscriptions.models import Membership
 
     membership = Membership.objects.get(id=membership_id)
+    assert membership.is_active, "Membership is not active. This notification will be retried."
 
     notify(
         recipient=membership.creator_user,
