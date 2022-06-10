@@ -1,3 +1,4 @@
+import time
 from django.db.models import Q
 from notifications.utils import notify
 from memberships.core.models import NotificationType
@@ -7,7 +8,12 @@ def notify_new_membership(membership_id):
     from memberships.subscriptions.models import Membership
 
     membership = Membership.objects.get(id=membership_id)
-    assert membership.is_active, "Membership is not active. This notification will be retried."
+    # ensure that membership is in correct state.
+    # TODO: use a better task queue.
+    if not membership.is_active:
+        time.sleep(10)
+        membership.refresh_from_db()
+        assert membership.is_active, "Membership is not active. Cannot proceed."
 
     notify(
         recipient=membership.creator_user,

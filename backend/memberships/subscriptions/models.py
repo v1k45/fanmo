@@ -373,6 +373,7 @@ class Subscription(BaseModel):
             "plan_id": self.plan.external_id,
             "total_count": 12,
             "notes": {"external_id": self.id},
+            "customer_notify": 0
         }
         if self.cycle_start_at > timezone.now():
             subscription_data["start_at"] = int(self.cycle_start_at.timestamp())

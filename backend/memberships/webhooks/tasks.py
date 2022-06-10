@@ -53,7 +53,9 @@ def subscription_charged(payload):
         cycle_end_at = timezone.make_aware(
             datetime.fromtimestamp(subscription_payload["current_end"])
         )
-        subscription.renew(cycle_end_at)
+        # only renew if needed.
+        if cycle_end_at.date() != subscription.cycle_end_at.date():
+            subscription.renew(cycle_end_at)
     subscription.save()
 
     # record the payment
