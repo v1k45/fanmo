@@ -221,6 +221,7 @@ class TestMembershipFlow:
                 "plan_id": "plan_123",
                 "total_count": 12,
                 "notes": {"external_id": response_data["scheduled_subscription"]["id"]},
+                "customer_notify": 0,
             }
         )
 
@@ -288,6 +289,7 @@ class TestMembershipFlow:
                 "plan_id": "plan_123",
                 "total_count": 12,
                 "notes": {"external_id": response_data["scheduled_subscription"]["id"]},
+                "customer_notify": 0,
             }
         )
 
@@ -523,6 +525,7 @@ class TestMembershipFlow:
                     active_membership.scheduled_subscription.cycle_start_at.timestamp()
                 ),
                 "notes": {"external_id": response_data["scheduled_subscription"]["id"]},
+                "customer_notify": 0,
             }
         )
 
