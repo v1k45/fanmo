@@ -56,7 +56,7 @@ class TestAnalyticsAPI:
         )
 
         api_client.force_authenticate(creator_user)
-        response = api_client.get("/api/analytics/")
+        response = api_client.get("/api/stats/")
         assert response.json()[metric_ref] == {
             "current": "150.00",
             "last": "100.00",
@@ -114,7 +114,7 @@ class TestAnalyticsAPI:
         )
 
         api_client.force_authenticate(creator_user)
-        response = api_client.get("/api/analytics/?period=month")
+        response = api_client.get("/api/stats/?period=month")
         assert response.json()[metric_ref] == {
             "current": "150.00",
             "last": "100.00",
@@ -175,7 +175,7 @@ class TestAnalyticsAPI:
         )
 
         api_client.force_authenticate(creator_user)
-        response = api_client.get("/api/analytics/?period=lifetime")
+        response = api_client.get("/api/stats/?period=lifetime")
         assert response.json()[metric_ref] == {
             "current": "650.00",
             "last": "0.00",
