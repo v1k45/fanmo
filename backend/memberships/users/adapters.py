@@ -101,7 +101,9 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
         user = super().populate_user(request, sociallogin, data)
         user.name = f"{user.first_name} {user.last_name}".strip()
         if not user.email:
-            raise ValidationError("Email is required. Please grant email permissions to proceed.")
+            raise ValidationError(
+                "Email is required. Please grant email permissions to proceed."
+            )
         user.email_verified = True
         return user
 
