@@ -223,8 +223,9 @@
             <td>
               <div class="flex items-center">
                 <template v-if="payment.payout">
-                  <div v-if="payment.payout.status === 'scheduled'" class="animate-pulse block h-em w-em rounded-full bg-fm-warning mr-2"></div>
-                  <div v-else-if="payment.payout.status === 'processed'" class="block h-em w-em rounded-full bg-fm-success mr-2"></div>
+                  <div v-if="payment.payout.status === 'scheduled'" class="animate-pulse block h-em w-em rounded-full bg-gray-300 mr-2"></div>
+                  <div v-else-if="payment.payout.status === 'processed'" class="block h-em w-em rounded-full bg-fm-warning mr-2"></div>
+                  <div v-else-if="payment.payout.status === 'settled'" class="block h-em w-em rounded-full bg-fm-success mr-2"></div>
                   {{ $currency(payment.payout.amount) }}
                 </template>
                 <template v-else>

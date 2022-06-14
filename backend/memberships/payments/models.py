@@ -152,6 +152,7 @@ class Payout(BaseModel):
     class Status(models.TextChoices):
         SCHEDULED = "scheduled"
         PROCESSED = "processed"
+        SETTLED = "settled"
 
     payment = models.OneToOneField(
         "payments.Payment", on_delete=models.CASCADE, related_name="payout"

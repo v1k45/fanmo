@@ -5,6 +5,7 @@ from django.db.transaction import atomic
 from django_fsm import can_proceed
 from moneyed import Money, get_currency
 from memberships.analytics.tasks import refresh_stats
+from memberships.utils import razorpay_client
 
 from memberships.donations.models import Donation
 from memberships.payments.models import Payment, Payout
@@ -25,6 +26,7 @@ def process_razorpay_webhook(webhook_message_id):
         "subscription.halted": subscription_halted,
         "order.paid": order_paid,
         "transfer.processed": transfer_processed,
+        "settlement.processed": settlement_processed,
     }
     event_name = webhook_message.payload["event"]
     if event_name in handlers:
@@ -159,6 +161,15 @@ def transfer_processed(payload):
     payout.status = Payout.Status.PROCESSED
     payout.save()
     refresh_stats(payout.payment.creator_user_id)
+
+
+def settlement_processed(payload):
+    settlement_id = payload["payload"]["settlement"]["entity"]["id"]
+    transfers = razorpay_client.transfer.all({"recipient_settlement_id": settlement_id})
+    transfer_ids = [transfer["id"] for transfer in transfers["items"]]
+    payouts = Payout.objects.filter(external_id__in=transfer_ids)
+    payouts.update(status=Payout.Status.SETTLED)
+    refresh_stats(payouts.first().payment.creator_user_id)
 
 
 def get_money_from_subunit(amount, currency_code):

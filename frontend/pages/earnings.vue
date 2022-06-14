@@ -26,7 +26,7 @@
         <div class="text-xs sm:text-sm text-gray-600">payout processed</div>
       </div>
       <div class="ml-3 sm:ml-10">
-        <div class="text-lg sm:text-3xl font-bold">{{ $currency(stats.total_payout_processed || 0) }}</div>
+        <div class="text-lg sm:text-3xl font-bold">{{ $currency(stats.total_payout_scheduled || 0) }}</div>
         <div class="text-xs sm:text-sm text-gray-600">payout scheduled</div>
       </div>
     </div>
@@ -119,8 +119,9 @@
           <td>
             <div class="flex items-center">
               <template v-if="earning.payout">
-                <div v-if="earning.payout.status === 'scheduled'" class="animate-pulse block h-em w-em rounded-full bg-fm-warning mr-2"></div>
-                <div v-else-if="earning.payout.status === 'processed'" class="block h-em w-em rounded-full bg-fm-success mr-2"></div>
+                <div v-if="earning.payout.status === 'scheduled'" class="animate-pulse block h-em w-em rounded-full bg-gray-300 mr-2"></div>
+                <div v-else-if="earning.payout.status === 'processed'" class="block h-em w-em rounded-full bg-fm-warning mr-2"></div>
+                <div v-else-if="earning.payout.status === 'settled'" class="block h-em w-em rounded-full bg-fm-success mr-2"></div>
                 {{ $currency(earning.payout.amount) }}
               </template>
               <template v-else>

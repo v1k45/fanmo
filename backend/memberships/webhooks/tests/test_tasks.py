@@ -277,7 +277,7 @@ class TestProcessRazorpayWebhook:
             },
         )
 
-    def test_transfer_processed(self, creator_user, user, mocker):
+    def test_transfer_processed(self, creator_user, user):
         donation = Donation.objects.create(
             creator_user=creator_user,
             fan_user=user,
@@ -320,3 +320,54 @@ class TestProcessRazorpayWebhook:
 
         payout = Payout.objects.get(payment=payment)
         assert payout.status == Payout.Status.PROCESSED
+
+    def test_settlement_processed(self, creator_user, user, mocker):
+        transfer_mock = mocker.patch(
+            "memberships.payments.models.razorpay_client.transfer.all",
+            return_value={"items": [{"id": "trf_123"}]},
+        )
+
+        donation = Donation.objects.create(
+            creator_user=creator_user,
+            fan_user=user,
+            amount=Money(Decimal("100"), INR),
+            external_id="don_123",
+            status=Donation.Status.SUCCESSFUL,
+        )
+        payment = Payment.objects.create(
+            type=Payment.Type.DONATION,
+            donation=donation,
+            creator_user=creator_user,
+            fan_user=user,
+            amount=Money(Decimal("100"), INR),
+            method=Payment.Status.CAPTURED,
+        )
+        payout = Payout.objects.create(
+            payment=payment,
+            status=Payout.Status.SCHEDULED,
+            amount=Money(Decimal("95.10"), INR),
+            bank_account=creator_user.bank_accounts.get(),
+            external_id="trf_123",
+        )
+        webhook_payload = {
+            "event": "settlement.processed",
+            "payload": {
+                "settlement": {
+                    "entity": {
+                        "id": "setl_123",
+                    },
+                },
+            },
+        }
+        webhook_message = WebhookMessage.objects.create(
+            sender=WebhookMessage.Sender.RAZORPAY,
+            external_id="rzp_001",
+            payload=webhook_payload,
+        )
+
+        process_razorpay_webhook(webhook_message.id)
+
+        payout = Payout.objects.get(payment=payment)
+        assert payout.status == Payout.Status.SETTLED
+
+        transfer_mock.assert_called_once_with({"recipient_settlement_id": "setl_123"})
