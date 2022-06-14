@@ -23,10 +23,10 @@
       <div class="font-bold text-black uppercase text-sm text-center">or continue in with</div>
 
       <div class="flex space-x-4">
-        <fm-button size="lg" class="mt-6 flex items-center justify-center" block @click="socialLogin">
+        <fm-button size="lg" class="mt-6 flex items-center justify-center" block @click="$auth.loginWith('google')">
           <img src="~/assets/marketing/google.svg" class="h-6 inline-block mr-2" alt="Google G logo"> Google
         </fm-button>
-        <fm-button size="lg" class="mt-6 flex items-center justify-center" block>
+        <fm-button size="lg" class="mt-6 flex items-center justify-center" block @click="$auth.loginWith('facebook')">
           <img src="~/assets/marketing/facebook.svg" class="h-6 inline-block mr-2" alt="Facebook F logo"> Facebook
         </fm-button>
       </div>
@@ -60,10 +60,6 @@ export default {
       } catch (err) {
         this.loginErrors = err.response.data;
       }
-    },
-    async socialLogin() {
-      // TODO: test if we need to switch back to cookie
-      await this.$auth.loginWith('google');
     }
   }
 };

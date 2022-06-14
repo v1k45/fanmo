@@ -7,10 +7,12 @@ from allauth.account.adapter import DefaultAccountAdapter
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
+from django.core.exceptions import ValidationError
 from django.http import HttpRequest
 from django.utils import timezone
 
 import random
+
 from .wordlist import adjectives, animals
 
 
@@ -98,6 +100,8 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
     def populate_user(self, request, sociallogin, data):
         user = super().populate_user(request, sociallogin, data)
         user.name = f"{user.first_name} {user.last_name}".strip()
+        if not user.email:
+            raise ValidationError("Email is required. Please grant email permissions to proceed.")
         user.email_verified = True
         return user
 

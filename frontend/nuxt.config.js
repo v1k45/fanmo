@@ -103,6 +103,19 @@ export default {
         // fuck nuxt-auth
         token: { property: 'username', type: 'google' },
         user: { property: false }
+      },
+      facebook: {
+        clientId: process.env.FACEBOOK_OAUTH2_CLIENT_ID,
+        responseType: 'code',
+        grantType: 'authorization_code',
+        codeChallengeMethod: '',
+        endpoints: {
+          token: '/api/auth/login/facebook/',
+          userInfo: '/api/me/',
+          logout: ''
+        },
+        token: { property: 'username', type: 'facebook' },
+        user: { property: false }
       }
     }
   },

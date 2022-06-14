@@ -12,9 +12,11 @@ export default {
   auth: false,
   layout: 'empty',
   mounted() {
-    // write better code?
-    window.opener.postMessage('refresh_login', {});
-    window.close();
+    if (window.opener) {
+      // write better code?
+      window.opener.postMessage('refresh_login', {});
+      window.close();
+    }
   }
 };
 </script>

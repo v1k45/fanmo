@@ -180,3 +180,4 @@ class FacebookLoginView(LoginViewMixin, SocialLoginView):
     """Login using facebook"""
 
     adapter_class = FacebookOAuth2Adapter
+    client_class = OAuth2Client
