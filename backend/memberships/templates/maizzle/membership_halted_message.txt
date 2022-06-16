@@ -1,15 +1,17 @@
 Hi {{ obj.fan_user.display_name }},
-Your membership with {{ obj.creator_user.display_name }} has been cancelled due to repeated payment failure. If you wish to continue the membership, please update your payment details on the membership page.
 
-View Memberships →
+Your membership with {{ obj.creator_user.display_name }} has been cancelled due to repeated payment failure.
 
-{{ settings.BASE_URL }}{% url 'memberships' %}
+If you wish to continue the membership, please update your payment details on the membership page.
 
-‌
+View Memberships
+      →
 
-Not sure why you received this email? Please let us knowhttps://example.com.
+{{ settings.BASE_URL }}{% 'memberships'  %}
 
 Fanmo
+Need help? Email us on hello@fanmo.in mailto:hello@fanmo.in
 
-Support https://maizzle.com/docs/ •
-Website https://github.com/maizzle
+Website https://fanmo.in •
+Twitter https://twitter.com/getfanmo •
+Facebook https://facebook.com/getfanmo

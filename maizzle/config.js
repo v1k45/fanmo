@@ -10,7 +10,6 @@
 */
 
 module.exports = {
-  plaintext: true,
   build: {
     templates: {
       source: 'src/templates',
@@ -20,6 +19,12 @@ module.exports = {
       assets: {
         source: 'src/images',
         destination: 'images',
+      },
+      plaintext: {
+        source: 'src/templates',
+        destination: {
+          path: 'build_local',
+        },
       },
     },
   },

@@ -10,14 +10,21 @@
 */
 
 module.exports = {
-  plaintext: true,
+  baseURL: {
+    tags: { img: { src: 'https://dev.fanmo.in/static/' } }
+  },
   build: {
     templates: {
       destination: {
         path: '../backend/memberships/templates/maizzle',
       },
+      plaintext: {
+        destination: {
+          path: '../backend/memberships/templates/maizzle',
+        },
+      },
     },
   },
   inlineCSS: true,
-  removeUnusedCSS: true,
+  removeUnusedCSS: true
 }

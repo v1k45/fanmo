@@ -6,8 +6,9 @@
     "watch": "maizzle serve"
   },
   "dependencies": {
-    "@maizzle/cli": "^1.4.0",
-    "@maizzle/framework": "^3.0.0",
-    "global": "^4.4.0"
+    "@maizzle/cli": "^1.5.0",
+    "@maizzle/framework": "^4.0.0",
+    "global": "^4.4.0",
+    "npm": "^8.12.2"
   }
 }

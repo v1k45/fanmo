@@ -22,3 +22,10 @@ The framework for rapid email prototyping
 Docs https://maizzle.com/docs/ •
 Github https://github.com/maizzle •
 Twitter https://twitter.com/maizzlejs
+
+Fanmo
+Need help? Email us on hello@fanmo.in mailto:hello@fanmo.in
+
+Website https://fanmo.in •
+Twitter https://twitter.com/getfanmo •
+Facebook https://facebook.com/getfanmo

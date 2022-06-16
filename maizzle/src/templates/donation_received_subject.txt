@@ -1,1 +1,1 @@
-{{ obj.fan_user.display_name }} sent you {{ obj.amount }}
+{{ obj.fan_user.display_name }} donated {{ obj.amount }}

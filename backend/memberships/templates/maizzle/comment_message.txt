@@ -5,15 +5,14 @@ Hi {{ obj.post.author_user.display_name }},
 
 You can moderate this comment from the post page.
 
-View Post →
+View Post
+      →
 
-{{ settings.BASE_URL }}{% url 'post_detail' obj.post.slug obj.post.id %}
-
-‌
-
-Not sure why you received this email? Please let us knowhttps://example.com.
+{{ settings.BASE_URL }}{% 'post_detail' obj.post.slug obj.post.id %}
 
 Fanmo
+Need help? Email us on hello@fanmo.in mailto:hello@fanmo.in
 
-Support https://maizzle.com/docs/ •
-Website https://github.com/maizzle
+Website https://fanmo.in •
+Twitter https://twitter.com/getfanmo •
+Facebook https://facebook.com/getfanmo

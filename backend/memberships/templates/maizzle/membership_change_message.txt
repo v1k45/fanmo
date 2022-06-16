@@ -1,17 +1,15 @@
 Hi {{ obj.fan_user.display_name }},
 Your {{ obj.creator_user.display_name }} membership tier has been successfully updated to {{ obj.scheduled_subscription.plan.tier.name }}.
-You will be charged {{ obj.scheduled_subscription.plan.amount }} per month from {{ obj.scheduled_subscription.cycle_start_at }}.
-If you wish to contact {{ obj.creator_user.display_name }} directly, you can reply this email, or send email on {{ obj.creator_user.email }} mailto:{{ obj.creator_user.email }}
+You will be charged {{ obj.scheduled_subscription.plan.amount }} per month from {{ obj.scheduled_subscription.cycle_start_at|date:"d F Y" }}.
 
-View Memberships →
+View Memberships
+      →
 
-{{ settings.BASE_URL }}{% url 'memberships' %}
-
-‌
-
-Not sure why you received this email? Please let us knowhttps://example.com.
+{{ settings.BASE_URL }}{% 'memberships'  %}
 
 Fanmo
+Need help? Email us on hello@fanmo.in mailto:hello@fanmo.in
 
-Support https://maizzle.com/docs/ •
-Website https://github.com/maizzle
+Website https://fanmo.in •
+Twitter https://twitter.com/getfanmo •
+Facebook https://facebook.com/getfanmo

@@ -31,30 +31,7 @@
     <div class="hidden">{{{ page.preheader }}}</div>
   </if>
   <div role="article" aria-roledescription="email" aria-label="{{{ page.title || '' }}}" lang="{{ page.language || 'en' }}">
-    <table class="w-full font-sans">
-      <tr>
-        <td align="center" class="bg-gray-100">
-          <table class="w-600 sm:w-full">
-            <component src="src/components/logo.html"></component>
-            <tr>
-              <td align="center" class="sm:px-24">
-                <table class="w-full">
-                  <tr>
-                    <td class="bg-white text-gray-800 text-base text-left p-48 sm:px-24 leading-24 rounded">
-                      <block name="template"></block>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="h-48"></td>
-                  </tr>
-                  <component src="src/components/footer.html"></component>
-                </table>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
+    <block name="template"></block>
   </div>
 </body>
 </html>

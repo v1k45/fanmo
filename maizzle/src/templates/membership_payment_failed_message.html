@@ -4,57 +4,15 @@ bodyClass: bg-gray-100
 
 <extends src="src/layouts/main.html">
   <block name="template">
-    <table class="w-full font-sans">
-      <tr>
-        <td align="center" class="bg-gray-100">
-          <table class="w-600 sm:w-full">
-            <component src="src/components/logo.html"></component>
-            <tr>
-              <td align="center" class="sm:px-24">
-                <table class="w-full">
-                  <tr>
-                    <td class="bg-white text-gray-800 text-base text-left p-48 sm:px-24 leading-24 rounded">
-                      <p class="text-xl sm:leading-32 text-black font-semibold m-0 mb-24">Hi @{{ obj.fan_user.display_name }},</p>
-                      <p>Your membership with @{{ obj.creator_user.display_name }} couldn't be renewed due to payment failure. We will retry the renewal on the next working day, please make sure payments are enabled on your Card or UPI.</p>
-                      <p>If the payment continues to fail, your membership will be cancelled and require a payment update from you. If you think this was a mistake, please contact help@fanmo.in.</p>
-                      <div class="leading-full">
-                        <a
-                          href="@{{ settings.BASE_URL }}{% url 'memberships' %}"
-                          class="inline-block py-16 px-24 rounded text-base font-semibold text-center no-underline text-white bg-blue-500 hover:bg-blue-600"
-                        >
-                          <!--[if mso]><i style="letter-spacing: 24px; mso-font-width: -100%; mso-text-raise:30px;">&#8202;</i><![endif]-->
-                          <span style="mso-text-raise: 16px;">View Memberships &rarr;</span>
-                          <!--[if mso]><i style="letter-spacing: 24px; mso-font-width: -100%;">&#8202;</i><![endif]-->
-                        </a>
-                      </div>
-                      <table class="w-full">
-                        <tr>
-                          <td class="py-32">
-                            <div class="bg-gray-200 h-px leading-px">&zwnj;</div>
-                          </td>
-                        </tr>
-                      </table>
-                      <p class="m-0 mb-16">Not sure why you received this email? Please <a href="https://example.com" class="text-blue-500 underline hover:no-underline">let us know</a>.</p>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="h-48"></td>
-                  </tr>
-                  <tr>
-                    <td class="text-center text-gray-600 text-xs px-24">
-                      <p class="m-0 mb-4">Fanmo</p>
-                      <p class="cursor-default">
-                        <a href="https://maizzle.com/docs/" class="text-blue-500 no-underline hover:underline">Support</a> &bull;
-                        <a href="https://github.com/maizzle" class="text-blue-500 no-underline hover:underline">Website</a>
-                      </p>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
-          </table>
-        </td>
-      </tr>
-    </table>
+    <p class="text-xl sm:leading-32 text-black font-semibold m-0 mb-24">Hi @{{ obj.fan_user.display_name }},</p>
+    <p>Your membership with @{{ obj.creator_user.display_name }} couldn't be renewed due to payment failure. We will
+      retry the renewal on the next working day, please make sure payments are enabled on your Card or UPI.</p>
+    <p>If the payment continues to fail, your membership will be cancelled and require a payment update from you. If you
+      think this was a mistake, please contact help@fanmo.in.</p>
+    <div class="leading-full">
+      <component src="src/components/button.html" target="memberships" args="">
+        View Memberships
+      </component>
+    </div>
   </block>
 </extends>
