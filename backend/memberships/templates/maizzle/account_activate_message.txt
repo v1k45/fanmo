@@ -6,7 +6,7 @@ This code will expire in 5 minutes. If you wish to activate it later, you can re
 
 Activate account→
 
-{{ settings.BASE_URL }}{% 'account_invite' user.email_base64 %}
+{{ settings.BASE_URL }}{% url 'account_invite' user.email_base64 %}
 
 Fanmo
 Need help? Email us on hello@fanmo.in mailto:hello@fanmo.in

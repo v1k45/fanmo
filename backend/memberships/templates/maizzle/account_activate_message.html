@@ -60,7 +60,7 @@
     <p>is your verification code to activate your account on Fanmo.</p>
     <p>This code will expire in 5 minutes. If you wish to activate it later, you can request a new code by clicking the link below:</p>
     <div style="line-height: 100%">
-      <a href="{{ settings.BASE_URL }}{% 'account_invite' user.email_base64 %}" class="hover-bg-blue-600" style="display: inline-block; border-radius: 4px; background-color: #3b82f6; padding-top: 16px; padding-bottom: 16px; padding-left: 24px; padding-right: 24px; text-align: center; font-size: 16px; font-weight: 600; color: #fff; text-decoration-line: none">
+      <a href="{{ settings.BASE_URL }}{% url 'account_invite' user.email_base64 %}" class="hover-bg-blue-600" style="display: inline-block; border-radius: 4px; background-color: #3b82f6; padding-top: 16px; padding-bottom: 16px; padding-left: 24px; padding-right: 24px; text-align: center; font-size: 16px; font-weight: 600; color: #fff; text-decoration-line: none">
     <!--[if mso]><i style="letter-spacing: 24px; mso-font-width: -100%; mso-text-raise:30px;">&#8202;</i><![endif]-->
     <span style="mso-text-raise: 16px">Activate account&rarr;</span>
     <!--[if mso]><i style="letter-spacing: 24px; mso-font-width: -100%;">&#8202;</i><![endif]-->

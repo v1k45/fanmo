@@ -5,7 +5,7 @@ You will be charged {{ obj.scheduled_subscription.plan.amount }} per month from 
 View Memberships
       →
 
-{{ settings.BASE_URL }}{% 'memberships'  %}
+{{ settings.BASE_URL }}{% url 'memberships'  %}
 
 Fanmo
 Need help? Email us on hello@fanmo.in mailto:hello@fanmo.in

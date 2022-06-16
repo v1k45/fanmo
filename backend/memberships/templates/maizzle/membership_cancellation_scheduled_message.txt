@@ -5,7 +5,7 @@ You won't be charged on the next renewal.
 View Memberships
       →
 
-{{ settings.BASE_URL }}{% 'memberships'  %}
+{{ settings.BASE_URL }}{% url 'memberships'  %}
 
 Fanmo
 Need help? Email us on hello@fanmo.in mailto:hello@fanmo.in

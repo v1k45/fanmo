@@ -7,7 +7,7 @@ If you wish to continue the membership, please update your payment details on th
 View Memberships
       →
 
-{{ settings.BASE_URL }}{% 'memberships'  %}
+{{ settings.BASE_URL }}{% url 'memberships'  %}
 
 Fanmo
 Need help? Email us on hello@fanmo.in mailto:hello@fanmo.in

@@ -5,7 +5,7 @@ If you wish to contact {{ obj.fan_user.display_name }} directly, you can send em
 View Members
         →
 
-{{ settings.BASE_URL }}{% 'members'  %}
+{{ settings.BASE_URL }}{% url 'members'  %}
 
 Fanmo
 Need help? Email us on hello@fanmo.in mailto:hello@fanmo.in

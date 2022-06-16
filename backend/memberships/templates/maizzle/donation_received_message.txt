@@ -6,7 +6,7 @@ If you wish to contact {{ obj.fan_user.display_name }} directly, you can send em
 View Donations
       →
 
-{{ settings.BASE_URL }}{% 'received-donations'  %}
+{{ settings.BASE_URL }}{% url 'received-donations'  %}
 
 Fanmo
 Need help? Email us on hello@fanmo.in mailto:hello@fanmo.in

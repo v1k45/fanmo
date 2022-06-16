@@ -8,7 +8,7 @@ Hi {{ notification.recipient.display_name }},
 View Post
       →
 
-{{ settings.BASE_URL }}{% 'post_detail' obj.post.slug obj.post.id %}
+{{ settings.BASE_URL }}{% url 'post_detail' obj.post.slug obj.post.id %}
 
 Fanmo
 Need help? Email us on hello@fanmo.in mailto:hello@fanmo.in

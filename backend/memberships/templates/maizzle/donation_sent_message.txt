@@ -9,7 +9,7 @@ You have sucessfully donated {{ obj.amount }} to {{ obj.creator_user.display_nam
 View Donations
       →
 
-{{ settings.BASE_URL }}{% 'sent-donations'  %}
+{{ settings.BASE_URL }}{% url 'sent-donations'  %}
 
 Fanmo
 Need help? Email us on hello@fanmo.in mailto:hello@fanmo.in
