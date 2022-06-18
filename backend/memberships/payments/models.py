@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django_fsm import FSMField, can_proceed
 from djmoney.models.fields import MoneyField
-from django_q.tasks import async_task
+from memberships.core.tasks import async_task
 
 from memberships.utils import razorpay_client
 from memberships.utils.models import BaseModel

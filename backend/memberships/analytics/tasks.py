@@ -1,4 +1,4 @@
-from django_q.tasks import async_task
+from memberships.core.tasks import async_task
 from trackstats.models import Period, Metric
 from memberships.payments.models import Payment, Payout
 from memberships.subscriptions.models import Subscription

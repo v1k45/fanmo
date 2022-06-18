@@ -10,7 +10,6 @@ from mptt.utils import get_cached_trees
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from memberships.posts.api.filters import PostFilter
-from django_q.tasks import async_task
 
 from memberships.posts.api.serializers import (
     CommentReactionSerializer,
@@ -24,6 +23,7 @@ from memberships.posts.api.serializers import (
 )
 from memberships.users.api.permissions import IsCreator
 from memberships.posts.models import Comment, Post, annotate_post_permissions
+from memberships.core.tasks import async_task
 
 
 class PostViewSet(

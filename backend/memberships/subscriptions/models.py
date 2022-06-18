@@ -23,7 +23,7 @@ from memberships.payments.models import Payment, Payout
 from memberships.subscriptions.querysets import SubscriptionQuerySet
 from memberships.utils import razorpay_client
 from memberships.utils.models import BaseModel
-from django_q.tasks import async_task
+from memberships.core.tasks import async_task
 
 
 class Tier(BaseModel):
