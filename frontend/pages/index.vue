@@ -67,7 +67,7 @@
   <!-- boasting end -->
 
   <!-- feature: memberships start -->
-  <section class="pb-24">
+  <section class="py-14">
     <div class="container">
       <div class="row items-center justify-center">
         <div class="col-12 md:col-8 xl:col-7 order-2 md:order-1 text-center md:text-left">
@@ -92,7 +92,7 @@
   <!-- feature: memberships end -->
 
   <!-- feature: donations start -->
-  <section class="pb-24">
+  <section class="py-14">
     <div class="container">
       <div class="row items-center justify-center">
         <div class="col-8 sm:col-6 md:col-4" aria-hidden="true">
@@ -116,7 +116,7 @@
   <!-- feature: donations end -->
 
   <!-- feature: posts & comments start -->
-  <section class="pb-24">
+  <section class="py-14">
     <div class="container">
       <div class="row items-center justify-center">
         <div class="col-12 md:col-8 xl:col-7 order-2 md:order-1 text-center md:text-left">
