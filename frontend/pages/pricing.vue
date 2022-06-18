@@ -6,7 +6,7 @@
     <div class="container flex flex-wrap">
       <div>
         <div class="lg:max-w-lg">
-          <h1 class="inline-block md:block font-title text-gray-500 text-2xl lg:text-3xl mb-6 lg:mb-12">Pricing <div aria-hidden="true" class="w-5 border-b-2 md:border-b-4 -mt-1 border-fm-primary"></div></h1>
+          <h1 class="inline-block md:block font-title text-gray-500 text-2xl lg:text-3xl mb-6 lg:mb-12">Pricing</h1>
           <h1 class="mb-6 lg:mb-12 text-4xl font-semibold leading-tight font-title sm:text-5xl lg:text-6xl">Simple and most affordable</h1>
 
           <p class="mb-8 leading-relaxed sm:text-lg">
@@ -38,15 +38,15 @@
 
           <ul class="space-y-4 mt-6 font-bold">
             <li
-              v-for="feature in ['Membership tiers', 'Donations', 'Posts', 'Fast payouts', 'Various payment methods', 'Live support']" :key="feature"
+              v-for="feature in ['Membership tiers', 'Donations', 'Posts', 'Fast payouts', 'Various payment methods', 'Responsive support']" :key="feature"
               class="flex items-center">
               <icon-check class="mr-3"></icon-check> {{ feature }}
             </li>
           </ul>
 
-          <a href="#" class="unstyled flex justify-center items-center mt-8 px-10 py-4 mx-auto lg:text-lg text-fm-primary rounded-full lg:mx-0 bg-white transform transition-transform hover:scale-105">
+          <nuxt-link to="/register" class="unstyled flex justify-center items-center mt-8 px-10 py-4 mx-auto lg:text-lg text-fm-primary rounded-full lg:mx-0 bg-white transform transition-transform hover:scale-105">
             Register Now <icon-arrow-right class="inline-block ml-3"></icon-arrow-right>
-          </a>
+          </nuxt-link>
         </div>
       </div>
     </div>
@@ -146,9 +146,9 @@
             <tr class="hidden lg:table-row">
               <th></th>
               <td>
-                <a href="#" class="unstyled inline-flex items-center px-10 py-4 my-6 text-lg mx-auto text-white transition-colors rounded-full bg-fm-primary hover:bg-fm-primary-600">
+                <nuxt-link to="/register" class="unstyled inline-flex items-center px-10 py-4 my-6 text-lg mx-auto text-white transition-colors rounded-full bg-fm-primary hover:bg-fm-primary-600">
                   Register Now <icon-arrow-right class="inline-block ml-3"></icon-arrow-right>
-                </a>
+                </nuxt-link>
               </td>
               <td></td>
               <td></td>
@@ -158,9 +158,9 @@
       </div>
 
       <div class="text-center lg:hidden">
-        <a href="#" class="unstyled inline-flex items-center px-10 py-3 my-6 text-sm text-white transition-colors rounded-full lg:mx-0 bg-fm-primary hover:bg-fm-primary-600">
+        <nuxt-link to="/register" class="unstyled inline-flex items-center px-10 py-3 my-6 text-sm text-white transition-colors rounded-full lg:mx-0 bg-fm-primary hover:bg-fm-primary-600">
           Register Now
-        </a>
+        </nuxt-link>
       </div>
 
     </div>
@@ -206,9 +206,9 @@
       </h2>
       <p class="mb-12 text-lg">It's free to sign up and takes less than 5 minutes to get started.</p>
 
-      <a href="#" class="unstyled inline-flex justify-center items-center px-10 py-4 mx-auto lg:text-lg text-fm-primary rounded-full lg:mx-0 bg-white transform transition-transform hover:scale-105">
+      <nuxt-link to="/register" class="unstyled inline-flex justify-center items-center px-10 py-4 mx-auto lg:text-lg text-fm-primary rounded-full lg:mx-0 bg-white transform transition-transform hover:scale-105">
         Register for free <icon-arrow-right class="inline-block ml-3"></icon-arrow-right>
-      </a>
+      </nuxt-link>
     </div>
   </div>
   <!-- final CTA end -->
