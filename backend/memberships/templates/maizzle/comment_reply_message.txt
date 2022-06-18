@@ -1,7 +1,6 @@
 Hi {{ notification.recipient.display_name }},
 
-{{ obj.author_user.display_name }} replied your comment on {{ obj.post.title
-        }}.
+{{ obj.author_user.display_name }} replied your comment on {{ obj.post.title}}.
 
 {{ obj.body }}
 

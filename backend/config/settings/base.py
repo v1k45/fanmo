@@ -321,6 +321,7 @@ Q_CLUSTER = {
     'name': 'taskrunner',
     'workers': 4,
     'timeout': 90,
+    'max_attempts': 3,
     'retry': 120,
     'django_redis': 'default'
 }

@@ -225,20 +225,18 @@ def notify_comment(comment_id):
 
     # do not send notification if the commentor is same as post author
     comment = Comment.objects.get(id=comment_id)
-    if comment.post.author_user_id == comment.author_user_id:
-        return
-
-    notify(
-        recipient=comment.post.author_user,
-        obj=comment,
-        action=NotificationType.COMMENT,
-        silent=True,
-        channels=("email", "creator_activity"),
-    )
-    parent_comment = comment.parent
-    if parent_comment and parent_comment.author_user_id != comment.author_user_id:
+    if comment.post.author_user_id != comment.author_user_id:
         notify(
-            recipient=comment.author_user,
+            recipient=comment.post.author_user,
+            obj=comment,
+            action=NotificationType.COMMENT,
+            silent=True,
+            channels=("email", "creator_activity"),
+        )
+
+    if comment.parent and comment.parent.author_user_id != comment.author_user_id:
+        notify(
+            recipient=comment.parent.author_user,
             obj=comment,
             action=NotificationType.COMMENT_REPLY,
             silent=True,
