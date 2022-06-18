@@ -1,0 +1,14 @@
+Hi {{ notification.recipient.display_name }},
+{{ obj.author_user.display_name }} just added a new post.
+"{{ obj.title }}"
+
+View Post→
+
+{{ settings.BASE_URL }}{% url 'post_detail' obj.slug obj.id %}
+
+Fanmo
+Need help? Email us on hello@fanmo.in mailto:hello@fanmo.in
+
+Website https://fanmo.in •
+Twitter https://twitter.com/getfanmo •
+Facebook https://facebook.com/getfanmo

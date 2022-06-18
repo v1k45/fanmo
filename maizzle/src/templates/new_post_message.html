@@ -1,0 +1,16 @@
+---
+bodyClass: bg-gray-100
+---
+
+<extends src="src/layouts/main.html">
+  <block name="template">
+    <p class="text-xl sm:leading-32 text-black font-semibold m-0 mb-24">Hi @{{ notification.recipient.display_name }},</p>
+    <p><strong>@{{ obj.author_user.display_name }}</strong> just added a new post.</p>
+    <p>
+      <em>"@{{ obj.title }}"</em>
+    </p>
+    <div class="leading-full">
+      <component src="src/components/button.html" target="post_detail" args="obj.slug obj.id">View Post</component>
+      </div>
+  </block>
+</extends>
