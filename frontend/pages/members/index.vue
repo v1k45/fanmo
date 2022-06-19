@@ -25,6 +25,11 @@
         <icon-gift class="w-4 h-4 mr-2"></icon-gift> Gift memberships
       </fm-button>
     </div>
+    <div class="ml-auto">
+      <fm-button class="flex" type="primary" @click="exportCSV">
+        <icon-download class="w-4 h-4 mr-2"></icon-download> Download CSV
+      </fm-button>
+    </div>
   </div>
   <!-- stats end -->
 
@@ -369,6 +374,9 @@ export default {
     ...mapActions('memberships', [
       'fetchMembers', 'fetchMoreMembers', 'fetchPayments', 'fetchMorePayments', 'cancelMembership', 'fetchStats', 'giveawayMembership'
     ]),
+    exportCSV() {
+      window.location.href = '/api/memberships/export/';
+    },
     loadMemberships() {
       const params = { creator_username: this.$auth.user.username, ordering: this.filter.orderBy };
       if (this.filter.search) {

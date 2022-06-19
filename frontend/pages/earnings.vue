@@ -29,6 +29,12 @@
         <div class="text-lg sm:text-3xl font-bold">{{ $currency(stats.total_payout_scheduled || 0) }}</div>
         <div class="text-xs sm:text-sm text-gray-600">payout scheduled</div>
       </div>
+      <div class="lg:block xl:hidden w-full mb-4"></div>
+      <div class="ml-auto">
+        <fm-button class="flex" type="primary" @click="exportCSV">
+          <icon-download class="w-4 h-4 mr-2"></icon-download> Download CSV
+        </fm-button>
+      </div>
     </div>
 
     <!-- filters start -->
@@ -214,6 +220,9 @@ export default {
       fetchMoreEarnings: 'fetchMorePayments',
       fetchStats: 'fetchStats'
     }),
+    exportCSV() {
+      window.location.href = '/api/payments/export/';
+    },
     loadEarnings() {
       const params = { creator_username: this.$auth.user.username, ordering: this.filter.orderBy };
       if (this.filter.search) {

@@ -18,6 +18,12 @@
       <div class="text-lg sm:text-3xl font-bold">{{ $currency(stats.total_payment) }}</div>
       <div class="text-xs sm:text-sm text-gray-600">total payment</div>
     </div>
+    <div class="lg:block xl:hidden w-full mb-4"></div>
+    <div class="ml-auto">
+      <fm-button class="flex" type="primary" @click="exportCSV">
+        <icon-download class="w-4 h-4 mr-2"></icon-download> Download CSV
+      </fm-button>
+    </div>
   </div>
 
   <!-- filters start -->
@@ -304,6 +310,9 @@ export default {
       'fetchReceivedDonations', 'fetchMoreDonations', 'fetchPayments', 'fetchMorePayments', 'fetchStats',
       'updateDonationMessageVisibility'
     ]),
+    exportCSV() {
+      window.location.href = '/api/donations/export/';
+    },
     handleSearchInput: debounce(function() {
       this.loadDonations();
     }, 250),
