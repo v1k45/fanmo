@@ -5,6 +5,7 @@ from rest_framework.decorators import action
 
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
+from memberships.payments.exports import PaymentExportResource
 from memberships.payments.api.filters import PaymentFilter
 
 from memberships.users.api.permissions import IsCreator
@@ -69,6 +70,15 @@ class PaymentViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
             )
         )
         return Response(self.get_serializer(agg_stats).data)
+    
+    @action(
+        detail=False,
+        methods=["get"],
+        permission_classes=[permissions.IsAuthenticated, IsCreator]
+    )
+    def export(self, *args, **kwargs):
+        queryset = self.get_queryset().filter(creator_user=self.request.user)
+        return PaymentExportResource().export_csv(queryset)
 
 
 class PayoutViewSet(viewsets.ReadOnlyModelViewSet):

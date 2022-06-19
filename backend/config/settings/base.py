@@ -91,6 +91,7 @@ THIRD_PARTY_APPS = [
     "notifications",
     "mptt",
     "trackstats",
+    "import_export",
     # "anymail",
 ]
 

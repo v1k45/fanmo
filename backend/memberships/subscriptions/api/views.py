@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
+from memberships.subscriptions.exports import MembershipExportResource
 from memberships.payments.models import Payment
 
 from memberships.subscriptions.api.serializers import (
@@ -113,6 +114,15 @@ class MembershipViewSet(
             )
         )
         return Response(self.get_serializer(agg_stats).data)
+
+    @action(
+        detail=False,
+        methods=["get"],
+        permission_classes=[permissions.IsAuthenticated, IsCreator]
+    )
+    def export(self, *args, **kwargs):
+        queryset = self.get_queryset().filter(creator_user=self.request.user)
+        return MembershipExportResource().export_csv(queryset)
 
 
 class SubscriptionViewSet(viewsets.ReadOnlyModelViewSet):

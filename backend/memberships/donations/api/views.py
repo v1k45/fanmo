@@ -4,6 +4,7 @@ from django.db.models import Q, Sum, Count, F
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.response import Response
+from memberships.donations.exports import DonationExportResource
 
 from memberships.donations.api.serializers import (
     DonationCreateSerializer,
@@ -100,3 +101,12 @@ class DonationViewSet(
             )
         )
         return Response(self.get_serializer(agg_stats).data)
+    
+    @action(
+        detail=False,
+        methods=["get"],
+        permission_classes=[permissions.IsAuthenticated, IsCreator]
+    )
+    def export(self, *args, **kwargs):
+        queryset = self.get_queryset().filter(creator_user=self.request.user)
+        return DonationExportResource().export_csv(queryset)
