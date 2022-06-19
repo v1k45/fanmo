@@ -101,11 +101,11 @@ class DonationViewSet(
             )
         )
         return Response(self.get_serializer(agg_stats).data)
-    
+
     @action(
         detail=False,
         methods=["get"],
-        permission_classes=[permissions.IsAuthenticated, IsCreator]
+        permission_classes=[permissions.IsAuthenticated, IsCreator],
     )
     def export(self, *args, **kwargs):
         queryset = self.get_queryset().filter(creator_user=self.request.user)
