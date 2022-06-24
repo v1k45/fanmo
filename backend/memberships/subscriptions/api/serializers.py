@@ -300,7 +300,7 @@ class MembershipGiveawaySerializer(serializers.ModelSerializer):
         source="tier",
         write_only=True,
     )
-    email = serializers.EmailField(required=False, allow_blank=True, write_only=True)
+    email = serializers.EmailField(write_only=True)
 
     class Meta:
         model = Membership
