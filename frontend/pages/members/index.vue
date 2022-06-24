@@ -3,10 +3,6 @@
   <!-- stats start -->
   <div v-if="stats" class="flex flex-wrap text-center mb-6">
     <div>
-      <div class="text-lg sm:text-3xl font-bold">{{ stats.total }}</div>
-      <div class="text-xs sm:text-sm text-gray-600">total members</div>
-    </div>
-    <div class="ml-3 sm:ml-10">
       <div class="text-lg sm:text-3xl font-bold">{{ stats.active }}</div>
       <div class="text-xs sm:text-sm text-gray-600">active members</div>
     </div>
@@ -15,10 +11,13 @@
       <div class="text-xs sm:text-sm text-gray-600">inactive members</div>
     </div>
     <div class="ml-3 sm:ml-10">
+      <div class="text-lg sm:text-3xl font-bold">{{ stats.total }}</div>
+      <div class="text-xs sm:text-sm text-gray-600">total members</div>
+    </div>
+    <div class="ml-3 sm:ml-10">
       <div class="text-lg sm:text-3xl font-bold">{{ $currency(stats.total_payment) }}</div>
       <div class="text-xs sm:text-sm text-gray-600">total payment</div>
     </div>
-
     <div class="lg:block xl:hidden w-full mb-4"></div>
     <div class="ml-auto">
       <fm-button class="flex" type="primary" @click="dialogs.giveaway = true">

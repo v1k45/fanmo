@@ -44,7 +44,7 @@
       <div class="mr-auto lg:max-w-sm flex-grow">
         <label class="text-sm block font-bold mb-2">Search for payments</label>
         <!-- TODO: placeholder -->
-        <fm-input v-model="filter.search" placeholder="Search by ?????" @input="handleSearchInput">
+        <fm-input v-model="filter.search" placeholder="Search by name or email" @input="handleSearchInput">
           <template #prepend>
             <icon-search class="w-em"></icon-search>
           </template>
