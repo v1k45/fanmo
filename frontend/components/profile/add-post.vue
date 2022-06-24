@@ -216,8 +216,8 @@ export default {
     linkPreviewComputed() {
       if (this.contentType !== 'link' || !this.linkPreview.link || !this.form.content.link) return null;
       // eslint-disable-next-line camelcase
-      const { link, link_og } = this.linkPreview;
-      const title = get(link_og, 'og.title') || get(link_og, 'meta.twitter:title') || get(link_og, 'page.title');
+      const { link, link_og, link_embed } = this.linkPreview;
+      const title = get(link_embed, 'title') || get(link_og, 'og.title') || get(link_og, 'meta.twitter:title') || get(link_og, 'page.title');
       const description = get(link_og, 'og.description') || get(link_og, 'meta.twitter:description') || get(link_og, 'meta.description') || '';
       const image = get(link_og, 'og.image') || get(link_og, 'meta.og:image') || '';
       return {
@@ -302,6 +302,9 @@ export default {
         ...data,
         link: new URL(data.link)
       };
+      if (!this.form.title) {
+        this.form.title = this.linkPreviewComputed.title;
+      }
       if (this.errors.content && this.errors.content.link) this.errors.content.link = null;
     }
   }

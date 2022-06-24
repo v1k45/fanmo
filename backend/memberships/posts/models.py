@@ -2,14 +2,14 @@ import metadata_parser
 from django.db import models
 from django_extensions.db.fields import AutoSlugField
 from django.core.cache import cache
-from mptt.models import MPTTModel, TreeForeignKey, MPTTModelBase
+from django.template.defaultfilters import truncatewords
+from mptt.models import MPTTModel, TreeForeignKey
 from micawber.providers import bootstrap_oembed
 from micawber.exceptions import ProviderException
 from versatileimagefield.fields import VersatileImageField
 
 
-from memberships.subscriptions.models import Membership, Subscription, Tier
-from memberships.utils.models import BaseModel, BaseModelMeta
+from memberships.utils.models import BaseModel
 
 
 def annotate_post_permissions(object_list, fan_user):
@@ -137,18 +137,26 @@ class Content(BaseModel):
                 url=self.link, support_malformed=True, search_head_only=False
             ).metadata
             if metadata.get("og"):
-                self.link_og["og"] = metadata["og"]
+                self.link_og["og"] = self._truncate_metadata(metadata["og"])
             if metadata.get("page"):
-                self.link_og["page"] = metadata["page"]
+                self.link_og["page"] = self._truncate_metadata(metadata["page"])
             if metadata.get("meta"):
-                self.link_og["meta"] = {
-                    key.lower(): value for key, value in metadata["meta"].items()
-                }
+                self.link_og["meta"] = self._truncate_metadata(metadata["meta"])
+
         except metadata_parser.NotParsable:
             pass
 
         if commit:
             self.save()
+    
+    @staticmethod
+    def _truncate_metadata(metadata):
+        new_metadata = {}
+        for key, value in metadata.items():
+            meta_key = key.lower()
+            meta_value = truncatewords(value, 30) if meta_key.endswith("description") or meta_key.endswith("keywords") else value
+            new_metadata[meta_key] = meta_value
+        return new_metadata
 
 
 class ContentFile(BaseModel):
