@@ -1,4 +1,6 @@
-import time
+from functools import lru_cache
+from time import mktime
+from dateutil.rrule import rrule, DAILY
 from django.utils import timezone
 from rest_framework.generics import GenericAPIView
 from rest_framework.serializers import ValidationError, ErrorDetail
@@ -63,6 +65,7 @@ class AnalyticsAPIView(GenericAPIView):
         }
         return Response(self.get_serializer(stats).data)
 
+    @lru_cache
     def get_filter_date_range(self):
         """
         Based on current datetime and URL parameter,
@@ -121,6 +124,11 @@ class AnalyticsAPIView(GenericAPIView):
         ).order_by("date")
 
     def get_stats(self, current_stats, last_stats):
+        (start_at, end_at), _ = self.get_filter_date_range()
+        series = {
+            int(mktime(datetime.date().timetuple()) * 1000): "0.00"
+            for datetime in rrule(dtstart=start_at, until=end_at, freq=DAILY)
+        }
         result = {
             "current": 0,
             "last": 0,
@@ -129,10 +137,11 @@ class AnalyticsAPIView(GenericAPIView):
         }
         for stat in current_stats:
             result["current"] += stat.value
-            result["series"].append({"x": stat.datestamp(), "y": stat.value})
+            series[stat.datestamp()] = stat.value
 
         for stat in last_stats:
             result["last"] += stat.value
 
+        result["series"] = [{"x": key, "y": value} for key, value in series.items()]
         result["percent_change"] = percent_change(result["current"], result["last"])
         return result
