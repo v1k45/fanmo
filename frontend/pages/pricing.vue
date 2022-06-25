@@ -56,7 +56,7 @@
   <!-- comparison start -->
   <section id="comparison" class="py-24">
     <div class="container">
-      <h2 class="text-center mb-8 md:mb-16 text-3xl leading-snug sm:text-4xl lg:text-5xl font-title">How Fanmo compares with other platforms</h2>
+      <h2 class="text-center mb-8 md:mb-16 text-3xl leading-snug sm:text-4xl lg:text-5xl font-title">Earn more without compromising on features</h2>
 
       <div class="comparison">
         <table>
