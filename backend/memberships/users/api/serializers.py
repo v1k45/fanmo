@@ -466,6 +466,14 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
         user = self.validated_data["user"]
         user.set_password(self.validated_data["new_password"])
         user.save()
+        request = self.context["request"]._request
+        email, _ = EmailAddress.objects.get_or_create(
+            user=user,
+            email=user.email,
+            defaults={"verified": False, "primary": True},
+        )
+        if not email.verified:
+            get_adapter(request).confirm_email(request, email)
         return user
 
 
