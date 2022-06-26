@@ -1,12 +1,12 @@
 Welcome to Fanmo
 
-{{ otp }}
-is your verification code to activate your account on Fanmo.
-This code will expire in 5 minutes. If you wish to activate it later, you can request a new code by clicking the link below:
+Welcome to Fanmo!
+Fanmo is a platform for creators and supporters to stay in touch by offerring and joining memberships and donations.
+Get started by activating your account by clicking the link below. Feel free to contact us at help@fanmo.in for any help.
 
 Activate account→
 
-{{ settings.BASE_URL }}{% url 'account_invite' user.email_base64 %}
+{{ settings.BASE_URL }}{% url 'password_reset' user.email_base64 %}
 
 Fanmo
 Need help? Email us on hello@fanmo.in mailto:hello@fanmo.in
