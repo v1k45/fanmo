@@ -22,7 +22,7 @@ class AccountAdapter(DefaultAccountAdapter):
 
     def populate_username(self, request, user):
         username = user.username or self.generate_unique_username(
-            [user.name, user.email, user.username, "user"]
+            [user.name, user.email, user.username, self.generate_name()]
         )
         user_username(user, username)
 

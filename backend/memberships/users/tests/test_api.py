@@ -291,6 +291,18 @@ class TestMeAPI:
             == '<b>Hello</b><strong>world</strong>! &lt;a title="xss" href="javascript:alert(0);"&gt;click me&lt;/a&gt;'
         )
 
+    def test_update_username_reserved_names(self, creator_user, api_client):
+        api_client.force_authenticate(creator_user)
+        response = api_client.patch("/api/me/", {"username": "login"})
+        assert response.status_code == 400
+        assert response.json()["username"][0]["code"] == "already_taken"
+
+    def test_update_username_as_a_fan(self, user, api_client):
+        api_client.force_authenticate(user)
+        response = api_client.patch("/api/me/", {"username": "yeahbaby"})
+        assert response.status_code == 400
+        assert response.json()["username"][0]["code"] == "invalid"
+
 
 class TestOnboardingFlow:
     def test_select_user_type(self, user, api_client):

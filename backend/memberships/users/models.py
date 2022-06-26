@@ -19,9 +19,23 @@ from memberships.core.models import (
 
 from memberships.payments.models import BankAccount
 from memberships.utils.models import BaseModel
+from memberships.users.validators import ASCIIUsernameValidator, validate_username
 
 
 class User(BaseModel, AbstractUser):
+    username_validator = ASCIIUsernameValidator()
+
+    username = models.CharField(
+        "username",
+        max_length=150,
+        unique=True,
+        help_text="Required. 150 characters or fewer. Letters, digits, dashes and underscores only.",
+        validators=[username_validator, validate_username],
+        error_messages={
+            "unique": "A user with that username already exists.",
+        },
+    )
+
     # First and last name do not cover name patterns around the globe
     name = models.CharField(_("Name of User"), blank=True, max_length=255)
     one_liner = models.CharField(max_length=150, blank=True)

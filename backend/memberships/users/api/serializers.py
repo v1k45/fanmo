@@ -279,6 +279,13 @@ class UserSerializer(ComputedUserFieldSerializer, serializers.ModelSerializer):
             )
         return is_creator
 
+    def validate_username(self, value):
+        if not self.instance.is_creator:
+            raise ValidationError(
+                "You need to be a creator to be change your username."
+            )
+        return value
+
     def update(self, instance, validated_data):
         user_preferences = validated_data.pop("user_preferences", {})
         user_onboarding = validated_data.pop("user_onboarding", {})
