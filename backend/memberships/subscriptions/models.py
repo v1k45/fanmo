@@ -52,6 +52,9 @@ class Tier(BaseModel):
 
     history = HistoricalRecords()
 
+    class Meta:
+        ordering = ["creator_user", "amount"]
+
     def __str__(self):
         return self.name
 
