@@ -76,7 +76,7 @@ class CreatorActivityChannel(BaseNotificationChannel):
             type=CreatorActivity.Type.NEW_MEMBERSHIP,
             membership=membership,
             data={"tier": {"id": membership.tier.id, "name": membership.tier.name}},
-            message=f"{membership.fan_user.display_name} joined {membership.tier.name}",
+            message=f"{membership.fan_user.display_name} joined {membership.tier.name}.",
             creator_user=membership.creator_user,
             fan_user=membership.fan_user,
         )
@@ -86,7 +86,7 @@ class CreatorActivityChannel(BaseNotificationChannel):
             type=CreatorActivity.Type.MEMBERSHIP_UPDATE,
             membership=membership,
             data={"tier": {"id": membership.tier.id, "name": membership.tier.name}},
-            message=f"{membership.fan_user.display_name} renewed {membership.tier.name}",
+            message=f"{membership.fan_user.display_name} renewed {membership.tier.name}.",
             creator_user=membership.creator_user,
             fan_user=membership.fan_user,
         )
@@ -104,7 +104,7 @@ class CreatorActivityChannel(BaseNotificationChannel):
             },
             message=(
                 f"{membership.fan_user.display_name} updated membership from {old_tier.name} to {new_tier.name}. "
-                f"The change will go live on {membership.scheduled_subscription.cycle_start_at:%d %b %Y}"
+                f"The change will go live on {membership.scheduled_subscription.cycle_start_at:%d %b %Y}."
             ),
             creator_user=membership.creator_user,
             fan_user=membership.fan_user,
@@ -155,7 +155,7 @@ class CreatorActivityChannel(BaseNotificationChannel):
         return CreatorActivity(
             type=CreatorActivity.Type.DONATION,
             donation=donation,
-            message=f"{donation.fan_user.display_name} donated {donation.amount}",
+            message=f"{donation.fan_user.display_name} donated {donation.amount}.",
             creator_user=donation.creator_user,
             fan_user=donation.fan_user,
         )
@@ -164,7 +164,7 @@ class CreatorActivityChannel(BaseNotificationChannel):
         return CreatorActivity(
             type=CreatorActivity.Type.COMMENT,
             comment=comment,
-            message=f"{comment.author_user.display_name} commmented on {comment.post.title}",
+            message=f"{comment.author_user.display_name} commmented on {comment.post.title}.",
             creator_user=comment.post.author_user,
             fan_user=comment.author_user,
         )
