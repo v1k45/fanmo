@@ -4,6 +4,7 @@ from django.utils import timezone
 from dateutil.relativedelta import relativedelta
 from trackstats.models import Period, Metric
 from memberships.analytics.models import StatisticByDateAndObject
+from memberships.utils.helpers import datestamp
 
 pytestmark = pytest.mark.django_db
 
@@ -63,7 +64,13 @@ class TestAnalyticsAPI:
             "percent_change": "50.00",
             "series": [
                 {"x": stat1.datestamp(), "y": "50.00"},
+                {"x": datestamp(stat1.date + relativedelta(days=1)), "y": "0.00"},
+                {"x": datestamp(stat1.date + relativedelta(days=2)), "y": "0.00"},
+                {"x": datestamp(stat1.date + relativedelta(days=3)), "y": "0.00"},
+                {"x": datestamp(stat1.date + relativedelta(days=4)), "y": "0.00"},
+                {"x": datestamp(stat1.date + relativedelta(days=5)), "y": "0.00"},
                 {"x": stat2.datestamp(), "y": "100.00"},
+                {"x": datestamp(stat1.date + relativedelta(days=7)), "y": "0.00"},
             ],
         }
 
@@ -121,7 +128,15 @@ class TestAnalyticsAPI:
             "percent_change": "50.00",
             "series": [
                 {"x": stat1.datestamp(), "y": "50.00"},
+                *[
+                    {
+                        "x": datestamp(stat1.date + relativedelta(days=i + 1)),
+                        "y": "0.00",
+                    }
+                    for i in range(28)
+                ],
                 {"x": stat2.datestamp(), "y": "100.00"},
+                {"x": datestamp(stat1.date + relativedelta(days=30)), "y": "0.00"},
             ],
         }
 
@@ -136,19 +151,17 @@ class TestAnalyticsAPI:
         ],
     )
     def test_lifetime_metrics(self, creator_user, api_client, metric_ref):
-        creator_user.date_joined = timezone.now() - relativedelta(days=500)
+        creator_user.date_joined = timezone.now() - relativedelta(days=90)
         creator_user.save()
 
         today = timezone.localtime().date()
-        # create data for last period
         default_stat_kwargs = {
             "metric": Metric.objects.get(ref=metric_ref),
             "object": creator_user,
             "period": Period.DAY,
         }
-        # this one should not be included in the response.
         stat1 = StatisticByDateAndObject.objects.create(
-            date=today - relativedelta(days=63),
+            date=today - relativedelta(days=60),
             value=Decimal("400"),
             **default_stat_kwargs
         )
@@ -181,10 +194,39 @@ class TestAnalyticsAPI:
             "last": "0.00",
             "percent_change": None,
             "series": [
+                *[
+                    {
+                        "x": datestamp(stat1.date - relativedelta(days=i + 1)),
+                        "y": "0.00",
+                    }
+                    for i in range(30)
+                ][::-1],
                 {"x": stat1.datestamp(), "y": "400.00"},
+                *[
+                    {
+                        "x": datestamp(stat1.date + relativedelta(days=i + 1)),
+                        "y": "0.00",
+                    }
+                    for i in range(14)
+                ],
                 {"x": stat2.datestamp(), "y": "10.00"},
+                *[
+                    {
+                        "x": datestamp(stat2.date + relativedelta(days=i + 1)),
+                        "y": "0.00",
+                    }
+                    for i in range(13)
+                ],
                 {"x": stat3.datestamp(), "y": "90.00"},
                 {"x": stat4.datestamp(), "y": "50.00"},
+                *[
+                    {
+                        "x": datestamp(stat4.date + relativedelta(days=i + 1)),
+                        "y": "0.00",
+                    }
+                    for i in range(28)
+                ],
                 {"x": stat5.datestamp(), "y": "100.00"},
+                {"x": datestamp(stat5.date + relativedelta(days=1)), "y": "0.00"},
             ],
         }

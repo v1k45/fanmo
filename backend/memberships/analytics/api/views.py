@@ -7,6 +7,7 @@ from rest_framework.serializers import ValidationError, ErrorDetail
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from dateutil.relativedelta import relativedelta
+from memberships.utils.helpers import datestamp
 from memberships.analytics.api.serializers import AnalyticsSerializer
 from memberships.utils.money import percent_change
 
@@ -126,7 +127,7 @@ class AnalyticsAPIView(GenericAPIView):
     def get_stats(self, current_stats, last_stats):
         (start_at, end_at), _ = self.get_filter_date_range()
         series = {
-            int(mktime(datetime.date().timetuple()) * 1000): "0.00"
+            datestamp(datetime.date()): "0.00"
             for datetime in rrule(dtstart=start_at, until=end_at, freq=DAILY)
         }
         result = {

@@ -7,6 +7,7 @@ from trackstats.models import (
     StatisticByDateAndObjectQuerySet,
 )
 from memberships.utils.models import BaseModel
+from memberships.utils.helpers import datestamp
 
 
 class StatisticByDateAndObject(
@@ -28,4 +29,4 @@ class StatisticByDateAndObject(
         return "{date}: {value}".format(date=self.date, value=self.value)
 
     def datestamp(self):
-        return int(time.mktime(self.date.timetuple()) * 1000)
+        return datestamp(self.date)
