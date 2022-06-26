@@ -148,13 +148,17 @@ class Content(BaseModel):
 
         if commit:
             self.save()
-    
+
     @staticmethod
     def _truncate_metadata(metadata):
         new_metadata = {}
         for key, value in metadata.items():
             meta_key = key.lower()
-            meta_value = truncatewords(value, 30) if meta_key.endswith("description") or meta_key.endswith("keywords") else value
+            meta_value = (
+                truncatewords(value, 30)
+                if meta_key.endswith("description") or meta_key.endswith("keywords")
+                else value
+            )
             new_metadata[meta_key] = meta_value
         return new_metadata
 

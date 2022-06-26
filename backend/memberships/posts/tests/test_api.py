@@ -467,7 +467,11 @@ class TestPostCrudAPI:
         mocker.patch(
             "memberships.posts.models.metadata_parser.MetadataParser",
             return_value=mocker.Mock(
-                metadata={"og": "hello", "page": "world", "meta": {"foo": "bar"}}
+                metadata={
+                    "og": {"hello": "world"},
+                    "page": {"hey": "there"},
+                    "meta": {"foo": "bar"},
+                }
             ),
         )
 
@@ -500,7 +504,11 @@ class TestPostCrudAPI:
         mocker.patch(
             "memberships.posts.models.metadata_parser.MetadataParser",
             return_value=mocker.Mock(
-                metadata={"og": "hello", "page": "world", "meta": {"foo": "bar"}}
+                metadata={
+                    "og": {"hello": "world"},
+                    "page": {"hey": "there"},
+                    "meta": {"foo": "bar"},
+                }
             ),
         )
 
@@ -521,8 +529,8 @@ class TestPostCrudAPI:
         assert data["content"]["link"] == "https://google.com"
         assert data["content"]["link_embed"] is None
         assert data["content"]["link_og"] == {
-            "og": "hello",
-            "page": "world",
+            "og": {"hello": "world"},
+            "page": {"hey": "there"},
             "meta": {"foo": "bar"},
         }
         request_embed_mock.assert_called_with("https://google.com")
@@ -643,7 +651,11 @@ class TestPostCrudAPI:
         mocker.patch(
             "memberships.posts.models.metadata_parser.MetadataParser",
             return_value=mocker.Mock(
-                metadata={"og": "hello", "page": "world", "meta": {"foo": "bar"}}
+                metadata={
+                    "og": {"hello": "world"},
+                    "page": {"hey": "there"},
+                    "meta": {"foo": "bar"},
+                }
             ),
         )
 
@@ -655,7 +667,11 @@ class TestPostCrudAPI:
         assert response.status_code == 200
         assert response.json() == {
             "link": "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-            "link_og": {"og": "hello", "page": "world", "meta": {"foo": "bar"}},
+            "link_og": {
+                "og": {"hello": "world"},
+                "page": {"hey": "there"},
+                "meta": {"foo": "bar"},
+            },
             "link_embed": {"foo": "bar"},
         }
 
