@@ -675,6 +675,23 @@ class TestPostCrudAPI:
             "link_embed": {"foo": "bar"},
         }
 
+    def test_create_handles_empty_slug(self, creator_user, api_client):
+        api_client.force_authenticate(creator_user)
+
+        response = api_client.post(
+            "/api/posts/",
+            {
+                "title": "🤞",
+                "content": {
+                    "type": "text",
+                    "text": "dekho kya hota hai",
+                },
+            },
+        )
+
+        assert response.status_code == 201
+        assert response.json()["slug"] == "post"
+
 
 class TestCommentAPI:
     def test_list_without_post_id(self, api_client):

@@ -7,6 +7,7 @@ from mptt.models import MPTTModel, TreeForeignKey
 from micawber.providers import bootstrap_oembed
 from micawber.exceptions import ProviderException
 from versatileimagefield.fields import VersatileImageField
+from memberships.utils.helpers import slugify
 
 
 from memberships.utils.models import BaseModel
@@ -88,7 +89,9 @@ class Post(BaseModel):
         ALLOWED_TIERS = "allowed_tiers"
 
     title = models.CharField(max_length=255)
-    slug = AutoSlugField(populate_from="title", allow_duplicates=True)
+    slug = AutoSlugField(
+        populate_from="title", allow_duplicates=True, slugify_function=slugify
+    )
     content = models.OneToOneField("posts.Content", on_delete=models.CASCADE)
 
     author_user = models.ForeignKey("users.User", on_delete=models.CASCADE)
