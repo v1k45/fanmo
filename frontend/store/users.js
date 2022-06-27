@@ -9,7 +9,9 @@ export const state = () => ({
   raw: {
     following: null // { previous, next, count, userIds }
   },
-  accounts: null // authenticated user's bank accounts
+  accounts: null, // authenticated user's bank accounts
+  analytics: null, // authenticated user's analytics
+  activities: null // authenticated user's recent activities
 });
 
 export const getters = {
@@ -53,6 +55,40 @@ export const actions = {
       return ERROR(err.response.data);
     }
   },
+  async loadAnalytics({ commit }, period) {
+    try {
+      const analytics = await this.$axios.$get('/api/stats/', {
+        params: {
+          period
+        }
+      });
+      commit('setAnalytics', { analytics });
+      return SUCCESS(analytics);
+    } catch (err) {
+      handleGenericError(err, true);
+      return ERROR(err.response.data);
+    }
+  },
+  async loadActivities({ commit }) {
+    try {
+      const activities = await this.$axios.$get('/api/activities/');
+      commit('setActivities', { activities });
+      return SUCCESS(activities);
+    } catch (err) {
+      handleGenericError(err, true);
+      return ERROR(err.response.data);
+    }
+  },
+  async loadNextActivities({ commit, state }) {
+    try {
+      const activities = await this.$axios.$get(state.activities.next);
+      commit('setNextActivities', { activities });
+      return SUCCESS(activities);
+    } catch (err) {
+      handleGenericError(err, true);
+      return ERROR(err.response.data);
+    }
+  },
   async updateSelfUser({ dispatch, state }, payload) {
     try {
       const user = await this.$axios.$patch('/api/me/', payload);
@@ -63,7 +99,7 @@ export const actions = {
       return ERROR(err.response.data);
     }
   },
-  async updatePassword({ dispatch, state }, payload) {
+  async updatePassword({ dispatch }, payload) {
     try {
       const user = await this.$axios.$post('/api/auth/password/change/', payload);
       await dispatch('refreshUser', null, { root: true });
@@ -99,5 +135,15 @@ export const mutations = {
   },
   setAccounts(state, { accounts }) {
     state.accounts = accounts;
+  },
+  setAnalytics(state, { analytics }) {
+    state.analytics = analytics;
+  },
+  setActivities(state, { activities }) {
+    state.activities = activities;
+  },
+  setNextActivities(state, { activities }) {
+    state.activities.results.push(...activities.results);
+    Object.assign(state.activities, { previous: activities.previous, next: activities.next, count: activities.count });
   }
 };
