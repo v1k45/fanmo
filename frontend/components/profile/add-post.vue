@@ -2,7 +2,7 @@
 <fm-dialog v-model="isVisible" fullscreen no-padding>
   <template #header>
     <div class="relative">
-      <div class="container max-w-5xl">Create post</div>
+      <div class="container">Create post</div>
       <logo class="h-5 absolute right-10 top-1"></logo>
     </div>
   </template>

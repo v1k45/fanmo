@@ -6,6 +6,7 @@
       :enter-active-class="drawer ? ' animatecss-slideInRight' : 'animatecss-zoomIn'"
       :leave-to-class="drawer ? ' animatecss-slideOutRight' : 'animatecss-zoomOut'">
       <div v-show="isVisible" class="fm-dialog__container animatecss" :class="dialogClass">
+        <div ref="focus-trap" class="fm-dialog__focus-trap" tabindex="-1"></div>
         <div v-if="$slots.header" class="fm-dialog__header">
           <slot name="header"></slot>
         </div>
@@ -65,8 +66,9 @@ export default {
     }
   },
   watch: {
-    isVisible() {
+    isVisible(isVisible) {
       this.hideViewportScroll();
+      if (isVisible) this.trapFocus();
     }
   },
   mounted() {
@@ -77,6 +79,12 @@ export default {
       if (!document || !document.documentElement) return;
       if (this.isVisible) document.documentElement.classList.add('overflow-hidden');
       else if (this.$el && this.$el.parentElement && !this.$el.parentElement.closest('.fm-dialog')) document.documentElement.classList.remove('overflow-hidden');
+    },
+    async trapFocus() {
+      await this.$nextTick();
+      const el = this.$refs['focus-trap'];
+      if (!el || !el.focus) return;
+      el.focus();
     },
     close() {
       this.isVisible = false;
@@ -95,6 +103,9 @@ export default {
 .fm-dialog__container {
   @apply bg-white rounded-lg relative flex flex-col flex-grow overflow-hidden max-h-[90vh];
   animation-duration: 200ms;
+}
+.fm-dialog__focus-trap {
+  @apply h-0 w-0 overflow-hidden;
 }
 .fm-dialog__header {
   @apply px-6 py-4 border-b text-xl text-black font-medium pr-9;
