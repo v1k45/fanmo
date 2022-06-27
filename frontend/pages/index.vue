@@ -14,8 +14,11 @@
 
         <p class="mb-8 leading-relaxed sm:text-lg">Simplest way to offer memberships, accept donations and post member-exclusive content.</p>
 
-        <nuxt-link to="/register" class="unstyled inline-flex items-center px-10 py-4 mx-auto text-lg text-white transition-colors rounded-full lg:mx-0 bg-fm-primary hover:bg-fm-primary-600">
-          Register Now <icon-arrow-right class="inline-block ml-3"></icon-arrow-right>
+        <nuxt-link
+          :to="$auth.loggedIn ? '/register' : '/dashboard'"
+          class="unstyled inline-flex items-center px-10 py-4 mx-auto text-lg text-white transition-colors rounded-full lg:mx-0 bg-fm-primary hover:bg-fm-primary-600">
+          {{ $auth.loggedIn ? 'Go to Dashboard' : 'Register Now' }}
+          <icon-arrow-right class="inline-block ml-3"></icon-arrow-right>
         </nuxt-link>
       </div>
       <div class="flex flex-col items-center justify-center mt-12 mb-12 space-y-3 lg:justify-start sm:flex-row sm:space-y-0 sm:space-x-6 lg:mb-0">
@@ -179,8 +182,11 @@
       </ul>
 
       <div class="text-center lg:text-left">
-        <nuxt-link to="/register" class="unstyled inline-flex items-center mt-8 px-10 py-4 mx-auto lg:text-lg text-white transition-colors rounded-full lg:mx-0 bg-fm-primary hover:bg-fm-primary-600">
-          Register Now <icon-arrow-right class="inline-block ml-3"></icon-arrow-right>
+        <nuxt-link
+          :to="$auth.loggedIn ? '/register' : '/dashboard'"
+          class="unstyled inline-flex items-center mt-8 px-10 py-4 mx-auto lg:text-lg text-white transition-colors rounded-full lg:mx-0 bg-fm-primary hover:bg-fm-primary-600">
+          {{ $auth.loggedIn ? 'Go to Dashboard' : 'Register Now' }}
+          <icon-arrow-right class="inline-block ml-3"></icon-arrow-right>
         </nuxt-link>
       </div>
     </div>
