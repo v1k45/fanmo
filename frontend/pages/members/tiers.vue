@@ -275,7 +275,7 @@ export default {
       if (payload.cover_base64 && typeof payload.cover_base64 !== 'string') payload.cover_base64 = await getBase64FromFile(payload.cover_base64);
       // deleting existing
       // eslint-disable-next-line brace-style
-      else if (this.tierToUpdate.cover && !payload.cover_base64) { /* nothing */ }
+      else if (this.tierToUpdate && this.tierToUpdate.cover && !payload.cover_base64) { /* nothing */ }
       // unchanged
       else delete payload.cover_base64;
 
