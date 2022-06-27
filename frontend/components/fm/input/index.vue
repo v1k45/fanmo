@@ -216,6 +216,18 @@ export default {
     @apply w-5 h-5 rounded border-gray-300 border cursor-pointer mr-1;
     @apply checked:bg-fm-primary checked:border-0;
     @apply focus:ring-1;
+    &[disabled] {
+      @apply cursor-not-allowed bg-gray-50;
+      + * {
+        @apply text-gray-400;
+      }
+    }
+    &[disabled]:checked {
+      @apply cursor-not-allowed bg-fm-primary-400;
+      + * {
+        @apply text-fm-primary-400;
+      }
+    }
   }
 
   .fm-input__input[type=radio] {
