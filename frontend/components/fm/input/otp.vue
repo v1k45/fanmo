@@ -70,6 +70,7 @@ export default {
       });
       this.didUserPasteWithLastKeyUp = true;
       this.postProcess();
+      this.focus(arr.length - 1);
     },
     postProcess() {
       const out = this.model.join('');
