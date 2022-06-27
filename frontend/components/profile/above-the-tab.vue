@@ -106,25 +106,25 @@
 
       <label class="block mt-8">Social links <small>(leave empty to hide)</small></label>
 
-      <div class="flex mt-4 items-center">
+      <div class="flex mt-5 items-center">
         <div class="mr-4 flex-shrink-0"><icon-globe class="text-fm-info"></icon-globe></div>
-        <div class="flex-grow"><fm-input v-model="editForm.social_links.website_url" placeholder="Website"></fm-input></div>
+        <div class="flex-grow"><fm-input v-model="editForm.social_links.website_url" uid="social_links.website_url" placeholder="Website"></fm-input></div>
       </div>
-      <div class="flex mt-4 items-center">
+      <div class="flex mt-5 items-center">
         <div class="mr-4 flex-shrink-0"><icon-twitter class="text-sky-500 fill-current"></icon-twitter></div>
-        <div class="flex-grow"><fm-input v-model="editForm.social_links.twitter_url" placeholder="Twitter"></fm-input></div>
+        <div class="flex-grow"><fm-input v-model="editForm.social_links.twitter_url" uid="social_links.twitter_url" placeholder="Twitter"></fm-input></div>
       </div>
-      <div class="flex mt-4 items-center">
+      <div class="flex mt-5 items-center">
         <div class="mr-4 flex-shrink-0"><icon-youtube class="text-red-500"></icon-youtube></div>
-        <div class="flex-grow"><fm-input v-model="editForm.social_links.youtube_url" placeholder="YouTube"></fm-input></div>
+        <div class="flex-grow"><fm-input v-model="editForm.social_links.youtube_url" uid="social_links.youtube_url" placeholder="YouTube"></fm-input></div>
       </div>
-      <div class="flex mt-4 items-center">
+      <div class="flex mt-5 items-center">
         <div class="mr-4 flex-shrink-0"><icon-instagram class="text-purple-500"></icon-instagram></div>
-        <div class="flex-grow"><fm-input v-model="editForm.social_links.instagram_url" placeholder="Instagram"></fm-input></div>
+        <div class="flex-grow"><fm-input v-model="editForm.social_links.instagram_url" uid="social_links.instagram_url" placeholder="Instagram"></fm-input></div>
       </div>
-      <div class="flex mt-4 items-center">
+      <div class="flex mt-5 items-center">
         <div class="mr-4 flex-shrink-0"><icon-facebook class="text-blue-500 fill-current"></icon-facebook></div>
-        <div class="flex-grow"><fm-input v-model="editForm.social_links.facebook_url" placeholder="Facebook"></fm-input></div>
+        <div class="flex-grow"><fm-input v-model="editForm.social_links.facebook_url" uid="social_links.facebook_url" placeholder="Facebook"></fm-input></div>
       </div>
     </fm-form>
 
@@ -251,9 +251,12 @@ export default {
 
     async saveEditForm() {
       if (this.editForm.about && /^(<p>\s*<\/p>)+$/.test(this.editForm.about.trim())) this.editForm.about = '';
-      const err = await this.updateUser({ payload: this.editForm });
-      if (err && typeof err === 'object') this.editFormErrors = err;
-      this.$toast.success('Your profile information has been saved successfully.');
+      const { success, data } = await this.updateUser({ payload: this.editForm });
+      if (!success) this.editFormErrors = data;
+      else {
+        this.$toast.success('Your profile information has been saved successfully.');
+        this.editFormErrors = {};
+      }
     },
 
 

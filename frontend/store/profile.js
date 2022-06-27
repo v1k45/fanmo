@@ -3,6 +3,9 @@
 import get from 'lodash/get';
 import toast from '~/components/fm/alert/service';
 
+const SUCCESS = (data) => ({ success: true, data });
+const ERROR = (data) => ({ success: false, data });
+
 const ERRORED = true;
 const NO_ERROR = false;
 
@@ -151,10 +154,10 @@ export const actions = {
       mutation: 'setProfileUser',
       handleAll
     });
-    if (err) return ERRORED;
+    if (err) return ERROR(err);
     err = await dispatch('fetchProfileUser', state.user.username);
     dispatch('refreshUser', null, { root: true });
-    return !!err;
+    return err ? ERROR(err) : SUCCESS();
   },
 
   async updateDonation({ dispatch, state }, { id, payload }) {
