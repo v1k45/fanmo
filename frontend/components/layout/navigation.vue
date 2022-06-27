@@ -64,7 +64,7 @@
             </fm-dropdown-item>
           </template>
           <fm-dropdown-divider></fm-dropdown-divider>
-          <fm-dropdown-item type="error" class="font-medium flex items-center" @click="$auth.logout('cookie')">
+          <fm-dropdown-item type="error" class="font-medium flex items-center" @click="logout">
             <icon-power class="h-6 w-6 mr-2 transform scale-75" :stroke-width="3" :size="18"></icon-power>
             Log out
           </fm-dropdown-item>
@@ -103,7 +103,7 @@
       </template>
       <fm-dropdown-divider></fm-dropdown-divider>
 
-      <fm-dropdown-item type="error" class="font-medium flex items-center" @click="$auth.logout('cookie')">
+      <fm-dropdown-item type="error" class="font-medium flex items-center" @click="logout">
         <icon-power class="h-6 w-6 mr-2 transform scale-75" :stroke-width="3" :size="18"></icon-power>
         Log out
       </fm-dropdown-item>
@@ -115,6 +115,7 @@
 
 <script>
 import { Coins, Home, LayoutList, LayoutTemplate, Sliders, UserCheck, Users, Wallet } from 'lucide-vue';
+import { delay } from '~/utils';
 export default {
   props: {
     type: { type: String, required: true, validator: val => ['sidebar', 'bottom-pane', 'hamburger'].includes(val) }
@@ -164,6 +165,13 @@ export default {
           { id: 'settings', label: 'Settings', icon: Sliders, url: '/settings/' }
         ]
       };
+    }
+  },
+  methods: {
+    async logout() {
+      await this.$auth.logout('cookie');
+      await delay();
+      location.reload();
     }
   }
 };
