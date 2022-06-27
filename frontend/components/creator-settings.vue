@@ -158,7 +158,7 @@
           </template>
         </fm-input>
 
-        <fm-input v-model="form.payment.account_number" uid="account_number" label="Account number" type="text" readonly required></fm-input>
+        <fm-input :value="maskString(form.payment.account_number)" uid="account_number" label="Account number" type="text" readonly required></fm-input>
         <fm-input v-model="form.payment.ifsc" uid="ifsc" label="IFSC code" type="text" readonly required></fm-input>
         <fm-input v-model="form.payment.account_type" uid="account_type" label="Account type" type="select" readonly required>
           <option v-for="accountType in ACCOUNT_TYPES" :key="accountType" :value="accountType">
@@ -195,7 +195,7 @@
 import cloneDeep from 'lodash/cloneDeep';
 import pick from 'lodash/pick';
 import { mapActions, mapState } from 'vuex';
-import { skipOnboarding } from '~/utils';
+import { skipOnboarding, maskString } from '~/utils';
 
 const ACCOUNT_TYPES = ['Individual', 'Private Limited', 'Partnership', 'Proprietorship', 'LLP'];
 
@@ -229,6 +229,7 @@ const initialFormState = (user = null) => ({
 export default {
   data() {
     return {
+      maskString,
       currentTab: 'account',
       nav: [
         { id: 'account', label: 'Account' },

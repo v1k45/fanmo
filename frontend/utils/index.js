@@ -153,3 +153,16 @@ export const getBase64FromFile = async (file) => {
   });
   return fileReaderResult.target.result;
 };
+
+/**
+ * Masks everything except the last 4 character of the passed string. If the string is <=4 characters,
+ * half (ceiling) its characters are masked instead.
+ * @param {string} str - string to mask
+ * @param {string} maskWith - masking character(s)
+ * @returns {string} masked string
+ */
+export const maskString = (str, maskWith = 'X') => {
+  if (typeof str !== 'string') return str;
+  const charCountToMask = Math.max(Math.ceil(str.length / 2), str.length - 4);
+  return maskWith.repeat(charCountToMask) + str.slice(charCountToMask);
+};
