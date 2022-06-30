@@ -7,6 +7,7 @@ redis==3.5.3  # https://github.com/andymccurdy/redis-py
 hiredis==2.0.0  # https://github.com/redis/hiredis-py
 uvicorn[standard]==0.15.0  # https://github.com/encode/uvicorn
 python-dateutil==2.8.2  # https://github.com/dateutil/dateutil
+django-structlog==2.2.0 # https://github.com/jrobichaud/django-structlog
 
 # Django
 # ------------------------------------------------------------------------------

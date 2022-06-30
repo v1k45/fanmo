@@ -1,8 +1,11 @@
 # General
 # ------------------------------------------------------------------------------
+DJANGO_ALLOWED_HOSTS=fanmo.in
 USE_DOCKER=yes
 IPYTHONDIR=/app/.ipython
 DOMAIN_NAME=localhost
+STORAGE_BUCKET_NAME=fanmo
+DJANGO_ADMIN_URL=admin
 
 # Third party
 # ------------------------------------------------------------------------------
@@ -18,6 +21,8 @@ DISCORD_OAUTH2_SECRET=change-this-to-secret
 RAZORPAY_KEY=FANMO_SECRET_CHANGE_ME
 RAZORPAY_SECRET=FANMO_SECRET_CHANGE_ME
 RAZORPAY_WEBHOOK_SECRET=FANMO_SECRET_CHANGE_ME
+
+SENTRY_DSN=FANMO_SECRET_CHANGE_ME
 
 # Redis
 # ------------------------------------------------------------------------------
