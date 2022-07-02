@@ -10,12 +10,11 @@ services:
       - postgres
       - redis
     env_file:
-      - ./.envs/.local/.django
-      - ./.envs/.local/.postgres
       - ./.envs/.prod/.django
+      - ./.envs/.local/.postgres
     command: /start
 
-  taskrunner:
+  qcluster:
     <<: *django
     ports: []
     command: /qcluster
@@ -25,8 +24,8 @@ services:
     ports: []
     command: /nuxt
 
-  proxy:
-    image: "caddy:2.5.1"
+  caddy:
+    image: "caddy:2.1.1"
     restart: unless-stopped
     depends_on:
       - django
