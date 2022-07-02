@@ -89,7 +89,7 @@ export default {
         }
       },
       google: {
-        clientId: process.env.GOOGLE_OAUTH2_CLIENT_ID,
+        clientId: 'FANMO_SECRET_CHANGE_ME',
         responseType: 'code',
         grantType: 'authorization_code',
         codeChallengeMethod: '',
@@ -105,7 +105,7 @@ export default {
         user: { property: false }
       },
       facebook: {
-        clientId: process.env.FACEBOOK_OAUTH2_CLIENT_ID,
+        clientId: 'FANMO_SECRET_CHANGE_ME',
         responseType: 'code',
         grantType: 'authorization_code',
         codeChallengeMethod: '',
