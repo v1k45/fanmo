@@ -1,0 +1,15 @@
+[bumpver]
+current_version = "2022.07.1000"
+version_pattern = "YYYY.0M.BUILD"
+commit_message = "bump version {old_version} -> {new_version}"
+commit = true
+tag = true
+push = false
+
+[bumpver.file_patterns]
+"dev.yml" = [
+    '    image: v1k45/fanmo:{version}-dev',
+]
+"bumpver.toml" = [
+    'current_version = "{version}"',
+]
