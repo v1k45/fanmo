@@ -11,13 +11,14 @@ services:
       - ./backend/memberships/media:/app/memberships/media
     depends_on:
       - postgres
-      - mailhog
+      - redis
+    networks:
+      - backend
+      - proxy
     env_file:
       - ./.envs/.dev/.django
       - ./.envs/.dev/.nuxt
       - ./.envs/.dev/.postgres
-    ports:
-      - "8801:8000"
     command: /start
     deploy:
       update_config:
@@ -28,19 +29,17 @@ services:
         parallelism: 0
         order: stop-first
       restart_policy:
-        condition: any
+        condition: on-failure
         delay: 5s
         max_attempts: 3
         window: 120s
 
   qcluster:
     <<: *django
-    ports: []
     command: /qcluster
 
   nuxt:
     <<: *django
-    ports: []
     command: /nuxt
 
   postgres:
@@ -54,16 +53,22 @@ services:
       - local_postgres_data_backups:/backups:z
     env_file:
       - ./.envs/.dev/.postgres
+    networks:
+      - backend
 
   mailhog:
     image: mailhog/mailhog:v1.0.0
     container_name: memberships_mailhog
     ports:
       - "8025:8025"
+    networks:
+      - backend
 
   redis:
     image: redis:6
     container_name: memberships_redis
+    networks:
+      - backend
 
   caddy:
     image: "caddy:2.1.1"
@@ -79,3 +84,11 @@ services:
     ports:
       - "7070:80"
       - "7777:443"
+    networks:
+      - proxy
+
+networks:
+  backend:
+    driver: bridge
+  proxy:
+    driver: bridge
