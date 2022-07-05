@@ -12,6 +12,8 @@ REPO="v1k45/fanmo:"
 
 DEV_TAG="${REPO}${CURRENT_VERSION}-dev"
 DEV_LATEST="${REPO}latest-dev"
-docker build -t "$DEV_TAG" -t "$DEV_LATEST" --build-arg VERSION="$CURRENT_VERSION" --build-arg BUILD_TIMESTAMP="$BUILD_TIMESTAMP" --build-arg BUILD_ENVIRONMENT=local . 
+DOCKER_BUILDKIT=0
+COMPOSE_DOCKER_CLI_BUILD=0
+docker build -f compose/production/django/Dockerfile -t "$DEV_TAG" -t "$DEV_LATEST" --build-arg VERSION="$CURRENT_VERSION" --build-arg BUILD_TIMESTAMP="$BUILD_TIMESTAMP" --build-arg BUILD_ENVIRONMENT=local .
 docker push "$DEV_LATEST"
 docker push "$DEV_TAG" 
