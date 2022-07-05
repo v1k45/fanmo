@@ -20,6 +20,9 @@ services:
       - ./.envs/.dev/.nuxt
       - ./.envs/.dev/.postgres
     command: /start
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      start_period: 15s
     deploy:
       update_config:
         order: start-first
@@ -37,10 +40,15 @@ services:
   qcluster:
     <<: *django
     command: /qcluster
+    healthcheck:
+      disable: true
 
   nuxt:
     <<: *django
     command: /nuxt
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      start_period: 15s
 
   postgres:
     build:
