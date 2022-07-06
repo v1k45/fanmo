@@ -7,6 +7,8 @@ from dj_rest_auth.views import (
 )
 from django.http import JsonResponse
 from django.urls.conf import include, path
+from django.contrib.sites.models import Site
+from django.core.cache import cache
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework_extensions.routers import ExtendedSimpleRouter
 
@@ -56,6 +58,8 @@ def api_meta(request):
     API to return meta stuff, to be used for healthchecks and version indentification.
     """
     return JsonResponse({
+        "cache": cache.get("dummy", 1),
+        "db": Site.objects.count(),
         "env": os.environ.get("BUILD_ENV", "UNKNOWN"),
         "build": {
             "version": os.environ.get("BUILD_VERSION", "UNKNOWN"),
