@@ -1,9 +1,11 @@
+import os
 from dj_rest_auth.views import (
     LogoutView,
     PasswordChangeView,
     PasswordResetConfirmView,
     PasswordResetView,
 )
+from django.http import JsonResponse
 from django.urls.conf import include, path
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework_extensions.routers import ExtendedSimpleRouter
@@ -48,6 +50,19 @@ from memberships.users.api.views import (
 )
 from memberships.webhooks.views import razorpay_webhook
 
+
+def api_meta(request):
+    """
+    API to return meta stuff, to be used for healthchecks and version indentification.
+    """
+    return JsonResponse({
+        "build": {
+            "version": os.environ.get("BUILD_VERSION", "UNKNOWN"),
+            "time": os.environ.get("BUILD_TIMESTAMP", "UNKNOWN")
+        }
+    })
+
+
 router = ExtendedSimpleRouter()
 router.register("users", UserViewSet, basename="users")
 router.register("activities", CreatorActivityViewSet, basename="activities")
@@ -89,6 +104,7 @@ integration_patterns = [
 
 app_name = "api"
 urlpatterns = router.urls + [
+    path("meta/", api_meta),
     path("me/", OwnUserAPIView.as_view(), name="me"),
     path("auth/", include(auth_patterns)),
     path("integrations/", include(integration_patterns)),

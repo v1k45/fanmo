@@ -79,6 +79,12 @@ RUN npm install --global yarn
 RUN yarn add nuxt-start 
 ENV PATH="$PATH:./node_modules/.bin"
 
+# tag version data
+ARG VERSION
+ARG BUILD_TIMESTAMP
+ENV BUILD_VERSION ${VERSION}
+ENV BUILD_TIMESTAMP ${BUILD_TIMESTAMP}
+
 # Utilitiy scripts
 COPY --chown=django:django ./compose/production/django/entrypoint /entrypoint
 RUN sed -i 's/\r$//g' /entrypoint
@@ -110,6 +116,6 @@ RUN chown django:django ${APP_HOME}
 
 USER django
 
-ENTRYPOINT ["/entrypoint"]
 EXPOSE 8000 3000
+ENTRYPOINT ["/entrypoint"]
 CMD ["supervisord"]
