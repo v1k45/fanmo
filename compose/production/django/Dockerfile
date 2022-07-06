@@ -102,9 +102,14 @@ COPY --chown=django:django ./frontend/nuxt.config.js ${APP_HOME}
 COPY --chown=django:django --from=node-build-stage /var/www/html /var/www/html/
 
 COPY --chown=django:django ./backend ${APP_HOME}
+COPY --chown=django:django ./backend ${APP_HOME}
+COPY --chown=django:django ./supervisord.conf /etc/
+
 # make django owner of the WORKDIR directory as well.
 RUN chown django:django ${APP_HOME}
 
 USER django
 
 ENTRYPOINT ["/entrypoint"]
+EXPOSE 8000 3000
+CMD ["supervisord"]
