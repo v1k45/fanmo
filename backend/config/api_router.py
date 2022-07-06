@@ -56,6 +56,7 @@ def api_meta(request):
     API to return meta stuff, to be used for healthchecks and version indentification.
     """
     return JsonResponse({
+        "env": os.environ.get("BUILD_ENV", "UNKNOWN"),
         "build": {
             "version": os.environ.get("BUILD_VERSION", "UNKNOWN"),
             "time": os.environ.get("BUILD_TIMESTAMP", "UNKNOWN")
