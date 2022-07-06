@@ -21,6 +21,9 @@ services:
       - ./.envs/.dev/.postgres
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     deploy:
       update_config:
         order: start-first
@@ -36,11 +39,13 @@ services:
         window: 120s
 
   postgres:
-    build:
-      context: .
-      dockerfile: ./compose/production/postgres/Dockerfile
-    image: memberships_production_postgres
+    image: postgres:13.2
     container_name: memberships_postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     volumes:
       - local_postgres_data:/var/lib/postgresql/data:Z
       - local_postgres_data_backups:/backups:z
