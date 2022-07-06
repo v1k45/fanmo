@@ -31,7 +31,7 @@
   reverse_proxy /admin/* django:8000
   reverse_proxy /static/* django:8000
   reverse_proxy /media/* django:8000
-  reverse_proxy nuxt:3000
+  reverse_proxy django:3000
 
   encode gzip
 }
