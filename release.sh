@@ -7,7 +7,7 @@ set -o nounset
 # Inspired by https://axellarsson.com/blog/tag-docker-image-with-git-commit-hash/
 bumpver update -v
 eval $(bumpver show -n --env)
-BUILD_TIMESTAMP=$( date '+%F_%H:%M:%S' )
+BUILD_TIMESTAMP=$( date '+%F %H:%M:%S' )
 REPO="v1k45/fanmo:"
 
 DEV_TAG="${REPO}${CURRENT_VERSION}-dev"
