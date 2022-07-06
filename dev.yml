@@ -20,7 +20,7 @@ services:
       - ./.envs/.dev/.nuxt
       - ./.envs/.dev/.postgres
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/meta/"]
       interval: 10s
       timeout: 5s
       retries: 5
