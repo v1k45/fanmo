@@ -53,6 +53,20 @@ services:
       - ./.envs/.dev/.postgres
     networks:
       - backend
+    deploy:
+      update_config:
+        order: start-first
+        failure_action: rollback
+        delay: 10s
+      rollback_config:
+        parallelism: 0
+        order: stop-first
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+
 
   mailhog:
     image: mailhog/mailhog:v1.0.0
@@ -67,6 +81,19 @@ services:
     container_name: memberships_redis
     networks:
       - backend
+    deploy:
+      update_config:
+        order: start-first
+        failure_action: rollback
+        delay: 10s
+      rollback_config:
+        parallelism: 0
+        order: stop-first
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
 
   caddy:
     image: "caddy:2.1.1"
