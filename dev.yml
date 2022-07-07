@@ -33,7 +33,7 @@ services:
         parallelism: 0
         order: stop-first
       restart_policy:
-        condition: always
+        condition: any
         delay: 10s
         max_attempts: 50
 
@@ -61,7 +61,7 @@ services:
         parallelism: 0
         order: stop-first
       restart_policy:
-        condition: always
+        condition: any
         delay: 10s
         max_attempts: 50
 
@@ -87,7 +87,7 @@ services:
         parallelism: 0
         order: stop-first
       restart_policy:
-        condition: always
+        condition: any
         delay: 10s
         max_attempts: 50
 
