@@ -5,6 +5,7 @@
   <div class="max-w-sm mx-auto mb-10">
     <fm-form :errors="errors" class="mt-8" @submit.prevent="setPassword">
 
+      <fm-input v-model="form.email" uid="email" label="Email" type="email" block required readonly></fm-input>
 
       <fm-input v-model="form.code" uid="code" label="OTP" type="otp" block required autofocus></fm-input>
 
