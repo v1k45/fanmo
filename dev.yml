@@ -33,10 +33,9 @@ services:
         parallelism: 0
         order: stop-first
       restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 3
-        window: 120s
+        condition: always
+        delay: 10s
+        max_attempts: 50
 
   postgres:
     image: postgres:13.2
@@ -62,11 +61,9 @@ services:
         parallelism: 0
         order: stop-first
       restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 3
-        window: 120s
-
+        condition: always
+        delay: 10s
+        max_attempts: 50
 
   mailhog:
     image: mailhog/mailhog:v1.0.0
@@ -90,10 +87,9 @@ services:
         parallelism: 0
         order: stop-first
       restart_policy:
-        condition: on-failure
-        delay: 5s
-        max_attempts: 3
-        window: 120s
+        condition: always
+        delay: 10s
+        max_attempts: 50
 
   caddy:
     image: "caddy:2.1.1"
