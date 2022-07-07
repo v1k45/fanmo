@@ -62,7 +62,7 @@ export default {
     handlePaste(evt) {
       evt.stopPropagation();
       evt.preventDefault();
-      const paste = (evt.clipboardData || window.clipboardData).getData('text');
+      const paste = (evt.clipboardData || window.clipboardData).getData('text').trim();
       if (!paste.length || !/^[0-9]+$/.test(paste)) return;
       const arr = paste.split('').slice(0, this.digits);
       arr.forEach((char, idx) => {
