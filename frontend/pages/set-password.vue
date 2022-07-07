@@ -3,8 +3,6 @@
   <h1 class="font-title font-bold text-4xl text-center">Set new password</h1>
 
   <div class="max-w-sm mx-auto mb-10">
-    <fm-alert v-if="done" type="success" class="mt-4">Your password was successfully updated.</fm-alert>
-
     <fm-form :errors="errors" class="mt-8" @submit.prevent="setPassword">
 
 
@@ -26,7 +24,6 @@
 
 <script>
 const initialFormState = () => ({
-  done: false,
   form: {
     email: '',
     code: '',
@@ -52,11 +49,9 @@ export default {
     async setPassword() {
       try {
         await this.$axios.$post('/api/auth/password/reset/confirm/', this.form);
+        this.$toast.success('Your password was set successfully.');
+        await this.$auth.loginWith('cookie', { data: { email: this.form.email, password: this.form.new_password } });
         Object.assign(this, initialFormState());
-        this.done = true;
-        setTimeout(() => {
-          this.$router.push({ name: 'login' });
-        }, 3000);
       } catch (err) {
         this.errors = err.response.data;
       }
