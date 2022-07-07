@@ -16,14 +16,17 @@
       <fm-input v-show="false" v-model="form.email" uid="email" label="Email" type="email" required></fm-input>
       <fm-input v-model="form.new_password" uid="new_password" label="New password" type="password" required></fm-input>
 
-      <fm-button native-type="submit" type="primary" size="lg" class="mt-6" block>Set password</fm-button>
+      <fm-button native-type="submit" type="primary" size="lg" class="mt-6" :loading="loading" block>Set password</fm-button>
     </fm-form>
   </div>
 </div>
 </template>
 
 <script>
+import { decode as decodeBase64 } from 'js-base64';
+
 const initialFormState = () => ({
+  loading: false,
   form: {
     email: '',
     code: '',
@@ -42,17 +45,20 @@ export default {
   head: {
     title: 'Set password'
   },
-  created() {
-    this.form.email = this.$route.query.email || '';
+  mounted() {
+    this.form.email = decodeBase64(this.$route.params.token || '');
   },
   methods: {
     async setPassword() {
+      this.loading = true;
       try {
         await this.$axios.$post('/api/auth/password/reset/confirm/', this.form);
         this.$toast.success('Your password was set successfully.');
         await this.$auth.loginWith('cookie', { data: { email: this.form.email, password: this.form.new_password } });
         Object.assign(this, initialFormState());
+        this.loading = false;
       } catch (err) {
+        this.loading = false;
         this.errors = err.response.data;
       }
     }
