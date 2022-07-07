@@ -1,7 +1,7 @@
 <template>
 <div v-if="donations">
 
-  <div v-if="stats" class="flex text-center mb-6">
+  <div v-if="stats" class="flex flex-wrap text-center mb-6">
     <div>
       <div class="text-lg sm:text-3xl font-bold">{{ stats.total }}</div>
       <div class="text-xs sm:text-sm text-gray-600">total donations</div>
@@ -19,8 +19,8 @@
       <div class="text-xs sm:text-sm text-gray-600">total payment</div>
     </div>
     <div class="lg:block xl:hidden w-full mb-4"></div>
-    <div class="ml-auto">
-      <fm-button class="flex" type="primary" @click="exportCSV">
+    <div class="xl:ml-auto">
+      <fm-button class="flex" @click="exportCSV">
         <icon-download class="w-4 h-4 mr-2"></icon-download> Download CSV
       </fm-button>
     </div>

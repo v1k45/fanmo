@@ -20,13 +20,13 @@
     </div>
     <div class="lg:block xl:hidden w-full mb-4"></div>
     <div class="ml-auto">
-      <fm-button class="flex" type="primary" @click="dialogs.giveaway = true">
-        <icon-gift class="w-4 h-4 mr-2"></icon-gift> Gift memberships
+      <fm-button class="flex" @click="exportCSV">
+        <icon-download class="w-4 h-4 mr-2"></icon-download> Download CSV
       </fm-button>
     </div>
-    <div class="ml-auto">
-      <fm-button class="flex" type="primary" @click="exportCSV">
-        <icon-download class="w-4 h-4 mr-2"></icon-download> Download CSV
+    <div class="ml-3">
+      <fm-button class="flex" type="primary" @click="dialogs.giveaway = true">
+        <icon-gift class="w-4 h-4 mr-2"></icon-gift> Gift memberships
       </fm-button>
     </div>
   </div>

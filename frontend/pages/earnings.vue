@@ -12,7 +12,7 @@
   <!-- container start -->
   <div v-if="earnings" class="container mt-5 pt-6 pb-16 md:px-8 rounded-xl border bg-white">
 
-    <div v-if="stats" class="flex text-center mb-8">
+    <div v-if="stats" class="flex flex-wrap text-center mb-8">
       <div>
         <div class="text-lg sm:text-3xl font-bold">{{ stats.total }}</div>
         <div class="text-xs sm:text-sm text-gray-600">transactions</div>
@@ -30,8 +30,8 @@
         <div class="text-xs sm:text-sm text-gray-600">payout scheduled</div>
       </div>
       <div class="lg:block xl:hidden w-full mb-4"></div>
-      <div class="ml-auto">
-        <fm-button class="flex" type="primary" @click="exportCSV">
+      <div class="xl:ml-auto">
+        <fm-button class="flex" @click="exportCSV">
           <icon-download class="w-4 h-4 mr-2"></icon-download> Download CSV
         </fm-button>
       </div>
