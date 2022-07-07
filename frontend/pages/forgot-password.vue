@@ -11,7 +11,7 @@
 
       <fm-input v-model="form.email" uid="email" type="email" placeholder="Email address" required autofocus></fm-input>
 
-      <fm-button native-type="submit" type="primary" size="lg" class="mt-8" block>Reset password</fm-button>
+      <fm-button native-type="submit" type="primary" size="lg" class="mt-8" :loading="loading" block>Reset password</fm-button>
 
     </fm-form>
 
@@ -24,7 +24,10 @@
 </template>
 
 <script>
+import { encode as encodeBase64 } from 'js-base64';
+
 const initialState = () => ({
+  loading: false,
   form: {
     email: ''
   },
@@ -41,14 +44,17 @@ export default {
   },
   methods: {
     async resetPassword() {
+      this.loading = true;
       try {
         await this.$axios.$post('/api/auth/password/reset/', this.form);
         const email = this.form.email;
         this.form.email = '';
         this.errors = {};
         this.$toast.success('Password reset instructions were sent to your email.');
-        this.$router.push({ name: 'set-password', query: { email } });
+        this.loading = false;
+        this.$router.push({ name: 'set-password-token', params: { token: encodeBase64(email) } });
       } catch (err) {
+        this.loading = false;
         this.errors = err.response.data;
       }
     }
