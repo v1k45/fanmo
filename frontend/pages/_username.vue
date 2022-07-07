@@ -58,7 +58,9 @@
       </div>
     </fm-tabs-pane>
 
-    <fm-tabs-pane :id="tabName.TIERS" lazy label="Memberships" class="pb-10 bg-gray-50">
+    <fm-tabs-pane
+      v-if="shouldShowTiersTab"
+      :id="tabName.TIERS" lazy label="Memberships" class="pb-10 bg-gray-50">
       <div class="container min-h-[300px]">
         <div class="max-w-6xl mx-auto">
           <div class="row justify-center mt-2 gy-4 px-4">
@@ -146,6 +148,7 @@
 import {
   Plus as IconPlus
 } from 'lucide-vue';
+import get from 'lodash/get';
 import { mapActions, mapGetters, mapState } from 'vuex';
 import { loadRazorpay } from '~/utils';
 
@@ -199,7 +202,11 @@ export default {
     const username = this.$route.params.username;
     this.isLoading = true;
     await this.fetchProfile(username);
-    this.activeTab = this.currentUserHasActiveSubscription ? this.tabName.POSTS : this.tabName.TIERS;
+    this.activeTab = (() => {
+      if (this.currentUserHasActiveSubscription) return this.tabName.POSTS;
+      if (this.shouldShowTiersTab) return this.tabName.TIERS;
+      return this.tabName.DONATION;
+    })();
     this.isLoading = false;
   },
   auth: false,
@@ -211,7 +218,13 @@ export default {
   computed: {
     ...mapState('profile', ['user', 'donations', 'posts']),
     ...mapGetters('profile', ['isSelfProfile', 'currentUserHasActiveSubscription']),
-    ...mapGetters('posts', ['profilePosts'])
+    ...mapGetters('posts', ['profilePosts']),
+
+    shouldShowTiersTab() {
+      if (!this.user) return false;
+      const hasTiers = !!this.user.tiers.length;
+      return this.isSelfProfile || hasTiers;
+    }
   },
   mounted() {
     loadRazorpay();
