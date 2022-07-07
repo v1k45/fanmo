@@ -1,5 +1,5 @@
 <template>
-<div class="bg-white rounded-xl border py-4">
+<div class="bg-white rounded-xl border pt-4 pb-1">
   <div class="post-body">
     <div class="flex items-center">
       <div class="flex flex-wrap flex-grow mr-auto">
