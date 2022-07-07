@@ -13,12 +13,12 @@
 
     <div class="flex mt-2 mb-8 border-b-2 justify-center lg:justify-start">
       <nuxt-link
-        v-for="item in nav" :key="item.id" :to="item.url" replace
+        v-for="item in nav" :key="item.name" :to="item.url" replace
         class="px-8 py-3 unstyled block relative font-medium text-black"
         exact-active-class="!text-fm-primary font-bold">
         {{ item.label }}
 
-        <div v-if="$route.path === item.url" class="absolute left-0 bottom-[-2px] w-full h-[2px] bg-fm-primary"></div>
+        <div v-if="$route.name === item.name" class="absolute left-0 bottom-[-2px] w-full h-[2px] bg-fm-primary"></div>
       </nuxt-link>
     </div>
 
@@ -38,8 +38,8 @@ export default {
   data() {
     return {
       nav: [
-        { id: 'index', label: 'Members', url: '/members/' },
-        { id: 'manage-tiers', label: 'Manage tiers', url: '/members/tiers/' }
+        { name: 'members', label: 'Members', url: '/members/' },
+        { name: 'members-tiers', label: 'Manage tiers', url: '/members/tiers/' }
       ]
     };
   }
