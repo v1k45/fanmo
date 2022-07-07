@@ -47,7 +47,16 @@ export default {
     title: 'Set password'
   },
   mounted() {
-    this.form.email = decodeBase64(this.$route.params.token || '');
+    try {
+      const email = decodeBase64(this.$route.params.token || '');
+      if (!/\S+@\S+\.\S+/.test(email)) throw new Error('Invalid email');
+      this.form.email = email;
+
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.error('(Handled)', err);
+      this.$router.replace({ name: 'forgot-password' });
+    }
   },
   methods: {
     async sendOTP() {
