@@ -3,12 +3,9 @@
   "scripts": {
     "local": "maizzle build",
     "production": "maizzle build production",
-    "watch": "maizzle serve"
+    "dev": "maizzle serve"
   },
   "dependencies": {
-    "@maizzle/cli": "^1.5.0",
-    "@maizzle/framework": "^4.0.0",
-    "global": "^4.4.0",
-    "npm": "^8.12.2"
+    "@maizzle/framework": "^4.0.0"
   }
 }
