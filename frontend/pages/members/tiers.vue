@@ -17,8 +17,8 @@
   </div>
 
   <div v-else-if="tiers && !tiers.count" class="max-w-lg h-64 bg-gray-100 rounded-xl mx-auto mt-16 flex justify-center flex-col items-center">
-    <div class="opacity-40 text-center">
-      <icon-list-minus :size="64" class="mx-auto mb-3"></icon-list-minus>
+    <div class="text-center">
+      <icon-crown class="mx-auto stroke-1 h-16 w-16 mb-3"></icon-crown>
       <div>Tiers will appear here. <br> Click on <strong>Add a tier</strong> to get started.</div>
     </div>
   </div>
