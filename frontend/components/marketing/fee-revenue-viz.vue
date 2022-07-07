@@ -60,8 +60,8 @@
           <label for="subscribers-slider" class="block mr-auto">Total subscribers</label>
           <input
             v-model.number="subscriberCount" type="number"
-            class="w-20 h-10 border-gray-200 border-2 rounded-lg text-xl text-center font-bold text-fm-info"
-            min="1" max="1000">
+            class="w-28 h-10 border-gray-200 border-2 rounded-lg text-xl font-bold text-fm-info"
+            min="1" max="1000" @focus="$event.target.select();">
         </div>
         <input
           id="subscribers-slider" v-model.number="subscriberCount"
@@ -76,8 +76,8 @@
             <icon-indian-rupee class="h-full mr-1"></icon-indian-rupee>
             <input
               v-model.number="subscriptionPrice" type="number"
-              class="w-20 h-10 border-gray-200 border-2 rounded-lg text-center font-bold text-xl text-fm-success-600"
-              min="10" max="2000">
+              class="w-28 h-10 border-gray-200 border-2 rounded-lg font-bold text-xl text-fm-success-600"
+              min="10" max="2000" @focus="$event.target.select();">
           </div>
         </div>
         <input
@@ -104,6 +104,8 @@ export default {
     IconIndianRupee
   },
   data() {
+    const subscriberCount = 500;
+    const subscriptionPrice = 150;
     return {
       data: [
         {
@@ -122,7 +124,7 @@ export default {
             const priceInUSD = price / USD_TO_INR_PRICE;
             // for transactions over $3, the % fee is 2.9% and 5% otherwise
             const txnFeePercent = priceInUSD > 3 ? 2.9 : 5;
-            // for transactions over $3, the static fee is $0.30 and $0.10 otherwise
+            // for transactions over $3, the flat fee is $0.30 and $0.10 otherwise
             const txnFeeStatic = (priceInUSD > 3 ? 0.30 : 0.10) * USD_TO_INR_PRICE;
 
             const paymentProcessingFee = (getValueByPercent(price, txnFeePercent) * subscribers) + (txnFeeStatic * subscribers);
@@ -137,21 +139,25 @@ export default {
           getFee: (subscribers, price) => getValueByPercent(subscribers * price, 30)
         }
       ],
-      subscriberCount: 500,
-      subscriptionPrice: 150,
+      subscriberCount,
+      subscriptionPrice,
+
+      internalSubscriberCount: subscriberCount,
+      internalSubscriptionPrice: subscriptionPrice,
+
       inrFormat,
       rerender: 0
     };
   },
   computed: {
     barData() {
-      let { subscriberCount, subscriptionPrice } = this;
-      if (!subscriberCount) subscriberCount = 0;
-      if (!subscriptionPrice) subscriptionPrice = 0;
-      const total = round(subscriberCount * subscriptionPrice);
+      let { internalSubscriberCount, internalSubscriptionPrice } = this;
+      if (!internalSubscriberCount) internalSubscriberCount = 0;
+      if (!internalSubscriptionPrice) internalSubscriptionPrice = 0;
+      const total = round(internalSubscriberCount * internalSubscriptionPrice);
       let maxFee = Number.NEGATIVE_INFINITY;
       const computed = this.data.map(platform => {
-        const fee = round(platform.getFee(subscriberCount, subscriptionPrice));
+        const fee = round(platform.getFee(internalSubscriberCount, internalSubscriptionPrice));
         const earned = round(total - fee);
         if (fee > maxFee) maxFee = fee;
         return {
@@ -172,14 +178,12 @@ export default {
   },
   watch: {
     subscriberCount(val) {
-      if ([null, ''].includes(val)) return;
-      if (val < 1 || val > 1000) this.subscriberCount = 500;
-      else if (!Number.isInteger(val)) this.subscriberCount = Math.round(val);
+      if ([null, ''].includes(val) || val < 1 || val > 1000) return;
+      this.internalSubscriberCount = Number.isInteger(val) ? val : Math.round(val);
     },
     subscriptionPrice(val) {
-      if ([null, ''].includes(val)) return;
-      if (val < 10 || val > 2000) this.subscriptionPrice = 150;
-      else if (!Number.isInteger(val)) this.subscriptionPrice = round(val);
+      if ([null, ''].includes(val) || val < 10 || val > 2000) return;
+      this.internalSubscriptionPrice = Number.isInteger(val) ? val : Math.round(val);
     }
   }
 };
