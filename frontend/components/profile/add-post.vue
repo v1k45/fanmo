@@ -285,7 +285,7 @@ export default {
         this.loading = false;
         return;
       }
-      this.$toast.success('Your post was published successfully.');
+      this.$toast.success('Your post was published successfully. Your followers will be notified shortly.');
       this.loading = false;
       this.isVisible = false;
     },
