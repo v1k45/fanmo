@@ -52,6 +52,7 @@ export default {
       if (!/\S+@\S+\.\S+/.test(email)) throw new Error('Invalid email');
       this.form.email = email;
 
+      if (this.$route.query.s === '1') this.sendOTP();
     } catch (err) {
       // eslint-disable-next-line no-console
       console.error('(Handled)', err);
