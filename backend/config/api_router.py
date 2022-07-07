@@ -1,3 +1,4 @@
+import socket
 import os
 from dj_rest_auth.views import (
     LogoutView,
@@ -9,6 +10,7 @@ from django.http import JsonResponse
 from django.urls.conf import include, path
 from django.contrib.sites.models import Site
 from django.core.cache import cache
+from django.utils import timezone
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework_extensions.routers import ExtendedSimpleRouter
 
@@ -58,6 +60,8 @@ def api_meta(request):
     API to return meta stuff, to be used for healthchecks and version indentification.
     """
     return JsonResponse({
+        "host": socket.gethostname(),
+        "time": timezone.now().isoformat(),
         "cache": cache.get("dummy", 1),
         "db": Site.objects.count(),
         "env": os.environ.get("BUILD_ENV", "UNKNOWN"),
