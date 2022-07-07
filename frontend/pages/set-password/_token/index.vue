@@ -11,7 +11,7 @@
 
       <div class="text-right mt-4 text-sm">
         Don't have one?
-        <nuxt-link to="/forgot-password" class="mr-auto">Get a password reset code</nuxt-link>.
+        <fm-button type="link" class="mr-auto" @click="sendOTP">Get a password reset code</fm-button>
       </div>
 
       <fm-input v-show="false" v-model="form.email" uid="email" label="Email" type="email" required></fm-input>
@@ -50,6 +50,16 @@ export default {
     this.form.email = decodeBase64(this.$route.params.token || '');
   },
   methods: {
+    async sendOTP() {
+      this.loading = true;
+      try {
+        await this.$axios.$post('/api/auth/password/reset/', { email: this.form.email });
+        this.$toast.success('Password reset code was sent to your email.');
+      } catch (err) {
+        this.errors = err.response.data;
+      }
+      this.loading = false;
+    },
     async setPassword() {
       this.loading = true;
       try {
