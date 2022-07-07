@@ -61,6 +61,7 @@
 </template>
 
 <script>
+import get from 'lodash/get';
 import { mapActions, mapState } from 'vuex';
 export default {
   props: {
@@ -109,6 +110,7 @@ export default {
         if (!success) {
           this.errors = data;
           this.loading = false;
+          if (get(data, 'creator_username[0]')) this.$toast.error(data.creator_username[0].message);
           return;
         }
         this.$emit('submit', data); // membership
@@ -120,6 +122,7 @@ export default {
         if (!success) {
           this.errors = data;
           this.loading = false;
+          if (get(data, 'creator_username[0]')) this.$toast.error(data.creator_username[0].message);
           return;
         }
         this.$emit('submit', data); // donation
