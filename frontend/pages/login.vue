@@ -16,7 +16,7 @@
         <nuxt-link to="/forgot-password" class="text-fm-primary">Forgot password?</nuxt-link>
       </div>
 
-      <fm-button native-type="submit" type="primary" size="lg" class="mt-6" block>Sign in</fm-button>
+      <fm-button native-type="submit" type="primary" size="lg" class="mt-6" :loading="loading" block>Sign in</fm-button>
     </fm-form>
 
     <div class="mt-6">
@@ -42,6 +42,7 @@ export default {
   auth: 'guest',
   data() {
     return {
+      loading: false,
       loginForm: {
         email: '',
         password: ''
@@ -54,12 +55,14 @@ export default {
   },
   methods: {
     async userLogin() {
+      this.loading = true;
       try {
         await this.$auth.loginWith('cookie', { data: this.loginForm });
         this.loginErrors = {};
       } catch (err) {
         this.loginErrors = err.response.data;
       }
+      this.loading = false;
     }
   }
 };
