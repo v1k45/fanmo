@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { decode as decodeBase64 } from 'js-base64';
+import { base64 } from '~/utils';
 
 const initialFormState = () => ({
   loading: false,
@@ -48,7 +48,7 @@ export default {
   },
   mounted() {
     try {
-      const email = decodeBase64(this.$route.params.token || '');
+      const email = base64.decode(this.$route.params.token || '');
       if (!/\S+@\S+\.\S+/.test(email)) throw new Error('Invalid email');
       this.form.email = email;
 

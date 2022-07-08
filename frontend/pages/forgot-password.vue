@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { encode as encodeBase64 } from 'js-base64';
+import { base64 } from '~/utils';
 
 const initialState = () => ({
   loading: false,
@@ -52,7 +52,7 @@ export default {
         this.errors = {};
         this.$toast.success('Password reset instructions were sent to your email.');
         this.loading = false;
-        this.$router.push({ name: 'set-password-token', params: { token: encodeBase64(email) } });
+        this.$router.push({ name: 'set-password-token', params: { token: base64.encode(email) } });
       } catch (err) {
         this.loading = false;
         this.errors = err.response.data;

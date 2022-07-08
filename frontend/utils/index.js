@@ -166,3 +166,9 @@ export const maskString = (str, maskWith = 'X') => {
   const charCountToMask = Math.max(Math.ceil(str.length / 2), str.length - 4);
   return maskWith.repeat(charCountToMask) + str.slice(charCountToMask);
 };
+
+export const base64 = {
+  encode,
+  decode
+};
+
