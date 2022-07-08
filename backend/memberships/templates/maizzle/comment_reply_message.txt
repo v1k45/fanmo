@@ -5,7 +5,7 @@ Hi {{ notification.recipient.display_name }},
 {{ obj.body }}
 
 View Post
-      →
+         →
 
 {{ settings.BASE_URL }}{% url 'post_detail' obj.post.slug obj.post.id %}
 

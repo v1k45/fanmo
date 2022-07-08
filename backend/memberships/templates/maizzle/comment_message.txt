@@ -6,7 +6,7 @@ Hi {{ obj.post.author_user.display_name }},
 You can moderate this comment from the post page.
 
 View Post
-      →
+         →
 
 {{ settings.BASE_URL }}{% url 'post_detail' obj.post.slug obj.post.id %}
 

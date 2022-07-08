@@ -3,7 +3,7 @@ Your {{ obj.creator_user.display_name }} membership tier has been successfully u
 You will be charged {{ obj.scheduled_subscription.plan.amount }} per month from {{ obj.scheduled_subscription.cycle_start_at|date:"d F Y" }}.
 
 View Memberships
-      →
+         →
 
 {{ settings.BASE_URL }}{% url 'memberships'  %}
 

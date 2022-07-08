@@ -4,9 +4,9 @@ Welcome to Fanmo!
 Fanmo is a platform for creators and supporters to stay in touch by offerring and joining memberships and donations.
 Get started by activating your account by clicking the link below. Feel free to contact us at help@fanmo.in for any help.
 
-Activate account→
+Activate account   →
 
-{{ settings.BASE_URL }}{% url 'password_reset' user.email_base64 %}
+{{ settings.BASE_URL }}{% url 'password_reset' user.email_base64 %}?s=1
 
 Fanmo
 Need help? Email us on hello@fanmo.in mailto:hello@fanmo.in

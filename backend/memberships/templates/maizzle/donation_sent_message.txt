@@ -7,7 +7,7 @@ You have sucessfully donated {{ obj.amount }} to {{ obj.creator_user.display_nam
 {% endif %}
 
 View Donations
-      →
+         →
 
 {{ settings.BASE_URL }}{% url 'sent-donations'  %}
 

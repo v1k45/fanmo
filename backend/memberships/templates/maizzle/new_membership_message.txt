@@ -7,7 +7,7 @@ You'll be charged {{ obj.active_subscription.plan.amount }} per month.
 {% if obj.tier.welcome_message %} {{ obj.tier.welcome_user }} {% endif %}
 
 View Memberships
-      →
+         →
 
 {{ settings.BASE_URL }}{% url 'memberships'  %}
 

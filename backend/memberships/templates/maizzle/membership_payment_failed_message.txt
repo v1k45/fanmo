@@ -5,7 +5,7 @@ If the payment continues to fail, your membership will be cancelled and require 
       think this was a mistake, please contact help@fanmo.in.
 
 View Memberships
-      →
+         →
 
 {{ settings.BASE_URL }}{% url 'memberships'  %}
 

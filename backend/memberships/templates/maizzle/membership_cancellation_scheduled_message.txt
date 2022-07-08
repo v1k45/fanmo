@@ -3,7 +3,7 @@ Hi {{ obj.fan_user.display_name }},
 You won't be charged on the next renewal.
 
 View Memberships
-      →
+         →
 
 {{ settings.BASE_URL }}{% url 'memberships'  %}
 

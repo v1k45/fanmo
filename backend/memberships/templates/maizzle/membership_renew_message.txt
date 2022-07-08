@@ -3,7 +3,7 @@ Your {{ obj.tier.name }} membership has been successfully renewed.
 You were charged {{ obj.active_subscription.plan.amount }}. Your next renewal is on {{ obj.active_subscription.cycle_end_at|date:"d F Y" }}.
 
 View Memberships
-      →
+         →
 
 {{ settings.BASE_URL }}{% url 'memberships'  %}
 

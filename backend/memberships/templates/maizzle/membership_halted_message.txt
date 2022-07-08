@@ -5,7 +5,7 @@ Your membership with {{ obj.creator_user.display_name }} has been cancelled due 
 If you wish to continue the membership, please update your payment details on the membership page.
 
 View Memberships
-      →
+         →
 
 {{ settings.BASE_URL }}{% url 'memberships'  %}
 

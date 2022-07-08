@@ -3,7 +3,7 @@ Hi {{ obj.creator_user.display_name }},
 If you wish to contact {{ obj.fan_user.display_name }} directly, you can send email on {{ obj.fan_user.email }} mailto:{{ obj.fan_user.email }}
 
 View Members
-        →
+           →
 
 {{ settings.BASE_URL }}{% url 'members'  %}
 
