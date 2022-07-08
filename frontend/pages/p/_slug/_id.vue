@@ -77,7 +77,7 @@
     v-if="post"
     v-model="sharePost.isVisible"
     :text="post.title"
-    :url="url">
+    :relative-url="post.slug">
   </profile-share>
 </div>
 </template>

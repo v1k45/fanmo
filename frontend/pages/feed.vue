@@ -113,7 +113,7 @@
   <!-- following phone dialog end -->
 
   <!-- dialogs start -->
-  <profile-share v-model="sharePost.isVisible" :text="sharePost.text" :url="sharePost.url"></profile-share>
+  <profile-share v-model="sharePost.isVisible" :text="sharePost.text" :relative-url="sharePost.relativeUrl"></profile-share>
   <!-- dialogs end -->
 </div>
 </template>
@@ -131,7 +131,7 @@ export default {
       isFollowingDialogVisible: false,
       sharePost: {
         isVisible: false,
-        url: null,
+        relativeUrl: null,
         text: null
       }
     };
@@ -168,7 +168,7 @@ export default {
     handleShareClick(post) {
       this.sharePost = {
         isVisible: true,
-        url: post.slug,
+        relativeUrl: post.slug,
         text: post.title
       };
     }

@@ -140,7 +140,7 @@
 
   <profile-add-post v-if="isSelfProfile" v-model="addPost.isVisible"></profile-add-post>
 
-  <profile-share v-model="sharePost.isVisible" :text="sharePost.text" :url="sharePost.url"></profile-share>
+  <profile-share v-model="sharePost.isVisible" :text="sharePost.text" :relative-url="sharePost.relativeUrl"></profile-share>
 </div>
 </template>
 
@@ -193,7 +193,7 @@ export default {
 
       sharePost: {
         isVisible: false,
-        url: null,
+        relativeUrl: null,
         text: null
       }
     };
@@ -386,7 +386,7 @@ export default {
     handleShareClick(post) {
       this.sharePost = {
         isVisible: true,
-        url: post.slug,
+        relativeUrl: post.slug,
         text: post.title
       };
     }
