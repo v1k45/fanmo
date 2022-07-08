@@ -30,7 +30,7 @@
 
     <div class="flex mt-2 mb-6">
       <fm-input readonly :value="url" class="flex-grow mr-3"></fm-input>
-      <fm-button type="primary" :disabled="isCopied" @click="copy">{{ isCopied ? 'Copied' : 'Copy link' }}</fm-button>
+      <fm-button type="primary" class="w-28" :disabled="isCopied" @click="copy">{{ isCopied ? 'Copied' : 'Copy' }}</fm-button>
     </div>
 
   </div>
@@ -44,7 +44,7 @@ import { getSocialLink, copy, delay } from '~/utils';
 export default {
   props: {
     value: { type: Boolean, default: true },
-    url: { type: String, default: '' },
+    relativeUrl: { type: String, default: '' },
     text: { type: String, default: '' }
   },
   data() {
@@ -60,6 +60,10 @@ export default {
       set(val) {
         this.$emit('input', val);
       }
+    },
+    url() {
+      if (!this.relativeUrl) return '';
+      return `${location.origin}${this.relativeUrl.startsWith('/') ? '' : '/'}${this.relativeUrl}`;
     },
     link() {
       const { url, text } = this;
