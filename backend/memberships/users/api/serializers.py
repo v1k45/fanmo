@@ -261,7 +261,7 @@ class UserSerializer(ComputedUserFieldSerializer, serializers.ModelSerializer):
                 self.fields["onboarding"].read_only = True
 
     def validate_about(self, about):
-        return bleach.clean(about, tags=["p", "b", "strong", "i", "strike", "em", "s"])
+        return bleach.clean(about, tags=["p", "b", "strong", "i", "strike", "em", "s", "br"])
 
     def validate_is_creator(self, is_creator):
         if self.instance.is_creator and not is_creator:
