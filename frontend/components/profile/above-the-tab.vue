@@ -74,13 +74,12 @@
       </div>
       <!-- name and short description end -->
 
-      <!-- Donate and follow/unfollow actions start -->
+      <!-- share and follow/unfollow actions start -->
       <div class="ml-auto my-4 lg:my-0">
-        <fm-button type="primary" class="mr-4 inline-flex items-center mr-0">
-          <!-- TODO: update image -->
-          <logo circle class="h-4 mr-2 inline-block"></logo> Support
+        <fm-button class="mr-4 inline-flex items-center" @click="isProfileShareVisible = true;">
+          <icon-share class="inline-block -mt-0.5 mr-1 h-em w-em"></icon-share> Share
         </fm-button>
-        <fm-button :type="user.is_following ? 'success' : ''" class="w-36" @click="toggleFollow">
+        <fm-button :type="user.is_following ? 'success' : 'primary'" class="w-36" @click="toggleFollow">
           <div v-if="user.is_following" class="flex items-center justify-center">
             <icon-check class="inline-block mr-1 h-em w-em"></icon-check> Following
           </div>
@@ -89,7 +88,7 @@
           </div>
         </fm-button>
       </div>
-    <!-- Donate and follow/unfollow actions end -->
+    <!-- share and follow/unfollow actions end -->
     </div>
 
   </div>
@@ -137,6 +136,13 @@
     </template>
   </fm-dialog>
 
+  <profile-share
+    v-if="user"
+    v-model="isProfileShareVisible"
+    text="Support me on Fanmo!"
+    :relative-url="user.username">
+  </profile-share>
+
 </div>
 </template>
 
@@ -158,6 +164,7 @@ export default {
   },
   data() {
     return {
+      isProfileShareVisible: false,
       isEditing: false,
       editForm: {
         name: '',
