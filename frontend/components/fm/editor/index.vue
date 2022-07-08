@@ -28,9 +28,14 @@
       :class="{ 'is-active': editor.isActive('strike') }" @click="editor.chain().focus().toggleStrike().run()">
       <icon-strikethrough></icon-strikethrough>
     </button>
+    <button
+      v-if="currentPreset.hardBreak" type="button" title="Newline (Shift + Enter)"
+      @click="editor.chain().focus().setHardBreak().run()">
+      <icon-corner-down-left></icon-corner-down-left>
+    </button>
 
 
-    <hr v-if="(currentPreset.heading || currentPreset.bold || currentPreset.italic || currentPreset.strike) && (currentPreset.bulletList || currentPreset.orderedList)">
+    <hr v-if="(currentPreset.heading || currentPreset.bold || currentPreset.italic || currentPreset.strike || currentPreset.hardBreak) && (currentPreset.bulletList || currentPreset.orderedList)">
 
     <button
       v-if="currentPreset.bulletList" type="button" title="Bullet list"
@@ -92,6 +97,7 @@ const options = () => ({
   history: true,
   paragraph: true,
   text: true,
+  hardBreak: true, // TODO: implement single enter - this, double enter - paragraph (very hard)
 
   blockquote: false,
   bold: false,
@@ -100,7 +106,6 @@ const options = () => ({
   codeBlock: false,
   dropcursor: false,
   gapcursor: false,
-  hardBreak: false, // TODO: implement single enter - this, double enter - paragraph
   heading: false,
   horizontalRule: false,
   italic: false,
