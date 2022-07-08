@@ -110,7 +110,7 @@
   </div>
 
   <hr v-if="!images.length && post.content" class="mt-4">
-  <div class="mt-4 post-body flex items-center">
+  <div class="mt-4 mb-3 post-body flex items-center">
     <button type="link" class="inline-flex items-center mr-6" @click="toggleReaction('heart')">
       <icon-heart
         class="inline mr-2 h-em w-em animatecss"
