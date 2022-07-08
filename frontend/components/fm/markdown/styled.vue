@@ -86,6 +86,9 @@ export default {
   p {
     margin-top: 0;
     margin-bottom: 10px;
+    &:last-child {
+      margin-bottom: 0;
+    }
   }
 
   blockquote {
