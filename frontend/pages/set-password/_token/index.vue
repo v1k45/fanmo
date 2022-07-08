@@ -65,6 +65,7 @@ export default {
       try {
         await this.$axios.$post('/api/auth/password/reset/', { email: this.form.email });
         this.$toast.success('Password reset code was sent to your email.');
+        this.errors = {};
       } catch (err) {
         this.errors = err.response.data;
       }
