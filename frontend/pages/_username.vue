@@ -30,10 +30,14 @@
               <div class="text-xl text-black font-bold mb-3">About me</div>
               <!-- TODO: remove duplication once breakpoint service is available -->
               <fm-read-more v-if="user.about" lines="2" class="lg:hidden mb-4">
-                <p v-html="user.about"></p>
+                <fm-markdown-styled>
+                  <div v-html="user.about"></div>
+                </fm-markdown-styled>
               </fm-read-more>
               <fm-read-more v-if="user.about" lines="6" class="hidden lg:block mb-4">
-                <p v-html="user.about"></p>
+                <fm-markdown-styled>
+                  <div v-html="user.about"></div>
+                </fm-markdown-styled>
               </fm-read-more>
               <div class="flex justify-center space-x-4 text-gray-600">
                 <a v-if="user.social_links.website_url" class="unstyled hover:text-gray-800" title="Website" target="_blank" :href="user.social_links.website_url">
