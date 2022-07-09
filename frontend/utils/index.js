@@ -1,7 +1,7 @@
 /* eslint no-console: ["warn", { allow: ["error"] }] */
 import dayjs from 'dayjs';
 import get from 'lodash/get';
-import { Base64 } from 'js-base64';
+import { encode, decode } from 'js-base64/base64.mjs';
 import toast from '~/components/fm/alert/service';
 
 const currencyFormatter = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' });
@@ -169,7 +169,7 @@ export const maskString = (str, maskWith = 'X') => {
 };
 
 export const base64 = {
-  encode: Base64.encode,
-  decode: Base64.decode
+  encode,
+  decode
 };
 
