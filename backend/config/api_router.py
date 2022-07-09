@@ -4,7 +4,6 @@ from dj_rest_auth.views import (
     LogoutView,
     PasswordChangeView,
     PasswordResetConfirmView,
-    PasswordResetView,
 )
 from django.http import JsonResponse
 from django.urls.conf import include, path
@@ -51,6 +50,7 @@ from memberships.users.api.views import (
     TOTPDeviceViewSet,
     UserViewSet,
     VerifyEmailView,
+    PasswordResetView,
 )
 from memberships.webhooks.views import razorpay_webhook
 
@@ -79,6 +79,7 @@ router.register("tiers", TierViewSet, basename="tiers")
 router.register("posts", PostViewSet, basename="posts")
 router.register("comments", CommentViewSet, basename="comments")
 router.register("memberships", MembershipViewSet, basename="memberships")
+# TODO: Remove subscriptions API
 router.register("subscriptions", SubscriptionViewSet, basename="subscriptions")
 router.register("donations", DonationViewSet, basename="donations")
 router.register("payments", PaymentViewSet, basename="payments")

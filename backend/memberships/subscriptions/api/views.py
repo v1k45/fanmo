@@ -18,6 +18,7 @@ from memberships.subscriptions.api.serializers import (
 from memberships.subscriptions.models import Membership, Subscription
 from memberships.users.api.permissions import IsCreator
 from memberships.subscriptions.api.filters import MembershipFilter
+from memberships.utils.throttling import Throttle
 
 
 class TierViewSet(
@@ -25,6 +26,7 @@ class TierViewSet(
 ):
     serializer_class = TierSerializer
     permission_classes = [permissions.IsAuthenticated, IsCreator]
+    throttle_classes = [Throttle("tier_hour", "create")]
 
     def get_queryset(self):
         return self.request.user.tiers.all()
@@ -41,6 +43,7 @@ class MembershipViewSet(
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filterset_class = MembershipFilter
     ordering_fields = ["created_at", "lifetime_amount"]
+    throttle_classes = [Throttle("transaction_hour", "create")]
 
     @property
     def search_fields(self):

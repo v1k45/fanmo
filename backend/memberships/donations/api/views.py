@@ -17,6 +17,7 @@ from memberships.users.api.permissions import IsCreator
 from memberships.donations.models import Donation
 from memberships.payments.models import Payment
 from memberships.donations.api.filters import DonationFilter
+from memberships.utils.throttling import Throttle
 
 
 class DonationViewSet(
@@ -25,6 +26,7 @@ class DonationViewSet(
     filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filterset_class = DonationFilter
     ordering_fields = ["created_at", "amount", "lifetime_amount"]
+    throttle_classes = [Throttle("transaction_hour", "create")]
 
     def get_queryset(self):
         queryset = Donation.objects.filter(status=Donation.Status.SUCCESSFUL)

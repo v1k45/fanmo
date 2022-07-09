@@ -401,6 +401,16 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "memberships.utils.authentication.SessionAuthentication",
     ),
+    'DEFAULT_THROTTLE_RATES': {
+        'register_hour': '100/h',
+        'login_hour': '100/h',
+        'otp_minute': '5/m',
+        'otp_hour': '100/h',
+        'transaction_hour': '500/h',
+        'post_hour': '100/h',
+        'comment_hour': '100/h',
+        'tier_hour': '50/h',
+    },
     "DEFAULT_PAGINATION_CLASS": "memberships.utils.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",

@@ -15,7 +15,6 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 from rest_framework.parsers import JSONParser, FormParser
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.filters import SearchFilter, OrderingFilter
 from memberships.users.api.filters import UserFilter
 
 from memberships.users.models import User
@@ -30,6 +29,8 @@ from .serializers import (
 )
 
 from dj_rest_auth.registration.views import SocialLoginView
+from dj_rest_auth.views import PasswordResetView as BasePasswordResetView
+from memberships.utils.throttling import Throttle
 
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
@@ -85,6 +86,8 @@ class CreatorActivityViewSet(ReadOnlyModelViewSet):
 
 
 class RegisterView(BaseRegisterView):
+    throttle_classes = [Throttle("register_hour")]
+
     def get_response_data(self, user):
         return UserSerializer(user, context=self.get_serializer_context()).data
 
@@ -115,6 +118,7 @@ class RequestEmailVerificationView(GenericAPIView):
 
     serializer_class = RequestEmailVerificationSerializer
     permission_classes = [IsAuthenticated]
+    throttle_classes = [Throttle("otp_minute"), Throttle("otp_hour")]
 
     @extend_schema(responses={204: None})
     def post(self, request, *args, **kwargs):
@@ -168,6 +172,8 @@ class TOTPDeviceViewSet(viewsets.ModelViewSet):
 class LoginView(LoginViewMixin, BaseLoginView):
     """Login using email/username and password"""
 
+    throttle_classes = [Throttle("login_hour")]
+
 
 class GoogleLoginView(LoginViewMixin, SocialLoginView):
     """Login using google"""
@@ -181,3 +187,10 @@ class FacebookLoginView(LoginViewMixin, SocialLoginView):
 
     adapter_class = FacebookOAuth2Adapter
     client_class = OAuth2Client
+
+
+class PasswordResetView(BasePasswordResetView):
+    throttle_classes = [
+        Throttle("otp_minute"),
+        Throttle("otp_hour"),
+    ]

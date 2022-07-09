@@ -24,6 +24,7 @@ from memberships.posts.api.serializers import (
 from memberships.users.api.permissions import IsCreator
 from memberships.posts.models import Comment, Post, annotate_post_permissions
 from memberships.core.tasks import async_task
+from memberships.utils.throttling import Throttle
 
 
 class PostViewSet(
@@ -34,6 +35,7 @@ class PostViewSet(
     queryset = Post.objects.filter(is_published=True)
     filter_backends = (DjangoFilterBackend,)
     filterset_class = PostFilter
+    throttle_classes = [Throttle("post_hour", "create")]
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -114,6 +116,7 @@ class CommentViewSet(
 ):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = CommentSerializer
+    throttle_classes = [Throttle("comment_hour", "create")]
 
     def get_queryset(self):
         queryset = (
