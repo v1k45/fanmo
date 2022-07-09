@@ -1,4 +1,6 @@
+from decimal import Decimal
 from django.db.models import Q, Sum, Count
+from django.db.models.functions import Coalesce
 from drf_spectacular.utils import extend_schema
 from rest_framework import mixins, permissions, viewsets
 from rest_framework.response import Response
@@ -113,7 +115,7 @@ class MembershipViewSet(
                 total=Count("id"),
                 active=Count("id", filter=Q(is_active=True)),
                 inactive=Count("id", filter=Q(is_active=False)),
-                total_payment=Sum("lifetime_amount"),
+                total_payment=Coalesce(Sum("lifetime_amount"), Decimal(0)),
             )
         )
         return Response(self.get_serializer(agg_stats).data)

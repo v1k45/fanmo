@@ -1,6 +1,8 @@
+from decimal import Decimal
 from rest_framework import mixins, viewsets, permissions
 from rest_framework.decorators import action
 from django.db.models import Q, Sum, Count, F
+from django.db.models.functions import Coalesce
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.response import Response
@@ -99,7 +101,7 @@ class DonationViewSet(
                 total=Count("id"),
                 total_with_message=Count("id", filter=Q(message="")),
                 total_without_message=Count("id", filter=~Q(message="")),
-                total_payment=Sum("amount"),
+                total_payment=Coalesce(Sum("amount"), Decimal(0)),
             )
         )
         return Response(self.get_serializer(agg_stats).data)
