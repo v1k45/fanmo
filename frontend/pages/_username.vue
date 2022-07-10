@@ -236,7 +236,7 @@ export default {
     this.isLoading = true;
     await this.fetchProfile(username);
     this.activeTab = (() => {
-      if (this.currentUserHasActiveSubscription) return this.tabName.POSTS;
+      if (this.currentUserHasActiveSubscription || this.isSelfProfile) return this.tabName.POSTS;
       if (this.shouldShowTiersTab) return this.tabName.TIERS;
       return this.tabName.DONATION;
     })();
