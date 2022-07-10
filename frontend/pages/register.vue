@@ -19,7 +19,7 @@
         and the <nuxt-link to="/privacy">Privacy policy</nuxt-link>.
       </div>
 
-      <fm-button native-type="submit" type="primary" size="lg" class="mt-6" block>Create account</fm-button>
+      <fm-button native-type="submit" type="primary" size="lg" class="mt-6" block :loading="loading">Create account</fm-button>
     </fm-form>
 
     <div class="mt-6">
@@ -56,6 +56,7 @@ export default {
         }
       : null;
     return {
+      loading: false,
       signupForm: fake || {
         name: '',
         email: '',
@@ -69,6 +70,7 @@ export default {
   },
   methods: {
     async register() {
+      this.loading = true;
       try {
         await this.$axios.$post('/api/auth/register/', this.signupForm);
         await this.$auth.loginWith('cookie', { data: this.signupForm });
@@ -77,6 +79,7 @@ export default {
       } catch (err) {
         this.signupErrors = err.response.data;
       }
+      this.loading = false;
     }
   }
 };
