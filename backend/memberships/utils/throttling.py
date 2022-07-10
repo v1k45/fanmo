@@ -1,3 +1,4 @@
+from ipware import get_client_ip
 from rest_framework.throttling import SimpleRateThrottle
 
 
@@ -30,15 +31,15 @@ class EnhancedThrottle(SimpleRateThrottle):
         return super().allow_request(request, view)
 
     def get_cache_key(self, request, view):
-        if request.user.is_authenticated:
-            ident = request.user.pk
-        else:
-            ident = self.get_ident(request)
-
         return self.cache_format % {
             "scope": self.scope,
-            "ident": ident,
+            "ident": self.get_ident(request),
         }
+    
+    def get_ident(self, request):
+        if request.user.is_authenticated:
+            return request.user.pk
+        return get_client_ip(request)[0] or "127.0.0.1"
 
 
 class Throttle:
