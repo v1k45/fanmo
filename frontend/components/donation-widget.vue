@@ -22,7 +22,7 @@
           <button
             v-for="amount in presetAmounts" :key="amount" type="button"
             :title="`Donate ₹${amount}`"
-            class="py-1 px-2 text-sm rounded border border-fm-success text-fm-success hover:bg-fm-success hover:text-white"
+            class="py-1 px-2 text-sm rounded border border-fm-primary-400 text-fm-primary-400 hover:border-fm-primary-500 hover:bg-fm-primary-500 hover:text-white"
             @click="form.amount = amount;">
             {{ $currency(amount) }}
           </button>
