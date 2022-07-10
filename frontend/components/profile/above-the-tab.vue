@@ -101,9 +101,11 @@
     <fm-form id="editProfileForm" :errors="editFormErrors" @submit.prevent="saveEditForm">
       <fm-input v-model="editForm.name" uid="name" type="text" label="Page name" autofocus required></fm-input>
       <fm-input v-model="editForm.one_liner" uid="one_liner" type="text" label="What are you creating?" placeholder="is creating space documentaries"></fm-input>
-      <fm-input v-model="editForm.about" uid="about" type="rich" label="About you"></fm-input>
+      <fm-input v-model="editForm.about" uid="about" type="rich" label="About"></fm-input>
 
       <label class="block mt-8">Social links <small>(leave empty to hide)</small></label>
+
+      <div class="text-sm text-gray-500 mt-2">Social links will be hidden from public if About is not set.</div>
 
       <div class="flex mt-5 items-center">
         <div class="mr-4 flex-shrink-0"><icon-globe class="text-fm-info"></icon-globe></div>
