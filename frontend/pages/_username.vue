@@ -184,9 +184,6 @@
 </template>
 
 <script>
-import {
-  Plus as IconPlus
-} from 'lucide-vue';
 import get from 'lodash/get';
 import { mapActions, mapGetters, mapState } from 'vuex';
 import { loadRazorpay } from '~/utils';
@@ -195,9 +192,6 @@ const MEMBERSHIP = 'membership';
 const DONATION = 'donation';
 
 export default {
-  components: {
-    IconPlus
-  },
   layout: 'default-no-container',
   data() {
     const tabName = {
