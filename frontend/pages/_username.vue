@@ -9,9 +9,9 @@
           <div class="col-12 lg:col-7">
 
             <div class="mt-6">
-              <div v-if="isSelfProfile" class="text-right mb-6">
-                <fm-button type="info" @click="addPost.isVisible = true;">
-                  <icon-plus class="mr-1" :size="16"></icon-plus>
+              <div v-if="isSelfProfile && profilePosts.results.length" class="text-right mb-6">
+                <fm-button type="primary" @click="addPost.isVisible = true;">
+                  <icon-image-plus class="mr-1" :size="16"></icon-image-plus>
                   Add a post
                 </fm-button>
               </div>
@@ -23,9 +23,28 @@
               <div v-if="profilePosts.next" class="text-center mt-4">
                 <fm-button :loading="nextPostsLoading" @click="loadNextPostsLocal">Load more</fm-button>
               </div>
+
+              <!-- no posts action start -->
+              <fm-card
+                v-else-if="isSelfProfile && !profilePosts.results.length"
+                class="mx-auto overflow-hidden" body-class="text-center !pt-16 !pb-20">
+                <icon-image-plus class="h-16 w-16 stroke-1 animatecss animatecss-tada"></icon-image-plus>
+                <div class="mt-2">
+                  Post exclusive and private content of any type for your fans and keep in touch by interacting with them using comments.
+                </div>
+                <fm-button class="mt-4 min-w-[200px]" type="primary" @click="addPost.isVisible = true;">
+                  Add a post
+                </fm-button>
+              </fm-card>
+              <!-- no posts action end -->
+
+              <!-- no posts public start -->
+              <div v-else-if="!isSelfProfile && !profilePosts.results.length" class="italic text-center text-gray-500">
+                {{ user.display_name }} hasn't posted anything yet.
+              </div>
+              <!-- no posts public end -->
             </div>
           </div>
-          <div class="col-12 lg:col-5">
             <fm-card body-class="" class="overflow-hidden sticky top-20 mt-6">
               <div class="text-xl text-black font-bold mb-3">About me</div>
               <!-- TODO: remove duplication once breakpoint service is available -->
