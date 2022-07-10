@@ -6,7 +6,7 @@
       <div class="flex mt-4">
         <!-- TODO: wire to correct dashboard link -->
         <fm-button block class="mr-2" @click="$router.replace('/dashboard')">Dashboard</fm-button>
-        <fm-button type="primary" block class="ml-2" @click="$router.replace('/profile')">Go to your profile</fm-button>
+        <fm-button type="primary" block class="ml-2" @click="$router.replace(`/${$auth.user.username}`)">Go to your profile</fm-button>
       </div>
     </div>
     <div v-else class="max-w-6xl grid grid-cols-12 gap-5 mx-auto">
