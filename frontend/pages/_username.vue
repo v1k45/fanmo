@@ -3,7 +3,7 @@
   <profile-above-the-tab></profile-above-the-tab>
 
   <fm-tabs v-model="activeTab" centered class="mt-8">
-    <fm-tabs-pane :id="tabName.POSTS" lazy label="Posts" class="bg-gray-50 pb-10">
+    <fm-tabs-pane :id="tabName.POSTS" lazy label="Feed" class="bg-gray-50 pb-10">
       <div class="container min-h-[300px]">
         <div class="max-w-6xl row gx-0 lg:gx-4 mx-auto flex-wrap-reverse">
           <div class="col-12 lg:col-7">
