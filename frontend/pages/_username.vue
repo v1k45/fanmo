@@ -45,19 +45,35 @@
               <!-- no posts public end -->
             </div>
           </div>
+          <div v-if="user.about || isSelfProfile" class="col-12 lg:col-5">
             <fm-card body-class="" class="overflow-hidden sticky top-20 mt-6">
-              <div class="text-xl text-black font-bold mb-3">About me</div>
-              <!-- TODO: remove duplication once breakpoint service is available -->
-              <fm-read-more v-if="user.about" lines="2" class="lg:hidden mb-4">
-                <fm-markdown-styled>
-                  <div v-html="user.about"></div>
-                </fm-markdown-styled>
-              </fm-read-more>
-              <fm-read-more v-if="user.about" lines="6" class="hidden lg:block mb-4">
-                <fm-markdown-styled>
-                  <div v-html="user.about"></div>
-                </fm-markdown-styled>
-              </fm-read-more>
+              <div class="text-xl text-black font-bold mb-3">About</div>
+              <div v-if="user.about">
+                <!-- TODO: remove duplication once breakpoint service is available -->
+                <fm-read-more lines="2" class="lg:hidden mb-4">
+                  <fm-markdown-styled>
+                    <div v-html="user.about"></div>
+                  </fm-markdown-styled>
+                </fm-read-more>
+                <fm-read-more lines="6" class="hidden lg:block mb-4">
+                  <fm-markdown-styled>
+                    <div v-html="user.about"></div>
+                  </fm-markdown-styled>
+                </fm-read-more>
+              </div>
+              <div
+                v-else
+                class="mx-auto overflow-hidden text-center pt-10 pb-14">
+                <icon-scroll class="h-16 w-16 stroke-1"></icon-scroll>
+                <div class="mt-2">
+                  Start by telling your fans a bit about yourself and where they can find you.
+
+                  <div class="text-sm text-gray-500 mt-3">
+                    Click on <span class="text-black">Edit Page</span> to get started.
+                  </div>
+
+                </div>
+              </div>
               <div class="flex justify-center space-x-4 text-gray-600">
                 <a v-if="user.social_links.website_url" class="unstyled hover:text-gray-800" title="Website" target="_blank" :href="user.social_links.website_url">
                   <icon-globe :size="24"></icon-globe>
