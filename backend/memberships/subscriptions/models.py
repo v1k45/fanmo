@@ -22,7 +22,7 @@ from memberships.core.notifications import (
 from memberships.payments.models import Payment, Payout
 from memberships.subscriptions.querysets import SubscriptionQuerySet
 from memberships.utils import razorpay_client
-from memberships.utils.models import BaseModel
+from memberships.utils.models import BaseModel, IPAddressHistoricalModel
 from memberships.core.tasks import async_task
 
 
@@ -50,7 +50,7 @@ class Tier(BaseModel):
 
     creator_user = models.ForeignKey("users.User", on_delete=models.CASCADE)
 
-    history = HistoricalRecords()
+    history = HistoricalRecords(bases=[IPAddressHistoricalModel])
 
     class Meta:
         ordering = ["creator_user", "amount"]
@@ -82,8 +82,7 @@ class Membership(BaseModel):
     )
 
     is_active = models.BooleanField(default=None, null=True)
-
-    history = HistoricalRecords()
+    history = HistoricalRecords(bases=[IPAddressHistoricalModel])
 
     class Meta:
         constraints = [
@@ -369,7 +368,7 @@ class Subscription(BaseModel):
     scheduled_to_change = models.BooleanField(default=False)
 
     objects = SubscriptionQuerySet.as_manager()
-    history = HistoricalRecords()
+    history = HistoricalRecords(bases=[IPAddressHistoricalModel])
 
     def create_external(self):
         subscription_data = {

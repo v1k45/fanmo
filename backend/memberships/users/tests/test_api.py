@@ -661,7 +661,7 @@ class TestActivitiesAPI:
         }
         assert (
             response_data["results"][3]["message"]
-            == f"{active_membership.fan_user.display_name} joined {active_membership.tier.name}"
+            == f"{active_membership.fan_user.display_name} joined {active_membership.tier.name}."
         )
         assert response_data["results"][3]["membership"]["id"] == active_membership.id
         assert response_data["results"][3]["fan_user"]["username"] == user.username

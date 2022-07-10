@@ -8,3 +8,4 @@ class CoreConfig(AppConfig):
     def ready(self):
         import memberships.core.channels  # noqa
         import memberships.core.providers  # noqa
+        import memberships.core.signals  # noqa

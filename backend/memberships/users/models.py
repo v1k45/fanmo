@@ -18,7 +18,7 @@ from memberships.core.models import (
 )
 
 from memberships.payments.models import BankAccount
-from memberships.utils.models import BaseModel
+from memberships.utils.models import BaseModel, IPAddressHistoricalModel
 from memberships.users.validators import ASCIIUsernameValidator, validate_username
 
 
@@ -163,7 +163,7 @@ class UserPreference(BaseModel):
     notify_memberships = models.BooleanField(default=True)
     notify_marketing = models.BooleanField(default=True)
 
-    history = HistoricalRecords()
+    history = HistoricalRecords(bases=[IPAddressHistoricalModel])
 
     def can_send_email_notification(self, email_type):
         if email_type in POST_NOTIFICATIONS:

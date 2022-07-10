@@ -49,6 +49,6 @@ class Throttle:
     def __init__(self, scope, action=None):
         self.scope = scope
         self.action = action
-    
+
     def __call__(self, *args, **kwargs):
         return EnhancedThrottle(self.scope, self.action)

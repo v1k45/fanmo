@@ -56,3 +56,14 @@ class BaseModel(models.Model, metaclass=BaseModelMeta):
 
     class Meta:
         abstract = True
+
+
+class IPAddressHistoricalModel(models.Model):
+    """
+    Abstract model for history models tracking the IP address.
+    """
+
+    ip_address = models.GenericIPAddressField("IP address", null=True)
+
+    class Meta:
+        abstract = True

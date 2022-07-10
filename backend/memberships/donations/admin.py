@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
-from simple_history.admin import SimpleHistoryAdmin
+from memberships.core.admin import SimpleHistoryAdmin
 
 from .models import Donation
 
@@ -26,3 +26,4 @@ class DonationAdmin(SimpleHistoryAdmin):
     )
     search_fields = ("name",)
     date_hierarchy = "created_at"
+    history_list_display = ["ip_address"]

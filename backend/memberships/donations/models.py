@@ -4,7 +4,7 @@ from djmoney.models.fields import MoneyField
 from simple_history.models import HistoricalRecords
 
 from memberships.utils import razorpay_client
-from memberships.utils.models import BaseModel
+from memberships.utils.models import BaseModel, IPAddressHistoricalModel
 
 
 class Donation(BaseModel):
@@ -23,7 +23,7 @@ class Donation(BaseModel):
 
     amount = MoneyField(max_digits=7, decimal_places=2)
     external_id = models.CharField(max_length=255)
-    history = HistoricalRecords()
+    history = HistoricalRecords(bases=[IPAddressHistoricalModel])
 
     is_hidden = models.BooleanField(default=False)
 
