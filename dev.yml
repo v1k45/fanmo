@@ -78,6 +78,11 @@ services:
     container_name: memberships_redis
     networks:
       - backend
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
     deploy:
       update_config:
         order: start-first
