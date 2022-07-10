@@ -195,7 +195,7 @@ export default {
     ...mapActions('posts', ['deletePost', 'addOrRemoveReaction']),
     async deletePostLocal() {
       try {
-        await this.$confirm.warning('Are you sure you want to delete this post? This action is irreversible.', 'Confirm');
+        await this.$confirm.error('Are you sure you want to delete this post? This action is irreversible.', 'Confirm');
       } catch (err) {
         return;
       }
