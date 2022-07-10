@@ -46,7 +46,7 @@
           <fm-input v-model="form.visibility" uid="visibility" type="select" label="Who can see this post?" class="mt-6">
             <option value="public">Public &mdash; Visible to everyone</option>
             <option value="all_members">All members &mdash; Visible to members of all levels</option>
-            <option value="allowed_tiers">Selected members &mdash; Visible to members of selected levels</option>
+            <option v-if="$auth.user.tiers.length" value="allowed_tiers">Selected members &mdash; Visible to members of selected levels</option>
           </fm-input>
 
           <div v-if="form.visibility == 'allowed_tiers'" class="mt-4">
