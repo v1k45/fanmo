@@ -1,5 +1,6 @@
 import socket
 import os
+from ipware import get_client_ip
 from dj_rest_auth.views import (
     LogoutView,
     PasswordChangeView,
@@ -64,6 +65,7 @@ def api_meta(request):
         "time": timezone.now().isoformat(),
         "cache": cache.get("dummy", 1),
         "db": Site.objects.count(),
+        "ip": get_client_ip(request)[0],
         "env": os.environ.get("BUILD_ENV", "UNKNOWN"),
         "build": {
             "version": os.environ.get("BUILD_VERSION", "UNKNOWN"),
