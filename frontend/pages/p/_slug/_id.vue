@@ -12,7 +12,10 @@
     <div v-else class="max-w-6xl grid grid-cols-12 gap-5 mx-auto">
       <div class="col-span-12 lg:col-span-7">
         <!-- TODO: showCreatorInfo on phone [needs breakpoint service] -->
-        <profile-post v-if="post" :post="post" @share-click="sharePost.isVisible = true;" @deleted="handleDeleted">
+        <profile-post
+          v-if="post"
+          :post="post"
+          @share-click="sharePost.isVisible = true;" @deleted="handleDeleted">
           <template #bottom>
             <profile-comments v-bind="{ post, comments }"></profile-comments>
           </template>
@@ -83,6 +86,7 @@
 </template>
 
 <script>
+import cloneDeep from 'lodash/cloneDeep';
 import { mapActions, mapGetters, mapMutations } from 'vuex';
 export default {
   layout: 'default-no-container',
@@ -90,6 +94,7 @@ export default {
   data() {
     return {
       postDeleted: false,
+      deletedCopy: null, // to be used after deletion
       sharePost: {
         isVisible: false
       }
@@ -105,7 +110,7 @@ export default {
     ...mapGetters('posts', ['currentPost', 'isDeleted']),
 
     post() {
-      return this.currentPost;
+      return this.currentPost || this.deletedCopy;
     },
     user() {
       return this.currentPost ? this.currentPost.author_user : null;
@@ -115,6 +120,15 @@ export default {
     },
     url() {
       return location.href;
+    }
+  },
+  watch: {
+    currentPost: {
+      immediate: true,
+      handler(post) {
+        if (!post) return;
+        this.deletedCopy = cloneDeep(post);
+      }
     }
   },
   created() {
