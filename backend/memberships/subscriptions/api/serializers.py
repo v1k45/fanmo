@@ -80,6 +80,8 @@ class RazorpayPayloadSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source="plan.name")
     prefill = serializers.SerializerMethodField()
     notes = serializers.SerializerMethodField()
+    image = serializers.SerializerMethodField()
+    theme = serializers.SerializerMethodField()
 
     class Meta:
         model = Subscription
@@ -90,6 +92,8 @@ class RazorpayPayloadSerializer(serializers.ModelSerializer):
             "name",
             "prefill",
             "notes",
+            "image",
+            "theme",
         ]
 
     def get_key(self, _):
@@ -104,6 +108,15 @@ class RazorpayPayloadSerializer(serializers.ModelSerializer):
 
     def get_subscription_card_change(self, subscription):
         return 1 if subscription.status == Subscription.Status.HALTED else 0
+
+    def get_image(self, subscription):
+        serializer = VersatileImageFieldSerializer("user_avatar")
+        serializer._context = self.context
+        avatar_renditions = serializer.to_representation(subscription.creator_user.avatar)
+        return avatar_renditions["thumbnail"] if avatar_renditions else None
+    
+    def get_theme(self, subscription):
+        return {"color": "#6266f1"}
 
 
 class SubscriptionPaymentSerializer(serializers.ModelSerializer):

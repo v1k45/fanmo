@@ -9,6 +9,7 @@ from memberships.users.api.serializers import (
     FanUserPreviewSerializer,
 )
 from memberships.core.serializers import PaymentIntentSerializerMixin
+from memberships.utils.fields import VersatileImageFieldSerializer
 
 
 class RazorpayPayloadSerializer(serializers.ModelSerializer):
@@ -17,10 +18,12 @@ class RazorpayPayloadSerializer(serializers.ModelSerializer):
     name = serializers.CharField(source="creator_user.display_name")
     prefill = serializers.SerializerMethodField()
     notes = serializers.SerializerMethodField()
+    image = serializers.SerializerMethodField()
+    theme = serializers.SerializerMethodField()
 
     class Meta:
         model = Donation
-        fields = ["key", "order_id", "name", "prefill", "notes"]
+        fields = ["key", "order_id", "name", "prefill", "notes", "image", "theme"]
 
     def get_key(self, _):
         return settings.RAZORPAY_KEY
@@ -31,6 +34,15 @@ class RazorpayPayloadSerializer(serializers.ModelSerializer):
 
     def get_notes(self, donation):
         return {"donation_id": donation.id}
+    
+    def get_image(self, donation):
+        serializer = VersatileImageFieldSerializer("user_avatar")
+        serializer._context = self.context
+        avatar_renditions = serializer.to_representation(donation.creator_user.avatar)
+        return avatar_renditions["thumbnail"] if avatar_renditions else None
+    
+    def get_theme(self, donation):
+        return {"color": "#6266f1"}
 
 
 class DonationPaymentSerializer(serializers.ModelSerializer):
