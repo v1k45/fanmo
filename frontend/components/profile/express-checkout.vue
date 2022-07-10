@@ -34,10 +34,10 @@
 
         <!-- TODO: figure out how this is supposed to work -->
         <div class="flex space-x-4">
-          <fm-button size="lg" class="mt-4 flex items-center justify-center" block @click="handleGoogleLogin">
+          <fm-button size="lg" class="mt-4 flex items-center justify-center" block @click="handleSocialLogin('google')">
             <img src="~/assets/marketing/google.svg" class="h-6 inline-block mr-2" alt="Google G logo"> Google
           </fm-button>
-          <fm-button size="lg" class="mt-4 flex items-center justify-center" block disabled>
+          <fm-button size="lg" class="mt-4 flex items-center justify-center" block @click="handleSocialLogin('facebook')">
             <img src="~/assets/marketing/facebook.svg" class="h-6 inline-block mr-2" alt="Facebook F logo"> Facebook
           </fm-button>
         </div>
@@ -99,6 +99,7 @@ export default {
   },
   methods: {
     ...mapActions('profile', ['createOrGetMembership', 'createDonation']),
+    ...mapActions(['refreshUser']),
     async handleSubmit() {
       this.loading = true;
       if (this.supportType === 'membership') {
@@ -130,16 +131,20 @@ export default {
       this.loading = false;
       this.errors = {};
     },
-    handleGoogleLogin() {
-      // todo: show a loading indicator in checkout form while login is being completed?
+    handleSocialLogin(provider) {
       // todo: remove listener?
-      window.onmessage = async () => {
-        // todo: filter messages?
-        // handle case where login fails or is abandoned for some reason?
-        await this.$auth.fetchUser();
-        await this.handleSubmit();
+      const vm = this;
+      window.onmessage = async ({ data }) => {
+        if (data !== 'refresh_login') return;
+        window.onmessage = null;
+        await vm.refreshUser();
+        if (vm.$auth.loggedIn) {
+          await vm.handleSubmit();
+        } else {
+          vm.$toast.error('Failed to login, please try again.');
+        }
       };
-      window.open('/auth/callback/google/');
+      window.open(`/auth/callback/${provider}/`);
     }
   }
 };

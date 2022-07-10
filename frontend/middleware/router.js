@@ -12,6 +12,13 @@ const allowedRoutes = {
 export default function(ctx) {
   const { $auth, route, next } = ctx;
   if (!$auth.loggedIn || !$auth.user) return;
+
+  // if authentication is triggered by express checkout, let the parent tab know.
+  if (window.opener) {
+    window.opener.postMessage('refresh_login', {});
+    window.close();
+  }
+
   const user = $auth.user;
   const nextIfNeeded = ({ name }) => {
     if (allowedRoutes[name].includes(route.name)) return;
