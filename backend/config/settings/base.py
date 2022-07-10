@@ -357,6 +357,7 @@ ACCOUNT_ADAPTER = "memberships.users.adapters.AccountAdapter"
 SOCIALACCOUNT_ADAPTER = "memberships.users.adapters.SocialAccountAdapter"
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
 OLD_PASSWORD_FIELD_ENABLED = True
+SOCIALACCOUNT_STORE_TOKENS = True
 SOCIALACCOUNT_PROVIDERS = {
     "google": {
         "SCOPE": ["email", "profile"],

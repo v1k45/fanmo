@@ -1,3 +1,5 @@
+import uuid
+import requests
 from collections import namedtuple
 from typing import Any
 
@@ -8,6 +10,7 @@ from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.http import HttpRequest
 from django.utils import timezone
 
@@ -105,7 +108,21 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
                 "Email is required. Please grant email permissions to proceed."
             )
         user.email_verified = True
+        user.avatar = self._get_avatar_file(sociallogin)
         return user
+    
+    def _get_avatar_file(self, sociallogin):
+        try:
+            # TODO: FB requires access_token in URL to get the avatar. fix it later.
+            response = requests.get(sociallogin.account.get_avatar_url())
+            response.raise_for_status()
+        except requests.RequestException:
+            return None
+        return SimpleUploadedFile(f"{uuid.uuid4()}.jpg", response.content, response.headers["content-type"])
 
     def is_open_for_signup(self, request: HttpRequest, sociallogin: Any):
         return getattr(settings, "ACCOUNT_ALLOW_REGISTRATION", True)
+    
+    def is_auto_signup_allowed(self, request, sociallogin):
+        # TODO: Support connecting social auth.
+        return super().is_auto_signup_allowed(request, sociallogin)
