@@ -117,6 +117,11 @@ export default {
       return location.href;
     }
   },
+  created() {
+    if (this.$route.params.share === '1') {
+      this.sharePost.isVisible = true;
+    }
+  },
   beforeDestroy() {
     this.unsetCurrentPost();
   },

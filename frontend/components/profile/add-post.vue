@@ -279,13 +279,14 @@ export default {
         payload.content.files = base64s.map(b64 => ({ type: 'image', image_base64: b64 }));
       }
       if (payload.content.text && /^(<p>\s*<\/p>)+$/.test(payload.content.text.trim())) payload.content.text = '';
-      const error = await this.createPost(payload);
-      if (error) {
-        this.errors = error;
+      const { success, data } = await this.createPost(payload);
+      if (!success) {
+        this.errors = data;
         this.loading = false;
         return;
       }
       this.$toast.success('Your post was published successfully. Your followers will be notified shortly.');
+      await this.$router.push({ name: 'p-slug-id', params: { slug: data.slug, id: data.id, share: '1' } });
       this.loading = false;
       this.isVisible = false;
     },

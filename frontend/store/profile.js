@@ -191,11 +191,14 @@ export const actions = {
     err = await dispatch('fetchProfileUser', state.user.username);
     return !!err;
   },
-  async createPost({ state, dispatch }, payload) {
-    const err = await dispatch('update', { url: '/api/posts/', payload });
-    if (err) return err;
-    dispatch('posts/loadProfilePosts', state.user.username, { root: true });
-    return NO_ERROR;
+  async createPost({ dispatch, state }, payload) {
+    try {
+      const post = await this.$axios.$post('/api/posts/', payload);
+      return SUCCESS(post);
+    } catch (err) {
+      handleGenericError(err);
+      return ERROR(err.response.data);
+    }
   },
   async getLinkPreview({ state, dispatch }, link) {
     const { error, response } = await dispatch('updateGeneric', { url: '/api/posts/link_preview/', payload: { link } });
