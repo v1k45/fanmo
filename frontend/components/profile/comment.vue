@@ -129,7 +129,7 @@ export default {
 
     async deleteCommentLocal() {
       try {
-        await this.$confirm.warning('Are you sure you want to delete this comment? This action is irreversible.', 'Confirm');
+        await this.$confirm.error('Are you sure you want to delete this comment? This action is irreversible.', 'Confirm');
       } catch (err) {
         return;
       }

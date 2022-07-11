@@ -323,6 +323,10 @@ export default {
     }
   },
   created() {
+    if (!this.$auth.user.is_creator) {
+      this.$router.replace({ name: 'feed' });
+      return;
+    }
     this.loadAnalyticsLocal();
     this.loadActivities();
   },

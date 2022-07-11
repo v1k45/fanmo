@@ -77,13 +77,13 @@
             <input
               v-model.number="subscriptionPrice" type="number"
               class="w-28 h-10 border-gray-200 border-2 rounded-lg font-bold text-xl text-fm-success-600"
-              min="10" max="2000" @focus="$event.target.select();">
+              min="10" max="1000" @focus="$event.target.select();">
           </div>
         </div>
         <input
           id="price-slider" v-model.number="subscriptionPrice"
           type="range" name="price-slider" class="slider"
-          min="10" max="2000">
+          min="10" max="1000">
       </div>
     </div>
   </div>
@@ -182,7 +182,7 @@ export default {
       this.internalSubscriberCount = Number.isInteger(val) ? val : Math.round(val);
     },
     subscriptionPrice(val) {
-      if ([null, ''].includes(val) || val < 10 || val > 2000) return;
+      if ([null, ''].includes(val) || val < 10 || val > 1000) return;
       this.internalSubscriptionPrice = Number.isInteger(val) ? val : Math.round(val);
     }
   }

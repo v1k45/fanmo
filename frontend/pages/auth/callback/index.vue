@@ -15,7 +15,7 @@
     Looks like was an error while logging you in.
   </div>
   <div class="mt-2">
-    Please make to grant email permission on your Google or Facebook Authorization Screen.
+    Please make sure to grant email permission on your Google or Facebook Authorization Screen.
   </div>
   <nuxt-link :to="{ name: 'login' }">
     <fm-button type="primary" class="mt-4">Try again</fm-button>
