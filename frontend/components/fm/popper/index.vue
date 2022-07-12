@@ -23,8 +23,10 @@ const unregisterClickOutside = function(el) {
 
 export default {
   props: {
+    popperOptions: { type: Object, default: () => ({}) },
     placement: { type: String, default: 'bottom' },
-    toggleOnClick: { type: Boolean, default: true }
+    toggleOnClick: { type: Boolean, default: true },
+    custom: { type: Boolean, default: false } // whether the events should be handled by consuming component
   },
   data() {
     return {
@@ -84,7 +86,7 @@ export default {
         referenceEl: reference,
         popperEl: popper
       };
-
+      if (this.custom) return;
       const showEvents = ['focus'];
       const hideEvents = ['blur'];
       this.useClickOutside = false;
@@ -128,8 +130,10 @@ export default {
     show() {
       if (!this.isInitialized) {
         this.popper = createPopper(this.state.referenceEl, this.state.popperEl, {
+          ...this.popperOptions,
           placement: this.placement,
           modifiers: [
+            ...(this.popperOptions.modifiers || []),
             { name: 'eventListeners', enabled: false }
           ]
         });
