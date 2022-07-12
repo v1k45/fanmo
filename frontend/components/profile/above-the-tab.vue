@@ -156,6 +156,7 @@ import {
   Camera as IconCamera,
   Globe as IconGlobe
 } from 'lucide-vue';
+import get from 'lodash/get';
 
 export default {
   components: {
@@ -211,8 +212,14 @@ export default {
         payload.cover_base64 = await this.getBase64(evt.target.files[0]);
       } else {
         payload.cover_base64 = '';
+        this.$refs.coverInput.value = '';
       }
-      this.updateUser({ payload, handleAll: true });
+      const { success, data } = await this.updateUser({ payload });
+      if (!success) {
+        if (get(data, 'cover_base64[0]')) this.$toast.error(data.cover_base64[0].message);
+        else this.$toast.error(data);
+        this.$refs.coverInput.value = '';
+      }
     },
 
     async handleAvatarChange(evt) {
@@ -222,9 +229,15 @@ export default {
         payload.avatar_base64 = await this.getBase64(evt.target.files[0]);
       } else {
         payload.avatar_base64 = '';
+        this.$refs.avatarInput.value = '';
       }
 
-      this.updateUser({ payload, handleAll: true });
+      const { success, data } = await this.updateUser({ payload });
+      if (!success) {
+        if (get(data, 'avatar_base64[0]')) this.$toast.error(data.avatar_base64[0].message);
+        else this.$toast.error(data);
+        this.$refs.avatarInput.value = '';
+      }
     },
 
     openEditDialog() {

@@ -146,18 +146,17 @@ export const actions = {
   },
 
   // PATCH
-  async updateUser({ dispatch, state }, { payload, handleAll = false }) {
-    let err = await dispatch('update', {
-      method: 'patch',
-      url: '/api/me/',
-      payload,
-      mutation: 'setProfileUser',
-      handleAll
-    });
-    if (err) return ERROR(err);
-    err = await dispatch('fetchProfileUser', state.user.username);
-    dispatch('refreshUser', null, { root: true });
-    return err ? ERROR(err) : SUCCESS();
+  async updateUser({ dispatch, state, commit }, { payload, handleAll = false }) {
+    try {
+      const user = await this.$axios.$patch('/api/me/', payload);
+      commit('setProfileUser', user);
+      await dispatch('fetchProfileUser', state.user.username);
+      dispatch('refreshUser', null, { root: true });
+      return SUCCESS(user);
+    } catch (err) {
+      handleGenericError(err, handleAll);
+      return ERROR(err.response.data);
+    }
   },
 
   async updateDonation({ dispatch, state }, { id, payload }) {
