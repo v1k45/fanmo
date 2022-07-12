@@ -173,3 +173,13 @@ export const base64 = {
   decode
 };
 
+// copied from HS because it seems useful. Might use someday
+export const validator = {
+  required: (fieldName = null) => val => !!val || `${fieldName || 'This field'} is required`,
+  minlength: length => val => !val || get(val, 'length', 0) >= length || `Must have at least ${length} characters`,
+  maxlength: length => val => !val || get(val, 'length', 0) <= length || `Must not exceed ${length} characters`,
+  name: () => val => !val || /^[a-zA-Z][a-zA-Z' ]+$/.test(val) || 'Please enter a valid name',
+  phone: () => val => !val || /^[6-9]\d{9}$/.test(val) || 'Not a valid phone number',
+  otp: () => val => !val || /^\d{6}$/.test(val) || 'Please enter the 6 digit OTP',
+  email: () => val => !val || /\S+@\S+\.\S+/.test(val) || 'Please enter a valid email'
+};
