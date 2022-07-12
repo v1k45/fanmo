@@ -1,31 +1,31 @@
 <template>
 <div v-if="members">
   <!-- stats start -->
-  <div v-if="stats" class="flex flex-wrap text-center mb-6">
-    <div>
-      <div class="text-lg sm:text-3xl font-bold">{{ stats.active }}</div>
-      <div class="text-xs sm:text-sm text-gray-600">active members</div>
+  <div v-if="stats" class="flex xl:space-x-12 flex-wrap mb-3">
+    <div class="w-1/2 sm:w-1/3 xl:w-[unset] mb-3 text-sm md:text-base">
+      <div class="text-gray-500">Active members</div>
+      <div class="flex items-end">
+        <div class="text-lg md:text-xl font-medium">{{ stats.active }}</div>
+      </div>
     </div>
-    <div class="ml-3 sm:ml-10">
-      <div class="text-lg sm:text-3xl font-bold">{{ stats.inactive }}</div>
-      <div class="text-xs sm:text-sm text-gray-600">inactive members</div>
+    <div class="w-1/2 sm:w-1/3 xl:w-[unset] mb-3 text-sm md:text-base">
+      <div class="text-gray-500">Inactive members</div>
+      <div class="flex items-end">
+        <div class="text-lg md:text-xl font-medium">{{ stats.inactive }}</div>
+      </div>
     </div>
-    <div class="ml-3 sm:ml-10">
-      <div class="text-lg sm:text-3xl font-bold">{{ stats.total }}</div>
-      <div class="text-xs sm:text-sm text-gray-600">total members</div>
+    <div class="w-1/2 sm:w-1/3 xl:w-[unset] mb-3 text-sm md:text-base">
+      <div class="text-gray-500">Total payment</div>
+      <div class="flex items-end">
+        <div class="text-lg md:text-xl font-medium">{{ $currency(stats.total_payment) }}</div>
+      </div>
     </div>
-    <div class="ml-3 sm:ml-10">
-      <div class="text-lg sm:text-3xl font-bold">{{ $currency(stats.total_payment) }}</div>
-      <div class="text-xs sm:text-sm text-gray-600">total payment</div>
-    </div>
-    <div class="lg:block xl:hidden w-full mb-4"></div>
-    <div class="ml-auto">
-      <fm-button class="flex" @click="exportCSV">
-        <icon-download class="w-4 h-4 mr-2"></icon-download> Download CSV
+    <div class="lg:block xl:hidden w-full"></div>
+    <div class="xl:!ml-auto flex flex-wrap items-start">
+      <fm-button class="flex mt-2 mr-3" @click="exportCSV">
+        <icon-download class="w-4 h-4 mr-2"></icon-download> <span class="hidden sm:inline">Download&nbsp;</span> CSV
       </fm-button>
-    </div>
-    <div class="ml-3">
-      <fm-button class="flex" type="primary" @click="dialogs.giveaway = true">
+      <fm-button class="flex mt-2" type="primary" @click="dialogs.giveaway = true">
         <icon-gift class="w-4 h-4 mr-2"></icon-gift> Gift memberships
       </fm-button>
     </div>
