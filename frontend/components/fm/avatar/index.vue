@@ -27,8 +27,7 @@ const colorMap = [
 export default {
   props: {
     src: { type: String, default: '' },
-    name: { type: String, default: '' },
-    username: { type: String, default: '' },
+    name: { type: String, default: '' }, // pass display_name
     size: { type: [String, Object, Array], default: 'w-8 h-8' }
   },
   data() {
@@ -38,17 +37,17 @@ export default {
   },
   computed: {
     initials() {
-      const { name, username } = this;
-      if (!name && !username) return '';
+      const { name } = this;
+      if (!name) return '';
 
-      const initials = (name || username).split(/[\s_.]/).map(str => str[0]).join('').toUpperCase();
+      const initials = name.split(/[\s_.]/).map(str => str[0]).join('').toUpperCase();
       if (initials.length > 2) return `${initials[0]}${initials[initials.length - 1]}`;
       return initials;
     },
     color() {
-      const { username } = this;
-      if (!username) return 'bg-fm-primary';
-      const colorIdx = username.split('').map(char => char.charCodeAt(0)).reduce((sum, curr) => sum + curr, 0) % colorMap.length;
+      const { name } = this;
+      if (!name) return 'bg-fm-primary';
+      const colorIdx = name.split('').map(char => char.charCodeAt(0)).reduce((sum, curr) => sum + curr, 0) % colorMap.length;
       return colorMap[colorIdx];
     }
   },
