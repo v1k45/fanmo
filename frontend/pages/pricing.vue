@@ -98,9 +98,11 @@
               <td class="font-bold text-fm-success-600"><span class="text-xl md:text-3xl">4.9%</span></td>
               <td>
                 10.9% (+ $0.30 per payment)
-                <span class="cursor-pointer" title="8% (platform fee) + 2.9% (payment fee) + $0.30 (per payment)">
-                  <icon-info class="h-4 w-4 text-fm-info fill-current stroke-white"></icon-info>
-                </span>
+                <fm-tooltip class="inline" content="8% (platform fee) + 2.9% (payment fee) + $0.30 (per payment)">
+                  <span class="cursor-pointer">
+                    <icon-info class="h-4 w-4 text-fm-info fill-current stroke-white"></icon-info>
+                  </span>
+                </fm-tooltip>
               </td>
               <td>30%</td>
             </tr>
