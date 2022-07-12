@@ -342,7 +342,8 @@ export default {
       if (!success) {
         if (data.message) data.non_field_errors = data.message;
         else if (data.amount) data.non_field_errors = data.amount;
-        this.$toast.error(data);
+        if (get(data, 'creator_username[0]')) this.$toast.error(data.creator_username[0].message);
+        else this.$toast.error(data);
         this.donationLoading = false;
         return;
       }
