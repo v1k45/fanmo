@@ -1,6 +1,6 @@
 <template>
 <div>
-  <h1 class="font-title font-bold text-4xl text-center">Set new password</h1>
+  <h1 class="font-title font-bold text-4xl text-center">Set password</h1>
 
   <div class="max-w-sm mx-auto mb-10">
     <fm-form :errors="errors" class="mt-8" @submit.prevent="setPassword">
@@ -14,7 +14,6 @@
         <fm-button type="link" class="mr-auto" @click="sendOTP">Get a password reset code</fm-button>
       </div>
 
-      <fm-input v-show="false" v-model="form.email" uid="email" label="Email" type="email" required></fm-input>
       <fm-input v-model="form.new_password" uid="new_password" label="New password" type="password" required></fm-input>
 
       <fm-button native-type="submit" type="primary" size="lg" class="mt-6" :loading="loading" block>Set password</fm-button>
