@@ -150,17 +150,20 @@
 
     <template v-if="activeMember">
       <!-- name, email and avatar start -->
-      <div class="flex items-center">
+      <div class="flex flex-wrap items-center">
         <fm-avatar
           :src="activeMember.fan_user.avatar && activeMember.fan_user.avatar.small"
           :name="activeMember.fan_user.display_name" :username="activeMember.fan_user.username"
           size="w-8 h-8 mr-2 inline-block font-normal flex-shrink-0">
         </fm-avatar>
-        <div>
+        <div class="mr-2">
           <div class="truncate text-black" :title="activeMember.fan_user.display_name">{{ activeMember.fan_user.display_name }}</div>
           <div class="truncate text-xs font-normal text-gray-500">
             <a class="unstyled" :href="`mailto:${activeMember.fan_user.email}`">{{ activeMember.fan_user.email }}</a>
           </div>
+        </div>
+        <div class="ml-auto">
+          <fm-button size="sm" class="w-[105px]" @click="copyEmail(activeMember.fan_user.email)">{{ emailCopied ? 'Copied!' : 'Copy email' }}</fm-button>
         </div>
       </div>
       <!-- name, email and avatar end -->
@@ -332,7 +335,7 @@
 <script>
 import debounce from 'lodash/debounce';
 import { mapActions, mapState } from 'vuex';
-import { STATUS_TEXT_MAP } from '~/utils';
+import { copy, delay, STATUS_TEXT_MAP } from '~/utils';
 
 export default {
   data() {
@@ -353,7 +356,9 @@ export default {
       },
       activeMember: null,
       isNextMembersLoading: false,
-      isNextPaymentsLoading: false
+      isNextPaymentsLoading: false,
+
+      emailCopied: false
     };
   },
   head: {
@@ -373,6 +378,12 @@ export default {
     ...mapActions('memberships', [
       'fetchMembers', 'fetchMoreMembers', 'fetchPayments', 'fetchMorePayments', 'cancelMembership', 'fetchStats', 'giveawayMembership'
     ]),
+    async copyEmail(email) {
+      copy(email);
+      this.emailCopied = true;
+      await delay(1000);
+      this.emailCopied = false;
+    },
     exportCSV() {
       window.location.href = '/api/memberships/export/';
     },
