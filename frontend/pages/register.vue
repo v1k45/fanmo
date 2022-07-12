@@ -29,7 +29,7 @@
         <fm-button size="lg" class="mt-6 flex items-center justify-center" block @click="$auth.loginWith('google')">
           <img src="~/assets/marketing/google.svg" class="h-6 inline-block mr-2" alt="Google G logo"> Google
         </fm-button>
-        <fm-button size="lg" class="mt-6 flex items-center justify-center" block @click="$auth.loginwith('facebook')">
+        <fm-button size="lg" class="mt-6 flex items-center justify-center" block @click="$auth.loginWith('facebook')">
           <img src="~/assets/marketing/facebook.svg" class="h-6 inline-block mr-2" alt="Facebook F logo"> Facebook
         </fm-button>
       </div>
