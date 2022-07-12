@@ -80,7 +80,7 @@
     v-if="post"
     v-model="sharePost.isVisible"
     :text="post.title"
-    :relative-url="post.slug">
+    :relative-url="`/p/${post.slug}/${post.id}/`">
   </profile-share>
 </div>
 </template>
