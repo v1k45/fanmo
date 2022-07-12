@@ -318,7 +318,7 @@ export default {
     @apply lg:text-2xl;
 
     &:first-child {
-      @apply sticky left-0 bg-white;
+      @apply sticky left-0;
     }
   }
 
@@ -340,6 +340,9 @@ export default {
 
     // no border on cells of last row
     tr:last-child {
+      th {
+        @apply bg-transparent;
+      }
       th, td {
         @apply border-b-0;
       }
