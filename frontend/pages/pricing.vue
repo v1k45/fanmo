@@ -48,7 +48,6 @@
             :to="$auth.loggedIn ? '/dashboard' : '/register'"
             class="unstyled flex justify-center items-center mt-8 px-10 py-4 mx-auto lg:text-lg text-fm-primary rounded-full lg:mx-0 bg-white transform transition-transform hover:scale-105">
             {{ $auth.loggedIn ? 'Go to Dashboard' : 'Register Now' }}
-            <icon-arrow-right class="inline-block ml-3"></icon-arrow-right>
           </nuxt-link>
         </div>
       </div>
@@ -153,9 +152,8 @@
               <td>
                 <nuxt-link
                   :to="$auth.loggedIn ? '/dashboard' : '/register'"
-                  class="unstyled inline-flex items-center px-10 py-4 my-6 text-lg mx-auto text-white transition-colors rounded-full bg-fm-primary hover:bg-fm-primary-600">
+                  class="unstyled inline-flex items-center px-10 py-4 my-6 text-lg mx-auto text-white rounded-full bg-fm-primary transform transition-transform hover:scale-105">
                   {{ $auth.loggedIn ? 'Go to Dashboard' : 'Register Now' }}
-                  <icon-arrow-right class="inline-block ml-3"></icon-arrow-right>
                 </nuxt-link>
               </td>
               <td></td>
@@ -220,7 +218,6 @@
         :to="$auth.loggedIn ? '/dashboard' : '/register'"
         class="unstyled inline-flex justify-center items-center px-10 py-4 mx-auto lg:text-lg text-fm-primary rounded-full lg:mx-0 bg-white transform transition-transform hover:scale-105">
         {{ $auth.loggedIn ? 'Go to dashboard' : 'Register for free' }}
-        <icon-arrow-right class="inline-block ml-3"></icon-arrow-right>
       </nuxt-link>
     </div>
   </div>
@@ -230,13 +227,12 @@
 
 <script>
 import {
-  ArrowRight as IconArrowRight, Verified as IconVerified, Check as IconCheck,
+  Verified as IconVerified, Check as IconCheck,
   CheckCircle2 as IconCheckCircle2, XCircle as IconXCircle, Info as IconInfo,
   ChevronDown as IconChevronDown
 } from 'lucide-vue';
 export default {
   components: {
-    IconArrowRight,
     IconVerified,
     IconCheck,
     IconCheckCircle2,
