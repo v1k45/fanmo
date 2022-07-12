@@ -3,7 +3,7 @@
   <div class="flex items-center">
     <fm-avatar
       :src="donation.fan_user.avatar && donation.fan_user.avatar.small"
-      :name="donation.fan_user.name" :username="donation.fan_user.username"
+      :name="donation.fan_user.display_name"
       size="w-8 h-8 flex-shrink-0">
     </fm-avatar>
     <div class="ml-3 mr-auto min-w-0">

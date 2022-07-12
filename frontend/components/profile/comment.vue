@@ -42,12 +42,10 @@
     <fm-form v-if="$auth.loggedIn && post.can_comment && showReplyForm" class="mt-4" @submit.prevent="createReply">
       <div class="flex">
         <fm-avatar
-          v-if="$auth.loggedIn"
           :src="$auth.user.avatar && $auth.user.avatar.small"
-          :name="$auth.user.name" :username="$auth.user.username"
+          :name="$auth.user.display_name"
           size="w-8 h-8 flex-shrink-0 mr-4">
         </fm-avatar>
-        <fm-avatar v-else size="w-12 h-12 flex-shrink-0 mr-6"></fm-avatar>
         <fm-input
           v-model="commentForm.body" uid="body" type="textarea" class="flex-grow"
           placeholder="Leave a comment" :rows="(isCommentTextareaFocused || commentForm.body) ? 3 : 1"

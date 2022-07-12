@@ -100,7 +100,7 @@
           <div class="flex items-center">
             <fm-avatar
               :src="member.fan_user.avatar && member.fan_user.avatar.small"
-              :name="member.fan_user.display_name" :username="member.fan_user.username"
+              :name="member.fan_user.display_name"
               size="w-5 h-5 lg:w-7 lg:h-7 mr-2 inline-block font-normal flex-shrink-0">
             </fm-avatar>
             <div class="max-w-[100px] lg:max-w-[200px] font-normal">
@@ -153,7 +153,7 @@
       <div class="flex flex-wrap items-center">
         <fm-avatar
           :src="activeMember.fan_user.avatar && activeMember.fan_user.avatar.small"
-          :name="activeMember.fan_user.display_name" :username="activeMember.fan_user.username"
+          :name="activeMember.fan_user.display_name"
           size="w-8 h-8 mr-2 inline-block font-normal flex-shrink-0">
         </fm-avatar>
         <div class="mr-2">

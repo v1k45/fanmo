@@ -34,7 +34,7 @@
             <!-- avatar start -->
             <fm-avatar
               :src="user.avatar && user.avatar.medium"
-              :name="user.name" :username="user.username"
+              :name="user.display_name"
               size="w-16 h-16 flex-shrink-0">
             </fm-avatar>
             <!-- avatar end -->

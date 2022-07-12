@@ -49,7 +49,7 @@
                 }">
                 <fm-avatar
                   :src="user.avatar && user.avatar.small"
-                  :name="user.display_name" :username="user.username"
+                  :name="user.display_name"
                   size="w-8 h-8 mr-2 inline-block flex-shrink-0">
                 </fm-avatar>
                 <div class="overflow-hidden">
@@ -94,7 +94,7 @@
         class="flex items-center border-l border-b border-r bg-white px-4 py-3 hover:bg-gray-200">
         <fm-avatar
           :src="user.avatar && user.avatar.small"
-          :name="user.display_name" :username="user.username"
+          :name="user.display_name"
           size="w-8 h-8 mr-2 inline-block flex-shrink-0">
         </fm-avatar>
         <div class="overflow-hidden">

@@ -70,7 +70,7 @@
             <div class="flex items-center">
               <fm-avatar
                 :src="$auth.user.avatar && $auth.user.avatar.small"
-                :name="$auth.user.name" :username="$auth.user.username"
+                :name="$auth.user.display_name"
                 size="w-10 h-10 flex-shrink-0">
               </fm-avatar>
               <div class="ml-3 mr-auto min-w-0">

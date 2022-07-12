@@ -7,7 +7,7 @@
           <!-- avatar start -->
           <fm-avatar
             :src="post.author_user.avatar && post.author_user.avatar.small"
-            :name="post.author_user.name" :username="post.author_user.username"
+            :name="post.author_user.display_name"
             size="w-10 h-10 flex-shrink-0">
           </fm-avatar>
           <!-- avatar end -->

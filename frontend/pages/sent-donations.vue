@@ -73,7 +73,7 @@
             <div class="flex items-center">
               <fm-avatar
                 :src="donation.creator_user.avatar && donation.creator_user.avatar.small"
-                :name="donation.creator_user.display_name" :username="donation.creator_user.username"
+                :name="donation.creator_user.display_name"
                 size="w-5 h-5 lg:w-7 lg:h-7 mr-2 inline-block font-normal flex-shrink-0">
               </fm-avatar>
               <div class="max-w-[100px] lg:max-w-[200px] font-normal">
@@ -129,7 +129,7 @@
       <div class="flex items-center">
         <fm-avatar
           :src="activeDonation.creator_user.avatar && activeDonation.creator_user.avatar.small"
-          :name="activeDonation.creator_user.display_name" :username="activeDonation.creator_user.username"
+          :name="activeDonation.creator_user.display_name"
           size="w-8 h-8 mr-2 inline-block font-normal flex-shrink-0">
         </fm-avatar>
         <div>

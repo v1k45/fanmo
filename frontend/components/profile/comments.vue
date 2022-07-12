@@ -3,12 +3,10 @@
   <fm-form v-if="post.can_comment" class="mt-4 pt-4 border-t-2 post-body" :errors="commentErrors" @submit.prevent="createCommentLocal">
     <div class="flex">
       <fm-avatar
-        v-if="$auth.loggedIn"
         :src="$auth.user.avatar && $auth.user.avatar.small"
-        :name="$auth.user.name" :username="$auth.user.username"
+        :name="$auth.user.display_name"
         size="w-12 h-12 flex-shrink-0 mr-6">
       </fm-avatar>
-      <fm-avatar v-else size="w-12 h-12 flex-shrink-0 mr-6"></fm-avatar>
       <fm-input
         v-model="commentForm.body" uid="body" type="textarea" class="flex-grow"
         rows="2" placeholder="Leave a comment" @focus="isCommentBoxFocused = true;" @blur="isCommentBoxFocused = false;"></fm-input>
