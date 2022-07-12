@@ -271,10 +271,6 @@ export default {
 }
 
 .fm-input--horizontal {
-  @apply inline-block;
-
-  & + .fm-input--horizontal {
-    @apply ml-6;
-  }
+  @apply inline-block mr-6;
 }
 </style>
