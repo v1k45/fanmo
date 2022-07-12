@@ -10,28 +10,36 @@
   <!-- header end -->
 
   <!-- container start -->
-  <div v-if="earnings" class="container mt-5 pt-6 pb-16 md:px-8 rounded-xl border bg-white">
+  <div v-if="earnings" class="container mt-5 pt-3 pb-16 md:px-8 rounded-xl border bg-white">
 
-    <div v-if="stats" class="flex flex-wrap text-center mb-8">
-      <div>
-        <div class="text-lg sm:text-3xl font-bold">{{ stats.total }}</div>
-        <div class="text-xs sm:text-sm text-gray-600">transactions</div>
+    <div v-if="stats" class="flex xl:space-x-12 flex-wrap mb-6">
+      <div class="w-1/2 sm:w-1/3 xl:w-[unset] mt-3 text-sm md:text-base">
+        <div class="text-gray-500">Total transactions</div>
+        <div class="flex items-end">
+          <div class="text-lg md:text-xl font-medium">{{ stats.total }}</div>
+        </div>
       </div>
-      <div class="ml-3 sm:ml-10">
-        <div class="text-lg sm:text-3xl font-bold">{{ $currency(stats.total_amount || 0) }}</div>
-        <div class="text-xs sm:text-sm text-gray-600">total earnings</div>
+      <div class="w-1/2 sm:w-1/3 xl:w-[unset] mt-3 text-sm md:text-base">
+        <div class="text-gray-500">Total earnings</div>
+        <div class="flex items-end">
+          <div class="text-lg md:text-xl font-medium">{{ $currency(stats.total_amount || 0) }}</div>
+        </div>
       </div>
-      <div class="ml-3 sm:ml-10">
-        <div class="text-lg sm:text-3xl font-bold">{{ $currency(stats.total_payout_processed || 0) }}</div>
-        <div class="text-xs sm:text-sm text-gray-600">payout processed</div>
+      <div class="w-1/2 sm:w-1/3 xl:w-[unset] mt-3 text-sm md:text-base">
+        <div class="text-gray-500">Payout processed</div>
+        <div class="flex items-end">
+          <div class="text-lg md:text-xl font-medium">{{ $currency(stats.total_payout_processed || 0) }}</div>
+        </div>
       </div>
-      <div class="ml-3 sm:ml-10">
-        <div class="text-lg sm:text-3xl font-bold">{{ $currency(stats.total_payout_scheduled || 0) }}</div>
-        <div class="text-xs sm:text-sm text-gray-600">payout scheduled</div>
+      <div class="w-1/2 sm:w-1/3 xl:w-[unset] mt-3 text-sm md:text-base">
+        <div class="text-gray-500">Payout scheduled</div>
+        <div class="flex items-end">
+          <div class="text-lg md:text-xl font-medium">{{ $currency(stats.total_payout_scheduled || 0) }}</div>
+        </div>
       </div>
-      <div class="lg:block xl:hidden w-full mb-4"></div>
-      <div class="xl:ml-auto">
-        <fm-button class="flex" @click="exportCSV">
+      <div class="lg:block xl:hidden w-full mb-2"></div>
+      <div class="xl:!ml-auto">
+        <fm-button class="flex mt-3" @click="exportCSV">
           <icon-download class="w-4 h-4 mr-2"></icon-download> Download CSV
         </fm-button>
       </div>
