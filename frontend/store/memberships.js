@@ -134,18 +134,20 @@ export const actions = {
       return ERROR(err.response.data);
     }
   },
-  async createTier(context, payload) {
+  async createTier({ dispatch }, payload) {
     try {
       const tier = await this.$axios.$post('/api/tiers/', payload);
+      dispatch('refreshUser', null, { root: true });
       return SUCCESS(tier);
     } catch (err) {
       handleGenericError(err);
       return ERROR(err.response.data);
     }
   },
-  async updateTier({ commit }, { tierId, payload }) {
+  async updateTier({ commit, dispatch }, { tierId, payload }) {
     try {
       const tier = await this.$axios.$patch(`/api/tiers/${tierId}/`, payload);
+      dispatch('refreshUser', null, { root: true });
       commit('updateTier', { tierId, tier });
       return SUCCESS(tier);
     } catch (err) {
