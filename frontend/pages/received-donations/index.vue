@@ -133,17 +133,20 @@
 
     <template v-if="activeDonation">
       <!-- name, email and avatar start -->
-      <div class="flex items-center">
+      <div class="flex flex-wrap items-center">
         <fm-avatar
           :src="activeDonation.fan_user.avatar && activeDonation.fan_user.avatar.small"
           :name="activeDonation.fan_user.display_name" :username="activeDonation.fan_user.username"
           size="w-8 h-8 mr-2 inline-block font-normal flex-shrink-0">
         </fm-avatar>
-        <div>
+        <div class="mr-2">
           <div class="truncate text-black" :title="activeDonation.fan_user.display_name">{{ activeDonation.fan_user.display_name }}</div>
           <div class="truncate text-xs font-normal text-gray-500">
             <a class="unstyled" :href="`mailto:${activeDonation.fan_user.email}`">{{ activeDonation.fan_user.email }}</a>
           </div>
+        </div>
+        <div class="ml-auto">
+          <fm-button size="sm" class="w-[105px]" @click="copyEmail(activeDonation.fan_user.email)">{{ emailCopied ? 'Copied!' : 'Copy email' }}</fm-button>
         </div>
       </div>
       <!-- name, email and avatar end -->
@@ -273,6 +276,7 @@
 <script>
 import debounce from 'lodash/debounce';
 import { mapActions, mapState } from 'vuex';
+import { copy, delay } from '~/utils';
 
 export default {
   layout: 'with-sidebar',
@@ -285,7 +289,9 @@ export default {
       showDialog: false,
       activeDonation: null,
       isNextDonationsLoading: false,
-      isNextPaymentsLoading: false
+      isNextPaymentsLoading: false,
+
+      emailCopied: false
     };
   },
   head: {
@@ -306,6 +312,12 @@ export default {
       'fetchReceivedDonations', 'fetchMoreDonations', 'fetchPayments', 'fetchMorePayments', 'fetchStats',
       'updateDonationMessageVisibility'
     ]),
+    async copyEmail(email) {
+      copy(email);
+      this.emailCopied = true;
+      await delay(1000);
+      this.emailCopied = false;
+    },
     exportCSV() {
       window.location.href = '/api/donations/export/';
     },
