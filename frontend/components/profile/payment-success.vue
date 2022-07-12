@@ -27,7 +27,7 @@
   <div v-if="$auth.loggedIn" class="mt-8 mb-6">
     <div v-if="supportType === 'membership'" class="flex space-x-3">
       <fm-button block @click="$emit('dashboard-click')">Dashboard</fm-button>
-      <fm-button block type="primary" @click="$emit('authenticated-next-click')">Get started</fm-button>
+      <fm-button block type="primary" @click="$emit('authenticated-next-click')">Done</fm-button>
     </div>
     <div v-else-if="supportType === 'donation'" class="text-center">
       <fm-button class="w-36" @click="$emit('donation-close-click')">Done</fm-button>
