@@ -283,6 +283,7 @@ export default {
 
 
     toggleFollow() {
+      if (!this.$auth.loggedIn) return this.$router.push('/login');
       // TODO: redirect to login for unauthenticated users
       if (this.user.is_following) this.unfollow();
       else this.follow();
