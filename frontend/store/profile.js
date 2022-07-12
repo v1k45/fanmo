@@ -242,7 +242,7 @@ export const actions = {
       // let the user know that they are going to pay only Rs. 5 for authorizing the transaction.
       // it will be automatically refunded and the actual subscription amount will be charged
       // when the next subscription cycle starts.
-      return { success: true, data: membership.scheduled_subscription };
+      return { success: true, data: membership };
     }
 
     return { success: true, data: null };

@@ -193,7 +193,7 @@
 <script>
 import get from 'lodash/get';
 import { mapActions, mapGetters, mapState } from 'vuex';
-import { loadRazorpay } from '~/utils';
+import { base64, loadRazorpay } from '~/utils';
 
 const MEMBERSHIP = 'membership';
 const DONATION = 'donation';
@@ -219,6 +219,7 @@ export default {
       },
       paymentSuccess: {
         isVisible: false,
+        fanUser: null, // stores fan_user to facilitate the "Activate account" functionality during express checkout success
         successMessage: null,
         tier: null,
         donationData: null,
@@ -308,20 +309,21 @@ export default {
         return;
       }
 
-      const membership = data;
+      const membership = data.scheduled_subscription;
 
       if (!membership) {
         this.paymentSuccess = {
           isVisible: true,
           successMessage: 'Your membership level was scheduled to update. Changes will be reflected during the next subscription cycle.',
           tier,
+          fanUser: this.$auth.user,
           donationData: null,
           supportType: 'membership'
         };
         return;
       }
 
-      this.initiateRazorpayPayment(membership, MEMBERSHIP);
+      this.initiateRazorpayPayment(membership, MEMBERSHIP, data);
     },
 
     async handleDonateClick(donationData) {
@@ -345,10 +347,10 @@ export default {
         return;
       }
       const donation = data;
-      this.initiateRazorpayPayment(donation, DONATION);
+      this.initiateRazorpayPayment(donation, DONATION, data);
     },
 
-    handleExpressCheckoutSubmit(membershipOrDonation) {
+    handleExpressCheckoutSubmit(membershipOrDonationResponse) {
       const type = this.expressCheckout.supportType;
       this.expressCheckout = {
         isVisible: false,
@@ -356,10 +358,14 @@ export default {
         supportType: null,
         donationData: null
       };
-      this.initiateRazorpayPayment(membershipOrDonation, type);
+      this.initiateRazorpayPayment(
+        type === MEMBERSHIP ? membershipOrDonationResponse.scheduled_subscription : membershipOrDonationResponse,
+        type,
+        membershipOrDonationResponse
+      );
     },
 
-    initiateRazorpayPayment(donationOrSubscription, supportType) {
+    initiateRazorpayPayment(donationOrSubscription, supportType, donationOrSubscriptionResponse) {
       const paymentOptions = donationOrSubscription.payment.payload;
       // success
       paymentOptions.handler = async (paymentResponse) => {
@@ -374,6 +380,7 @@ export default {
         if (this.$refs.donationWidget) this.$refs.donationWidget.reset();
         this.paymentSuccess = {
           isVisible: true,
+          fanUser: donationOrSubscriptionResponse.fan_user,
           successMessage: response.message,
           tier: supportType === MEMBERSHIP ? donationOrSubscription.tier : null,
           donationData: supportType === DONATION ? donationOrSubscription : null,
@@ -400,8 +407,10 @@ export default {
     },
 
     handlePaymentSuccessNext(actionType) {
+      const fanUser = this.paymentSuccess.fanUser;
       this.paymentSuccess = {
         isVisible: false,
+        fanUser: null,
         successMessage: null,
         tier: null,
         donationData: null,
@@ -411,8 +420,9 @@ export default {
       else if (actionType === 'authenticated-next') {
         this.fetchProfile(this.user.username);
         this.activeTab = this.tabName.POSTS;
-      } else if (actionType === 'unauthenticated-next') this.$router.push('login');
-      else if (actionType === 'donation-close') {
+      } else if (actionType === 'unauthenticated-next') {
+        this.$router.push({ name: 'set-password-token', params: { token: base64.encode(fanUser.email) } });
+      } else if (actionType === 'donation-close') {
         this.fetchProfile(this.user.username);
       }
     },

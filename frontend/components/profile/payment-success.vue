@@ -39,7 +39,7 @@
       Your account has been created with the email provided during checkout. Please check your email for login instructions.
     </fm-alert>
     <div class="text-center mt-4 mb-6">
-      <fm-button type="primary" @click="$emit('unauthenticated-next-click')">Get started &rarr;</fm-button>
+      <fm-button type="primary" @click="$emit('unauthenticated-next-click')">Activate account &rarr;</fm-button>
     </div>
   </template>
   <!-- buttons end -->
