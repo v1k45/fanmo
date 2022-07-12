@@ -1,25 +1,21 @@
 <template>
 <div v-if="donations">
 
-  <div v-if="stats" class="flex flex-wrap text-center mb-6">
-    <div>
-      <div class="text-lg sm:text-3xl font-bold">{{ stats.total }}</div>
-      <div class="text-xs sm:text-sm text-gray-600">total donations</div>
+  <div v-if="stats" class="flex xl:space-x-12 flex-wrap mb-6">
+    <div class="w-1/2 sm:w-1/3 xl:w-[unset] text-sm md:text-base">
+      <div class="text-gray-500">Total donations</div>
+      <div class="flex items-end">
+        <div class="text-lg md:text-xl font-medium">{{ stats.total }}</div>
+      </div>
     </div>
-    <div class="ml-3 sm:ml-10">
-      <div class="text-lg sm:text-3xl font-bold">{{ stats.total_with_message }}</div>
-      <div class="text-xs sm:text-sm text-gray-600">with message</div>
+    <div class="w-1/2 sm:w-1/3 xl:w-[unset] text-sm md:text-base">
+      <div class="text-gray-500">Total payment</div>
+      <div class="flex items-end">
+        <div class="text-lg md:text-xl font-medium">{{ $currency(stats.total_payment) }}</div>
+      </div>
     </div>
-    <div class="ml-3 sm:ml-10">
-      <div class="text-lg sm:text-3xl font-bold">{{ stats.total_without_message }}</div>
-      <div class="text-xs sm:text-sm text-gray-600">without message</div>
-    </div>
-    <div class="ml-3 sm:ml-10">
-      <div class="text-lg sm:text-3xl font-bold">{{ $currency(stats.total_payment) }}</div>
-      <div class="text-xs sm:text-sm text-gray-600">total payment</div>
-    </div>
-    <div class="lg:block xl:hidden w-full mb-4"></div>
-    <div class="xl:ml-auto">
+    <div class="block md:hidden w-full mb-4"></div>
+    <div class="xl:!ml-auto">
       <fm-button class="flex" @click="exportCSV">
         <icon-download class="w-4 h-4 mr-2"></icon-download> Download CSV
       </fm-button>
