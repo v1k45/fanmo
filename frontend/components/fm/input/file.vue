@@ -134,7 +134,7 @@ export default {
         const allFiles = new DataTransfer();
         this.fileList.forEach(file => {
           if (file.type === 'url') return;
-          allFiles.items.add(file);
+          allFiles.items.add(file.file);
         });
         [...event.dataTransfer.files].forEach(file => {
           allFiles.items.add(file);
