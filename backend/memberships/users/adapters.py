@@ -6,6 +6,7 @@ from typing import Any
 from django_otp.plugins.otp_email.models import EmailDevice
 from allauth.account.utils import setup_user_email, user_username
 from allauth.account.adapter import DefaultAccountAdapter
+from allauth.account.models import EmailAddress
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
@@ -100,6 +101,25 @@ class AccountAdapter(DefaultAccountAdapter):
 
 
 class SocialAccountAdapter(DefaultSocialAccountAdapter):
+    def pre_social_login(self, request, sociallogin):
+        """
+        Connect social login with existing account.
+        WARNING: All social logins are considered verified.
+        """
+        if sociallogin.is_existing:
+            return
+
+        email = sociallogin.account.extra_data.get('email', None)
+        if not email:
+            return
+
+        try:
+            existing_email = EmailAddress.objects.get(email__iexact=email)
+        except EmailAddress.DoesNotExist:
+            return
+
+        sociallogin.connect(request, existing_email.user)
+    
     def populate_user(self, request, sociallogin, data):
         user = super().populate_user(request, sociallogin, data)
         user.name = f"{user.first_name} {user.last_name}".strip()
@@ -119,10 +139,3 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
         except requests.RequestException:
             return None
         return SimpleUploadedFile(f"{uuid.uuid4()}.jpg", response.content, response.headers["content-type"])
-
-    def is_open_for_signup(self, request: HttpRequest, sociallogin: Any):
-        return getattr(settings, "ACCOUNT_ALLOW_REGISTRATION", True)
-    
-    def is_auto_signup_allowed(self, request, sociallogin):
-        # TODO: Support connecting social auth.
-        return super().is_auto_signup_allowed(request, sociallogin)
