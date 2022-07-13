@@ -1,5 +1,5 @@
 <template>
-<div>
+<fm-markdown-styled class="bg-white p-6 rounded-lg">
   <h1 class="font-title text-3xl text-center mb-4">Refunds and Cancellation</h1>
   <p>
     Thank you for supporting the creators you love! We hope you are happy with
@@ -31,7 +31,7 @@
     error, refund requests or monetary disputes of any kind between you and
     the Creator.
   </p>
-</div>
+</fm-markdown-styled>
 </template>
 
 

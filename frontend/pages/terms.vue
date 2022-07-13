@@ -1,5 +1,5 @@
 <template>
-<div>
+<fm-markdown-styled class="bg-white p-6 rounded-lg">
   <h1 class="font-title text-3xl text-center">Terms and Conditions</h1>
   <h3 class="font-bold text-xl mt-4">Summary</h3>
   <p>
@@ -311,7 +311,7 @@
     If you have any questions about this Agreement, please contact us by email:
   </p>
   <p>hello@fanmo.in</p>
-</div>
+</fm-markdown-styled>
 </template>
 
 <script>

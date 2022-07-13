@@ -1,5 +1,5 @@
 <template>
-<div>
+<fm-markdown-styled class="bg-white p-6 rounded-lg">
   <h1 class="font-title text-3xl text-center">Privacy Policy</h1>
   <h3 class="font-bold text-xl mt-4">Summary</h3>
   <p>
@@ -335,7 +335,7 @@
     use it, then please feel free to contact us at the details as indicated
     above.
   </p>
-</div>
+</fm-markdown-styled>
 </template>
 
 
