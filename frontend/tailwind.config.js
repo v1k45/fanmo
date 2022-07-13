@@ -5,8 +5,6 @@ const fontFamily = { ...defaultTheme.fontFamily };
 delete fontFamily.serif;
 fontFamily.sans.unshift('Quicksand');
 
-const lightTheme = require('daisyui/colors/themes')['[data-theme=light]'];
-
 const brandColors = {
   primary: {
     DEFAULT: '#6B68F9',
@@ -101,7 +99,6 @@ module.exports = {
   },
 
   plugins: [
-    require('daisyui'),
     require('@tailwindcss/aspect-ratio'),
     require('@tailwindcss/forms'),
     require('tailwind-animatecss'),
@@ -146,22 +143,5 @@ module.exports = {
         body: ['"Work Sans"', 'sans-serif']
       }
     }
-  },
-
-  daisyui: {
-    styled: true,
-    themes: [
-      {
-        brand: {
-          ...lightTheme,
-          primary: '#06f',
-          'primary-focus': '#0052cc'
-        }
-      }
-    ],
-    base: false,
-    utils: true,
-    logs: true,
-    rtl: false
   }
 };
