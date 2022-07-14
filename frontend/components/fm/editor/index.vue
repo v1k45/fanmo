@@ -209,7 +209,7 @@ export default {
   methods: {
     setLink() {
       const previousUrl = this.editor.getAttributes('link').href;
-      const url = window.prompt('URL', previousUrl);
+      let url = window.prompt('URL', previousUrl);
 
       // cancelled
       if (url === null) return;
@@ -218,6 +218,11 @@ export default {
       if (url === '') {
         this.editor.chain().focus().extendMarkRange('link').unsetLink().run();
         return;
+      }
+
+      // prevent unexpected relative URLs
+      if (!url.startsWith('http') || !url.startsWith('mailto')) {
+        url = 'http://' + url;
       }
 
       // update link

@@ -1,3 +1,4 @@
+import bleach
 from drf_extra_fields.fields import Base64ImageField, Base64FileField
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
@@ -63,6 +64,29 @@ class ContentSerializer(serializers.ModelSerializer):
             "link_embed",
         ]
         read_only_fields = ["link_og", "link_embed", "image"]
+
+    def validate_text(self, text):
+        return bleach.clean(
+            text,
+            tags=[
+                "p",
+                "b",
+                "strong",
+                "i",
+                "strike",
+                "em",
+                "s",
+                "br",
+                "a",
+                "h3",
+                "ol",
+                "ul",
+                "li",
+                "blockquote",
+                "hr",
+            ],
+            attributes={"a": ["href", "rel", "target"]},
+        )
 
     def validate(self, attrs):
         """

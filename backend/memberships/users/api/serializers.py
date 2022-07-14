@@ -262,7 +262,9 @@ class UserSerializer(ComputedUserFieldSerializer, serializers.ModelSerializer):
 
     def validate_about(self, about):
         return bleach.clean(
-            about, tags=["p", "b", "strong", "i", "strike", "em", "s", "br"]
+            about,
+            tags=["p", "b", "strong", "i", "strike", "em", "s", "br", "a"],
+            attributes={"a": ["href", "rel", "target"]},
         )
 
     def validate_is_creator(self, is_creator):
