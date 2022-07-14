@@ -112,9 +112,11 @@ class RazorpayPayloadSerializer(serializers.ModelSerializer):
     def get_image(self, subscription):
         serializer = VersatileImageFieldSerializer("user_avatar")
         serializer._context = self.context
-        avatar_renditions = serializer.to_representation(subscription.creator_user.avatar)
+        avatar_renditions = serializer.to_representation(
+            subscription.creator_user.avatar
+        )
         return avatar_renditions["thumbnail"] if avatar_renditions else None
-    
+
     def get_theme(self, subscription):
         return {"color": "#6266f1"}
 

@@ -19,6 +19,7 @@ class IntStatOverviewSerializer(serializers.Serializer):
     percent_change = serializers.DecimalField(max_digits=15, decimal_places=2)
     series = SeriesSerializer(many=True)
 
+
 class AnalyticsMetaSerializer(serializers.Serializer):
     current_date_range = serializers.ListField(
         child=serializers.DateField(read_only=True),

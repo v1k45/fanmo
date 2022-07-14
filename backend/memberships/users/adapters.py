@@ -109,7 +109,7 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
         if sociallogin.is_existing:
             return
 
-        email = sociallogin.account.extra_data.get('email', None)
+        email = sociallogin.account.extra_data.get("email", None)
         if not email:
             return
 
@@ -119,7 +119,7 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
             return
 
         sociallogin.connect(request, existing_email.user)
-    
+
     def populate_user(self, request, sociallogin, data):
         user = super().populate_user(request, sociallogin, data)
         user.name = f"{user.first_name} {user.last_name}".strip()
@@ -130,7 +130,7 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
         user.email_verified = True
         user.avatar = self._get_avatar_file(sociallogin)
         return user
-    
+
     def _get_avatar_file(self, sociallogin):
         try:
             # TODO: FB requires access_token in URL to get the avatar. fix it later.
@@ -138,4 +138,6 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
             response.raise_for_status()
         except requests.RequestException:
             return None
-        return SimpleUploadedFile(f"{uuid.uuid4()}.jpg", response.content, response.headers["content-type"])
+        return SimpleUploadedFile(
+            f"{uuid.uuid4()}.jpg", response.content, response.headers["content-type"]
+        )

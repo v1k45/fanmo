@@ -34,13 +34,13 @@ class RazorpayPayloadSerializer(serializers.ModelSerializer):
 
     def get_notes(self, donation):
         return {"donation_id": donation.id}
-    
+
     def get_image(self, donation):
         serializer = VersatileImageFieldSerializer("user_avatar")
         serializer._context = self.context
         avatar_renditions = serializer.to_representation(donation.creator_user.avatar)
         return avatar_renditions["thumbnail"] if avatar_renditions else None
-    
+
     def get_theme(self, donation):
         return {"color": "#6266f1"}
 

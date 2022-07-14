@@ -35,7 +35,7 @@ class EnhancedThrottle(SimpleRateThrottle):
             "scope": self.scope,
             "ident": self.get_ident(request),
         }
-    
+
     def get_ident(self, request):
         if request.user.is_authenticated:
             return request.user.pk
