@@ -62,11 +62,6 @@
       <icon-quote></icon-quote>
     </button>
     <button
-      v-if="currentPreset.link" type="button" title="Link (Coming soon)"
-      disabled>
-      <icon-link></icon-link>
-    </button>
-    <button
       v-if="currentPreset.horizontalRule" type="button" title="Divider"
       @click="editor.chain().focus().setHorizontalRule().run()">
       <icon-separator-horizontal></icon-separator-horizontal>
