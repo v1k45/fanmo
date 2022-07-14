@@ -29,6 +29,12 @@
       <icon-strikethrough></icon-strikethrough>
     </button>
     <button
+      type="button" title="Link"
+      :class="{ 'is-active': editor.isActive('link') }" :disabled="editor.view.state.selection.empty && !editor.isActive('link')"
+      @click="setLink">
+      <icon-link></icon-link>
+    </button>
+    <button
       v-if="currentPreset.hardBreak" type="button" title="Newline (Shift + Enter)"
       @click="editor.chain().focus().setHardBreak().run()">
       <icon-corner-down-left></icon-corner-down-left>
@@ -91,6 +97,7 @@ import {
 } from 'lucide-vue';
 import { Editor, EditorContent } from '@tiptap/vue-2';
 import StarterKit from '@tiptap/starter-kit';
+import LinkExtension from '@tiptap/extension-link';
 
 const options = () => ({
   document: true,
@@ -183,10 +190,10 @@ export default {
     this.editor = new Editor({
       content: this.value,
       extensions: [
-        StarterKit.configure(this.currentPreset)
-        // Link.configure({
-        //   openOnClick: false
-        // })
+        StarterKit.configure(this.currentPreset),
+        LinkExtension.configure({
+          openOnClick: false
+        })
       ]
     });
 
@@ -197,6 +204,25 @@ export default {
 
   beforeDestroy() {
     this.editor.destroy();
+  },
+
+  methods: {
+    setLink() {
+      const previousUrl = this.editor.getAttributes('link').href;
+      const url = window.prompt('URL', previousUrl);
+
+      // cancelled
+      if (url === null) return;
+
+      // empty
+      if (url === '') {
+        this.editor.chain().focus().extendMarkRange('link').unsetLink().run();
+        return;
+      }
+
+      // update link
+      this.editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+    }
   }
 };
 </script>
@@ -216,6 +242,9 @@ italic, bold, strikethrough, list, paragraph, h1-h6, blockquote, hr
     }
     &:hover {
       @apply text-gray-800;
+    }
+    &:disabled {
+      @apply text-gray-400;
     }
     &.is-active {
       @apply bg-gray-100 text-black;
