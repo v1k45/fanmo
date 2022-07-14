@@ -13,6 +13,12 @@ class StatOverviewSerializer(serializers.Serializer):
     series = SeriesSerializer(many=True)
 
 
+class IntStatOverviewSerializer(serializers.Serializer):
+    current = serializers.IntegerField()
+    last = serializers.IntegerField()
+    percent_change = serializers.DecimalField(max_digits=15, decimal_places=2)
+    series = SeriesSerializer(many=True)
+
 class AnalyticsMetaSerializer(serializers.Serializer):
     current_date_range = serializers.ListField(
         child=serializers.DateField(read_only=True),
@@ -27,7 +33,7 @@ class AnalyticsMetaSerializer(serializers.Serializer):
 
 
 class AnalyticsSerializer(serializers.Serializer):
-    new_member_count = StatOverviewSerializer()
+    new_member_count = IntStatOverviewSerializer()
     total_payment_amount = StatOverviewSerializer()
     total_donation_amount = StatOverviewSerializer()
     total_membership_amount = StatOverviewSerializer()
