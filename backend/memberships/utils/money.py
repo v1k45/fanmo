@@ -18,6 +18,6 @@ def percent_change(current, previous):
     if current == previous:
         return Decimal(0)
     try:
-        return (abs(current - previous) / previous) * Decimal("100.0")
+        return ((current - previous) / previous) * Decimal("100.0")
     except ZeroDivisionError:
         return None

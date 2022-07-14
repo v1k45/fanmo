@@ -9,7 +9,7 @@ class SeriesSerializer(serializers.Serializer):
 class StatOverviewSerializer(serializers.Serializer):
     current = serializers.DecimalField(max_digits=15, decimal_places=2)
     last = serializers.DecimalField(max_digits=15, decimal_places=2)
-    percent_change = serializers.DecimalField(max_digits=5, decimal_places=2)
+    percent_change = serializers.DecimalField(max_digits=15, decimal_places=2)
     series = SeriesSerializer(many=True)
 
 
