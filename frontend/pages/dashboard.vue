@@ -36,16 +36,16 @@
             <div class="text-lg md:text-xl font-medium">{{ parseInt(analytics.new_member_count.current) }}</div>
 
             <!-- delta start -->
-            <div :class="{
+            <fm-tooltip :delay="500" :class="{
               'text-fm-success-600': Number(analytics.new_member_count.percent_change) > 0,
               'text-fm-error': Number(analytics.new_member_count.percent_change) < 0,
               'text-gray-400': Number(analytics.new_member_count.percent_change) === 0
-            }" class="ml-2 text-sm font-bold">
+            }" class="ml-2 text-sm font-bold cursor-pointer" :content="lastValueTooltip(analytics.new_member_count)">
               {{ Number(analytics.new_member_count.percent_change) }}%
               <template v-if="Number(analytics.new_member_count.percent_change) > 0">&uarr;</template>
               <template v-else-if="Number(analytics.new_member_count.percent_change) < 0">&darr;</template>
               <template v-else>&approx;</template>
-            </div>
+            </fm-tooltip>
             <!-- delta end -->
           </div>
         </div>
@@ -57,16 +57,16 @@
           <div class="flex items-end">
             <div class="text-lg md:text-xl font-medium">{{ $currency(analytics.total_donation_amount.current) }}</div>
             <!-- delta start -->
-            <div :class="{
+            <fm-tooltip :delay="500" :class="{
               'text-fm-success-600': Number(analytics.total_donation_amount.percent_change) > 0,
               'text-fm-error': Number(analytics.total_donation_amount.percent_change) < 0,
               'text-gray-400': Number(analytics.total_donation_amount.percent_change) === 0
-            }" class="ml-2 text-sm font-bold">
+            }" class="ml-2 text-sm font-bold cursor-pointer" :content="lastValueTooltip(analytics.total_donation_amount, true)">
               {{ Number(analytics.total_donation_amount.percent_change) }}%
               <template v-if="Number(analytics.total_donation_amount.percent_change) > 0">&uarr;</template>
               <template v-else-if="Number(analytics.total_donation_amount.percent_change) < 0">&darr;</template>
               <template v-else>&approx;</template>
-            </div>
+            </fm-tooltip>
             <!-- delta end -->
           </div>
         </div>
@@ -78,16 +78,16 @@
           <div class="flex items-end">
             <div class="text-lg md:text-xl font-medium">{{ $currency(analytics.total_membership_amount.current) }}</div>
             <!-- delta start -->
-            <div :class="{
+            <fm-tooltip :delay="500" :class="{
               'text-fm-success-600': Number(analytics.total_membership_amount.percent_change) > 0,
               'text-fm-error': Number(analytics.total_membership_amount.percent_change) < 0,
               'text-gray-400': Number(analytics.total_membership_amount.percent_change) === 0
-            }" class="ml-2 text-sm font-bold">
+            }" class="ml-2 text-sm font-bold cursor-pointer" :content="lastValueTooltip(analytics.total_membership_amount, true)">
               {{ Number(analytics.total_membership_amount.percent_change) }}%
               <template v-if="Number(analytics.total_membership_amount.percent_change) > 0">&uarr;</template>
               <template v-else-if="Number(analytics.total_membership_amount.percent_change) < 0">&darr;</template>
               <template v-else>&approx;</template>
-            </div>
+            </fm-tooltip>
             <!-- delta end -->
           </div>
         </div>
@@ -99,16 +99,16 @@
           <div class="flex items-end">
             <div class="text-lg md:text-xl font-medium">{{ $currency(analytics.total_payment_amount.current) }}</div>
             <!-- delta start -->
-            <div :class="{
+            <fm-tooltip :delay="500" :class="{
               'text-fm-success-600': Number(analytics.total_payment_amount.percent_change) > 0,
               'text-fm-error': Number(analytics.total_payment_amount.percent_change) < 0,
               'text-gray-400': Number(analytics.total_payment_amount.percent_change) === 0
-            }" class="ml-2 text-sm font-bold">
+            }" class="ml-2 text-sm font-bold cursor-pointer" :content="lastValueTooltip(analytics.total_payment_amount, true)">
               {{ Number(analytics.total_payment_amount.percent_change) }}%
               <template v-if="Number(analytics.total_payment_amount.percent_change) > 0">&uarr;</template>
               <template v-else-if="Number(analytics.total_payment_amount.percent_change) < 0">&darr;</template>
               <template v-else>&approx;</template>
-            </div>
+            </fm-tooltip>
             <!-- delta end -->
           </div>
         </div>
@@ -370,6 +370,14 @@ export default {
       this.isAnalyticsLoading = true;
       await this.loadAnalytics(this.form.period);
       this.isAnalyticsLoading = false;
+    },
+    lastValueTooltip(stat, isCurrency = false) {
+      const { period } = this.form;
+      const periodText = period === 'lifetime' ? 'period' : period;
+      if (!stat.percent_change) return `No change since last ${periodText}`;
+      const upOrDown = stat.percent_change > 0 ? 'Up' : 'Down';
+      const value = isCurrency ? toCurrency(stat.last) : stat.last;
+      return `${upOrDown} from last ${periodText}'s: ${value}`;
     }
   }
 };
