@@ -168,7 +168,7 @@ export default {
     handleShareClick(post) {
       this.sharePost = {
         isVisible: true,
-        relativeUrl: post.slug,
+        relativeUrl: `p/${post.slug}/${post.id}`,
         text: post.title
       };
     }
