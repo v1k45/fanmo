@@ -37,5 +37,6 @@ export const actions = {
     const { error, data } = await dispatch('fetch', { url: '/api/me/' });
     if (error) return;
     this.$auth.setUser(data);
+    this.$auth.$storage.setUniversal('loggedIn', true);
   }
 };

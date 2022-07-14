@@ -134,7 +134,7 @@ export default {
     handleSocialLogin(provider) {
       const vm = this;
       window.onmessage = async ({ data }) => {
-        if (data !== 'refresh_login') return;
+        if (data !== 'refresh_login' || vm.loading) return;
         window.onmessage = null;
         vm.loading = true;
         await vm.refreshUser();
