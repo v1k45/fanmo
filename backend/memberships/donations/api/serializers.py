@@ -67,7 +67,7 @@ class DonationCreateSerializer(
         default_currency="INR",
     )
     payment = DonationPaymentSerializer(source="*", read_only=True)
-    fan_user = UserPreviewSerializer(read_only=True)
+    fan_user = FanUserPreviewSerializer(read_only=True)
     creator_user = UserPreviewSerializer(read_only=True)
 
     class Meta:
