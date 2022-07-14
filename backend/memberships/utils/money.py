@@ -20,4 +20,4 @@ def percent_change(current, previous):
     try:
         return ((current - previous) / previous) * Decimal("100.0")
     except ZeroDivisionError:
-        return None
+        return Decimal("100.0")
