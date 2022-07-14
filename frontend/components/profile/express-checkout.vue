@@ -132,16 +132,19 @@ export default {
       this.errors = {};
     },
     handleSocialLogin(provider) {
-      // todo: remove listener?
       const vm = this;
       window.onmessage = async ({ data }) => {
         if (data !== 'refresh_login') return;
         window.onmessage = null;
+        vm.loading = true;
         await vm.refreshUser();
+        await vm.$nextTick();
         if (vm.$auth.loggedIn) {
           await vm.handleSubmit();
         } else {
+          // TODO: track this as a sentry error to make sure it does not reappear.
           vm.$toast.error('Failed to login, please try again.');
+          vm.loading = false;
         }
       };
       window.open(`/auth/callback/${provider}/`);

@@ -169,7 +169,8 @@ export default {
   },
   methods: {
     async logout() {
-      await this.$auth.logout('cookie');
+      await this.$axios.$post('/api/auth/logout/');
+      await this.$auth.logout();
       await delay();
       location.reload();
     }
