@@ -115,10 +115,12 @@ class TestDonationAPI:
             "processor": "razorpay",
             "payload": {
                 "key": "rzp_test_key",
+                "image": None,
                 "order_id": "ord_123",
                 "name": creator_user.name,
                 "prefill": {"name": "confused racoon", "email": "fan@example.com"},
                 "notes": {"donation_id": response_data["id"]},
+                "theme": {"color": "#6266f1"},
             },
             "is_required": True,
         }
@@ -148,10 +150,12 @@ class TestDonationAPI:
             "processor": "razorpay",
             "payload": {
                 "key": "rzp_test_key",
+                "image": None,
                 "order_id": "ord_123",
                 "name": creator_user.name,
                 "prefill": {"name": user.display_name, "email": user.email},
                 "notes": {"donation_id": response_data["id"]},
+                "theme": {"color": "#6266f1"},
             },
             "is_required": True,
         }

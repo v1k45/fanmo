@@ -288,7 +288,7 @@ class TestMeAPI:
         assert response.status_code == 200
         assert (
             response.json()["about"]
-            == '<b>Hello</b><strong>world</strong>! &lt;a title="xss" href="javascript:alert(0);"&gt;click me&lt;/a&gt;'
+            == "<b>Hello</b><strong>world</strong>! <a>click me</a>"
         )
 
     def test_update_username_reserved_names(self, creator_user, api_client):

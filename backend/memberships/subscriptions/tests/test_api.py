@@ -186,11 +186,13 @@ class TestMembershipFlow:
             "processor": "razorpay",
             "payload": {
                 "key": "rzp_test_key",
+                "image": None,
                 "subscription_id": "sub_123",
                 "subscription_card_change": 0,
                 "name": f"{tier.name} - {creator_user.name}",
                 "prefill": {"name": "confused racoon", "email": "peter@griffins.com"},
                 "notes": {"subscription_id": membership.scheduled_subscription_id},
+                "theme": {"color": "#6266f1"},
             },
             "is_required": True,
         }
@@ -257,11 +259,13 @@ class TestMembershipFlow:
             "processor": "razorpay",
             "payload": {
                 "key": "rzp_test_key",
+                "image": None,
                 "subscription_id": "sub_123",
                 "subscription_card_change": 0,
                 "name": f"{tier.name} - {creator_user.name}",
                 "prefill": {"name": user.name, "email": user.email},
                 "notes": {"subscription_id": membership.scheduled_subscription_id},
+                "theme": {"color": "#6266f1"},
             },
             "is_required": True,
         }

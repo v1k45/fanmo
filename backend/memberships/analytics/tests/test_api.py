@@ -192,7 +192,7 @@ class TestAnalyticsAPI:
         assert response.json()[metric_ref] == {
             "current": "650.00",
             "last": "0.00",
-            "percent_change": None,
+            "percent_change": "100.00",
             "series": [
                 *[
                     {
