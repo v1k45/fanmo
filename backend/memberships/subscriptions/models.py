@@ -364,9 +364,6 @@ class Subscription(BaseModel):
     )
     fan_user = models.ForeignKey("users.User", on_delete=models.CASCADE)
 
-    scheduled_to_cancel = models.BooleanField(default=False)
-    scheduled_to_change = models.BooleanField(default=False)
-
     objects = SubscriptionQuerySet.as_manager()
     history = HistoricalRecords(bases=[IPAddressHistoricalModel])
 

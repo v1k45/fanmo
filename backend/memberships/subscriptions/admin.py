@@ -84,8 +84,6 @@ class SubscriptionAdmin(SimpleHistoryAdmin):
         "is_active",
         "creator_user",
         "fan_user",
-        "scheduled_to_cancel",
-        "scheduled_to_change",
     )
     list_filter = (
         "created_at",
@@ -96,7 +94,5 @@ class SubscriptionAdmin(SimpleHistoryAdmin):
         "is_active",
         "creator_user",
         "fan_user",
-        "scheduled_to_cancel",
-        "scheduled_to_change",
     )
     date_hierarchy = "created_at"
