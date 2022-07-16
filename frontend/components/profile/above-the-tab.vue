@@ -79,7 +79,7 @@
         <fm-button class="mr-4 inline-flex items-center" @click="isProfileShareVisible = true;">
           <icon-share class="inline-block -mt-0.5 mr-1 h-em w-em"></icon-share> Share
         </fm-button>
-        <fm-button :type="user.is_following ? 'success' : 'primary'" class="w-36" @click="toggleFollow">
+        <fm-button :type="user.is_following ? 'success' : 'primary'" class="w-36" :loading="isFollowLoading" @click="toggleFollow">
           <div v-if="user.is_following" class="flex items-center justify-center">
             <icon-check class="inline-block mr-1 h-em w-em"></icon-check> Following
           </div>
@@ -191,7 +191,8 @@ export default {
           youtube_url: ''
         }
       },
-      editFormErrors: {}
+      editFormErrors: {},
+      isFollowLoading: false
     };
   },
   computed: {
@@ -296,11 +297,13 @@ export default {
     },
 
 
-    toggleFollow() {
+    async toggleFollow() {
+      // TODO: redirect back to this after login and dispatch follow automatically
       if (!this.$auth.loggedIn) return this.$router.push('/login');
-      // TODO: redirect to login for unauthenticated users
-      if (this.user.is_following) this.unfollow();
-      else this.follow();
+      this.isFollowLoading = true;
+      if (this.user.is_following) await this.unfollow();
+      else await this.follow();
+      this.isFollowLoading = false;
     }
   }
 };
