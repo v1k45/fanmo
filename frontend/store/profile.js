@@ -2,6 +2,7 @@
 
 import get from 'lodash/get';
 import toast from '~/components/fm/alert/service';
+import { handleGenericError } from '~/utils';
 
 const SUCCESS = (data) => ({ success: true, data });
 const ERROR = (data) => ({ success: false, data });
@@ -28,24 +29,6 @@ export const state = () => ({
   donations: null,
   existingMemberships: null
 });
-
-const handleGenericError = (err, handleAll = false) => {
-  if (process.env.NODE_ENV !== 'production') console.error(err);
-  if (err.response.status >= 500) {
-    console.error(err);
-    toast.error("Internal server error. It's not you, it's us. Please try again in a minute.");
-  } else if (err.response.status >= 400) {
-    if (handleAll) toast.error(err.response.data);
-    else return err.response.data;
-  } else if (get(err, 'response.data')) { // shouldn't come here
-    console.error(err);
-    toast.error(err.response.data);
-  } else {
-    console.error(err);
-    toast.error("We're sorry but an unknown error occurred. If this persists, please contact support.");
-  }
-  return ERRORED;
-};
 
 export const getters = {
   isSelfProfile(state, getters, rootState) {
