@@ -53,7 +53,13 @@
       </div>
     </template>
 
-    <div class="text-sm">Page name</div>
+    <fm-alert>
+      Please review the details you are about to submit.
+      We will review your submission and activate payments on your page after processing it.
+      This process can take upto 2 days.
+    </fm-alert>
+
+    <div class="text-sm mt-6">Page name</div>
     <div class="font-medium text-black">{{ $auth.user.name }}</div>
 
     <div class="text-sm mt-4">Full name</div>
@@ -69,7 +75,7 @@
     <div class="font-medium text-black">{{ form.ifsc }}</div>
 
     <div class="text-sm mt-4">Account type</div>
-    <div class="font-medium text-black mt-1">{{ form.account_type }}</div>
+    <div class="font-medium text-black mt-1 mb-6">{{ form.account_type }}</div>
 
 
     <template #footer>
