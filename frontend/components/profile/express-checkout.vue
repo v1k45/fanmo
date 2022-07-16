@@ -62,10 +62,11 @@
 
 <script>
 import get from 'lodash/get';
-import { mapActions, mapState } from 'vuex';
+import { mapActions } from 'vuex';
 export default {
   props: {
     value: { type: Boolean, default: true },
+    user: { type: Object, required: true },
     tier: { type: Object, default: null },
     donationData: { type: Object, default: null },
     supportType: { type: String, default: null, validator: val => ['membership', 'donation'].includes(val) }
@@ -78,8 +79,6 @@ export default {
     };
   },
   computed: {
-    ...mapState('profile', ['user']),
-
     isVisible: {
       get() {
         return this.value;

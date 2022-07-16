@@ -164,6 +164,7 @@
 
   <profile-express-checkout
     v-model="expressCheckout.isVisible"
+    :user="user"
     :tier="expressCheckout.tier"
     :donation-data="expressCheckout.donationData"
     :support-type="expressCheckout.supportType"
