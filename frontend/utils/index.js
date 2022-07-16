@@ -1,6 +1,7 @@
 /* eslint no-console: ["warn", { allow: ["error"] }] */
 import dayjs from 'dayjs';
 import get from 'lodash/get';
+import set from 'lodash/set';
 import { encode, decode } from 'js-base64/base64.mjs';
 import toast from '~/components/fm/alert/service';
 
@@ -135,7 +136,10 @@ export const handleGenericError = (err, handleAll = false) => {
     toast.error("Internal server error. It's not you, it's us. Please try again in a minute.");
   } else if (err.response.status >= 400) {
     if (handleAll) toast.error(err.response.data);
-    else return err.response.data;
+    else {
+      set(err.response.data, 'responseStatusCode', err.response.status);
+      return err.response.data;
+    }
   } else if (get(err, 'response.data')) { // shouldn't come here
     console.error(err);
     toast.error(err.response.data);
