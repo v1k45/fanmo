@@ -244,7 +244,11 @@ export default {
   async fetch() {
     const username = this.$route.params.username;
     this.isLoading = true;
-    await this.fetchProfile(username);
+
+    const { success, data } = await this.fetchProfile(username);
+    if (!success) {
+      if (data.some(d => get(d.data, 'responseStatusCode') === 404)) return this.$nuxt.error({ statusCode: 404 });
+    }
 
     const routeData = (this.$route.params.data || {});
     if (routeData.intent === 'subscribe-through-post') {

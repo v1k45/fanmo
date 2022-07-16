@@ -108,24 +108,45 @@ export const actions = {
   },
 
   // GET
-  async fetchProfileUser({ dispatch }, username) {
-    return await dispatch('fetch', { url: `/api/users/${username}/`, mutation: 'setProfileUser' });
+  async fetchProfileUser({ commit }, username) {
+    try {
+      const user = await this.$axios.$get(`/api/users/${username}/`);
+      commit('setProfileUser', user);
+      return SUCCESS(user);
+    } catch (err) {
+      handleGenericError(err);
+      return ERROR(err.response.data);
+    }
   },
-  async fetchProfileDonations({ dispatch }, username) {
-    return await dispatch('fetch', { url: `/api/donations/recent/?creator_username=${username}`, mutation: 'setProfileDonations' });
+  async fetchProfileDonations({ commit }, username) {
+    try {
+      const donations = await this.$axios.$get(`/api/donations/recent/?creator_username=${username}`);
+      commit('setProfileDonations', donations);
+      return SUCCESS(donations);
+    } catch (err) {
+      handleGenericError(err);
+      return ERROR(err.response.data);
+    }
   },
-  async fetchExistingMemberships({ dispatch }, { creatorUsername, fanUsername }) {
-    return await dispatch('fetch', { url: '/api/memberships/', payload: { params: { creator_username: creatorUsername, fan_username: fanUsername } }, mutation: 'setExistingMemberships' });
+  async fetchExistingMemberships({ commit }, { creatorUsername, fanUsername }) {
+    try {
+      const memberships = await this.$axios.$get('/api/memberships/', { params: { creator_username: creatorUsername, fan_username: fanUsername } });
+      commit('setExistingMemberships', memberships);
+      return SUCCESS(memberships);
+    } catch (err) {
+      handleGenericError(err);
+      return ERROR(err.response.data);
+    }
   },
 
   async fetchProfile({ dispatch, rootState }, username) {
-    const errors = await Promise.allSettled([
+    const pValues = (await Promise.allSettled([
       dispatch('posts/loadProfilePosts', username, { root: true }),
       dispatch('fetchProfileUser', username),
       dispatch('fetchProfileDonations', username),
       dispatch('fetchExistingMemberships', { creatorUsername: username, fanUsername: get(rootState, 'auth.user.username') })
-    ]);
-    return errors.some(err => !!err) ? ERRORED : NO_ERROR;
+    ])).map(promise => promise.value);
+    return pValues.some(data => !data.success) ? ERROR(pValues) : SUCCESS(pValues);
   },
 
   // PATCH
@@ -156,22 +177,22 @@ export const actions = {
 
   // POST
   async follow({ state, dispatch }) {
-    let err = await dispatch('update', {
+    const err = await dispatch('update', {
       url: `/api/users/${state.user.username}/follow/`,
       handleAll: true
     });
     if (err) return ERRORED;
-    err = await dispatch('fetchProfileUser', state.user.username);
-    return !!err;
+    const { success } = await dispatch('fetchProfileUser', state.user.username);
+    return !success;
   },
   async unfollow({ state, dispatch }) {
-    let err = await dispatch('update', {
+    const err = await dispatch('update', {
       url: `/api/users/${state.user.username}/unfollow/`,
       handleAll: true
     });
     if (err) return ERRORED;
-    err = await dispatch('fetchProfileUser', state.user.username);
-    return !!err;
+    const { success } = await dispatch('fetchProfileUser', state.user.username);
+    return !success;
   },
   async createPost({ dispatch, state }, payload) {
     try {
