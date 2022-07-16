@@ -99,7 +99,7 @@ export default {
 
 
 .fm-tooltip__content {
-  @apply bg-black text-white px-2 py-1 rounded text-sm border shadow-lg max-h-[80vh] overflow-auto font-normal;
+  @apply bg-black text-white px-2 py-1 rounded text-sm shadow-lg max-h-[80vh] overflow-auto font-normal;
   @apply max-w-[85vw] sm:max-w-md;
 }
 </style>
