@@ -1,6 +1,8 @@
 <template>
-<div class="fm-layout fm-layout--default bg-gray-50" :class="{ 'fm-layout--with-sidebar': sidebar && $auth.loggedIn }">
-
+<div
+  v-loading="showGlobalLoader"
+  class="fm-layout fm-layout--default bg-gray-50"
+  :class="{ 'fm-layout--with-sidebar': sidebar && $auth.loggedIn }">
   <!-- header start -->
   <!-- TODO: always show for marketing pages and remove bottom pane -->
   <header class="fm-layout__header z-20 py-2 bg-white shadow-sm" :class="{ 'hidden md:block': $auth.loggedIn }">
@@ -116,6 +118,7 @@ import {
   Menu as IconMenu, X as IconX, Facebook as IconFacebook,
   Twitter as IconTwitter, Instagram as IconInstagram
 } from 'lucide-vue';
+import { mapState } from 'vuex';
 export default {
   components: {
     IconMenu,
@@ -136,6 +139,9 @@ export default {
       currentYear: new Date().getFullYear(),
       dev: process.env.NODE_ENV !== 'production'
     };
+  },
+  computed: {
+    ...mapState('ui', ['showGlobalLoader'])
   }
 };
 </script>
