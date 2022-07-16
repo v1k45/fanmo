@@ -17,8 +17,9 @@
               </div>
               <div v-if="profilePosts.results.length">
                 <profile-post
-                  v-for="post in profilePosts.results" :key="post.id" :post="post"
-                  class="mb-6 md:mb-8" @share-click="handleShareClick"></profile-post>
+                  v-for="post in profilePosts.results" :key="post.id" :post="post" class="mb-6 md:mb-8"
+                  @share-click="handleShareClick" @subscribe-click="handleSubscribeClick">
+                </profile-post>
               </div>
               <div v-if="profilePosts.next" class="text-center mt-4">
                 <fm-button :loading="nextPostsLoading" @click="loadNextPostsLocal">Load more</fm-button>
@@ -193,7 +194,7 @@
 
 <script>
 import get from 'lodash/get';
-import { mapActions, mapGetters, mapState } from 'vuex';
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex';
 import { base64, loadRazorpay } from '~/utils';
 
 const MEMBERSHIP = 'membership';
@@ -244,11 +245,20 @@ export default {
     const username = this.$route.params.username;
     this.isLoading = true;
     await this.fetchProfile(username);
-    this.activeTab = (() => {
-      if (this.currentUserHasActiveSubscription || this.isSelfProfile) return this.tabName.POSTS;
-      if (this.shouldShowTiersTab) return this.tabName.TIERS;
-      return this.tabName.DONATION;
-    })();
+
+    const routeData = (this.$route.params.data || {});
+    if (routeData.intent === 'subscribe-through-post') {
+      this.activeTab = this.tabName.TIERS;
+      this.handleSubscribeClick(routeData.tier);
+      this.setGlobalLoader(false);
+    } else {
+      this.activeTab = (() => {
+        if (this.currentUserHasActiveSubscription || this.isSelfProfile) return this.tabName.POSTS;
+        if (this.shouldShowTiersTab) return this.tabName.TIERS;
+        return this.tabName.DONATION;
+      })();
+    }
+
     this.isLoading = false;
   },
   auth: false,
@@ -274,6 +284,7 @@ export default {
   methods: {
     ...mapActions('profile', ['fetchProfile', 'createOrGetMembership', 'createDonation', 'processPayment']),
     ...mapActions('posts', ['loadNextProfilePosts']),
+    ...mapMutations('ui', ['setGlobalLoader']),
 
     // logic is documented in createOrGetMembership
     async handleSubscribeClick(tier) {

@@ -102,7 +102,7 @@
       </div>
       <div class="mt-6 rounded-l-full rounded-r-full">
         <fm-button
-          type="" class="text-body" block @click="$router.push(`/${post.author_user.username}`)">
+          type="" class="text-body" block @click="handleSubscribeIntent">
           Join now for {{ $currency(post.minimum_tier.amount) }}/month
         </fm-button>
       </div>
@@ -140,7 +140,7 @@
 <script>
 import dayjs from 'dayjs';
 import get from 'lodash/get';
-import { mapActions } from 'vuex';
+import { mapActions, mapMutations } from 'vuex';
 export default {
   props: {
     post: { type: Object, required: true },
@@ -193,6 +193,8 @@ export default {
   },
   methods: {
     ...mapActions('posts', ['deletePost', 'addOrRemoveReaction']),
+    ...mapMutations('ui', ['setGlobalLoader']),
+
     async deletePostLocal() {
       try {
         await this.$confirm.error('Are you sure you want to delete this post? This action is irreversible.', 'Confirm');
@@ -217,6 +219,23 @@ export default {
     },
     handleCommentClick() {
       this.$router.push({ name: 'p-slug-id', params: { slug: this.post.slug, id: this.post.id } });
+    },
+    handleSubscribeIntent() {
+      if (this.$route.name === 'username') { // on profile page, simply emit and the page can handle the rest
+        this.$emit('subscribe-click', this.post.minimum_tier);
+        return;
+      }
+      this.setGlobalLoader('Just a moment...');
+      this.$router.push({
+        name: 'username',
+        params: {
+          username: this.post.author_user.username,
+          data: {
+            intent: 'subscribe-through-post',
+            tier: this.post.minimum_tier
+          }
+        }
+      });
     }
   }
 };
