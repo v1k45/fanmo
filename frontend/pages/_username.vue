@@ -1,5 +1,5 @@
 <template>
-<div v-if="user" class="bg-white">
+<div v-if="user" class="bg-white" :class="{ 'disable-donation-and-join': isPreviewMode }">
   <profile-above-the-tab></profile-above-the-tab>
 
   <fm-tabs v-model="activeTab" centered class="mt-8">
@@ -17,7 +17,8 @@
               </div>
               <div v-if="profilePosts.results.length">
                 <profile-post
-                  v-for="post in profilePosts.results" :key="post.id" :post="post" class="mb-6 md:mb-8"
+                  v-for="post in profilePosts.results" :key="post.id"
+                  :post="post" :hide-options="isPreviewMode" class="mb-6 md:mb-8"
                   @share-click="handleShareClick" @subscribe-click="handleSubscribeClick">
                 </profile-post>
               </div>
@@ -272,7 +273,7 @@ export default {
     };
   },
   computed: {
-    ...mapState('profile', ['user', 'donations', 'posts']),
+    ...mapState('profile', ['user', 'donations', 'posts', 'isPreviewMode']),
     ...mapGetters('profile', ['isSelfProfile', 'currentUserHasActiveSubscription']),
     ...mapGetters('posts', ['profilePosts']),
 
@@ -467,6 +468,15 @@ export default {
 @media (max-height: 600px) {
   .donation-card-sticky {
     @apply lg:max-h-[75vh] lg:overflow-auto;
+  }
+}
+
+.disable-donation-and-join {
+  .btn-join,
+  .btn-rejoin,
+  .btn-donate,
+  .donation-card-sticky {
+    @apply pointer-events-none cursor-not-allowed;
   }
 }
 </style>

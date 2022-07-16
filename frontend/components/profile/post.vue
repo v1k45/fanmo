@@ -48,7 +48,7 @@
       </div>
 
       <!-- options for self profile start -->
-      <div v-if="isSelfProfile" class="ml-2 flex-shrink-0 self-start mt-0.5">
+      <div v-if="!hideOptions && isSelfProfile" class="ml-2 flex-shrink-0 self-start mt-0.5">
         <fm-dropdown placement="bottom-end">
           <button class="hover:text-fm-primary hover:scale-105 transform flex" title="Options">
             <span class="sr-only">Options</span>
@@ -141,10 +141,12 @@
 import dayjs from 'dayjs';
 import get from 'lodash/get';
 import { mapActions, mapMutations } from 'vuex';
+
 export default {
   props: {
     post: { type: Object, required: true },
-    showCreatorInfo: { type: Boolean, default: false }
+    showCreatorInfo: { type: Boolean, default: false },
+    hideOptions: { type: Boolean, default: false } // useful for profile page to hide the post options when preview mode is active
   },
   data() {
     return {

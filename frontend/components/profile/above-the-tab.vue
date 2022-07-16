@@ -75,7 +75,7 @@
       <!-- name and short description end -->
 
       <!-- share and follow/unfollow actions start -->
-      <div class="ml-auto my-4 lg:my-0">
+      <div class="ml-auto my-4 lg:my-0 flex items-center">
         <fm-button class="mr-4 inline-flex items-center" @click="isProfileShareVisible = true;">
           <icon-share class="inline-block -mt-0.5 mr-1 h-em w-em"></icon-share> Share
         </fm-button>
@@ -87,6 +87,16 @@
             <icon-plus class="inline-block mr-1 h-em w-em"></icon-plus> Follow
           </div>
         </fm-button>
+
+        <fm-tooltip v-if="isSelfProfile" class="ml-4 inline-block" content="View your page as it would appear to your supporters" :delay="500">
+          <fm-button class="w-[42px] !px-0 !rounded-full" @click="setPreviewMode(true)">
+            <icon-eye class="inline-block h-4 w-4"></icon-eye>
+          </fm-button>
+        </fm-tooltip>
+        <fm-alert v-else-if="isPreviewMode" type="warning" class="fixed bottom-[78px] md:bottom-0 w-full left-0 z-20 !rounded-none justify-center" :show-icon="false">
+          You're viewing your profile as a supporter.
+          <fm-button type="error" class="ml-4" size="sm" @click="setPreviewMode(false)">Exit view</fm-button>
+        </fm-alert>
       </div>
     <!-- share and follow/unfollow actions end -->
     </div>
@@ -149,7 +159,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapState } from 'vuex';
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex';
 import {
   Check as IconCheck,
   Plus as IconPlus,
@@ -185,7 +195,7 @@ export default {
     };
   },
   computed: {
-    ...mapState('profile', ['user']),
+    ...mapState('profile', ['user', 'isPreviewMode']),
     ...mapGetters('profile', ['isSelfProfile'])
   },
   watch: {
@@ -193,8 +203,12 @@ export default {
       if (!isEditing) this.resetEditDialog();
     }
   },
+  beforeDestroy() {
+    this.setPreviewMode(false);
+  },
   methods: {
     ...mapActions('profile', ['updateUser', 'follow', 'unfollow']),
+    ...mapMutations('profile', ['setPreviewMode']),
 
     async getBase64(file) {
       const reader = new FileReader();

@@ -27,15 +27,18 @@ export const state = () => ({
   user: null,
   posts: null,
   donations: null,
-  existingMemberships: null
+  existingMemberships: null,
+  isPreviewMode: false
 });
 
 export const getters = {
   isSelfProfile(state, getters, rootState) {
-    return !!(
-      (get(rootState, 'auth.user.username') && get(state, 'user.username')) &&
-      (rootState.auth.user.username === state.user.username)
-    );
+    return state.isPreviewMode
+      ? false
+      : !!(
+          (get(rootState, 'auth.user.username') && get(state, 'user.username')) &&
+          (rootState.auth.user.username === state.user.username)
+        );
   },
   currentUserHasActiveSubscription(state, getters, rootState) {
     if (!rootState.auth.loggedIn) return false; // unauthenticated
@@ -312,6 +315,9 @@ export const mutations = {
   },
   setExistingMemberships(state, existingMemberships) {
     state.existingMemberships = existingMemberships.results;
+  },
+  setPreviewMode(state, isPreviewMode) {
+    state.isPreviewMode = isPreviewMode;
   },
   replaceDonation(state, donation) {
     const idxToReplace = (state.donations || []).findIndex(currDonation => currDonation.id === donation.id);

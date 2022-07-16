@@ -50,8 +50,8 @@
       <fm-button v-else-if="isScheduledAfterCurrent" type="warning" class="w-48 pointer-events-none">
         <icon-clock class="inline-block h-em w-em"></icon-clock> Scheduled
       </fm-button>
-      <fm-button v-else-if="isExpired" type="info" class="w-48" :loading="loading" @click="$emit('subscribe-click')">Rejoin</fm-button>
-      <fm-button v-else type="primary" class="w-48" :loading="loading" @click="$emit('subscribe-click')">Join</fm-button>
+      <fm-button v-else-if="isExpired" type="info" class="w-48 btn-rejoin" :loading="loading" @click="$emit('subscribe-click')">Rejoin</fm-button>
+      <fm-button v-else type="primary" class="w-48 btn-join" :loading="loading" @click="$emit('subscribe-click')">Join</fm-button>
     </div>
 
     <fm-read-more-height :max-height="tier.cover ? 100 : 200" class="mt-4">
