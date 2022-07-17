@@ -9,7 +9,9 @@
       </h1>
       <div class="text-3xl font-bold uppercase">Page not found</div>
     </div>
-    <template v-else>An error occurred</template>
+    <template v-else>
+      {{ error && error.message }}
+    </template>
     <div class="text-black mt-8">
       <fm-button type="primary" class="mx-2 min-w-[150px]" @click="$router.go(-1)">
         <span class="text-lg">&larr; Back</span>
