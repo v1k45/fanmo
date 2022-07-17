@@ -121,7 +121,8 @@ const preset = (() => {
     ...options(),
     bold: true,
     italic: true,
-    strike: true
+    strike: true,
+    link: true
   });
   const intermediate = () => ({
     ...basic(),
@@ -135,8 +136,7 @@ const preset = (() => {
       levels: [3]
     },
     blockquote: true,
-    horizontalRule: true,
-    link: true // TODO: implement link. to be handled separately
+    horizontalRule: true
   });
   return {
     basic,
@@ -186,9 +186,7 @@ export default {
       content: this.value,
       extensions: [
         StarterKit.configure(this.currentPreset),
-        LinkExtension.configure({
-          openOnClick: false
-        })
+        ...(this.currentPreset.link ? [LinkExtension.configure({ openOnClick: false })] : [])
       ]
     });
 
