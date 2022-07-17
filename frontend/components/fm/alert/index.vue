@@ -64,10 +64,13 @@ export default {
   @apply max-w-xl;
 }
 .fm-alert__icon {
-  @apply self-baseline mr-3;
+  @apply self-baseline mr-3 flex-shrink-0;
   svg {
     @apply fill-current stroke-white h-6 w-6;
   }
+}
+.fm-alert__content {
+  @apply flex-grow;
 }
 .fm-alert__title {
   @apply text-lg leading-tight font-bold mb-1;
