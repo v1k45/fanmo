@@ -3,8 +3,8 @@
   <div v-show="isVisible" class="fm-dialog animatecss" :class="classes">
     <div class="fm-dialog__backdrop" @click="closeOnBackdropClick ? close() : () => {}"></div>
     <transition
-      :enter-active-class="drawer ? ' animatecss-slideInRight' : 'animatecss-zoomIn'"
-      :leave-to-class="drawer ? ' animatecss-slideOutRight' : 'animatecss-zoomOut'">
+      :enter-active-class="drawer ? 'animatecss-slideInRight' : 'animatecss-slideInUp md:animatecss-zoomIn'"
+      :leave-to-class="drawer ? 'animatecss-slideOutRight' : 'animatecss-slideOutDown md:animatecss-zoomOut'">
       <div v-show="isVisible" class="fm-dialog__container animatecss" :class="dialogClass">
         <div ref="focus-trap" class="fm-dialog__focus-trap" tabindex="-1"></div>
         <div v-if="$slots.header" class="fm-dialog__header">
