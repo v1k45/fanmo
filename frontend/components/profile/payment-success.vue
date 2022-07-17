@@ -48,8 +48,9 @@
 </template>
 
 <script>
-import JSConfetti from 'js-confetti';
+import confetti from 'canvas-confetti';
 import { CheckCircle as IconCheckCircle } from 'lucide-vue';
+import { delay } from '~/utils';
 
 export default {
   components: {
@@ -81,13 +82,26 @@ export default {
   },
   watch: {
     isVisible(isVisible) {
-      if (isVisible && this.confetti) this.confetti.addConfetti({ confettiNumber: 300 });
+      if (isVisible && this.confetti) this.fireConfetti();
     }
   },
   mounted() {
-    this.confetti = new JSConfetti();
+    this.confetti = confetti;
+  },
+  beforeDestroy() {
+    const canvas = document.querySelector('canvas');
+    if (canvas) canvas.remove();
   },
   methods: {
+    async fireConfetti() {
+      await delay(200); // wait for opening animation to finish
+      this.confetti({
+        particleCount: 300,
+        spread: 150,
+        origin: { y: 0.6 },
+        disableForReducedMotion: true
+      });
+    }
   }
 };
 </script>
