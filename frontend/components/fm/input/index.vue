@@ -115,11 +115,15 @@
 <script>
 import get from 'lodash/get';
 import { Eye as IconEye, EyeOff as IconEyeOff } from 'lucide-vue';
+import FmInputOtp from './otp.vue';
+import FmInputFile from './file.vue';
 
 export default {
   components: {
     IconEye,
-    IconEyeOff
+    IconEyeOff,
+    FmInputOtp,
+    FmInputFile
   },
   inject: {
     $form: { default: () => ({ errors: {} }) }
