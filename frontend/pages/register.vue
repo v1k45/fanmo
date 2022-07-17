@@ -40,24 +40,13 @@
 </template>
 
 <script>
-import faker from 'faker';
-// TODO: remove faker
-const USE_FAKE = false;
-
 export default {
   layout: 'auth',
   auth: 'guest',
   data() {
-    const fake = USE_FAKE
-      ? {
-          name: faker.name.firstName(),
-          email: faker.internet.email(),
-          password: faker.internet.password()
-        }
-      : null;
     return {
       loading: false,
-      signupForm: fake || {
+      signupForm: {
         name: '',
         email: '',
         password: ''
