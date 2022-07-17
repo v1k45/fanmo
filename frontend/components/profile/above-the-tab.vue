@@ -93,9 +93,11 @@
             <icon-eye class="inline-block h-4 w-4"></icon-eye>
           </fm-button>
         </fm-tooltip>
-        <fm-alert v-else-if="isPreviewMode" type="warning" class="fixed bottom-[78px] md:bottom-0 w-full left-0 z-20 !rounded-none justify-center" :show-icon="false">
-          You're viewing your profile as a supporter.
-          <fm-button type="error" class="ml-4" size="sm" @click="setPreviewMode(false)">Exit view</fm-button>
+        <fm-alert v-else-if="isPreviewMode" type="warning" class="fixed bottom-[78px] md:bottom-0 w-full left-0 z-20 !rounded-none" :show-icon="false">
+          <div class="text-center">
+            You're viewing your profile as a supporter.
+            <fm-button type="error" class="ml-4" size="sm" @click="setPreviewMode(false)">Exit view</fm-button>
+          </div>
         </fm-alert>
       </div>
     <!-- share and follow/unfollow actions end -->
