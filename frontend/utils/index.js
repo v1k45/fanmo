@@ -25,9 +25,9 @@ export const toDate = val => {
 
 export const delay = (ms = 0) => new Promise(resolve => setTimeout(resolve, ms));
 export const skipOnboarding = {
-  value: (userId) => { return localStorage.getItem(`onboarding:skipped:${userId}`) || false; },
-  set: (userId) => localStorage.setItem(`onboarding:skipped:${userId}`, '1'),
-  unset: (userId) => localStorage.setItem(`onboarding:skipped:${userId}`, '0')
+  value: (username) => localStorage.getItem(`onboarding:skipped:${username}`) === '1' || false,
+  set: (username) => localStorage.setItem(`onboarding:skipped:${username}`, '1'),
+  unset: (username) => localStorage.setItem(`onboarding:skipped:${username}`, '0')
 };
 export const loadScript = url => {
   const script = document.createElement('script');
