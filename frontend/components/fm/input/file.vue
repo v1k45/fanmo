@@ -9,7 +9,7 @@
         <template v-if="multiple">Click here to select files or drag them here.</template>
         <template v-else>Click here to select a file or drag it here.</template>
       </div>
-      <input ref="file" type="file" tabindex="-1" :multiple="multiple" v-bind="$attrs" class="w-full h-full top-0 left-0 opacity-0 overflow-hidden cursor-pointer absolute" @change="onChange">
+      <input ref="file" type="file" tabindex="-1" :multiple="multiple" v-bind="$attrs" class="w-full h-full top-0 left-0 opacity-0 overflow-hidden cursor-pointer absolute" @change="handleChangeEvent">
     </label>
   </div>
   <ul v-if="fileList.length" class="flex flex-wrap">
@@ -94,6 +94,10 @@ export default {
     }
   },
   methods: {
+    handleChangeEvent() {
+      if (this.multiple) this.push(...this.$refs.file.files);
+      else this.onChange();
+    },
     onChange() {
       const existingFiles = this.fileList.filter(file => file.type === 'url');
       const inputFiles = [...this.$refs.file.files].map(file => ({ type: 'file', file }));
@@ -108,6 +112,16 @@ export default {
         ? this.fileList.map(file => file.file)
         : (this.fileList[0] ? this.fileList[0].file : '')
       );
+    },
+    push(...files) {
+      const allFiles = new DataTransfer();
+      this.fileList.forEach((file, idx) => {
+        if (file.type === 'url') return;
+        allFiles.items.add(file.file);
+      });
+      if (files.length) files.forEach(file => allFiles.items.add(file));
+      this.$refs.file.files = allFiles.files;
+      this.onChange();
     },
     remove(i) {
       if (this.fileList[i].type === 'url') {
