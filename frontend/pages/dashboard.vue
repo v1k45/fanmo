@@ -4,7 +4,7 @@
   <!-- header start -->
   <div class="container sm:pl-0">
     <div class="text-2xl text-black font-bold">Dashboard</div>
-    <div class="mt-1 text-gray-600">View and manage members, review transaction history and manage membership tiers.</div>
+    <div class="mt-1 text-gray-600">View recent activities and analytics for your Fanmo page.</div>
   </div>
   <!-- header end -->
 

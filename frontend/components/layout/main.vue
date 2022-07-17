@@ -68,9 +68,9 @@
         <span class="lg:hidden">{{ onboarding.smallText }}</span>
       </div>
       <div class="absolute right-0 sm:right-4 top-[-7px] hidden sm:block">
-        <fm-button type="success" @click="continueOnboarding">Finish onboarding</fm-button>
+        <fm-button type="success" @click="continueOnboarding">Finish setup</fm-button>
       </div>
-      <fm-button class="sm:hidden" size="sm" type="success" @click="continueOnboarding">Finish onboarding</fm-button>
+      <fm-button class="sm:hidden" size="sm" type="success" @click="continueOnboarding">Finish setup</fm-button>
     </div>
   </fm-alert>
   <!-- onboarding banner end -->
