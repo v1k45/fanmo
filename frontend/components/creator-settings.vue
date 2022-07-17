@@ -328,7 +328,7 @@ export default {
       this.isNotificationLoading = false;
     },
     continueOnboarding() {
-      skipOnboarding.unset(this.$auth.user.id);
+      skipOnboarding.unset(this.$auth.user.username);
       this.$router.push({ name: 'onboarding-payment-info' });
     }
   }

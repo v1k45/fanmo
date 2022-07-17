@@ -213,7 +213,7 @@ export default {
       this.isNotificationLoading = false;
     },
     restartOnboarding() {
-      skipOnboarding.unset(this.$auth.user.id);
+      skipOnboarding.unset(this.$auth.user.username);
       this.$router.push({ name: 'onboarding-role' });
     }
   }
