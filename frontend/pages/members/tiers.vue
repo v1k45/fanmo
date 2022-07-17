@@ -59,7 +59,7 @@
             <!-- amount end -->
 
             <!-- image start -->
-            <fm-input v-model="tierForm.cover_base64" uid="cover_base64" label="Tier image" type="file" accept="images/*">
+            <fm-input v-model="tierForm.cover_base64" uid="cover_base64" label="Tier image" type="file" accept="image/*">
               <template #label>
                 <label class="mr-3">Tier image</label>
                 <div class="text-sm text-gray-500">Tier image is optional but we highly recommend adding one to establish and emphasize your brand and community.</div>

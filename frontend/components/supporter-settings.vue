@@ -6,7 +6,7 @@
     <div class="text-xl font-medium text-black flex items-center mb-4">General</div>
 
     <fm-input v-model="form.general.name" uid="name" label="Name"></fm-input>
-    <fm-input v-model="form.general.avatar_base64" uid="avatar_base64" label="Profile picture" type="file" accept="images/*"></fm-input>
+    <fm-input v-model="form.general.avatar_base64" uid="avatar_base64" label="Profile picture" type="file" accept="image/*"></fm-input>
 
     <div class="text-left mt-8">
       <fm-button
