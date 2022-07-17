@@ -318,7 +318,11 @@ export default {
       }
 
       this.loadingTierId = tier.id;
-      const { success, data } = await this.createOrGetMembership({ creator_username: this.user.username, tier_id: tier.id });
+      const { success, data } = await this.createOrGetMembership({
+        creator_username: this.user.username,
+        tier_id: tier.id,
+        period: this.$route.query.period
+      });
       if (!success) {
         if (get(data, 'creator_username[0]')) this.$toast.error(data.creator_username[0].message);
         else this.$toast.error(data);

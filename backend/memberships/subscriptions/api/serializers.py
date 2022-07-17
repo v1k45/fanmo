@@ -169,6 +169,9 @@ class MembershipSerializer(PaymentIntentSerializerMixin, serializers.ModelSerial
     )
     lifetime_amount = serializers.SerializerMethodField()
     status = serializers.SerializerMethodField()
+    period = serializers.ChoiceField(
+        choices=Plan.Period.choices, default=Plan.Period.MONTHLY
+    )
 
     class Meta:
         model = Membership
@@ -184,6 +187,7 @@ class MembershipSerializer(PaymentIntentSerializerMixin, serializers.ModelSerial
             "lifetime_amount",
             "status",
             "email",
+            "period",
             "is_active",
             "created_at",
             "updated_at",
@@ -264,13 +268,15 @@ class MembershipSerializer(PaymentIntentSerializerMixin, serializers.ModelSerial
 
     def create(self, validated_data):
         tier = validated_data.pop("tier")
+        period = validated_data.pop("period")
         membership, _ = Membership.objects.get_or_create(**validated_data)
-        membership.start(tier)
+        membership.start(tier, period)
         return membership
 
     def update(self, instance: Membership, validated_data):
         tier = validated_data.pop("tier")
-        instance.update(tier)
+        period = validated_data.pop("period", Plan.Period.MONTHLY)
+        instance.update(tier, period)
         return instance
 
 
@@ -316,10 +322,13 @@ class MembershipGiveawaySerializer(serializers.ModelSerializer):
         write_only=True,
     )
     email = serializers.EmailField(write_only=True)
+    period = serializers.ChoiceField(
+        choices=Plan.Period.choices, default=Plan.Period.MONTHLY
+    )
 
     class Meta:
         model = Membership
-        fields = ["id", "tier_id", "email"]
+        fields = ["id", "tier_id", "email", "period"]
 
     def validate_tier(self, tier):
         if tier.creator_user_id != self.context["request"].user.pk:
@@ -337,7 +346,7 @@ class MembershipGiveawaySerializer(serializers.ModelSerializer):
         membership, _ = Membership.objects.get_or_create(
             creator_user=request.user, fan_user=fan_user
         )
-        membership.giveaway(validated_data["tier"])
+        membership.giveaway(validated_data["tier"], validated_data["period"])
         return membership
 
 

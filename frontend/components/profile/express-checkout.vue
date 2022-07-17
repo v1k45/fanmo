@@ -105,7 +105,8 @@ export default {
         const { success, data } = await this.createOrGetMembership({
           creator_username: this.user.username,
           tier_id: this.tier.id,
-          email: this.email
+          email: this.email,
+          period: this.$route.query.period
         });
         if (!success) {
           this.errors = data;

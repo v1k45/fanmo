@@ -94,12 +94,14 @@ class Membership(BaseModel):
     def __str__(self):
         return f"{self.fan_user} -> {self.creator_user} ({self.tier})"
 
-    def start(self, tier):
+    def start(self, tier, period=None):
         plan = Plan.objects.create(
             name=f"{tier.name} - {self.creator_user.name}",
             tier=tier,
             # todo: guess amount based on currency.
             amount=tier.amount,
+            period=period,
+            interval=1,
         )
         plan.create_external()
 
@@ -110,19 +112,21 @@ class Membership(BaseModel):
             creator_user=self.creator_user,
             fan_user=self.fan_user,
             cycle_start_at=timezone.now(),
-            cycle_end_at=timezone.now() + relativedelta(months=1),
+            cycle_end_at=timezone.now() + plan.get_delta(),
         )
         subscription.create_external()
 
         self.scheduled_subscription = subscription
         self.save()
 
-    def giveaway(self, tier):
+    def giveaway(self, tier, period=None):
         # TODO: Send different email for giveaway
         plan = Plan.objects.create(
             name=f"{tier.name} - {self.creator_user.name}",
             tier=tier,
             amount=Money(Decimal(0), INR),
+            period=period,
+            interval=1,
             external_id="giveaway",
         )
 
@@ -133,7 +137,7 @@ class Membership(BaseModel):
             creator_user=self.creator_user,
             fan_user=self.fan_user,
             cycle_start_at=timezone.now(),
-            cycle_end_at=timezone.now() + relativedelta(months=1),
+            cycle_end_at=timezone.now() + plan.get_delta(),
             external_id="giveaway",
         )
 
@@ -160,7 +164,7 @@ class Membership(BaseModel):
         subscription.activate()
         subscription.save()
 
-    def update(self, tier):
+    def update(self, tier, period=None):
         """Update membership with active subscription to a new tier"""
         active_subscription = self.active_subscription
         if not active_subscription:
@@ -187,6 +191,8 @@ class Membership(BaseModel):
             tier=tier,
             # todo: guess amount based on currency.
             amount=tier.amount,
+            period=period,
+            interval=1,
         )
         plan.create_external()
         self.scheduled_subscription = active_subscription.update(plan)
@@ -238,12 +244,18 @@ class Plan(BaseModel):
     Subscription plan, similar to a tier, but private.
     """
 
+    class Period(models.TextChoices):
+        WEEKLY = "weekly"
+        MONTHLY = "monthly"
+        YEARLY = "yearly"
+
     name = models.CharField(max_length=255)
     tier = models.ForeignKey("subscriptions.Tier", on_delete=models.CASCADE, null=True)
 
-    # hardcode for now.
-    period = "monthly"
-    interval = 1
+    period = models.CharField(
+        max_length=16, choices=Period.choices, default=Period.MONTHLY
+    )
+    interval = models.PositiveSmallIntegerField(default=1)
 
     amount = MoneyField(max_digits=7, decimal_places=2)
     external_id = models.CharField(max_length=255)
@@ -252,6 +264,22 @@ class Plan(BaseModel):
 
     def __str__(self):
         return self.name
+
+    def get_delta(self):
+        if self.period == self.Period.WEEKLY:
+            return relativedelta(weeks=self.interval)
+        elif self.period == self.Period.YEARLY:
+            return relativedelta(years=self.interval)
+        else:
+            return relativedelta(months=self.interval)
+
+    def get_term_count(self):
+        base_term = {
+            self.Period.WEEKLY: 52,
+            self.Period.MONTHLY: 12,
+            self.Period.YEARLY: 1,
+        }
+        return (base_term[self.period] * 5) // self.interval
 
     @classmethod
     def for_subscription(cls, amount, creator_user):
@@ -293,7 +321,7 @@ class Plan(BaseModel):
             creator_user=self.tier.creator_user,
             fan_user=fan_user,
             cycle_start_at=timezone.now(),
-            cycle_end_at=timezone.now() + relativedelta(months=1),
+            cycle_end_at=timezone.now() + self.get_delta(),
         )
         subscription.create_external()
         return subscription
@@ -370,7 +398,7 @@ class Subscription(BaseModel):
     def create_external(self):
         subscription_data = {
             "plan_id": self.plan.external_id,
-            "total_count": 12,
+            "total_count": self.plan.get_term_count(),
             "notes": {"external_id": self.id},
             "customer_notify": 0,
         }
@@ -473,7 +501,7 @@ class Subscription(BaseModel):
                 status=Subscription.Status.CREATED,
                 # pad time to day end?
                 cycle_start_at=self.cycle_end_at,
-                cycle_end_at=self.cycle_end_at + relativedelta(months=1),
+                cycle_end_at=self.cycle_end_at + plan.get_delta(),
                 fan_user=self.fan_user,
                 creator_user=self.creator_user,
             )
@@ -500,7 +528,7 @@ class Subscription(BaseModel):
                 status=Subscription.Status.SCHEDULED_TO_ACTIVATE,
                 # pad time to day end?
                 cycle_start_at=self.cycle_end_at,
-                cycle_end_at=self.cycle_end_at + relativedelta(months=1),
+                cycle_end_at=self.cycle_end_at + plan.get_delta(),
                 fan_user=self.fan_user,
                 creator_user=self.creator_user,
                 external_id=self.external_id,

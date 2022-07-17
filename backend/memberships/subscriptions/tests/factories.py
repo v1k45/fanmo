@@ -21,6 +21,7 @@ class PlanFactory(DjangoModelFactory):
     tier = SubFactory(TierFactory)
     external_id = Faker("uuid4")
     amount = Money(amount=Decimal(100), currency="INR")
+    period = Plan.Period.MONTHLY
 
     class Meta:
         model = Plan

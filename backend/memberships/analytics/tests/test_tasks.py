@@ -10,7 +10,7 @@ from memberships.subscriptions.tasks import refresh_membership
 from memberships.subscriptions.tests.factories import MembershipFactory
 from memberships.subscriptions.tests.factories import PlanFactory, SubscriptionFactory
 from memberships.users.tests.factories import UserFactory
-from memberships.subscriptions.models import Membership, Subscription
+from memberships.subscriptions.models import Membership, Plan
 from memberships.payments.models import Payout
 from memberships.payments.models import Payment
 from memberships.analytics.tasks import refresh_stats
@@ -246,7 +246,7 @@ class TestRefreshStats:
         new_tier = TierFactory(
             creator_user=creator_user, amount=Money(Decimal("150"), INR)
         )
-        anuj_membership.update(new_tier)
+        anuj_membership.update(new_tier, Plan.Period.MONTHLY)
 
         time_machine.move_to(anuj_membership.active_subscription.cycle_end_at)
         refresh_creator_memberships(creator_user.id)

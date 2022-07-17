@@ -225,17 +225,17 @@ export const actions = {
                                                    successful. Just show the success dialog as feedback.
    */
   // eslint-disable-next-line camelcase
-  async createOrGetMembership({ state }, { creator_username, tier_id, email }) {
+  async createOrGetMembership({ state }, { creator_username, tier_id, email, period }) {
     let membership;
     try {
       const { existingMemberships } = state;
       if (existingMemberships.length) {
         membership = await this.$axios.$patch(
           `/api/memberships/${existingMemberships[0].id}/`,
-          { creator_username, tier_id }
+          { creator_username, tier_id, period }
         );
       } else {
-        membership = await this.$axios.$post('/api/memberships/', { creator_username, tier_id, email });
+        membership = await this.$axios.$post('/api/memberships/', { creator_username, tier_id, email, period });
       }
     } catch (err) {
       console.error(err.response.data);
