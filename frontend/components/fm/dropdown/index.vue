@@ -1,5 +1,7 @@
 <template>
-<fm-popper v-slot="{ $reference, $popper, isVisible, hide }" v-bind="{ placement }" class="fm-dropdown">
+<fm-popper
+  v-slot="{ $reference, $popper, isVisible, hide }"
+  v-bind="{ placement, popperOptions: { strategy: 'fixed' } }" class="fm-dropdown">
   <div v-bind="$reference" class="fm-dropdown__reference">
     <slot></slot>
   </div>
@@ -27,7 +29,7 @@ export default {
   @apply inline-block;
 }
 .fm-dropdown__content-wrapper {
-  @apply absolute min-w-[175px] z-20;
+  @apply absolute min-w-[175px] z-30;
   @apply p-2;
 }
 .fm-dropdown__content {
