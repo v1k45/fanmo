@@ -1,7 +1,6 @@
 import uuid
 import requests
 from collections import namedtuple
-from typing import Any
 
 from django_otp.plugins.otp_email.models import EmailDevice
 from allauth.account.utils import setup_user_email, user_username
@@ -18,6 +17,7 @@ from django.utils import timezone
 import random
 
 from .wordlist import adjectives, animals
+from .models import UserOnboarding
 
 
 class AccountAdapter(DefaultAccountAdapter):
@@ -67,8 +67,12 @@ class AccountAdapter(DefaultAccountAdapter):
 
     def confirm_email(self, request, email_address):
         super().confirm_email(request, email_address)
-        email_address.user.email_verified = True
-        email_address.user.save()
+        user = email_address.user
+        user.email_verified = True
+        user.save()
+        if not user.is_creator:
+            user.user_onboarding.status = UserOnboarding.Status.COMPLETED
+            user.user_onboarding.save()
 
     def send_password_reset_mail(self, request, email_device, invite_intent=None):
         if email_device.valid_until < timezone.now():

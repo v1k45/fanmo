@@ -303,10 +303,17 @@ class UserSerializer(ComputedUserFieldSerializer, serializers.ModelSerializer):
             setattr(instance.social_links, field_name, value)
         instance.social_links.save()
 
-        if user_onboarding.pop("submit_for_review", None):
-            instance.user_onboarding.status = UserOnboarding.Status.SUBMITTED
         for field_name, value in user_onboarding.items():
             setattr(instance.user_onboarding, field_name, value)
+        # set onboarding status
+        if user_onboarding.pop("submit_for_review", None):
+            instance.user_onboarding.status = UserOnboarding.Status.SUBMITTED
+        if not instance.is_creator and validated_data.get("is_creator", instance.is_creator):
+            # if a supporter becomes a creator after email verfication, move the onboarding status back to in progress.
+            instance.user_onboarding.status = UserOnboarding.Status.IN_PROGRESS
+        if instance.is_creator and not validated_data.get("is_creator", instance.is_creator):
+            # if a creator becomes a supporter, move the onboarding status back to depend on email verification.
+            instance.user_onboarding.status = UserOnboarding.Status.COMPLETED if instance.email_verified else UserOnboarding.Status.IN_PROGRESS
         instance.user_onboarding.save()
 
         return super().update(instance, validated_data)
