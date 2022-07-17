@@ -25,3 +25,11 @@ class FileField(serializers.FileField):
         if data:
             return {"url": data}
         return None
+
+
+class URLField(serializers.URLField):
+    def to_internal_value(self, data):
+        value = super().to_internal_value(data)
+        if "://" not in value:
+            value = "http://" + value
+        return value

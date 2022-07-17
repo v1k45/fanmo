@@ -14,6 +14,7 @@ from rest_framework.exceptions import ErrorDetail
 from dj_rest_auth.registration.serializers import (
     RegisterSerializer as BaseRegisterSerializer,
 )
+from memberships.utils.fields import URLField
 from memberships.users.models import CreatorActivity
 
 from memberships.subscriptions.models import Tier
@@ -59,6 +60,12 @@ class UserTierSerializer(serializers.ModelSerializer):
 
 
 class SocialLinkSerializer(serializers.ModelSerializer):
+    website_url = URLField(required=False, allow_blank=True)
+    youtube_url = URLField(required=False, allow_blank=True)
+    facebook_url = URLField(required=False, allow_blank=True)
+    instagram_url = URLField(required=False, allow_blank=True)
+    twitter_url = URLField(required=False, allow_blank=True)
+
     class Meta:
         model = SocialLink
         fields = [
