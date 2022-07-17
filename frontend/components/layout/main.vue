@@ -2,7 +2,10 @@
 <div
   v-loading="showGlobalLoader"
   class="fm-layout fm-layout--default bg-gray-50"
-  :class="{ 'fm-layout--with-sidebar': sidebar && $auth.loggedIn }">
+  :class="{
+    'fm-layout--with-sidebar': sidebar && $auth.loggedIn,
+    'fm-layout--with-header-banner': onboarding.isPending
+  }">
   <!-- header start -->
   <!-- TODO: always show for marketing pages and remove bottom pane -->
   <header class="fm-layout__header z-20 py-2 bg-white shadow-sm" :class="{ 'hidden md:block': $auth.loggedIn }">
@@ -55,6 +58,23 @@
       </nav>
     </div>
   </header>
+
+  <!-- onboarding banner start -->
+  <fm-alert v-if="onboarding.isPending" :show-icon="false" class="fm-layout__banner !rounded-none z-[15]">
+    <div class="sm:container flex items-center relative text-sm sm:text-base">
+      <div class="mr-3 hidden sm:block"><icon-info></icon-info></div>
+      <div class="mr-auto">
+        <span class="hidden lg:inline">{{ onboarding.text }}</span>
+        <span class="lg:hidden">{{ onboarding.smallText }}</span>
+      </div>
+      <div class="absolute right-0 sm:right-4 top-[-7px] hidden sm:block">
+        <fm-button type="success" @click="continueOnboarding">Finish onboarding</fm-button>
+      </div>
+      <fm-button class="sm:hidden" size="sm" type="success" @click="continueOnboarding">Finish onboarding</fm-button>
+    </div>
+  </fm-alert>
+  <!-- onboarding banner end -->
+
   <!-- header end -->
 
   <div class="fm-layout__content">
@@ -119,6 +139,8 @@ import {
   Twitter as IconTwitter, Instagram as IconInstagram
 } from 'lucide-vue';
 import { mapState } from 'vuex';
+import { skipOnboarding } from '~/utils';
+
 export default {
   components: {
     IconMenu,
@@ -141,11 +163,48 @@ export default {
     };
   },
   computed: {
-    ...mapState('ui', ['showGlobalLoader'])
+    ...mapState('ui', ['showGlobalLoader']),
+
+    /* eslint-disable camelcase */
+    onboarding() {
+      const { loggedIn, user } = this.$auth;
+      if (!loggedIn) return { isPending: false };
+      const isPending = user.onboarding.status === 'in_progress';
+
+      let text, smallText;
+      const { email_verification, payment_setup } = user.onboarding.checklist;
+      if (user.is_creator) { // creator
+        if (!payment_setup) {
+          text = 'Finish your account setup now to start accepting payments from your supporters.';
+          smallText = 'Finish your account setup.';
+        }
+      } else { // supporter
+        // eslint-disable-next-line no-lonely-if
+        if (!email_verification) {
+          text = 'Verify your email now to unlock all features!';
+          smallText = 'Verify your email.';
+        }
+      }
+      return {
+        isPending,
+        text,
+        smallText
+      };
+    }
+  },
+  methods: {
+    continueOnboarding() {
+      skipOnboarding.unset(this.$auth.user.username);
+      location.reload();
+    }
   }
 };
 </script>
 <style lang="scss">
+$header-height: 60px;
+$banner-height: 54px;
+$top-offset-with-banner: $header-height + $banner-height;
+
 .fm-layout {
   @apply grid;
 }
@@ -154,10 +213,11 @@ export default {
   @apply min-h-screen max-w-full;
   grid-template-areas:
     'header'
+    'banner'
     'content'
     'footer'
     'bottom-pane';
-  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  grid-template-rows: auto auto minmax(0, 1fr) auto auto;
   grid-template-columns: minmax(0, 1fr);
 }
 .fm-layout--with-sidebar {
@@ -169,8 +229,8 @@ export default {
   .fm-layout__sidebar {
     @apply flex-shrink-0 overflow-auto sticky mr-4 hidden lg:block;
     width: 250px;
-    height: calc(100vh - 60px);
-    top: 60px;
+    height: calc(100vh - $header-height);
+    top: $header-height;
     + * {
       flex-grow: 1;
       min-width: 0;
@@ -184,8 +244,15 @@ export default {
 
 .fm-layout__header {
   grid-area: header;
-  height: 60px;
+  height: $header-height;
   @apply sticky top-0;
+}
+.fm-layout__banner {
+  @apply sticky top-0;
+  height: $banner-height;
+  @screen md {
+    top: $header-height;
+  }
 }
 .fm-layout__content {
   grid-area: content;
@@ -197,6 +264,13 @@ export default {
   grid-area: bottom-pane;
   height: 78px;
   @apply sticky bottom-0 md:hidden;
+}
+
+.fm-layout--with-header-banner {
+  .fm-layout__sidebar {
+    height: calc(100vh - $top-offset-with-banner);
+    top: $top-offset-with-banner;
+  }
 }
 
 // TODO: delete this comment after all the pages are implemented
