@@ -3,7 +3,6 @@ const defaultTheme = require('tailwindcss/defaultTheme');
 
 const fontFamily = { ...defaultTheme.fontFamily };
 delete fontFamily.serif;
-fontFamily.sans.unshift('Quicksand');
 
 const brandColors = {
   primary: {
