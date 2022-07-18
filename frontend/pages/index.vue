@@ -3,7 +3,7 @@
 
   <!-- hero start -->
   <section class="relative flex flex-wrap py-8 lg:py-24 xl:py-36 items-center min-h-[550px] 2xl:max-w-7xl mx-auto z-0">
-    <img src="~/assets/marketing/hero.svg" :class="{
+    <img src="~/assets/marketing/hero.optimized.svg" :class="{
       'w-auto mx-auto max-h-72': true,
       'md:max-h-80': true,
       'lg:absolute lg:top-1/2 lg:transform lg:-translate-y-1/2 lg:right-0 lg:max-w-[50%] lg:max-h-full -z-10': true
@@ -59,13 +59,13 @@
   <!-- fee comparison end -->
 
   <!-- boasting start -->
-  <section v-if="false" class="py-24" style="background: linear-gradient(180deg, #F2F2FF 0%, rgba(241, 248, 255, 0) 79.31%);">
+  <!-- <section v-if="false" class="py-24" style="background: linear-gradient(180deg, #F2F2FF 0%, rgba(241, 248, 255, 0) 79.31%);">
     <div class="container text-center">
       <h2 class="text-3xl leading-snug sm:text-4xl lg:text-5xl font-title">Managing fans has never been <br> this easy</h2>
       <img src="~/assets/marketing/dashboard-illustration.png" alt="Illustrative layout of the platform" class="mx-auto">
       <p class="mt-12 sm:text-xl lg:text-2xl leading-relaxed">Fanmo is refreshing and easy to use, yet <br> powerful enough for all your needs.</p>
     </div>
-  </section>
+  </section> -->
   <!-- boasting end -->
 
   <!-- feature: memberships start -->
@@ -86,7 +86,7 @@
           </p>
         </div>
         <div class="col-8 sm:col-6 md:col-4 xl:col-5 xl:offset-1 order-1 md:order-2" aria-hidden="true">
-          <img src="~/assets/marketing/memberships.svg" class="mx-auto">
+          <img src="~/assets/marketing/memberships.optimized.svg" class="mx-auto">
         </div>
       </div>
     </div>
@@ -98,7 +98,7 @@
     <div class="container">
       <div class="row items-center justify-center">
         <div class="col-8 sm:col-6 md:col-4 xl:col-5" aria-hidden="true">
-          <img src="~/assets/marketing/donations.svg" alt="" class="mx-auto">
+          <img src="~/assets/marketing/donations.optimized.svg" alt="" class="mx-auto">
         </div>
         <div class="col-12 md:col-8 xl:col-6 xl:offset-1 text-center md:text-left">
           <header>
@@ -137,7 +137,7 @@
           </p>
         </div>
         <div class="mb-8 md:mb-0 col-6 md:col-4 xl:col-5 xl:offset-1 order-1 md:order-2" aria-hidden="true">
-          <img src="~/assets/marketing/posts.svg" class="mx-auto max-h-48 lg:max-h-full">
+          <img src="~/assets/marketing/posts.optimized.svg" class="mx-auto max-h-48 lg:max-h-full">
         </div>
       </div>
     </div>
