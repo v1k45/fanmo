@@ -9,7 +9,7 @@
   <!-- cover start -->
   <figure v-if="tier.cover" class="w-full h-36 relative" :class="{ 'mt-4': tier.cover_background_style === 'contain' }">
     <img
-      :src="tier.cover.full"
+      :src="tier.cover[`${tier.cover_background_style}_medium`]"
       class="absolute h-full w-full" alt="Tier image"
       :class="{ 'object-contain': tier.cover_background_style === 'contain', 'object-cover': tier.cover_background_style === 'cover' }">
   </figure>

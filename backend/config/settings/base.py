@@ -481,9 +481,12 @@ VERSATILEIMAGEFIELD_RENDITION_KEY_SETS = {
     ],
     "tier_cover": [
         ("full", "url"),
-        ("big", "thumbnail__720x300"),
-        ("medium", "thumbnail__540x205"),
-        ("small", "thumbnail__360x150"),
+        ("cover_big", "crop__720x300"),
+        ("cover_medium", "crop__540x205"),
+        ("cover_small", "crop__360x150"),
+        ("contain_big", "thumbnail__720x300"),
+        ("contain_medium", "thumbnail__540x205"),
+        ("contain_small", "thumbnail__360x150"),
     ],
     "post_image": [
         ("full", "url"),

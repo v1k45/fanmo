@@ -222,11 +222,20 @@ export default {
           return tierForm.cover_base64 && typeof tierForm.cover_base64 !== 'string' ? URL.createObjectURL(tierForm.cover_base64) : '';
         }
       })();
+      const coverImage = {
+        full: cover,
+        cover_big: cover,
+        cover_medium: cover,
+        cover_small: cover,
+        contain_big: cover,
+        contain_medium: cover,
+        contain_small: cover
+      };
       return {
         id: Date.now(),
         name: tierForm.name,
         amount: tierForm.amount || 0,
-        cover: cover ? { big: cover, full: cover, medium: cover, small: cover } : '',
+        cover: cover ? coverImage : '',
         cover_background_style: tierForm.cover_background_style,
         description: tierForm.description,
         welcome_message: tierForm.welcome_message,
