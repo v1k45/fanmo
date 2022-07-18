@@ -58,8 +58,9 @@
       <div class="mt-12">
         <div class="flex items-end mb-4 md:mb-6 md:text-lg xl:text-xl font-bold">
           <label for="subscribers-slider" class="block mr-auto">Total subscribers</label>
+          <label for="subscribers-input" class="sr-only">Total subscribers</label>
           <input
-            v-model.number="subscriberCount" type="number"
+            id="subscribers-input" v-model.number="subscriberCount" type="number"
             class="w-28 h-10 border-gray-200 border-2 rounded-lg text-xl font-bold text-fm-info"
             min="1" max="1000" @focus="$event.target.select();">
         </div>
@@ -72,10 +73,11 @@
       <div class="mt-12">
         <div class="flex items-end mb-4 md:mb-6 md:text-lg xl:text-xl font-bold">
           <label for="price-slider" class="block mr-auto">Monthly subscription price</label>
+          <label for="price-input" class="sr-only">Monthly subscription price</label>
           <div class="flex items-center text-fm-success-600">
             <icon-indian-rupee class="h-full mr-1"></icon-indian-rupee>
             <input
-              v-model.number="subscriptionPrice" type="number"
+              id="price-input" v-model.number="subscriptionPrice" type="number"
               class="w-28 h-10 border-gray-200 border-2 rounded-lg font-bold text-xl text-fm-success-600"
               min="10" max="1000" @focus="$event.target.select();">
           </div>
