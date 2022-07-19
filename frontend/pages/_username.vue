@@ -1,7 +1,48 @@
 <template>
 <div v-if="user" v-loading="isLoading" class="bg-white" :class="{ 'disable-donation-and-join': isPreviewMode }">
 
-  <fm-tabs v-model="activeTab" centered class="mt-8">
+  <!-- sticky header start -->
+  <header v-show="showStickyNav" class="bg-white fixed z-20 top-0 w-full border-b animatecss animatecss-slideInDown" style="animation-duration: 100ms;">
+    <div class="lg:container px-4 lg:px-0 flex items-center py-2">
+
+      <breakpoint-helper></breakpoint-helper>
+
+      <fm-avatar :src="user.avatar && user.avatar.medium" :name="user.display_name" size="w-8 h-8 lg:w-10 lg:h-10" class="flex-shrink-0"></fm-avatar>
+
+      <div class="ml-2 lg:ml-3 mr-auto max-w-[60%] md:max-w-[50%]">
+        <div v-tooltip="user.display_name" class="text-base lg:text-lg text-black font-bold leading-none lg:leading-none max-w-max truncate">{{ user.display_name }}</div>
+        <div v-if="user.one_liner" v-tooltip="user.one_liner" class="mt-1 text-xs lg:text-sm text-gray-500 max-w-max truncate">{{ user.one_liner }}</div>
+      </div>
+
+      <fm-input :value="activeTab" type="select" size="sm" class="mx-4 hidden md:block" @change="gotoTab($event.target.value)">
+        <option disabled>Jump to</option>
+        <option :value="tabName.POSTS">Feed</option>
+        <option :value="tabName.TIERS">Memberships</option>
+        <option :value="tabName.DONATION">Donations</option>
+      </fm-input>
+
+      <fm-button :type="user.is_following ? 'success' : 'primary'" class="w-36 hidden md:block" :loading="isFollowLoading" @click="toggleFollow">
+        <div v-if="user.is_following" class="flex items-center justify-center">
+          <icon-check class="inline-block mr-1 h-em w-em flex-shrink-0"></icon-check> Following
+        </div>
+        <div v-else class="flex items-center justify-center">
+          <icon-plus class="inline-block mr-1 h-em w-em flex-shrink-0"></icon-plus> Follow
+        </div>
+      </fm-button>
+
+      <layout-navigation
+        :type="$auth.loggedIn ? 'hamburger-minimal' : 'anonymous-hamburger'"
+        class="rounded-full ml-4">
+      </layout-navigation>
+    </div>
+
+  </header>
+  <!-- sticky header end -->
+
+  <profile-above-the-tab v-intersect="handleIntersect"></profile-above-the-tab>
+
+  <fm-tabs ref="tabs" v-model="activeTab" centered class="mt-4" :class="{ 'min-h-[400px]': isLoading }">
+
     <fm-tabs-pane :id="tabName.POSTS" lazy label="Feed" class="bg-gray-50 pb-10">
       <div class="container min-h-[300px]">
         <div class="max-w-6xl row gx-0 lg:gx-4 mx-auto flex-wrap-reverse">
@@ -161,6 +202,7 @@
         </div>
       </div>
     </fm-tabs-pane>
+
   </fm-tabs>
 
   <profile-express-checkout
@@ -201,7 +243,7 @@ const MEMBERSHIP = 'membership';
 const DONATION = 'donation';
 
 export default {
-  layout: 'default-no-container',
+  layout: 'empty',
   data() {
     const tabName = {
       POSTS: 'posts',
@@ -210,6 +252,7 @@ export default {
     };
     return {
       tabName,
+      showStickyNav: false,
       activeTab: null,
       isLoading: true, // NOT being used. Use it if profile loading becomes slow
       donationFormErrors: null,
@@ -233,6 +276,7 @@ export default {
       loadingTierId: null,
       donationLoading: false,
       nextPostsLoading: false,
+      isFollowLoading: false,
 
       sharePost: {
         isVisible: false,
@@ -286,9 +330,14 @@ export default {
     loadRazorpay();
   },
   methods: {
-    ...mapActions('profile', ['fetchProfile', 'createOrGetMembership', 'createDonation', 'processPayment']),
+    ...mapActions('profile', ['fetchProfile', 'createOrGetMembership', 'createDonation', 'processPayment', 'follow', 'unfollow']),
     ...mapActions('posts', ['loadNextProfilePosts']),
     ...mapMutations('ui', ['setGlobalLoader']),
+
+    gotoTab(tabId) {
+      this.activeTab = tabId;
+      this.$refs.tabs.$el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    },
 
     // logic is documented in createOrGetMembership
     async handleSubscribeClick(tier) {
@@ -460,6 +509,19 @@ export default {
         relativeUrl: `p/${post.slug}/${post.id}`,
         text: post.title
       };
+    },
+
+    handleIntersect(entries, observer, isIntersecting) {
+      this.showStickyNav = !isIntersecting;
+    },
+
+    async toggleFollow() {
+      // TODO: redirect back to this after login and dispatch follow automatically
+      if (!this.$auth.loggedIn) return this.$router.push('/login');
+      this.isFollowLoading = true;
+      if (this.user.is_following) await this.unfollow();
+      else await this.follow();
+      this.isFollowLoading = false;
     }
   }
 };
