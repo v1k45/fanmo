@@ -76,14 +76,14 @@
 <!-- bottom pane nav items & hamburger end -->
 
 <!-- top nav hamburger start -->
-<div v-else-if="type === 'hamburger'">
+<div v-else-if="['hamburger', 'hamburger-minimal'].includes(type)">
   <fm-dropdown placement="top-end">
-    <button class="inline-flex items-center p-1 rounded-full border">
+    <button class="inline-flex items-center p-1 rounded-full border bg-white">
       <fm-avatar
         :src="$auth.user.avatar && $auth.user.avatar.small" :name="$auth.user.display_name"
-        size="w-9 h-9 mx-auto">
+        size="mx-auto" :class="{ 'w-9 h-9': type === 'hamburger', 'w-8 h-8': type === 'hamburger-minimal' }">
       </fm-avatar>
-      <span class="font-medium ml-2 max-w-[300px] truncate">{{ $auth.user.display_name }}</span>
+      <span v-if="type === 'hamburger'" class="font-medium ml-2 max-w-[300px] truncate">{{ $auth.user.display_name }}</span>
       <icon-menu class="ml-2 mr-2 w-5"></icon-menu>
     </button>
     <template #items>
@@ -118,7 +118,11 @@ import { Coins, Home, LayoutList, LayoutTemplate, Sliders, UserCheck, Users, Wal
 import { delay } from '~/utils';
 export default {
   props: {
-    type: { type: String, required: true, validator: val => ['sidebar', 'bottom-pane', 'hamburger'].includes(val) }
+    type: {
+      type: String,
+      required: true,
+      validator: val => ['sidebar', 'bottom-pane', 'hamburger', 'hamburger-minimal', 'anonymous-hamburger'].includes(val)
+    }
   },
   data() {
     return {
