@@ -2,11 +2,10 @@ from django.contrib import admin
 from django.contrib.auth import admin as auth_admin
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
-from memberships.users.models import UserPreference
-from memberships.payments.models import BankAccount
 
+from memberships.payments.models import BankAccount
 from memberships.users.forms import UserChangeForm, UserCreationForm
-from memberships.users.models import UserOnboarding
+from memberships.users.models import UserOnboarding, UserPreference
 
 User = get_user_model()
 

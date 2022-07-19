@@ -1,5 +1,6 @@
-from memberships.donations.models import Donation
 from import_export import resources
+
+from memberships.donations.models import Donation
 from memberships.utils.resources import ModelResource
 
 

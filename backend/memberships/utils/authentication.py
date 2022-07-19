@@ -1,8 +1,8 @@
 from django.conf import settings
+from django.db.models import prefetch_related_objects
 from rest_framework import authentication, exceptions
 
 from memberships.users.models import User
-from django.db.models import prefetch_related_objects
 
 
 def create_auth_token(token_model, user, serializer):

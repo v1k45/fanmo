@@ -1,6 +1,6 @@
-from django.core.mail import get_connection, EmailMultiAlternatives
-
+from django.core.mail import EmailMultiAlternatives, get_connection
 from notifications.providers import BaseNotificationProvider
+
 from memberships.users.models import CreatorActivity
 
 

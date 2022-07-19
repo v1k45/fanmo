@@ -3,6 +3,9 @@ import django_otp
 from allauth.account.adapter import get_adapter
 from allauth.account.models import EmailAddress
 from allauth.account.utils import filter_users_by_email
+from dj_rest_auth.registration.serializers import (
+    RegisterSerializer as BaseRegisterSerializer,
+)
 from django.contrib.auth import password_validation
 from django.forms import ValidationError
 from django_otp.plugins.otp_email.models import EmailDevice
@@ -11,15 +14,16 @@ from drf_extra_fields.fields import Base64ImageField
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 from rest_framework.exceptions import ErrorDetail
-from dj_rest_auth.registration.serializers import (
-    RegisterSerializer as BaseRegisterSerializer,
-)
-from memberships.utils.fields import URLField
-from memberships.users.models import CreatorActivity
 
 from memberships.subscriptions.models import Tier
-from memberships.users.models import SocialLink, User, UserOnboarding, UserPreference
-from memberships.utils.fields import VersatileImageFieldSerializer
+from memberships.users.models import (
+    CreatorActivity,
+    SocialLink,
+    User,
+    UserOnboarding,
+    UserPreference,
+)
+from memberships.utils.fields import URLField, VersatileImageFieldSerializer
 
 
 class RegisterSerializer(BaseRegisterSerializer):
@@ -521,11 +525,11 @@ class CreatorActivitySerializer(serializers.ModelSerializer):
         ]
 
     def get_fields(self):
+        from memberships.donations.api.serializers import DonationSerializer
+        from memberships.posts.api.serializers import CommentPreviewSerializer
         from memberships.subscriptions.api.serializers import (
             MembershipPreviewSerializer,
         )
-        from memberships.donations.api.serializers import DonationSerializer
-        from memberships.posts.api.serializers import CommentPreviewSerializer
 
         fields = super().get_fields()
         fields["membership"] = MembershipPreviewSerializer(read_only=True)

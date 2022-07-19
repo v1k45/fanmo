@@ -1,11 +1,11 @@
 from calendar import month
+
 import pytest
 from dateutil.relativedelta import relativedelta
+
 from memberships.conftest import active_membership
 from memberships.subscriptions.models import Subscription
-
 from memberships.subscriptions.tasks import refresh_membership
-
 
 pytestmark = pytest.mark.django_db
 

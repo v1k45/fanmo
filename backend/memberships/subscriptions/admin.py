@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
+
 from memberships.core.admin import SimpleHistoryAdmin
 
-from .models import Plan, Subscription, Tier, Membership
+from .models import Membership, Plan, Subscription, Tier
 
 
 @admin.register(Tier)

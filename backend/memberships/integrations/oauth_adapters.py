@@ -1,4 +1,5 @@
 from allauth.socialaccount.providers.discord.views import DiscordOAuth2Adapter
+
 from memberships.integrations.provider import DiscordServerProvider, DiscordUserProvider
 
 

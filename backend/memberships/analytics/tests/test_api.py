@@ -1,8 +1,10 @@
 from decimal import Decimal
+
 import pytest
-from django.utils import timezone
 from dateutil.relativedelta import relativedelta
-from trackstats.models import Period, Metric
+from django.utils import timezone
+from trackstats.models import Metric, Period
+
 from memberships.analytics.models import StatisticByDateAndObject
 from memberships.utils.helpers import datestamp
 

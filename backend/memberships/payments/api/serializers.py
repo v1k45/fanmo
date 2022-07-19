@@ -1,3 +1,5 @@
+from drf_spectacular.utils import extend_schema_field
+from razorpay.errors import SignatureVerificationError
 from rest_framework import serializers
 
 from memberships.donations.api.serializers import DonationSerializer
@@ -9,10 +11,7 @@ from memberships.users.api.serializers import (
     FanUserPreviewSerializer,
     UserPreviewSerializer,
 )
-
 from memberships.utils import razorpay_client
-from razorpay.errors import SignatureVerificationError
-from drf_spectacular.utils import extend_schema_field
 
 
 class RazorpayResponseSerializer(serializers.Serializer):

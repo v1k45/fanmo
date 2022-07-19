@@ -1,15 +1,14 @@
 import metadata_parser
-from django.db import models
-from django_extensions.db.fields import AutoSlugField
 from django.core.cache import cache
+from django.db import models
 from django.template.defaultfilters import truncatewords
-from mptt.models import MPTTModel, TreeForeignKey
-from micawber.providers import bootstrap_oembed
+from django_extensions.db.fields import AutoSlugField
 from micawber.exceptions import ProviderException
+from micawber.providers import bootstrap_oembed
+from mptt.models import MPTTModel, TreeForeignKey
 from versatileimagefield.fields import VersatileImageField
+
 from memberships.utils.helpers import slugify
-
-
 from memberships.utils.models import BaseModel
 
 

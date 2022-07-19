@@ -1,40 +1,38 @@
 import qrcode
 import qrcode.image.svg
+from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import RegisterView as BaseRegisterView
+from dj_rest_auth.registration.views import SocialLoginView
 from dj_rest_auth.views import LoginView as BaseLoginView
-from django.http.response import HttpResponse
+from dj_rest_auth.views import PasswordResetView as BasePasswordResetView
 from django.conf import settings
+from django.http.response import HttpResponse
+from django_filters.rest_framework import DjangoFilterBackend
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from drf_spectacular.utils import extend_schema
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.generics import GenericAPIView, RetrieveUpdateAPIView
+from rest_framework.parsers import FormParser, JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
-from rest_framework.parsers import JSONParser, FormParser
-from django_filters.rest_framework import DjangoFilterBackend
-from memberships.users.api.filters import UserFilter
 
+from memberships.users.api.filters import UserFilter
 from memberships.users.models import User
+from memberships.utils.throttling import Throttle
 
 from .serializers import (
     CreatorActivitySerializer,
+    PublicUserSerializer,
     RequestEmailVerificationSerializer,
     TOTPDeviceSerializer,
     UserSerializer,
-    PublicUserSerializer,
     VerifyEmailSerializer,
 )
-
-from dj_rest_auth.registration.views import SocialLoginView
-from dj_rest_auth.views import PasswordResetView as BasePasswordResetView
-from memberships.utils.throttling import Throttle
-
-from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
-from allauth.socialaccount.providers.facebook.views import FacebookOAuth2Adapter
-from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 
 
 class UserViewSet(ReadOnlyModelViewSet):

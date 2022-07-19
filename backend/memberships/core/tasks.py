@@ -1,8 +1,9 @@
-from django_q.models import Schedule
-from django_q.tasks import schedule, async_task as q_async_task
-from django.utils import timezone
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
+from django.utils import timezone
+from django_q.models import Schedule
+from django_q.tasks import async_task as q_async_task
+from django_q.tasks import schedule
 
 
 def register_scheduled_tasks():

@@ -1,4 +1,5 @@
 from time import mktime
+
 from django.template.defaultfilters import slugify as dj_slugify
 
 

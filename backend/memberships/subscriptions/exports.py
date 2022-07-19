@@ -1,5 +1,6 @@
-from memberships.subscriptions.models import Membership
 from import_export import resources
+
+from memberships.subscriptions.models import Membership
 from memberships.utils.resources import ModelResource
 
 

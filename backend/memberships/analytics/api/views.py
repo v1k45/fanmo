@@ -1,21 +1,22 @@
 from functools import lru_cache
 from time import mktime
-from dateutil.rrule import rrule, DAILY
+
+from dateutil.relativedelta import relativedelta
+from dateutil.rrule import DAILY, rrule
 from django.utils import timezone
 from rest_framework.generics import GenericAPIView
-from rest_framework.serializers import ValidationError, ErrorDetail
-from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from dateutil.relativedelta import relativedelta
-from memberships.utils.helpers import datestamp
-from memberships.analytics.api.serializers import AnalyticsSerializer
-from memberships.utils.money import percent_change
-
-from memberships.analytics.models import StatisticByDateAndObject
-from memberships.subscriptions.models import Membership
-from memberships.donations.models import Donation
+from rest_framework.response import Response
+from rest_framework.serializers import ErrorDetail, ValidationError
 from trackstats.models import Metric
+
+from memberships.analytics.api.serializers import AnalyticsSerializer
+from memberships.analytics.models import StatisticByDateAndObject
+from memberships.donations.models import Donation
+from memberships.subscriptions.models import Membership
 from memberships.users.api.permissions import IsCreator
+from memberships.utils.helpers import datestamp
+from memberships.utils.money import percent_change
 
 
 class AnalyticsAPIView(GenericAPIView):

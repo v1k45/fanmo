@@ -1,12 +1,13 @@
+from datetime import date, datetime, time, timedelta
+
 from django.db import models
 from django.db.models.functions.datetime import TruncDate
-from datetime import date, timedelta, datetime, time
 from django.utils import timezone
-
-from trackstats.trackers import ObjectsByDateAndObjectTracker
 from trackstats.models import Period
-from memberships.users.models import User
+from trackstats.trackers import ObjectsByDateAndObjectTracker
+
 from memberships.analytics.models import StatisticByDateAndObject
+from memberships.users.models import User
 
 
 class ObjectTracker(ObjectsByDateAndObjectTracker):

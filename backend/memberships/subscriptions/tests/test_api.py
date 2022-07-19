@@ -1,16 +1,16 @@
 from decimal import Decimal
+
 import pytest
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
-from moneyed import Money, INR
-from memberships.payments.models import Payment
+from moneyed import INR, Money
 
-from memberships.users.models import User
+from memberships.payments.models import Payment
 from memberships.payments.tests.factories import BankAccountFactory
 from memberships.subscriptions.models import Membership, Plan, Subscription
-from memberships.users.tests.factories import UserFactory
 from memberships.subscriptions.tests.factories import TierFactory
-
+from memberships.users.models import User
+from memberships.users.tests.factories import UserFactory
 
 pytestmark = pytest.mark.django_db
 

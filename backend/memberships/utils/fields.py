@@ -1,6 +1,6 @@
 from django_fsm import FSMFieldMixin
-from rest_framework import serializers
 from model_utils.fields import StatusField as ModelUtilsStatusField
+from rest_framework import serializers
 from versatileimagefield.serializers import (
     VersatileImageFieldSerializer as BaseVersatileImageFieldSerializer,
 )

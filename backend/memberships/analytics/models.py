@@ -1,13 +1,15 @@
 import time
+
 from django.db import models
 from trackstats.models import (
+    AbstractStatistic,
     ByDateMixin,
     ByObjectMixin,
-    AbstractStatistic,
     StatisticByDateAndObjectQuerySet,
 )
-from memberships.utils.models import BaseModel
+
 from memberships.utils.helpers import datestamp
+from memberships.utils.models import BaseModel
 
 
 class StatisticByDateAndObject(

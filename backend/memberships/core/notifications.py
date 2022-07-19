@@ -1,6 +1,8 @@
 import time
+
 from django.db.models import Q
 from notifications.utils import notify
+
 from memberships.core.models import NotificationType
 
 
@@ -189,8 +191,8 @@ def notify_donation(donation_id):
 
 
 def notify_new_post(post_id):
-    from memberships.users.models import User
     from memberships.posts.models import Post
+    from memberships.users.models import User
 
     post = Post.objects.get(id=post_id)
 

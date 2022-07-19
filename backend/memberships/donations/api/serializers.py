@@ -1,14 +1,14 @@
 from django.conf import settings
-from drf_spectacular.utils import extend_schema_field
 from djmoney.contrib.django_rest_framework.fields import MoneyField
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
+from memberships.core.serializers import PaymentIntentSerializerMixin
 from memberships.donations.models import Donation
 from memberships.users.api.serializers import (
-    UserPreviewSerializer,
     FanUserPreviewSerializer,
+    UserPreviewSerializer,
 )
-from memberships.core.serializers import PaymentIntentSerializerMixin
 from memberships.utils.fields import VersatileImageFieldSerializer
 
 

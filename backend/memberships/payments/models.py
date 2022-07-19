@@ -2,12 +2,12 @@ from django.core.exceptions import ValidationError
 from django.db import models
 from django_fsm import FSMField, can_proceed
 from djmoney.models.fields import MoneyField
-from memberships.core.tasks import async_task
 
+from memberships.core.notifications import notify_donation
+from memberships.core.tasks import async_task
 from memberships.utils import razorpay_client
 from memberships.utils.models import BaseModel
 from memberships.utils.money import deduct_platform_fee, money_from_sub_unit
-from memberships.core.notifications import notify_donation
 
 
 class Payment(BaseModel):

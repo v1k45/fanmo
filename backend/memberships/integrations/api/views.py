@@ -1,14 +1,14 @@
-from django.shortcuts import get_object_or_404
 from allauth.socialaccount.providers.oauth2.client import OAuth2Client
 from dj_rest_auth.registration.views import SocialConnectView
+from django.shortcuts import get_object_or_404
 from rest_framework import generics
+
 from memberships.integrations.api.serializers import (
     DiscordServerSerializer,
     DiscordUserSerializer,
     IntegrationSerializer,
 )
 from memberships.integrations.models import DiscordServer, DiscordUser
-
 from memberships.integrations.oauth_adapters import (
     DiscordServerOAuth2Adapter,
     DiscordUserOAuth2Adapter,

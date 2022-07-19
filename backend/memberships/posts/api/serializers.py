@@ -1,22 +1,16 @@
 import bleach
-from drf_extra_fields.fields import Base64ImageField, Base64FileField
+from drf_extra_fields.fields import Base64FileField, Base64ImageField
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
-from memberships.posts.models import (
-    Comment,
-    Content,
-    ContentFile,
-    Post,
-    Reaction,
-)
+from memberships.posts.models import Comment, Content, ContentFile, Post, Reaction
+from memberships.subscriptions.api.serializers import TierPreviewSerializer
+from memberships.subscriptions.models import Tier
 from memberships.users.api.serializers import (
     PublicUserSerializer,
     UserPreviewSerializer,
 )
-from memberships.subscriptions.models import Tier
-from memberships.subscriptions.api.serializers import TierPreviewSerializer
-from memberships.utils.fields import VersatileImageFieldSerializer, FileField
+from memberships.utils.fields import FileField, VersatileImageFieldSerializer
 
 
 class ContentFileSerializer(serializers.ModelSerializer):

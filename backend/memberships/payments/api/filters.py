@@ -1,7 +1,8 @@
 from django_filters import rest_framework as filters
-from memberships.payments.models import Payment
-from memberships.donations.models import Donation
 from rest_framework import serializers
+
+from memberships.donations.models import Donation
+from memberships.payments.models import Payment
 
 
 class PaymentFilter(filters.FilterSet):

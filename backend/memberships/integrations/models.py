@@ -1,6 +1,7 @@
 from allauth.socialaccount.models import SocialAccount
-from memberships.utils.models import BaseModel
 from django.db import models
+
+from memberships.utils.models import BaseModel
 
 
 class DiscordServer(BaseModel):

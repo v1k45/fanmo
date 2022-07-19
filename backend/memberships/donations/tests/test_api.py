@@ -1,11 +1,10 @@
+from decimal import Decimal
+
 import pytest
+from moneyed import INR, Money
 
 from memberships.donations.models import Donation
-from decimal import Decimal
-from moneyed import Money, INR
-
 from memberships.payments.models import Payment
-
 
 pytestmark = pytest.mark.django_db
 

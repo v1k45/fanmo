@@ -1,7 +1,8 @@
 from django.db import transaction
 from django_fsm import can_proceed
-from memberships.core.tasks import async_task
+
 from memberships.analytics.tasks import refresh_stats
+from memberships.core.tasks import async_task
 from memberships.subscriptions.models import Membership, Subscription
 from memberships.users.models import User
 

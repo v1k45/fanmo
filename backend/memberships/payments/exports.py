@@ -1,5 +1,6 @@
-from memberships.payments.models import Payment
 from import_export import resources
+
+from memberships.payments.models import Payment
 from memberships.utils.resources import ModelResource
 
 

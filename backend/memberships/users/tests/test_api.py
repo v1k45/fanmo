@@ -1,12 +1,13 @@
-import pytest
 from decimal import Decimal
-from moneyed import Money, INR
-from memberships.core.models import NotificationType
 
-from memberships.users.models import User, CreatorActivity, UserPreference
-from memberships.donations.models import Donation
-from memberships.posts.models import Post, Comment, Content
+import pytest
 from django.conf import settings
+from moneyed import INR, Money
+
+from memberships.core.models import NotificationType
+from memberships.donations.models import Donation
+from memberships.posts.models import Comment, Content, Post
+from memberships.users.models import CreatorActivity, User, UserPreference
 
 pytestmark = pytest.mark.django_db
 

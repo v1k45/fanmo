@@ -1,5 +1,6 @@
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+
 from memberships.payments.models import BankAccount
 from memberships.users.models import UserOnboarding
 

@@ -1,13 +1,15 @@
 import base64
 from functools import cached_property, lru_cache
+
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
-from django.db import models
 from django.core.serializers.json import DjangoJSONEncoder
+from django.db import models
 from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
-from versatileimagefield.fields import VersatileImageField
 from simple_history.models import HistoricalRecords
+from versatileimagefield.fields import VersatileImageField
+
 from memberships.core.models import (
     COMMENT_NOTIFICATIONS,
     COMMENT_REPLY_NOTIFICATIONS,
@@ -16,10 +18,9 @@ from memberships.core.models import (
     MEMBERSHIP_NOTIFICATIONS,
     POST_NOTIFICATIONS,
 )
-
 from memberships.payments.models import BankAccount
-from memberships.utils.models import BaseModel, IPAddressHistoricalModel
 from memberships.users.validators import ASCIIUsernameValidator, validate_username
+from memberships.utils.models import BaseModel, IPAddressHistoricalModel
 
 
 class User(BaseModel, AbstractUser):

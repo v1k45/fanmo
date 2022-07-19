@@ -1,9 +1,10 @@
-import re
 import bisect
+import re
 
+from django.core import validators
 from django.core.exceptions import ValidationError
 from django.utils.deconstruct import deconstructible
-from django.core import validators
+
 from memberships.users.wordlist import reserved_usernames
 
 

@@ -1,6 +1,7 @@
-from rest_framework import serializers
-from memberships.users.models import User
 from allauth.account.adapter import get_adapter
+from rest_framework import serializers
+
+from memberships.users.models import User
 
 
 class PaymentIntentSerializerMixin(serializers.ModelSerializer):

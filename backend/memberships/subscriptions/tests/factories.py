@@ -1,10 +1,11 @@
 from decimal import Decimal
-from django.contrib.auth import get_user_model
-from factory import Faker, post_generation, SubFactory
-from factory.django import DjangoModelFactory
 
-from memberships.subscriptions.models import Membership, Tier, Plan, Subscription
+from django.contrib.auth import get_user_model
+from factory import Faker, SubFactory, post_generation
+from factory.django import DjangoModelFactory
 from moneyed import Money
+
+from memberships.subscriptions.models import Membership, Plan, Subscription, Tier
 
 
 class TierFactory(DjangoModelFactory):

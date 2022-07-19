@@ -1,18 +1,17 @@
+from allauth.account.adapter import get_adapter
 from django.conf import settings
 from djmoney.contrib.django_rest_framework import MoneyField
+from drf_extra_fields.fields import Base64ImageField
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
-from allauth.account.adapter import get_adapter
+from memberships.core.serializers import PaymentIntentSerializerMixin
 from memberships.subscriptions.models import Membership, Plan, Subscription, Tier
 from memberships.users.api.serializers import (
-    UserPreviewSerializer,
     FanUserPreviewSerializer,
+    UserPreviewSerializer,
 )
 from memberships.users.models import User
-from memberships.core.serializers import PaymentIntentSerializerMixin
-
-from drf_spectacular.utils import extend_schema_field
-from drf_extra_fields.fields import Base64ImageField
 from memberships.utils.fields import VersatileImageFieldSerializer
 
 

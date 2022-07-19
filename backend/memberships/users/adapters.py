@@ -1,11 +1,11 @@
+import random
 import uuid
-import requests
 from collections import namedtuple
 
-from django_otp.plugins.otp_email.models import EmailDevice
-from allauth.account.utils import setup_user_email, user_username
+import requests
 from allauth.account.adapter import DefaultAccountAdapter
 from allauth.account.models import EmailAddress
+from allauth.account.utils import setup_user_email, user_username
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
 from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
@@ -13,11 +13,10 @@ from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.http import HttpRequest
 from django.utils import timezone
+from django_otp.plugins.otp_email.models import EmailDevice
 
-import random
-
-from .wordlist import adjectives, animals
 from .models import UserOnboarding
+from .wordlist import adjectives, animals
 
 
 class AccountAdapter(DefaultAccountAdapter):
