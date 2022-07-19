@@ -94,16 +94,8 @@ class Membership(BaseModel):
     def __str__(self):
         return f"{self.fan_user} -> {self.creator_user} ({self.tier})"
 
-    def start(self, tier, period=None):
-        plan = Plan.objects.create(
-            name=f"{tier.name} - {self.creator_user.name}",
-            tier=tier,
-            # todo: guess amount based on currency.
-            amount=tier.amount,
-            period=period,
-            interval=1,
-        )
-        plan.create_external()
+    def start(self, tier, period):
+        plan = Plan.for_tier(tier, period)
 
         subscription = Subscription.objects.create(
             plan=plan,
@@ -119,16 +111,9 @@ class Membership(BaseModel):
         self.scheduled_subscription = subscription
         self.save()
 
-    def giveaway(self, tier, period=None):
+    def giveaway(self, tier, period):
         # TODO: Send different email for giveaway
-        plan = Plan.objects.create(
-            name=f"{tier.name} - {self.creator_user.name}",
-            tier=tier,
-            amount=Money(Decimal(0), INR),
-            period=period,
-            interval=1,
-            external_id="giveaway",
-        )
+        plan = Plan.for_tier(tier, period, is_giveaway=True)
 
         subscription = Subscription.objects.create(
             plan=plan,
@@ -186,15 +171,7 @@ class Membership(BaseModel):
                 "already_scheduled",
             )
 
-        plan = Plan.objects.create(
-            name=f"{tier.name} - {self.creator_user.name}",
-            tier=tier,
-            # todo: guess amount based on currency.
-            amount=tier.amount,
-            period=period,
-            interval=1,
-        )
-        plan.create_external()
+        plan = Plan.for_tier(tier, period)
         self.scheduled_subscription = active_subscription.update(plan)
         self.save()
 
@@ -282,23 +259,24 @@ class Plan(BaseModel):
         return (base_term[self.period] * 5) // self.interval
 
     @classmethod
-    def for_subscription(cls, amount, creator_user):
-        tier = (
-            Tier.objects.filter(amount__lte=amount, creator_user=creator_user)
-            .order_by("-amount")
-            .first()
-        )
+    def for_tier(cls, tier, period, interval=1, is_giveaway=False):
+        existing_plan = cls.objects.filter(
+            tier=tier, amount=tier.amount, period=period, interval=interval
+        ).first()
 
-        tier_name = tier.name if tier else "Custom"
-        default_name = f"{tier_name} ({amount}) - {creator_user.name}"
+        if existing_plan:
+            return existing_plan
 
         # todo - cleanup orpahed plans?
-        plan, created = cls.objects.get_or_create(
-            amount=amount,
+        plan = cls.objects.create(
+            name=f"{tier.name} ({tier.amount}) - {tier.creator_user.display_name}",
+            amount=tier.amount,
             tier=tier,
-            defaults={"name": default_name},
+            period=period,
+            interval=interval,
+            external_id="giveaway" if is_giveaway else "",
         )
-        if created:
+        if not is_giveaway:
             plan.create_external()
 
         return plan
