@@ -1,8 +1,10 @@
 <template>
 <fm-popper
+  ref="popper"
   v-slot="{ $reference, $popper, isVisible, show, hide }"
   v-bind="{
     placement,
+    reference,
     custom: true,
     popperOptions: {
       offset: [0, 8],
@@ -13,7 +15,7 @@
     }
   }"
   :toggle-on-click="false" class="fm-tooltip">
-  <div v-bind="$reference" class="fm-tooltip__reference" @mouseover="localShow(show)" @mouseleave="localHide(hide)">
+  <div v-if="!reference" v-bind="$reference" class="fm-tooltip__reference" @mouseover="localShow(show)" @mouseleave="localHide(hide)">
     <slot></slot>
   </div>
   <div v-show="isVisible" v-bind="$popper" class="fm-tooltip__content-wrapper">
@@ -31,11 +33,33 @@ export default {
     content: { type: String, default: '' },
     placement: { type: String, default: 'top' },
     delay: { type: Number, default: 500 },
+    reference: { type: Element, default: null }
   },
   data() {
     return {
-      timer: null
+      timer: null,
+      handlers: { // handlers for manual binding when using directive
+        mouseover: null,
+        mouseleave: null
+      }
     };
+  },
+  watch: {
+    reference: {
+      immediate: true,
+      handler(reference) {
+        if (!reference) return;
+        this.handlers.mouseover = () => this.localShow(this.$refs.popper.show);
+        this.handlers.mouseleave = () => this.localHide(this.$refs.popper.hide);
+        reference.addEventListener('mouseover', this.handlers.mouseover);
+        reference.addEventListener('mouseleave', this.handlers.mouseleave);
+      }
+    }
+  },
+  beforeDestroy() {
+    if (!this.reference) return;
+    this.reference.removeEventListener('mouseover', this.handlers.mouseover);
+    this.reference.removeEventListener('mouseleave', this.handlers.mouseleave);
   },
   methods: {
     localShow(show) {
