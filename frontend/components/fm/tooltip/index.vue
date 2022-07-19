@@ -67,7 +67,7 @@ export default {
 }
 .fm-tooltip__arrow {
   &, &:before {
-    @apply absolute bg-gray-800 box-border;
+    @apply absolute bg-black box-border;
     height: 8px;
     width: 8px; // diagonal = ~14.14px
   }
