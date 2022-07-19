@@ -205,6 +205,53 @@
 
   </fm-tabs>
 
+  <!-- footer start -->
+  <footer class="py-4 px-6 text-center">
+    <div class="text-sm ml-7">Powered by</div>
+    <nuxt-link to="/" class="mx-auto inline-block">
+      <logo class="h-6"></logo>
+    </nuxt-link>
+  </footer>
+  <!-- footer end -->
+
+  <!-- phone bottom pane tab nav start -->
+  <nav class="bottom-0 sticky z-20 w-full bg-white border-t md:hidden py-1 shadow">
+    <ul class="flex items-center h-full max-w-full sm:max-w-md md:max-w-lg mx-2 sm:mx-auto justify-around">
+      <li class="mx-2 cursor-pointer text-center text-xs sm:text-sm font-medium flex-1 min-w-0">
+        <div
+          class="unstyled rounded-xl focus:bg-fm-primary focus:text-white inline-block px-2 py-2 w-full"
+          :class="{ 'text-white bg-fm-primary pointer-events-none': activeTab === tabName.POSTS }"
+          @click="gotoTab(tabName.POSTS)">
+
+          <icon-image class="h-6 w-6"></icon-image>
+          <div class="mt-1 truncate" title="Feed">Feed</div>
+        </div>
+      </li>
+      <li class="mx-2 cursor-pointer text-center text-xs sm:text-sm font-medium flex-1 min-w-0">
+        <div
+          class="unstyled rounded-xl focus:bg-fm-primary focus:text-white inline-block px-2 py-2 w-full"
+          :class="{ 'text-white bg-fm-primary pointer-events-none': activeTab === tabName.TIERS }"
+          @click="gotoTab(tabName.TIERS)">
+
+          <icon-crown class="h-6 w-6"></icon-crown>
+          <div class="mt-1 truncate" title="Feed">Memberships</div>
+        </div>
+      </li>
+      <li class="mx-2 cursor-pointer text-center text-xs sm:text-sm font-medium flex-1 min-w-0">
+        <div
+          class="unstyled rounded-xl focus:bg-fm-primary focus:text-white inline-block px-2 py-2 w-full"
+          :class="{ 'text-white bg-fm-primary pointer-events-none': activeTab === tabName.DONATION }"
+          @click="gotoTab(tabName.DONATION)">
+
+          <icon-coins class="h-6 w-6"></icon-coins>
+          <div class="mt-1 truncate" title="Feed">Donations</div>
+        </div>
+      </li>
+    </ul>
+  </nav>
+  <!-- phone bottom pane tab nav end -->
+
+  <!-- dialogs start -->
   <profile-express-checkout
     v-model="expressCheckout.isVisible"
     :user="user"
@@ -231,6 +278,7 @@
   <profile-add-post v-if="isSelfProfile" v-model="addPost.isVisible"></profile-add-post>
 
   <profile-share v-model="sharePost.isVisible" :text="sharePost.text" :relative-url="sharePost.relativeUrl"></profile-share>
+  <!-- dialogs end -->
 </div>
 </template>
 
