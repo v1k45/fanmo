@@ -10,14 +10,7 @@
   <!-- TODO: always show for marketing pages and remove bottom pane -->
   <header class="fm-layout__header z-20 py-2 bg-white shadow-sm" :class="{ 'hidden md:block': $auth.loggedIn }">
     <div class="max-w-[1390px] container-fluid flex items-center">
-      <div v-if="dev" class="inline-block text-xl font-bold">
-        <div class="sm:hidden">XS</div>
-        <div class="hidden sm:inline-block md:hidden">SM</div>
-        <div class="hidden md:inline-block lg:hidden">MD</div>
-        <div class="hidden lg:inline-block xl:hidden">LG</div>
-        <div class="hidden xl:inline-block 2xl:hidden">XL</div>
-        <div class="hidden 2xl:inline-block">2XL</div>
-      </div>
+      <breakpoint-helper></breakpoint-helper>
 
       <nuxt-link to="/" class="mr-auto">
         <logo class="h-6"></logo>
@@ -158,8 +151,7 @@ export default {
   data() {
     return {
       isNavVisibleMobile: false,
-      currentYear: new Date().getFullYear(),
-      dev: process.env.NODE_ENV !== 'production'
+      currentYear: new Date().getFullYear()
     };
   },
   computed: {
