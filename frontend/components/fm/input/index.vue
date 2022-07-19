@@ -1,5 +1,10 @@
 <template>
-<div class="fm-input" :class="{ 'fm-input--error': !!computedError, 'fm-input--vertical': !horizontal, 'fm-input--horizontal': horizontal }">
+<div class="fm-input" :class="{
+  'fm-input--error': !!computedError,
+  'fm-input--vertical': !horizontal,
+  'fm-input--horizontal': horizontal,
+  'fm-input--sm': size === 'sm'
+}">
   <!-- label start -->
   <label v-if="label || $slots.label" class="fm-input__label">
     <slot v-if="$slots.label" name="label"></slot>
@@ -140,6 +145,7 @@ export default {
     error: { type: String, default: '' },
     horizontal: { type: Boolean, default: false },
     block: { type: Boolean, default: false },
+    size: { type: String, default: '' },
     preset: { type: String, default: undefined }, // for fm-editor (type=rich)
     multiple: { type: Boolean, default: false }, // for file input
     props: { type: Object, default: () => {} } // for any nested components like otp/editor
@@ -269,6 +275,14 @@ export default {
   }
 }
 
+.fm-input--sm {
+  .fm-input__input[type=email], .fm-input__input[type=number],
+  .fm-input__input[type=text], .fm-input__input[type=password],
+  .fm-input__input[type=url],
+  textarea.fm-input__input, select.fm-input__input {
+    @apply py-2;
+  }
+}
 
 .fm-input--vertical + .fm-input--vertical {
   @apply mt-6;
