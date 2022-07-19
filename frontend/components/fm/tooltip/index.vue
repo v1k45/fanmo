@@ -30,7 +30,7 @@ export default {
   props: {
     content: { type: String, default: '' },
     placement: { type: String, default: 'top' },
-    delay: { type: Number, default: 0 }
+    delay: { type: Number, default: 500 },
   },
   data() {
     return {

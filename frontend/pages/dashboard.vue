@@ -36,7 +36,7 @@
             <div class="text-lg md:text-xl font-medium">{{ parseInt(analytics.new_member_count.current) }}</div>
 
             <!-- delta start -->
-            <fm-tooltip :delay="500" :class="{
+            <fm-tooltip :class="{
               'text-fm-success-600': Number(analytics.new_member_count.percent_change) > 0,
               'text-fm-error': Number(analytics.new_member_count.percent_change) < 0,
               'text-gray-400': Number(analytics.new_member_count.percent_change) === 0
@@ -57,7 +57,7 @@
           <div class="flex items-end">
             <div class="text-lg md:text-xl font-medium">{{ $currency(analytics.total_donation_amount.current) }}</div>
             <!-- delta start -->
-            <fm-tooltip :delay="500" :class="{
+            <fm-tooltip :class="{
               'text-fm-success-600': Number(analytics.total_donation_amount.percent_change) > 0,
               'text-fm-error': Number(analytics.total_donation_amount.percent_change) < 0,
               'text-gray-400': Number(analytics.total_donation_amount.percent_change) === 0
@@ -78,7 +78,7 @@
           <div class="flex items-end">
             <div class="text-lg md:text-xl font-medium">{{ $currency(analytics.total_membership_amount.current) }}</div>
             <!-- delta start -->
-            <fm-tooltip :delay="500" :class="{
+            <fm-tooltip :class="{
               'text-fm-success-600': Number(analytics.total_membership_amount.percent_change) > 0,
               'text-fm-error': Number(analytics.total_membership_amount.percent_change) < 0,
               'text-gray-400': Number(analytics.total_membership_amount.percent_change) === 0
@@ -99,7 +99,7 @@
           <div class="flex items-end">
             <div class="text-lg md:text-xl font-medium">{{ $currency(analytics.total_payment_amount.current) }}</div>
             <!-- delta start -->
-            <fm-tooltip :delay="500" :class="{
+            <fm-tooltip :class="{
               'text-fm-success-600': Number(analytics.total_payment_amount.percent_change) > 0,
               'text-fm-error': Number(analytics.total_payment_amount.percent_change) < 0,
               'text-gray-400': Number(analytics.total_payment_amount.percent_change) === 0
