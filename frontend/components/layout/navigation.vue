@@ -111,10 +111,42 @@
   </fm-dropdown>
 </div>
 <!-- top nav hamburger end -->
+
+<!-- anonymous hamburger start -->
+<div v-else-if="type === 'anonymous-hamburger'">
+  <fm-dropdown placement="top-end">
+    <button class="inline-flex items-center p-1 rounded-full border bg-white">
+      <fm-avatar size="mx-auto w-8 h-8"></fm-avatar>
+      <icon-menu class="ml-2 mr-2 w-5"></icon-menu>
+    </button>
+    <template #items>
+      <template v-for="(item) in nav.anonymous">
+        <fm-dropdown-item
+          v-if="!item.url" :key="item.id" static
+          class="uppercase font-medium text-gray-600 text-sm">
+          {{ item.label }}
+        </fm-dropdown-item>
+        <fm-dropdown-item v-else :key="item.id" class="font-medium min-w-[200px] !p-0">
+          <nuxt-link
+            :to="item.url" class="unstyled flex items-center p-3">
+            <component :is="item.icon" class="h-6 w-6 mr-3"></component>
+            {{ item.label }}
+          </nuxt-link>
+        </fm-dropdown-item>
+      </template>
+      <fm-dropdown-divider></fm-dropdown-divider>
+
+      <fm-dropdown-item static class="font-medium flex items-center !pt-0">
+        <span class="text-sm">Powered by</span> <logo class="inline-block h-em"></logo>
+      </fm-dropdown-item>
+    </template>
+  </fm-dropdown>
+</div>
+<!-- anonymous hamburger end -->
 </template>
 
 <script>
-import { Coins, Home, LayoutList, LayoutTemplate, Sliders, UserCheck, Users, Wallet } from 'lucide-vue';
+import { Coins, Home, LayoutList, LayoutTemplate, Sliders, UserCheck, Users, Wallet, LogIn, UserPlus } from 'lucide-vue';
 import { delay } from '~/utils';
 export default {
   props: {
@@ -130,7 +162,16 @@ export default {
   },
   computed: {
     nav() {
-      const { user } = this.$auth;
+      const { user, loggedIn } = this.$auth;
+      if (!loggedIn) return {
+        anonymous: [
+          { id: 'login', label: 'Login', icon: LogIn, url: '/login/' },
+          { id: 'register', label: 'Sign up', icon: UserPlus, url: '/register/' },
+          { id: 'landing', label: 'Fanmo home', icon: Home, url: '/' }
+        ],
+        creator: [],
+        supporter: []
+      };
       return {
         creator: [
           { id: 'creator-pages', label: 'Creator pages' },
