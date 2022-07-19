@@ -1,5 +1,12 @@
 <template>
 <div>
+
+  <layout-navigation
+    :type="$auth.loggedIn ? 'hamburger-minimal' : 'anonymous-hamburger'"
+    class="absolute z-10"
+    :class="{ 'top-1 right-1': !user.cover && !isSelfProfile, 'top-1 right-1 md:top-5 md:right-10': user.cover || isSelfProfile }">
+  </layout-navigation>
+
   <!-- cover photo start -->
   <div class="relative bg-gray-200 border-b">
     <div v-if="user.cover" class="aspect-w-16 aspect-h-4 lg:aspect-h-3">
@@ -178,7 +185,13 @@ export default {
     IconGlobe
   },
   data() {
+    const tabName = {
+      POSTS: 'posts',
+      TIERS: 'tiers',
+      DONATION: 'donation'
+    };
     return {
+      tabName,
       isProfileShareVisible: false,
       isEditing: false,
       editForm: {
@@ -194,7 +207,8 @@ export default {
         }
       },
       editFormErrors: {},
-      isFollowLoading: false
+      isFollowLoading: false,
+      showStickyNav: false
     };
   },
   computed: {
