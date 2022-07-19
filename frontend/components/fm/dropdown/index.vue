@@ -1,7 +1,20 @@
 <template>
 <fm-popper
   v-slot="{ $reference, $popper, isVisible, hide }"
-  v-bind="{ placement, popperOptions: { strategy: 'fixed' } }" class="fm-dropdown">
+  v-bind="{
+    placement,
+    popperOptions: {
+      strategy: 'fixed',
+      modifiers: [
+        {
+          name: 'preventOverflow',
+          options: {
+            altAxis: true
+          }
+        }
+      ]
+    }
+  }" class="fm-dropdown">
   <div v-bind="$reference" class="fm-dropdown__reference">
     <slot></slot>
   </div>
