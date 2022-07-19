@@ -26,6 +26,7 @@ export default {
     popperOptions: { type: Object, default: () => ({}) },
     placement: { type: String, default: 'bottom' },
     toggleOnClick: { type: Boolean, default: true },
+    reference: { type: Element, default: null },
     custom: { type: Boolean, default: false } // whether the events should be handled by consuming component
   },
   data() {
@@ -71,7 +72,7 @@ export default {
     getElements() {
       if (!this.$el) return { reference: null, popper: null };
       return {
-        reference: this.$el.querySelector(`[data-popper-id="${this.slotProps.$reference['data-popper-id']}"]`),
+        reference: this.reference || this.$el.querySelector(`[data-popper-id="${this.slotProps.$reference['data-popper-id']}"]`),
         popper: this.$el.querySelector(`[data-popper-id="${this.slotProps.$popper['data-popper-id']}"]`)
       };
     },
