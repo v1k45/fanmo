@@ -1,6 +1,5 @@
 <template>
-<div v-if="user" class="bg-white" :class="{ 'disable-donation-and-join': isPreviewMode }">
-  <profile-above-the-tab></profile-above-the-tab>
+<div v-if="user" v-loading="isLoading" class="bg-white" :class="{ 'disable-donation-and-join': isPreviewMode }">
 
   <fm-tabs v-model="activeTab" centered class="mt-8">
     <fm-tabs-pane :id="tabName.POSTS" lazy label="Feed" class="bg-gray-50 pb-10">
