@@ -248,7 +248,11 @@ class MembershipSerializer(PaymentIntentSerializerMixin, serializers.ModelSerial
                 "membership_exists",
             )
 
-        if self.instance and self.instance.tier == attrs["tier"] and self.instance.is_active:
+        if (
+            self.instance
+            and self.instance.tier == attrs["tier"]
+            and self.instance.is_active
+        ):
             raise serializers.ValidationError(
                 f"You are already a member of {self.instance.tier.name}.",
                 "membership_exists",

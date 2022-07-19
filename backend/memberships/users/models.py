@@ -38,7 +38,7 @@ class User(BaseModel, AbstractUser):
 
     # First and last name do not cover name patterns around the globe
     name = models.CharField(_("Name of User"), blank=True, max_length=255)
-    one_liner = models.CharField(max_length=150, blank=True)
+    one_liner = models.CharField(max_length=80, blank=True)
     first_name = None
     last_name = None
 
