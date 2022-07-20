@@ -23,7 +23,7 @@
       <div class="flex flex-col items-center justify-center mt-12 mb-12 space-y-3 lg:justify-start sm:flex-row sm:space-y-0 sm:space-x-6 lg:mb-0">
         <div class="flex items-center w-48 sm:w-auto">
           <icon-verified :size="28" class="inline-block mr-1 fill-current text-fm-success-600 stroke-white"></icon-verified>
-          <div><span class="text-fm-success-600">4.9%</span> platform fee</div>
+          <div><span class="text-fm-success-700">4.9%</span> platform fee</div>
         </div>
         <div class="flex items-center w-48 sm:w-auto">
           <icon-verified :size="28" class="inline-block mr-1 fill-current text-fm-success-600 stroke-white"></icon-verified>

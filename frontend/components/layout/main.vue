@@ -18,6 +18,7 @@
 
       <nav>
         <button class="p-3 md:hidden text-fm-primary" @click="isNavVisibleMobile = !isNavVisibleMobile;">
+          <div class="sr-only">Menu</div>
           <icon-menu v-if="!isNavVisibleMobile"></icon-menu>
           <icon-x v-else></icon-x>
         </button>
