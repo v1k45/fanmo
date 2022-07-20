@@ -156,6 +156,9 @@ export default {
 
     hide() {
       if (!this.popper) return;
+      try {
+        this.getElements().popper.style.display = 'none'; // attempt to hide the popper instantly to avoid it from jumping around
+      } catch (err) {}
       this.slotProps.isVisible = false;
 
       // Disable the event listeners
