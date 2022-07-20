@@ -2,9 +2,10 @@
 <div class="mt-6 lg:my-12 lg:mx-4">
 
   <div class="container sm:pl-0 pb-16  rounded-xl">
-    <div class="row xl:gx-5">
+    <div class="flex flex-wrap xl:flex-nowrap xl:space-x-8">
+
       <!-- posts start -->
-      <div class="col-12 md:col-auto md:max-w-2xl md:flex-grow lg:col-8 lg:max-w-none lg:flex-grow-0 xl:col-auto xl:max-w-2xl xl:flex-grow mx-auto">
+      <div class="w-full md:max-w-2xl mx-auto flex-shrink-0">
         <div class="flex">
           <div>
             <div class="text-2xl text-black font-bold">Posts</div>
@@ -34,7 +35,7 @@
       <!-- posts end -->
 
       <!-- following users start -->
-      <div class="hidden lg:block col-12 lg:col">
+      <div class="hidden lg:block flex-grow min-w-0">
         <div class="sticky top-[76px]">
           <div class="text-xl text-black font-bold">Following <template v-if="following.count">({{ following.count }})</template></div>
           <div class="mt-1 text-gray-600 mb-5">Creators you follow.</div>
@@ -52,7 +53,7 @@
                   :name="user.display_name"
                   size="w-8 h-8 mr-2 inline-block flex-shrink-0">
                 </fm-avatar>
-                <div class="overflow-hidden">
+                <div class="overflow-hidden min-w-0">
                   <div class="truncate text-base text-black font-medium" :title="user.display_name">{{ user.display_name }}</div>
                   <div v-if="user.one_liner" :title="user.one_liner" class="truncate text-sm text-gray-500">{{ user.one_liner }}</div>
                 </div>
@@ -68,6 +69,7 @@
         </div>
       </div>
       <!-- following users end -->
+
     </div>
   </div>
 
