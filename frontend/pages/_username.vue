@@ -227,7 +227,7 @@
           <div class="mt-1 truncate" title="Feed">Feed</div>
         </div>
       </li>
-      <li class="mx-2 cursor-pointer text-center text-xs sm:text-sm font-medium flex-1 min-w-0">
+      <li v-if="shouldShowTiersTab" class="mx-2 cursor-pointer text-center text-xs sm:text-sm font-medium flex-1 min-w-0">
         <div
           class="unstyled rounded-xl focus:bg-fm-primary focus:text-white inline-block px-2 py-2 w-full"
           :class="{ 'text-white bg-fm-primary pointer-events-none': activeTab === tabName.TIERS }"
