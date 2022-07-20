@@ -1,6 +1,44 @@
 <template>
-<div class="bg-gray-50 py-8 flex-grow">
-  <div class="container">
+<div v-loading="loading" class="bg-gray-50 flex-grow">
+  <!-- sticky header start -->
+  <header v-if="user" class="bg-white sticky z-20 top-0 w-full border-b">
+    <div class="lg:container px-4 lg:px-0 flex items-center py-2">
+
+      <breakpoint-helper></breakpoint-helper>
+
+      <fm-avatar :src="user.avatar && user.avatar.medium" :name="user.display_name" size="w-8 h-8 lg:w-10 lg:h-10" class="flex-shrink-0"></fm-avatar>
+
+      <div class="ml-2 lg:ml-3 mr-auto max-w-[60%] md:max-w-[50%]">
+        <div v-tooltip="user.display_name" class="text-base lg:text-lg text-black font-bold leading-none lg:leading-none max-w-max truncate">{{ user.display_name }}</div>
+        <div v-if="user.one_liner" v-tooltip="user.one_liner" class="mt-1 text-xs lg:text-sm text-gray-500 max-w-max truncate">{{ user.one_liner }}</div>
+      </div>
+
+      <fm-input v-model="activeTab" type="select" size="sm" class="mx-4 hidden md:block" @change="gotoTab()">
+        <option :value="null" disabled selected>Jump to</option>
+        <option :value="tabName.POSTS">Feed</option>
+        <option v-if="shouldShowTiersTab" :value="tabName.TIERS">Memberships</option>
+        <option :value="tabName.DONATION">Donations</option>
+      </fm-input>
+
+      <fm-button :type="user.is_following ? 'success' : 'primary'" class="w-36 hidden md:block" :loading="isFollowLoading" @click="toggleFollow">
+        <div v-if="user.is_following" class="flex items-center justify-center">
+          <icon-check class="inline-block mr-1 h-em w-em flex-shrink-0"></icon-check> Following
+        </div>
+        <div v-else class="flex items-center justify-center">
+          <icon-plus class="inline-block mr-1 h-em w-em flex-shrink-0"></icon-plus> Follow
+        </div>
+      </fm-button>
+
+      <layout-navigation
+        :type="$auth.loggedIn ? 'hamburger-minimal' : 'anonymous-hamburger'"
+        class="rounded-full ml-4">
+      </layout-navigation>
+    </div>
+
+  </header>
+  <!-- sticky header end -->
+
+  <div class="container py-8">
     <div v-if="postDeleted" class="max-w-md mt-[20vh] mx-auto">
       <fm-alert type="error" :show-icon="false">This post has been deleted.</fm-alert>
       <div class="flex mt-4">
@@ -30,30 +68,20 @@
         </div>
         <fm-card class="overflow-hidden sticky top-20">
 
-          <nuxt-link class="flex flex-wrap items-center" :to="`/${user.username}/`">
-            <!-- avatar start -->
-            <fm-avatar
-              :src="user.avatar && user.avatar.medium"
-              :name="user.display_name"
-              size="w-16 h-16 flex-shrink-0">
-            </fm-avatar>
-            <!-- avatar end -->
+          <div class="text-lg font-bold truncate">About {{ user.display_name }}</div>
+          <hr class="my-2">
 
-            <!-- author name and one liner start -->
-            <div class="ml-3 min-w-0 text-body">
-              <div class="font-bold text-lg truncate" :title="user.name || user.username">
-                {{ user.name || user.username }}
-              </div>
-              <div v-if="user.one_liner" class="text-gray-500">{{ user.one_liner }}</div>
-            </div>
-            <!-- author name and one liner end -->
-          </nuxt-link>
-
-          <hr class="my-4">
-
-          <fm-read-more v-if="user && user.about" lines="6" class="mb-4">
-            <p v-html="user.about"></p>
+          <fm-read-more lines="2" class="lg:hidden mb-4">
+            <fm-markdown-styled>
+              <div v-html="user.about"></div>
+            </fm-markdown-styled>
           </fm-read-more>
+          <fm-read-more lines="6" class="hidden lg:block mb-4">
+            <fm-markdown-styled>
+              <div v-html="user.about"></div>
+            </fm-markdown-styled>
+          </fm-read-more>
+
           <div v-if="user && user.social_links" class="flex justify-center space-x-4 text-gray-600">
             <a v-if="user.social_links.website_url" class="unstyled hover:text-gray-800" title="Website" target="_blank" :href="user.social_links.website_url">
               <icon-globe :size="24"></icon-globe>
@@ -76,6 +104,15 @@
     </div>
   </div>
 
+  <!-- footer start -->
+  <footer class="py-4 px-6 text-center">
+    <div class="text-sm ml-7">Powered by</div>
+    <nuxt-link to="/" class="mx-auto inline-block">
+      <logo class="h-6"></logo>
+    </nuxt-link>
+  </footer>
+  <!-- footer end -->
+
   <profile-share
     v-if="post"
     v-model="sharePost.isVisible"
@@ -88,23 +125,35 @@
 <script>
 import cloneDeep from 'lodash/cloneDeep';
 import { mapActions, mapGetters, mapMutations } from 'vuex';
+import get from 'lodash/get';
 export default {
-  layout: 'default-no-container',
+  layout: 'empty',
   auth: false,
   data() {
+    const tabName = {
+      POSTS: 'posts',
+      TIERS: 'tiers',
+      DONATION: 'donation'
+    };
     return {
+      tabName,
+      activeTab: null,
       postDeleted: false,
+      loading: false,
       deletedCopy: null, // to be used after deletion
       sharePost: {
         isVisible: false
-      }
+      },
+      isFollowLoading: false
     };
   },
   async fetch() {
+    this.loading = true;
     await Promise.allSettled([
       this.loadPost(this.$route.params.id),
       this.loadComments(this.$route.params.id)
     ]);
+    this.loading = false;
   },
   computed: {
     ...mapGetters('posts', ['currentPost', 'isDeleted']),
@@ -120,6 +169,17 @@ export default {
     },
     url() {
       return location.href;
+    },
+    isSelfProfile() {
+      return !!(
+        (get(this.$auth, 'user.username') && this.post.author_user.username) &&
+        (this.$auth.user.username === this.post.author_user.username)
+      );
+    },
+    shouldShowTiersTab() {
+      if (!this.user) return false;
+      const hasTiers = !!this.user.tiers.length;
+      return this.isSelfProfile || hasTiers;
     }
   },
   watch: {
@@ -141,9 +201,31 @@ export default {
   },
   methods: {
     ...mapActions('posts', ['loadPost', 'loadComments']),
-    ...mapMutations('posts', ['unsetCurrentPost']),
+    ...mapActions('profile', ['follow', 'unfollow']),
+    ...mapMutations('posts', ['unsetCurrentPost', 'updatePostUser']),
+
     handleDeleted() {
       this.postDeleted = true;
+    },
+    async toggleFollow() {
+      // TODO: redirect back to this after login and dispatch follow automatically
+      if (!this.$auth.loggedIn) return this.$router.push('/login');
+      this.isFollowLoading = true;
+      const { data: user } = await (this.user.is_following ? this.unfollow(this.user.username) : this.follow(this.user.username));
+      this.updatePostUser({ postId: this.post.id, user });
+      this.isFollowLoading = false;
+    },
+    gotoTab() {
+      this.$router.push({
+        name: 'username',
+        params: {
+          username: this.post.author_user.username,
+          data: {
+            intent: 'preselect-tab',
+            tab: this.activeTab
+          }
+        }
+      });
     }
   }
 };

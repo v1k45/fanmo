@@ -341,6 +341,8 @@ export default {
       this.activeTab = this.tabName.TIERS;
       this.handleSubscribeClick(routeData.tier);
       this.setGlobalLoader(false);
+    } else if (routeData.intent === 'preselect-tab') {
+      this.activeTab = routeData.tab === this.tabName.TIERS && !this.shouldShowTiersTab ? this.tabName.POSTS : routeData.tab;
     } else {
       this.activeTab = (() => {
         if (this.currentUserHasActiveSubscription || this.isSelfProfile) return this.tabName.POSTS;

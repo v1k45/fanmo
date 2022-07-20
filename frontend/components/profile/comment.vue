@@ -13,7 +13,7 @@
         :title="comment.author_user.name || comment.author_user.username">
         {{ comment.author_user.name || comment.author_user.username }}
       </div>
-      <span class="ml-2 sm:ml-3 clear-both whitespace-pre-wrap">{{ comment.body }}</span>
+      <span class="ml-2 clear-both whitespace-pre-wrap">{{ comment.body }}</span>
     </fm-read-more-height>
 
     <div class="mt-1 flex items-end sm:items-center text-gray-500">

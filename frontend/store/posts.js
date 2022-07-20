@@ -241,6 +241,9 @@ export const mutations = {
   updatePostStats(state, { postId, stats }) {
     state.postsById[postId].stats = stats;
   },
+  updatePostUser(state, { postId, user }) {
+    state.postsById[postId].author_user = user;
+  },
   deletePost(state, postId) {
     Vue.delete(state.postsById, postId);
   },

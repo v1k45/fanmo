@@ -179,23 +179,25 @@ export const actions = {
   },
 
   // POST
-  async follow({ state, dispatch }) {
-    const err = await dispatch('update', {
-      url: `/api/users/${state.user.username}/follow/`,
-      handleAll: true
-    });
-    if (err) return ERRORED;
-    const { success } = await dispatch('fetchProfileUser', state.user.username);
-    return !success;
+  async follow({ state, commit }, username) {
+    try {
+      const user = await this.$axios.$post(`/api/users/${username || state.user.username}/follow/`);
+      if (!username) commit('setProfileUser', user);
+      return SUCCESS(user);
+    } catch (err) {
+      handleGenericError(err, true);
+      return ERROR(err.response.data);
+    }
   },
-  async unfollow({ state, dispatch }) {
-    const err = await dispatch('update', {
-      url: `/api/users/${state.user.username}/unfollow/`,
-      handleAll: true
-    });
-    if (err) return ERRORED;
-    const { success } = await dispatch('fetchProfileUser', state.user.username);
-    return !success;
+  async unfollow({ state, commit }, username) {
+    try {
+      const user = await this.$axios.$post(`/api/users/${username || state.user.username}/unfollow/`);
+      if (!username) commit('setProfileUser', user);
+      return SUCCESS(user);
+    } catch (err) {
+      handleGenericError(err, true);
+      return ERROR(err.response.data);
+    }
   },
   async createPost({ dispatch, state }, payload) {
     try {
