@@ -39,22 +39,16 @@
   </header>
   <!-- sticky header end -->
 
-  <profile-above-the-tab v-intersect="handleIntersect"></profile-above-the-tab>
+  <profile-above-the-tab v-intersect="handleIntersect" @add-post="addPost.isVisible = true;"></profile-above-the-tab>
 
-  <fm-tabs ref="tabs" v-model="activeTab" centered class="mt-4" :class="{ 'min-h-[400px]': isLoading }">
+  <fm-tabs ref="tabs" v-model="activeTab" centered class="mt-2" :class="{ 'min-h-[400px]': isLoading }">
 
     <fm-tabs-pane :id="tabName.POSTS" lazy label="Feed" class="bg-gray-50 pb-10">
       <div class="container min-h-[300px]">
         <div class="max-w-6xl row gx-0 lg:gx-4 mx-auto flex-wrap-reverse">
           <div class="col-12 lg:col-7">
 
-            <div class="mt-6">
-              <div v-if="isSelfProfile && profilePosts.results.length" class="text-right mb-6">
-                <fm-button type="primary" @click="addPost.isVisible = true;">
-                  <icon-image-plus class="mr-1" :size="16"></icon-image-plus>
-                  Add a post
-                </fm-button>
-              </div>
+            <div>
               <div v-if="profilePosts.results.length">
                 <profile-post
                   v-for="post in profilePosts.results" :key="post.id"
@@ -88,7 +82,7 @@
             </div>
           </div>
           <div v-if="user.about || isSelfProfile" class="col-12 lg:col-5">
-            <fm-card body-class="" class="overflow-hidden sticky top-20 mt-6">
+            <fm-card body-class="" class="overflow-hidden sticky top-20">
               <div class="text-xl text-black font-bold mb-3">About</div>
               <div v-if="user.about">
                 <!-- TODO: remove duplication once breakpoint service is available -->
@@ -144,7 +138,7 @@
       :id="tabName.TIERS" lazy label="Memberships" class="pb-10 bg-gray-50">
       <div class="container min-h-[300px]">
         <div class="max-w-6xl mx-auto">
-          <div class="row justify-center mt-2 gy-4 px-4">
+          <div class="row justify-center gy-4 px-4">
             <div v-for="tier in user.tiers" :key="tier.id" class="col-12 md:col-6 lg:col-4">
               <profile-tier-card
                 class="max-w-sm mx-auto h-full"
