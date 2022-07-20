@@ -18,8 +18,9 @@
     </li>
   </template>
   <template v-for="(item, idx) in ($auth.user.is_creator ? nav.creator : nav.supporter)">
+    <template v-if="item.id === 'profile'"></template>  <!-- don't render profile in sidebar -->
     <li
-      v-if="!item.url" :key="item.id"
+      v-else-if="!item.url" :key="item.id"
       class="uppercase font-medium text-gray-600 text-sm mb-3"
       :class="{ 'mt-6': idx > 0 }">
       {{ item.label }}
@@ -161,7 +162,7 @@
 </template>
 
 <script>
-import { Coins, Home, LayoutList, Sliders, UserCheck, Users, Wallet, LogIn, UserPlus } from 'lucide-vue';
+import { Coins, Home, LayoutList, LayoutTemplate, Sliders, UserCheck, Users, Wallet, LogIn, UserPlus } from 'lucide-vue';
 import { delay } from '~/utils';
 export default {
   props: {
@@ -177,7 +178,7 @@ export default {
   },
   computed: {
     nav() {
-      const { loggedIn } = this.$auth;
+      const { user, loggedIn } = this.$auth;
       if (!loggedIn) return {
         anonymous: [
           { id: 'login', label: 'Login', icon: LogIn, url: '/login/' },
@@ -194,6 +195,7 @@ export default {
           { id: 'members', label: 'Members', icon: Users, url: '/members/' },
           { id: 'creator-donations', label: 'Donations', icon: Coins, url: '/received-donations/' },
           { id: 'earnings', label: 'Earnings', icon: Wallet, url: '/earnings/' },
+          { id: 'profile', label: 'View page', icon: LayoutTemplate, url: `/${user.username}` },
           { id: 'settings', label: 'Settings', icon: Sliders, url: '/settings/' },
 
           { id: 'supporter-pages', label: 'Supporter pages' },
