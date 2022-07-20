@@ -231,7 +231,7 @@ const options = () => ({
   tooltip: {
     y: {
       formatter(value, { series, dataPointIndex }) {
-        const sum = series[0][dataPointIndex] + series[1][dataPointIndex];
+        const sum = (series[0][dataPointIndex] || 0) + (series[1][dataPointIndex] || 0);
         if (sum === 0 || value === 0 || value === sum) return toCurrency(value);
         return `${toCurrency(value)} of ${toCurrency(sum)}`;
       }
