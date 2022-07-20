@@ -156,6 +156,8 @@ export default {
 
     hide() {
       if (!this.popper) return;
+      this.slotProps.isVisible = false;
+
       // Disable the event listeners
       if (this.useClickOutside && this.$el) unregisterClickOutside(this.$el);
       this.popper.setOptions((options) => ({
@@ -165,7 +167,6 @@ export default {
           { name: 'eventListeners', enabled: false }
         ]
       }));
-      this.slotProps.isVisible = false;
     },
 
     destroy() {
