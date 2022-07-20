@@ -1,11 +1,16 @@
 <template>
 <div>
-
-  <layout-navigation
-    :type="$auth.loggedIn ? 'hamburger-minimal' : 'anonymous-hamburger'"
-    class="absolute z-10"
-    :class="{ 'top-1 right-1': !user.cover && !isSelfProfile, 'top-1 right-1 md:top-5 md:right-10': user.cover || isSelfProfile }">
-  </layout-navigation>
+  <div class="absolute z-10 flex space-x-4" :class="{ 'top-1 right-1': !user.cover && !isSelfProfile, 'top-1 right-1 md:top-5 md:right-10': user.cover || isSelfProfile }">
+    <fm-button v-if="isSelfProfile" class="hidden md:block" @click="$emit('add-post')">
+      <icon-image-plus class="mr-1 -mt-0.5" :size="16"></icon-image-plus>
+      Add a post
+    </fm-button>
+    <fm-button v-if="isSelfProfile" class="hidden md:block" @click="openEditDialog">
+      <icon-wand class="" :size="16"></icon-wand>
+      Edit page
+    </fm-button>
+    <layout-navigation class="inline-block" :type="$auth.loggedIn ? 'hamburger-minimal' : 'anonymous-hamburger'"></layout-navigation>
+  </div>
 
   <!-- cover photo start -->
   <div class="relative bg-gray-200 border-b">
@@ -77,15 +82,16 @@
         <div v-if="user.one_liner" class="mt-1 text-gray-500">
           {{ user.one_liner }}
         </div>
-        <fm-button v-if="isSelfProfile" class="mt-3" @click="openEditDialog">Edit page</fm-button>
       </div>
       <!-- name and short description end -->
 
       <!-- share and follow/unfollow actions start -->
-      <div class="ml-auto my-4 lg:my-0 flex items-center">
+      <div class="mx-auto lg:mr-[unset] lg:ml-auto my-4 lg:my-0 flex items-center">
+
         <fm-button class="mr-4 inline-flex items-center" @click="isProfileShareVisible = true;">
           <icon-share class="inline-block -mt-0.5 mr-1 h-em w-em"></icon-share> Share
         </fm-button>
+
         <fm-button :type="user.is_following ? 'success' : 'primary'" class="w-36" :loading="isFollowLoading" @click="toggleFollow">
           <div v-if="user.is_following" class="flex items-center justify-center">
             <icon-check class="inline-block mr-1 h-em w-em"></icon-check> Following
@@ -95,19 +101,30 @@
           </div>
         </fm-button>
 
-        <fm-tooltip v-if="isSelfProfile" class="ml-4 inline-block" content="View your page as it would appear to your supporters" :delay="500">
-          <fm-button class="w-[42px] !px-0 !rounded-full" @click="setPreviewMode(true)">
-            <icon-eye class="inline-block h-4 w-4"></icon-eye>
-          </fm-button>
-        </fm-tooltip>
+        <fm-button v-if="isSelfProfile" v-tooltip="'View your page as it would appear to your supporters'" class="ml-4 inline-block w-[42px] !px-0 !rounded-full" @click="setPreviewMode(true)">
+          <icon-eye class="inline-block h-4 w-4"></icon-eye>
+        </fm-button>
         <fm-alert v-else-if="isPreviewMode" type="warning" class="fixed bottom-[78px] md:bottom-0 w-full left-0 z-20 !rounded-none" :show-icon="false">
           <div class="text-center">
-            You're viewing your profile as a supporter.
+            <span class="hidden sm:inline">You're viewing your page as a supporter.</span>
+            <span class="sm:hidden">Viewing as supporter.</span>
             <fm-button type="error" class="ml-4" size="sm" @click="setPreviewMode(false)">Exit view</fm-button>
           </div>
         </fm-alert>
       </div>
-    <!-- share and follow/unfollow actions end -->
+      <!-- share and follow/unfollow actions end -->
+
+      <div v-if="isSelfProfile" class="md:hidden text-center space-x-4 w-full">
+        <fm-button @click="$emit('add-post')">
+          <icon-image-plus class="mr-1 -mt-0.5" :size="16"></icon-image-plus>
+          Add a post
+        </fm-button>
+        <fm-button @click="openEditDialog">
+          <icon-wand class="" :size="16"></icon-wand>
+          Edit page
+        </fm-button>
+      </div>
+
     </div>
 
   </div>
