@@ -4,15 +4,7 @@
   v-bind="{
     placement,
     popperOptions: {
-      strategy: 'fixed',
-      modifiers: [
-        {
-          name: 'preventOverflow',
-          options: {
-            altAxis: true
-          }
-        }
-      ]
+      strategy: 'fixed'
     }
   }" class="fm-dropdown">
   <div v-bind="$reference" class="fm-dropdown__reference">
