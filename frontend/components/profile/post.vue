@@ -3,47 +3,10 @@
   <div class="post-body">
     <div class="flex items-center">
       <div class="flex flex-wrap flex-grow mr-auto">
-        <template v-if="showCreatorInfo">
-          <!-- avatar start -->
-          <fm-avatar
-            :src="post.author_user.avatar && post.author_user.avatar.small"
-            :name="post.author_user.display_name"
-            size="w-10 h-10 flex-shrink-0">
-          </fm-avatar>
-          <!-- avatar end -->
-
-          <!-- author name and timestamp start -->
-          <div class="ml-3 min-w-0">
-            <div class="font-bold truncate" :title="post.author_user.name || post.author_user.username">
-              {{ post.author_user.name || post.author_user.username }}
-            </div>
-            <div class="flex">
-              <div class="text-xs text-gray-500">{{ createdAt }}</div>
-            </div>
-          </div>
-          <!-- author name and timestamp end -->
-        </template>
-
-        <nuxt-link :to="{ name: 'p-slug-id', params: { slug: post.slug, id: post.id } }" class="w-full basis-auto">
-          <div class="text-lg md:text-xl text-black font-bold w-full" :class="{ 'mt-4': showCreatorInfo }">{{ post.title }}</div>
-          <div v-if="!showCreatorInfo" class="flex items-center mt-1 text-xs">
-            <div class="text-gray-500 flex-shrink-0">{{ createdAt }}</div>
-            <!-- TODO: show post visibility information for members too -->
-            <div class="flex items-center text-gray-500 overflow-hidden">
-              <span class="mx-2">&bull;</span>
-              <icon-lock v-if="post.visibility !== 'public'" class="h-em w-em mr-1"></icon-lock>
-              <icon-globe v-if="post.visibility === 'public'" class="h-em w-em mr-1"></icon-globe>
-              <div class="truncate">
-                <template v-if="post.visibility === 'public'">Public</template>
-                <template v-else-if="post.visibility === 'all_members'">All members</template>
-                <template v-else-if="post.visibility === 'allowed_tiers'">
-                  {{
-                    post.allowed_tiers.map(tier => tier.name).join(', ')
-                  }}
-                </template>
-              </div>
-            </div>
-          </div>
+        <nuxt-link
+          :to="{ name: 'p-slug-id', params: { slug: post.slug, id: post.id } }"
+          class="w-full basis-auto unstyled" title="Open post">
+          <div class="text-lg md:text-xl text-black font-bold w-full">{{ post.title }}</div>
         </nuxt-link>
       </div>
 
@@ -60,6 +23,45 @@
         </fm-dropdown>
       </div>
       <!-- options for self profile end -->
+    </div>
+    <div class="flex flex-wrap items-center mt-1 text-xs">
+
+      <!-- avatar and name start -->
+      <nuxt-link
+        :to="`/${post.author_user.username}/`"
+        class="unstyled flex items-center mr-auto mt-1 overflow-hidden md:max-w-[47.5%]">
+        <!-- avatar start -->
+        <fm-avatar
+          :src="post.author_user.avatar && post.author_user.avatar.small"
+          :name="post.author_user.display_name"
+          size="w-5 h-5 flex-shrink-0">
+        </fm-avatar>
+        <!-- avatar end -->
+
+        <!-- name start -->
+        <div class="ml-2 min-w-0 text-sm truncate">
+          <div class="truncate" :title="post.author_user.display_name">{{ post.author_user.display_name }}</div>
+        </div>
+        <!-- name end -->
+      </nuxt-link>
+      <!-- avatar and name end -->
+
+      <!-- TODO: show post visibility information for members too -->
+      <div class="ml-7 md:ml-0 flex items-center text-gray-500 overflow-hidden mt-1 md:max-w-[47.5%]">
+        <div class="text-gray-500 flex-shrink-0">{{ createdAt }}</div>
+        <span class="mx-2">&bull;</span>
+        <icon-lock v-if="post.visibility !== 'public'" class="h-em w-em mr-1"></icon-lock>
+        <icon-globe v-if="post.visibility === 'public'" class="h-em w-em mr-1"></icon-globe>
+        <div
+          v-tooltip="{ content: post.allowed_tiers.map(tier => tier.name).join(', '), disabled: post.visibility !== 'allowed_tiers' }"
+          tabindex="0" class="truncate">
+          <template v-if="post.visibility === 'public'">Public</template>
+          <template v-else-if="post.visibility === 'all_members'">All members</template>
+          <template v-else-if="post.visibility === 'allowed_tiers'">
+            {{ post.allowed_tiers.map(tier => tier.name).join(', ') }} Lorem ipsum dolor sit amet consectetur adipisicing elit. Assumenda, facilis.
+          </template>
+        </div>
+      </div>
     </div>
   </div>
 
