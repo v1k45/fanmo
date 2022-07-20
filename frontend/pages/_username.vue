@@ -17,7 +17,7 @@
       <fm-input :value="activeTab" type="select" size="sm" class="mx-4 hidden md:block" @change="gotoTab($event.target.value)">
         <option disabled>Jump to</option>
         <option :value="tabName.POSTS">Feed</option>
-        <option :value="tabName.TIERS">Memberships</option>
+        <option v-if="shouldShowTiersTab" :value="tabName.TIERS">Memberships</option>
         <option :value="tabName.DONATION">Donations</option>
       </fm-input>
 
