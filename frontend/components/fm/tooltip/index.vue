@@ -32,6 +32,7 @@ export default {
   props: {
     content: { type: String, default: '' },
     placement: { type: String, default: 'top' },
+    disabled: { type: Boolean, default: false },
     delay: { type: Number, default: 500 },
     reference: { type: Element, default: null }
   },
@@ -63,7 +64,7 @@ export default {
   },
   methods: {
     localShow(show) {
-      if (this.timer) return;
+      if (this.timer || this.disabled) return;
       if (!this.delay) return show();
       this.timer = setTimeout(() => {
         this.timer = null;
