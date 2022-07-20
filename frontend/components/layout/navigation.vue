@@ -106,7 +106,7 @@
 
 <!-- top nav hamburger start -->
 <div v-else-if="['hamburger', 'hamburger-minimal'].includes(type)">
-  <fm-dropdown placement="top-end">
+  <fm-dropdown placement="bottom-end">
     <button class="inline-flex items-center p-1 rounded-full border bg-white">
       <fm-avatar
         :src="$auth.user.avatar && $auth.user.avatar.small" :name="$auth.user.display_name"
