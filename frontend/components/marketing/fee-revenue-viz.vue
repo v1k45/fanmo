@@ -89,7 +89,7 @@
       </div>
     </div>
   </div>
-  <div class="text-xs text-gray-400">* USD based flat fee calculation for Patreon assumes 1 USD ≈ 75 INR conversion rate.</div>
+  <div class="text-xs text-gray-400">* USD based flat fee calculation for Patreon assumes 1 USD ≈ 80 INR conversion rate.</div>
 </div>
 </template>
 
@@ -98,7 +98,7 @@ import { IndianRupee as IconIndianRupee } from 'lucide-vue';
 
 const getValueByPercent = (total, percent) => percent * (total / 100);
 const round = num => Number(num.toFixed(2));
-const USD_TO_INR_PRICE = 75;
+const USD_TO_INR_PRICE = 80;
 const inrFormat = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 export default {
