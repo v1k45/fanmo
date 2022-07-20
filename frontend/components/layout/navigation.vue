@@ -56,38 +56,51 @@
       </li>
     </template>
     <li class="text-center text-sm font-medium flex-1">
-      <fm-dropdown placement="top-end">
-        <button class="inline-flex items-center p-1 rounded-full border">
-          <fm-avatar
-            :src="$auth.user.avatar && $auth.user.avatar.small" :name="$auth.user.display_name"
-            size="w-9 h-9 mx-auto">
-          </fm-avatar>
-          <icon-menu class="ml-1 w-4"></icon-menu>
-        </button>
-        <template #items>
-          <template v-for="(item) in ($auth.user.is_creator ? nav.creator : nav.supporter)">
-            <fm-dropdown-item
-              v-if="!item.url" :key="item.id" static
-              class="uppercase font-medium text-gray-600 text-sm">
-              {{ item.label }}
-            </fm-dropdown-item>
-            <fm-dropdown-item v-else :key="item.id" class="font-medium min-w-[200px] !p-0">
-              <nuxt-link
-                :to="item.url" class="unstyled flex items-center p-3">
-                <component :is="item.icon" class="h-6 w-6 mr-3"></component>
-                {{ item.label }}
-              </nuxt-link>
-            </fm-dropdown-item>
-          </template>
-          <fm-dropdown-divider></fm-dropdown-divider>
-          <fm-dropdown-item type="error" class="font-medium flex items-center" @click="logout">
-            <icon-power class="h-6 w-6 mr-2 transform scale-75" :stroke-width="3" :size="18"></icon-power>
-            Log out
-          </fm-dropdown-item>
-        </template>
-      </fm-dropdown>
+      <button class="inline-flex items-center p-1 rounded-full border" @click="isBottomPaneDrawerVisible = true;">
+        <fm-avatar
+          :src="$auth.user.avatar && $auth.user.avatar.small" :name="$auth.user.display_name"
+          size="w-9 h-9 mx-auto">
+        </fm-avatar>
+        <icon-menu class="ml-1 w-4"></icon-menu>
+      </button>
     </li>
   </ul>
+
+  <fm-dialog v-model="isBottomPaneDrawerVisible" dialog-class="!max-w-xs" drawer no-padding>
+    <div class="!border-t-0 mt-4">
+      <template v-if="$auth.user.is_creator">
+        <div>
+          <fm-avatar :src="$auth.user.avatar && $auth.user.avatar.small" :name="$auth.user.display_name" size="h-24 w-24" class="mx-auto"></fm-avatar>
+        </div>
+        <div class="text-center mt-2">
+          <nuxt-link :to="`/${$auth.user.username}/`">
+            <fm-button>
+              <icon-layout-template class="h-4 w-4 -mt-0.5"></icon-layout-template> View page
+            </fm-button>
+          </nuxt-link>
+        </div>
+      </template>
+      <template v-for="(item) in ($auth.user.is_creator ? nav.creator : nav.supporter)">
+        <template v-if="item.id === 'profile'"></template>  <!-- don't render profile in sidebar -->
+        <div
+          v-else-if="!item.url" :key="item.id"
+          class="uppercase font-medium text-gray-600 text-sm mt-2 px-4 py-3 border-b">
+          {{ item.label }}
+        </div>
+        <nuxt-link
+          v-else :key="item.id" :to="item.url"
+          class="unstyled flex items-center border-l border-b border-r bg-white px-4 py-3 hover:bg-gray-200 font-medium" actionable
+          @click.native="isBottomPaneDrawerVisible = false;">
+          <component :is="item.icon" class="h-6 w-6 mr-3"></component>
+          {{ item.label }}
+        </nuxt-link>
+      </template>
+      <div class="font-medium flex items-center px-4 py-3 border-b text-fm-error hover:bg-fm-error hover:text-white" actionable @click="logout">
+        <icon-power class="h-6 w-6 mr-2 transform scale-75" :stroke-width="3" :size="18"></icon-power>
+        Log out
+      </div>
+    </div>
+  </fm-dialog>
 </div>
 <!-- bottom pane nav items & hamburger end -->
 
@@ -174,6 +187,7 @@ export default {
   },
   data() {
     return {
+      isBottomPaneDrawerVisible: false
     };
   },
   computed: {
