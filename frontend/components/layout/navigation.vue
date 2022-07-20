@@ -2,6 +2,21 @@
 <!-- sidebar nav items start -->
 <ul v-if="type === 'sidebar'">
   <!-- no loggedIn check, consumer should do it -->
+  <template v-if="$auth.user.is_creator">
+    <li>
+      <fm-avatar :src="$auth.user.avatar && $auth.user.avatar.small" :name="$auth.user.display_name" size="h-24 w-24" class="mx-auto"></fm-avatar>
+    </li>
+    <li class="text-center mt-2">
+      <nuxt-link :to="`/${$auth.user.username}/`">
+        <fm-button>
+          <icon-layout-template class="h-4 w-4 -mt-0.5"></icon-layout-template> View page
+        </fm-button>
+      </nuxt-link>
+    </li>
+    <li class="my-3">
+      <hr>
+    </li>
+  </template>
   <template v-for="(item, idx) in ($auth.user.is_creator ? nav.creator : nav.supporter)">
     <li
       v-if="!item.url" :key="item.id"
@@ -146,7 +161,7 @@
 </template>
 
 <script>
-import { Coins, Home, LayoutList, LayoutTemplate, Sliders, UserCheck, Users, Wallet, LogIn, UserPlus } from 'lucide-vue';
+import { Coins, Home, LayoutList, Sliders, UserCheck, Users, Wallet, LogIn, UserPlus } from 'lucide-vue';
 import { delay } from '~/utils';
 export default {
   props: {
@@ -162,7 +177,7 @@ export default {
   },
   computed: {
     nav() {
-      const { user, loggedIn } = this.$auth;
+      const { loggedIn } = this.$auth;
       if (!loggedIn) return {
         anonymous: [
           { id: 'login', label: 'Login', icon: LogIn, url: '/login/' },
@@ -179,7 +194,6 @@ export default {
           { id: 'members', label: 'Members', icon: Users, url: '/members/' },
           { id: 'creator-donations', label: 'Donations', icon: Coins, url: '/received-donations/' },
           { id: 'earnings', label: 'Earnings', icon: Wallet, url: '/earnings/' },
-          { id: 'profile', label: 'View page', icon: LayoutTemplate, url: `/${user.username}` },
           { id: 'settings', label: 'Settings', icon: Sliders, url: '/settings/' },
 
           { id: 'supporter-pages', label: 'Supporter pages' },
