@@ -81,7 +81,7 @@
               <!-- no posts public end -->
             </div>
           </div>
-          <div v-if="user.about || isSelfProfile" class="col-12 lg:col-5">
+          <div v-if="user.about || isSelfProfile" class="col-12 lg:col-5 mb-6 lg:mb-0">
             <fm-card body-class="" class="overflow-hidden sticky top-20">
               <div class="text-xl text-black font-bold mb-3">About</div>
               <div v-if="user.about">
