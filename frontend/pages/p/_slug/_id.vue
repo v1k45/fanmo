@@ -1,5 +1,5 @@
 <template>
-<div v-loading="loading" class="bg-gray-50 flex-grow">
+<div v-loading="loading" class="bg-gray-50 flex-grow min-h-screen">
   <!-- sticky header start -->
   <header v-if="user" class="bg-white sticky z-20 top-0 w-full border-b">
     <div class="lg:container px-4 lg:px-0 flex items-center py-2">
@@ -101,7 +101,7 @@
   </div>
 
   <!-- footer start -->
-  <footer class="py-4 px-6 text-center">
+  <footer class="mt-auto py-4 px-6 text-center">
     <div class="text-sm ml-7">Powered by</div>
     <nuxt-link to="/" class="mx-auto inline-block">
       <logo class="h-6"></logo>
