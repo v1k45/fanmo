@@ -13,7 +13,7 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: titleChunk => titleChunk ? `${titleChunk} | Fanmo` : 'Fanmo',
+    titleTemplate: titleChunk => titleChunk ? `${titleChunk} | Fanmo` : 'Fanmo - Home for your most passionate fans',
     htmlAttrs: {
       lang: 'en',
       'data-theme': 'brand'
@@ -24,8 +24,9 @@ export default {
     meta: [
       { charset: 'utf-8' },
       // https://stackoverflow.com/questions/44679794/position-fixed-on-chrome-mobile-causing-element-to-move-on-scroll-up-down
-      { name: 'viewport', content: 'height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0' },
-      { hid: 'description', name: 'description', content: '' },
+      { name: 'viewport', content: 'height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0' },
+      { hid: 'description', name: 'description', content: 'Fanmo is the simplest way to offer memberships, accept donations and post member-exclusive content. Create your Fanmo page today, it takes less than 5 minutes to get started.' },
+      { hid: 'keywords', name: 'keywords', content: 'fanmo, memberships, donations, patreon alternative, buymeacoffee alternative, india, creators, supporters, low cost' },
       { name: 'format-detection', content: 'telephone=no' }
     ],
     link: []
