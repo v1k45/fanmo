@@ -6,12 +6,14 @@
 
       <breakpoint-helper></breakpoint-helper>
 
-      <fm-avatar :src="user.avatar && user.avatar.medium" :name="user.display_name" size="w-8 h-8 lg:w-10 lg:h-10" class="flex-shrink-0"></fm-avatar>
+      <nuxt-link :to="`/${user.username}/`" class="flex flex-grow mr-auto max-w-[65%] md:max-w-[55%]">
+        <fm-avatar :src="user.avatar && user.avatar.medium" :name="user.display_name" size="w-8 h-8 lg:w-10 lg:h-10" class="flex-shrink-0"></fm-avatar>
 
-      <div class="ml-2 lg:ml-3 mr-auto max-w-[60%] md:max-w-[50%]">
-        <div v-tooltip="user.display_name" class="text-base lg:text-lg text-black font-bold leading-none lg:leading-none max-w-max truncate">{{ user.display_name }}</div>
-        <div v-if="user.one_liner" v-tooltip="user.one_liner" class="mt-1 text-xs lg:text-sm text-gray-500 max-w-max truncate">{{ user.one_liner }}</div>
-      </div>
+        <div class="ml-2 lg:ml-3 max-w-full">
+          <div v-tooltip="user.display_name" class="text-base lg:text-lg text-black font-bold leading-none lg:leading-none max-w-max truncate">{{ user.display_name }}</div>
+          <div v-if="user.one_liner" v-tooltip="user.one_liner" class="mt-1 text-xs lg:text-sm text-gray-500 max-w-max truncate">{{ user.one_liner }}</div>
+        </div>
+      </nuxt-link>
 
       <fm-input v-model="activeTab" type="select" size="sm" class="mx-4 hidden md:block" @change="gotoTab()">
         <option :value="null" disabled selected>Jump to</option>
