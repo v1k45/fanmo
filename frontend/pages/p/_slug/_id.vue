@@ -62,16 +62,10 @@
         </profile-post>
       </div>
       <div v-if="user" class="col-span-12 lg:col-span-5 h-full">
-        <div class="lg:hidden">
-          <hr class="my-4">
-          <div class="text-lg font-bold mb-4">
-            About the creator
-          </div>
-        </div>
-        <fm-card class="overflow-hidden sticky top-20">
+        <div class="lg:hidden mt-4"></div>
 
-          <div class="text-lg font-bold truncate">About {{ user.display_name }}</div>
-          <hr class="my-2">
+        <fm-card class="overflow-hidden sticky top-20">
+          <div class="text-xl text-black font-bold truncate mb-3">About</div>
 
           <fm-read-more lines="2" class="lg:hidden mb-4">
             <fm-markdown-styled>
