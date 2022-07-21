@@ -100,6 +100,7 @@
         Log out
       </div>
     </div>
+    <layout-footer></layout-footer>
   </fm-dialog>
 </div>
 <!-- bottom pane nav items & hamburger end -->

@@ -86,39 +86,7 @@
   </div>
 
   <!-- footer start -->
-  <footer class="fm-layout__footer py-12 mt-auto bg-white border-t">
-    <div class="container">
-      <div class="flex items-center">
-        <div class="mr-auto">
-          <logo class="h-7 md:h-9"></logo>
-        </div>
-        <div class="flex text-black">
-          <a href="https://facebook.com/getfanmo" target="_blank" title="Facebook" class="unstyled p-2 rounded-lg hover:bg-blue-500 hover:text-white transition-colors">
-            <icon-facebook></icon-facebook>
-            <span class="sr-only">Facebook</span>
-          </a>
-          <a href="https://twitter.com/getfanmo" target="_blank" title="Twitter" class="unstyled p-2 rounded-lg ml-4 hover:bg-sky-500 hover:text-white transition-colors">
-            <icon-twitter></icon-twitter>
-            <span class="sr-only">Twitter</span>
-          </a>
-          <a href="https://instagram.com/getfanmo" title="Instagram" class="unstyled p-2 rounded-lg ml-4 hover:bg-violet-500 hover:text-white transition-colors">
-            <icon-instagram></icon-instagram>
-            <span class="sr-only">Instagram</span>
-          </a>
-        </div>
-      </div>
-
-      <div class="flex flex-wrap items-center mt-2 lg:mt-4">
-        <p class="text-xs md:text-sm text-gray-500 mr-auto">Copyright &copy; {{ currentYear }}. All rights reserved.</p>
-        <div class="mt-8 lg:mt-0 flex flex-wrap text-black text-sm md:text-base justify-center">
-          <nuxt-link class="unstyled py-2 mr-4 hover:text-fm-primary" to="/pricing#faq">FAQ</nuxt-link>
-          <nuxt-link class="unstyled p-2 mr-2 hover:text-fm-primary" to="/terms">Terms &amp; Conditions</nuxt-link>
-          <nuxt-link class="unstyled p-2 mr-2 hover:text-fm-primary" to="/privacy">Privacy Policy</nuxt-link>
-          <nuxt-link class="unstyled p-2 hover:text-fm-primary" to="/refunds">Cancellation policy</nuxt-link>
-        </div>
-      </div>
-    </div>
-  </footer>
+  <layout-footer class="fm-layout__footer hidden md:block mt-auto"></layout-footer>
   <!-- footer end -->
 
   <div v-if="$auth.loggedIn" class="fm-layout__bottom-pane z-20 py-2 bg-white shadow border-t">
@@ -128,20 +96,14 @@
 </template>
 
 <script>
-import {
-  Menu as IconMenu, X as IconX, Facebook as IconFacebook,
-  Twitter as IconTwitter, Instagram as IconInstagram
-} from 'lucide-vue';
+import { Menu as IconMenu, X as IconX } from 'lucide-vue';
 import { mapState } from 'vuex';
 import { skipOnboarding } from '~/utils';
 
 export default {
   components: {
     IconMenu,
-    IconX,
-    IconFacebook,
-    IconTwitter,
-    IconInstagram
+    IconX
   },
   props: {
     container: { type: Boolean, default: true },
