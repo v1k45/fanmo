@@ -77,7 +77,7 @@
 
     <div class="flex flex-col lg:flex-row flex-grow items-start" :class="{ 'self-stretch items-center': !user.cover }">
       <!-- name and short description start -->
-      <div class="text-center lg:text-left lg:ml-3">
+      <div class="mx-auto lg:mr-0 text-center lg:text-left lg:ml-3">
         <div class="text-2xl text-black font-bold">{{ user.name || user.username }}</div>
         <div v-if="user.one_liner" class="mt-1 text-gray-500">
           {{ user.one_liner }}
