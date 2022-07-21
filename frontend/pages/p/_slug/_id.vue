@@ -109,6 +109,43 @@
   </footer>
   <!-- footer end -->
 
+  <!-- phone bottom pane tab nav start -->
+  <nav class="bottom-0 sticky z-20 w-full bg-white border-t md:hidden py-1 shadow">
+    <ul class="flex items-center h-full max-w-full sm:max-w-md md:max-w-lg mx-2 sm:mx-auto justify-around">
+      <li class="mx-2 cursor-pointer text-center text-xs sm:text-sm font-medium flex-1 min-w-0">
+        <div
+          class="unstyled rounded-xl focus:bg-fm-primary focus:text-white inline-block px-2 py-2 w-full"
+          :class="{ 'text-white bg-fm-primary pointer-events-none': activeTab === tabName.POSTS }"
+          @click="gotoTab(tabName.POSTS)">
+
+          <icon-image class="h-6 w-6"></icon-image>
+          <div class="mt-1 truncate" title="Feed">Feed</div>
+        </div>
+      </li>
+      <li v-if="shouldShowTiersTab" class="mx-2 cursor-pointer text-center text-xs sm:text-sm font-medium flex-1 min-w-0">
+        <div
+          class="unstyled rounded-xl focus:bg-fm-primary focus:text-white inline-block px-2 py-2 w-full"
+          :class="{ 'text-white bg-fm-primary pointer-events-none': activeTab === tabName.TIERS }"
+          @click="gotoTab(tabName.TIERS)">
+
+          <icon-crown class="h-6 w-6"></icon-crown>
+          <div class="mt-1 truncate" title="Feed">Memberships</div>
+        </div>
+      </li>
+      <li class="mx-2 cursor-pointer text-center text-xs sm:text-sm font-medium flex-1 min-w-0">
+        <div
+          class="unstyled rounded-xl focus:bg-fm-primary focus:text-white inline-block px-2 py-2 w-full"
+          :class="{ 'text-white bg-fm-primary pointer-events-none': activeTab === tabName.DONATION }"
+          @click="gotoTab(tabName.DONATION)">
+
+          <icon-coins class="h-6 w-6"></icon-coins>
+          <div class="mt-1 truncate" title="Feed">Donations</div>
+        </div>
+      </li>
+    </ul>
+  </nav>
+  <!-- phone bottom pane tab nav end -->
+
   <profile-share
     v-if="post"
     v-model="sharePost.isVisible"
@@ -211,14 +248,14 @@ export default {
       this.updatePostUser({ postId: this.post.id, user });
       this.isFollowLoading = false;
     },
-    gotoTab() {
+    gotoTab(tabName) {
       this.$router.push({
         name: 'username',
         params: {
           username: this.post.author_user.username,
           data: {
             intent: 'preselect-tab',
-            tab: this.activeTab
+            tab: tabName || this.activeTab
           }
         }
       });
