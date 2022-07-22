@@ -86,7 +86,7 @@
   </div>
 
   <!-- footer start -->
-  <layout-footer class="fm-layout__footer hidden md:block mt-auto"></layout-footer>
+  <layout-footer class="fm-layout__footer mt-auto" :class="{'hidden md:block': $auth.loggedIn}"></layout-footer>
   <!-- footer end -->
 
   <div v-if="$auth.loggedIn" class="fm-layout__bottom-pane z-20 py-2 bg-white shadow border-t">
