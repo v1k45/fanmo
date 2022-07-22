@@ -7,7 +7,7 @@
       <fm-avatar :src="$auth.user.avatar && $auth.user.avatar.small" :name="$auth.user.display_name" size="h-24 w-24" class="mx-auto"></fm-avatar>
     </li>
     <li class="text-center mt-2">
-      <nuxt-link :to="`/${$auth.user.username}/`">
+      <nuxt-link :to="`/${$auth.user.username}`">
         <fm-button>
           <icon-layout-template class="h-4 w-4 -mt-0.5"></icon-layout-template> View page
         </fm-button>
@@ -73,7 +73,7 @@
           <fm-avatar :src="$auth.user.avatar && $auth.user.avatar.small" :name="$auth.user.display_name" size="h-24 w-24" class="mx-auto"></fm-avatar>
         </div>
         <div class="text-center mt-2">
-          <nuxt-link :to="`/${$auth.user.username}/`">
+          <nuxt-link :to="`/${$auth.user.username}`">
             <fm-button>
               <icon-layout-template class="h-4 w-4 -mt-0.5"></icon-layout-template> View page
             </fm-button>
