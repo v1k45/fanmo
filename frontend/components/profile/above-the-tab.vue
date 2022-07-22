@@ -14,13 +14,13 @@
 
   <!-- cover photo start -->
   <div class="relative bg-gray-200 border-b">
-    <div v-if="user.cover" class="aspect-w-16 aspect-h-4 lg:aspect-h-3">
+    <div v-if="user.cover" class="aspect-w-16 aspect-h-5 lg:aspect-h-3">
       <img
         class="object-cover h-full w-full absolute"
         :src="user.cover.big"
         alt="Cover photo">
     </div>
-    <div v-else-if="isSelfProfile" class="aspect-w-16 aspect-h-4 lg:aspect-h-3"></div>
+    <div v-else-if="isSelfProfile" class="aspect-w-16 aspect-h-5 lg:aspect-h-3"></div>
 
 
     <!-- actions icon start -->
