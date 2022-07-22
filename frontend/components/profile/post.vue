@@ -50,16 +50,12 @@
       <div class="ml-7 md:ml-0 flex items-center text-gray-500 overflow-hidden mt-1 md:max-w-[47.5%]">
         <div class="text-gray-500 flex-shrink-0">{{ createdAt }}</div>
         <span class="mx-2">&bull;</span>
-        <icon-lock v-if="post.visibility !== 'public'" class="h-em w-em mr-1"></icon-lock>
-        <icon-globe v-if="post.visibility === 'public'" class="h-em w-em mr-1"></icon-globe>
         <div
-          v-tooltip="{ content: post.allowed_tiers.map(tier => tier.name).join(', '), disabled: post.visibility !== 'allowed_tiers' }"
+          v-tooltip="{ content: normalizedVisibility, disabled: post.visibility === 'public' }"
           tabindex="0" class="truncate">
-          <template v-if="post.visibility === 'public'">Public</template>
-          <template v-else-if="post.visibility === 'all_members'">All members</template>
-          <template v-else-if="post.visibility === 'allowed_tiers'">
-            {{ post.allowed_tiers.map(tier => tier.name).join(', ') }} Lorem ipsum dolor sit amet consectetur adipisicing elit. Assumenda, facilis.
-          </template>
+          <icon-lock v-if="post.visibility !== 'public'" class="h-em w-em -mt-1"></icon-lock>
+          <icon-globe v-if="post.visibility === 'public'" class="h-em w-em -mt-1"></icon-globe>
+          {{ normalizedVisibility }}
         </div>
       </div>
     </div>
@@ -166,6 +162,14 @@ export default {
     createdAt() {
       if (!this.post || !this.post.created_at) return '';
       return dayjs(this.post.created_at).format('D MMM, YYYY hh:mm A');
+    },
+    normalizedVisibility() {
+      const visibilityMap = {
+        public: 'Public',
+        all_members: 'All members',
+        allowed_tiers: this.post.allowed_tiers.map(tier => tier.name).join(', ')
+      };
+      return visibilityMap[this.post.visibility];
     },
     images() {
       if (!this.post || !this.post.content || !this.post.content.files) return [];
