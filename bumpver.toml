@@ -8,7 +8,7 @@ push = false
 
 [bumpver.file_patterns]
 "dev.yml" = [
-    '    image: v1k45/fanmo:{version}-dev',
+    '    image: v1k45/fanmo:{version}',
 ]
 "bumpver.toml" = [
     'current_version = "{version}"',
