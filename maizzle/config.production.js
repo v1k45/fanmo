@@ -16,11 +16,11 @@ module.exports = {
   build: {
     templates: {
       destination: {
-        path: '../backend/memberships/templates/maizzle',
+        path: '../backend/fanmo/templates/maizzle',
       },
       plaintext: {
         destination: {
-          path: '../backend/memberships/templates/maizzle',
+          path: '../backend/fanmo/templates/maizzle',
         },
       },
     },

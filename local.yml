@@ -67,7 +67,7 @@ services:
       - ./Caddyfile.local:/etc/caddy/Caddyfile
       - ./caddy/data:/data
       - ./caddy/config:/config
-      - ./build:/var/www/html
+      - ./backend/fanmo/media:/var/www/html/media
     ports:
       - "7070:80"
       - "7777:443"

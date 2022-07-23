@@ -25,9 +25,9 @@ See environment specific settings under `config/settings/`
 Following tools are recommended, but not enforced yet:
 
 ```
-black memberships/
-isort memberships/
-flake8 memberships/
+black fanmo/
+isort fanmo/
+flake8 fanmo/
 ```
 
 ### Env vars and secrets
@@ -44,7 +44,7 @@ Dependencies should be manually added to `requirements/{stage}.txt` files and th
 
 All email templates are written using `maizzle`, the template files in this directory are just the build files spit out by maizzle.
 
-Do not touch `memberships/templates/maizzle/`, it will be overwritten.
+Do not touch `fanmo/templates/maizzle/`, it will be overwritten.
 
 ### Media file management
 

@@ -271,7 +271,7 @@ tags
 
 ### Project template
 
-backend/memberships/media/
+backend/fanmo/media/
 
 .pytest_cache/
 

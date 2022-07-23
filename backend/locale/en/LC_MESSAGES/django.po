@@ -18,119 +18,119 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: memberships/posts/apps.py:7
+#: fanmo/posts/apps.py:7
 msgid "Posts"
 msgstr ""
 
-#: memberships/subscriptions/apps.py:7
+#: fanmo/subscriptions/apps.py:7
 msgid "Subcriptions"
 msgstr ""
 
-#: memberships/templates/account/account_inactive.html:5
-#: memberships/templates/account/account_inactive.html:8
+#: fanmo/templates/account/account_inactive.html:5
+#: fanmo/templates/account/account_inactive.html:8
 msgid "Account Inactive"
 msgstr ""
 
-#: memberships/templates/account/account_inactive.html:10
+#: fanmo/templates/account/account_inactive.html:10
 msgid "This account is inactive."
 msgstr ""
 
-#: memberships/templates/account/email.html:7
+#: fanmo/templates/account/email.html:7
 msgid "Account"
 msgstr ""
 
-#: memberships/templates/account/email.html:10
+#: fanmo/templates/account/email.html:10
 msgid "E-mail Addresses"
 msgstr ""
 
-#: memberships/templates/account/email.html:13
+#: fanmo/templates/account/email.html:13
 msgid "The following e-mail addresses are associated with your account:"
 msgstr ""
 
-#: memberships/templates/account/email.html:27
+#: fanmo/templates/account/email.html:27
 msgid "Verified"
 msgstr ""
 
-#: memberships/templates/account/email.html:29
+#: fanmo/templates/account/email.html:29
 msgid "Unverified"
 msgstr ""
 
-#: memberships/templates/account/email.html:31
+#: fanmo/templates/account/email.html:31
 msgid "Primary"
 msgstr ""
 
-#: memberships/templates/account/email.html:37
+#: fanmo/templates/account/email.html:37
 msgid "Make Primary"
 msgstr ""
 
-#: memberships/templates/account/email.html:38
+#: fanmo/templates/account/email.html:38
 msgid "Re-send Verification"
 msgstr ""
 
-#: memberships/templates/account/email.html:39
+#: fanmo/templates/account/email.html:39
 msgid "Remove"
 msgstr ""
 
-#: memberships/templates/account/email.html:46
+#: fanmo/templates/account/email.html:46
 msgid "Warning:"
 msgstr ""
 
-#: memberships/templates/account/email.html:46
+#: fanmo/templates/account/email.html:46
 msgid ""
 "You currently do not have any e-mail address set up. You should really add "
 "an e-mail address so you can receive notifications, reset your password, etc."
 msgstr ""
 
-#: memberships/templates/account/email.html:51
+#: fanmo/templates/account/email.html:51
 msgid "Add E-mail Address"
 msgstr ""
 
-#: memberships/templates/account/email.html:56
+#: fanmo/templates/account/email.html:56
 msgid "Add E-mail"
 msgstr ""
 
-#: memberships/templates/account/email.html:66
+#: fanmo/templates/account/email.html:66
 msgid "Do you really want to remove the selected e-mail address?"
 msgstr ""
 
-#: memberships/templates/account/email/email_confirmation_subject.txt:3
+#: fanmo/templates/account/email/email_confirmation_subject.txt:3
 msgid "Please Confirm Your E-mail Address"
 msgstr ""
 
-#: memberships/templates/account/email/password_reset_key_subject.txt:3
+#: fanmo/templates/account/email/password_reset_key_subject.txt:3
 msgid "Password Reset E-mail"
 msgstr ""
 
-#: memberships/templates/account/email_confirm.html:6
-#: memberships/templates/account/email_confirm.html:10
+#: fanmo/templates/account/email_confirm.html:6
+#: fanmo/templates/account/email_confirm.html:10
 msgid "Confirm E-mail Address"
 msgstr ""
 
-#: memberships/templates/account/email_confirm.html:16
+#: fanmo/templates/account/email_confirm.html:16
 #, python-format
 msgid ""
 "Please confirm that <a href=\"mailto:%(email)s\">%(email)s</a> is an e-mail "
 "address for user %(user_display)s."
 msgstr ""
 
-#: memberships/templates/account/email_confirm.html:20
+#: fanmo/templates/account/email_confirm.html:20
 msgid "Confirm"
 msgstr ""
 
-#: memberships/templates/account/email_confirm.html:27
+#: fanmo/templates/account/email_confirm.html:27
 #, python-format
 msgid ""
 "This e-mail confirmation link expired or is invalid. Please <a href="
 "\"%(email_url)s\">issue a new e-mail confirmation request</a>."
 msgstr ""
 
-#: memberships/templates/account/login.html:7
-#: memberships/templates/account/login.html:11
-#: memberships/templates/account/login.html:44
+#: fanmo/templates/account/login.html:7
+#: fanmo/templates/account/login.html:11
+#: fanmo/templates/account/login.html:44
 msgid "Sign In"
 msgstr ""
 
-#: memberships/templates/account/login.html:16
+#: fanmo/templates/account/login.html:16
 #, python-format
 msgid ""
 "Please sign in with one\n"
@@ -139,73 +139,73 @@ msgid ""
 "for a %(site_name)s account and sign in below:"
 msgstr ""
 
-#: memberships/templates/account/login.html:26
+#: fanmo/templates/account/login.html:26
 msgid "or"
 msgstr ""
 
-#: memberships/templates/account/login.html:33
+#: fanmo/templates/account/login.html:33
 #, python-format
 msgid ""
 "If you have not created an account yet, then please\n"
 "<a href=\"%(signup_url)s\">sign up</a> first."
 msgstr ""
 
-#: memberships/templates/account/login.html:43
+#: fanmo/templates/account/login.html:43
 msgid "Forgot Password?"
 msgstr ""
 
-#: memberships/templates/account/logout.html:5
-#: memberships/templates/account/logout.html:8
-#: memberships/templates/account/logout.html:17
+#: fanmo/templates/account/logout.html:5
+#: fanmo/templates/account/logout.html:8
+#: fanmo/templates/account/logout.html:17
 msgid "Sign Out"
 msgstr ""
 
-#: memberships/templates/account/logout.html:10
+#: fanmo/templates/account/logout.html:10
 msgid "Are you sure you want to sign out?"
 msgstr ""
 
-#: memberships/templates/account/password_change.html:6
-#: memberships/templates/account/password_change.html:9
-#: memberships/templates/account/password_change.html:14
-#: memberships/templates/account/password_reset_from_key.html:5
-#: memberships/templates/account/password_reset_from_key.html:8
-#: memberships/templates/account/password_reset_from_key_done.html:4
-#: memberships/templates/account/password_reset_from_key_done.html:7
+#: fanmo/templates/account/password_change.html:6
+#: fanmo/templates/account/password_change.html:9
+#: fanmo/templates/account/password_change.html:14
+#: fanmo/templates/account/password_reset_from_key.html:5
+#: fanmo/templates/account/password_reset_from_key.html:8
+#: fanmo/templates/account/password_reset_from_key_done.html:4
+#: fanmo/templates/account/password_reset_from_key_done.html:7
 msgid "Change Password"
 msgstr ""
 
-#: memberships/templates/account/password_reset.html:7
-#: memberships/templates/account/password_reset.html:11
-#: memberships/templates/account/password_reset_done.html:6
-#: memberships/templates/account/password_reset_done.html:9
+#: fanmo/templates/account/password_reset.html:7
+#: fanmo/templates/account/password_reset.html:11
+#: fanmo/templates/account/password_reset_done.html:6
+#: fanmo/templates/account/password_reset_done.html:9
 msgid "Password Reset"
 msgstr ""
 
-#: memberships/templates/account/password_reset.html:16
+#: fanmo/templates/account/password_reset.html:16
 msgid ""
 "Forgotten your password? Enter your e-mail address below, and we'll send you "
 "an e-mail allowing you to reset it."
 msgstr ""
 
-#: memberships/templates/account/password_reset.html:21
+#: fanmo/templates/account/password_reset.html:21
 msgid "Reset My Password"
 msgstr ""
 
-#: memberships/templates/account/password_reset.html:24
+#: fanmo/templates/account/password_reset.html:24
 msgid "Please contact us if you have any trouble resetting your password."
 msgstr ""
 
-#: memberships/templates/account/password_reset_done.html:15
+#: fanmo/templates/account/password_reset_done.html:15
 msgid ""
 "We have sent you an e-mail. Please contact us if you do not receive it "
 "within a few minutes."
 msgstr ""
 
-#: memberships/templates/account/password_reset_from_key.html:8
+#: fanmo/templates/account/password_reset_from_key.html:8
 msgid "Bad Token"
 msgstr ""
 
-#: memberships/templates/account/password_reset_from_key.html:12
+#: fanmo/templates/account/password_reset_from_key.html:12
 #, python-format
 msgid ""
 "The password reset link was invalid, possibly because it has already been "
@@ -213,101 +213,101 @@ msgid ""
 "a>."
 msgstr ""
 
-#: memberships/templates/account/password_reset_from_key.html:18
+#: fanmo/templates/account/password_reset_from_key.html:18
 msgid "change password"
 msgstr ""
 
-#: memberships/templates/account/password_reset_from_key.html:21
-#: memberships/templates/account/password_reset_from_key_done.html:8
+#: fanmo/templates/account/password_reset_from_key.html:21
+#: fanmo/templates/account/password_reset_from_key_done.html:8
 msgid "Your password is now changed."
 msgstr ""
 
-#: memberships/templates/account/password_set.html:6
-#: memberships/templates/account/password_set.html:9
-#: memberships/templates/account/password_set.html:14
+#: fanmo/templates/account/password_set.html:6
+#: fanmo/templates/account/password_set.html:9
+#: fanmo/templates/account/password_set.html:14
 msgid "Set Password"
 msgstr ""
 
-#: memberships/templates/account/signup.html:6
+#: fanmo/templates/account/signup.html:6
 msgid "Signup"
 msgstr ""
 
-#: memberships/templates/account/signup.html:9
-#: memberships/templates/account/signup.html:19
+#: fanmo/templates/account/signup.html:9
+#: fanmo/templates/account/signup.html:19
 msgid "Sign Up"
 msgstr ""
 
-#: memberships/templates/account/signup.html:11
+#: fanmo/templates/account/signup.html:11
 #, python-format
 msgid ""
 "Already have an account? Then please <a href=\"%(login_url)s\">sign in</a>."
 msgstr ""
 
-#: memberships/templates/account/signup_closed.html:5
-#: memberships/templates/account/signup_closed.html:8
+#: fanmo/templates/account/signup_closed.html:5
+#: fanmo/templates/account/signup_closed.html:8
 msgid "Sign Up Closed"
 msgstr ""
 
-#: memberships/templates/account/signup_closed.html:10
+#: fanmo/templates/account/signup_closed.html:10
 msgid "We are sorry, but the sign up is currently closed."
 msgstr ""
 
-#: memberships/templates/account/verification_sent.html:5
-#: memberships/templates/account/verification_sent.html:8
-#: memberships/templates/account/verified_email_required.html:5
-#: memberships/templates/account/verified_email_required.html:8
+#: fanmo/templates/account/verification_sent.html:5
+#: fanmo/templates/account/verification_sent.html:8
+#: fanmo/templates/account/verified_email_required.html:5
+#: fanmo/templates/account/verified_email_required.html:8
 msgid "Verify Your E-mail Address"
 msgstr ""
 
-#: memberships/templates/account/verification_sent.html:10
+#: fanmo/templates/account/verification_sent.html:10
 msgid ""
 "We have sent an e-mail to you for verification. Follow the link provided to "
 "finalize the signup process. Please contact us if you do not receive it "
 "within a few minutes."
 msgstr ""
 
-#: memberships/templates/account/verified_email_required.html:12
+#: fanmo/templates/account/verified_email_required.html:12
 msgid ""
 "This part of the site requires us to verify that\n"
 "you are who you claim to be. For this purpose, we require that you\n"
 "verify ownership of your e-mail address. "
 msgstr ""
 
-#: memberships/templates/account/verified_email_required.html:16
+#: fanmo/templates/account/verified_email_required.html:16
 msgid ""
 "We have sent an e-mail to you for\n"
 "verification. Please click on the link inside this e-mail. Please\n"
 "contact us if you do not receive it within a few minutes."
 msgstr ""
 
-#: memberships/templates/account/verified_email_required.html:20
+#: fanmo/templates/account/verified_email_required.html:20
 #, python-format
 msgid ""
 "<strong>Note:</strong> you can still <a href=\"%(email_url)s\">change your e-"
 "mail address</a>."
 msgstr ""
 
-#: memberships/users/admin.py:38
+#: fanmo/users/admin.py:38
 msgid "Personal info"
 msgstr ""
 
-#: memberships/users/admin.py:52
+#: fanmo/users/admin.py:52
 msgid "Permissions"
 msgstr ""
 
-#: memberships/users/admin.py:64
+#: fanmo/users/admin.py:64
 msgid "Important dates"
 msgstr ""
 
-#: memberships/users/apps.py:7
+#: fanmo/users/apps.py:7
 msgid "Users"
 msgstr ""
 
-#: memberships/users/forms.py:18
+#: fanmo/users/forms.py:18
 msgid "This username has already been taken."
 msgstr ""
 
-#: memberships/users/models.py:40
+#: fanmo/users/models.py:40
 msgid "Name of User"
 msgstr ""
 

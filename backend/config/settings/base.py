@@ -7,8 +7,8 @@ import environ
 import structlog
 
 ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
-# memberships/
-APPS_DIR = ROOT_DIR / "memberships"
+# fanmo/
+APPS_DIR = ROOT_DIR / "fanmo"
 PLACEHOLDERS_DIR = APPS_DIR / "static" / "images" / "placeholders"
 env = environ.Env()
 
@@ -98,15 +98,15 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    "memberships.users.apps.UsersConfig",
-    "memberships.subscriptions.apps.SubscriptionsConfig",
-    "memberships.posts.apps.PostsConfig",
-    "memberships.payments.apps.PaymentsConfig",
-    "memberships.core.apps.CoreConfig",
-    "memberships.donations",
-    "memberships.webhooks",
-    "memberships.integrations",
-    "memberships.analytics.apps.AnalyticsConfig",
+    "fanmo.users.apps.UsersConfig",
+    "fanmo.subscriptions.apps.SubscriptionsConfig",
+    "fanmo.posts.apps.PostsConfig",
+    "fanmo.payments.apps.PaymentsConfig",
+    "fanmo.core.apps.CoreConfig",
+    "fanmo.donations",
+    "fanmo.webhooks",
+    "fanmo.integrations",
+    "fanmo.analytics.apps.AnalyticsConfig",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -115,7 +115,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 # MIGRATIONS
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#migration-modules
-MIGRATION_MODULES = {"sites": "memberships.contrib.sites.migrations"}
+MIGRATION_MODULES = {"sites": "fanmo.contrib.sites.migrations"}
 
 # AUTHENTICATION
 # ------------------------------------------------------------------------------
@@ -231,7 +231,7 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
-                "memberships.utils.context_processors.settings_context",
+                "fanmo.utils.context_processors.settings_context",
             ],
         },
     }
@@ -354,8 +354,8 @@ ACCOUNT_AUTHENTICATION_METHOD = "email"
 ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = "optional"
-ACCOUNT_ADAPTER = "memberships.users.adapters.AccountAdapter"
-SOCIALACCOUNT_ADAPTER = "memberships.users.adapters.SocialAccountAdapter"
+ACCOUNT_ADAPTER = "fanmo.users.adapters.AccountAdapter"
+SOCIALACCOUNT_ADAPTER = "fanmo.users.adapters.SocialAccountAdapter"
 ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
 OLD_PASSWORD_FIELD_ENABLED = True
 SOCIALACCOUNT_STORE_TOKENS = True
@@ -401,7 +401,7 @@ REST_FRAMEWORK = {
         "rest_framework.parsers.JSONParser",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "memberships.utils.authentication.SessionAuthentication",
+        "fanmo.utils.authentication.SessionAuthentication",
     ),
     'DEFAULT_THROTTLE_RATES': {
         'register_hour': '100/h',
@@ -413,29 +413,29 @@ REST_FRAMEWORK = {
         'comment_hour': '100/h',
         'tier_hour': '50/h',
     },
-    "DEFAULT_PAGINATION_CLASS": "memberships.utils.pagination.PageNumberPagination",
+    "DEFAULT_PAGINATION_CLASS": "fanmo.utils.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
-    "EXCEPTION_HANDLER": "memberships.utils.exception_handlers.handle_drf_exception",
+    "EXCEPTION_HANDLER": "fanmo.utils.exception_handlers.handle_drf_exception",
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
 }
 
 # Mock token authentication
-REST_AUTH_TOKEN_MODEL = "memberships.users.models.User"
-REST_AUTH_TOKEN_CREATOR = "memberships.utils.authentication.create_auth_token"
+REST_AUTH_TOKEN_MODEL = "fanmo.users.models.User"
+REST_AUTH_TOKEN_CREATOR = "fanmo.utils.authentication.create_auth_token"
 REST_AUTH_SERIALIZERS = {
-    "TOKEN_SERIALIZER": "memberships.users.api.serializers.UserSerializer",
-    "USER_DETAILS_SERIALIZER": "memberships.users.api.serializers.UserSerializer",
-    "PASSWORD_CHANGE_SERIALIZER": "memberships.users.api.serializers.PasswordChangeSerializer",
-    "PASSWORD_RESET_SERIALIZER": "memberships.users.api.serializers.PasswordResetSerializer",
-    "PASSWORD_RESET_CONFIRM_SERIALIZER": "memberships.users.api.serializers.PasswordResetConfirmSerializer",
+    "TOKEN_SERIALIZER": "fanmo.users.api.serializers.UserSerializer",
+    "USER_DETAILS_SERIALIZER": "fanmo.users.api.serializers.UserSerializer",
+    "PASSWORD_CHANGE_SERIALIZER": "fanmo.users.api.serializers.PasswordChangeSerializer",
+    "PASSWORD_RESET_SERIALIZER": "fanmo.users.api.serializers.PasswordResetSerializer",
+    "PASSWORD_RESET_CONFIRM_SERIALIZER": "fanmo.users.api.serializers.PasswordResetConfirmSerializer",
 }
 REST_AUTH_REGISTER_SERIALIZERS = {
-    "REGISTER_SERIALIZER": "memberships.users.api.serializers.RegisterSerializer",
+    "REGISTER_SERIALIZER": "fanmo.users.api.serializers.RegisterSerializer",
 }
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "Memberships API",
+    "TITLE": "Fanmo API",
     "DESCRIPTION": "",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,

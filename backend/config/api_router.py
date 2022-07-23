@@ -14,20 +14,20 @@ from django.utils import timezone
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from rest_framework_extensions.routers import ExtendedSimpleRouter
 
-from memberships.donations.api.views import DonationViewSet
-from memberships.integrations.api.views import (
+from fanmo.donations.api.views import DonationViewSet
+from fanmo.integrations.api.views import (
     IntegrationView,
     DiscordServerConnectView,
     DiscordUserConnectView,
 )
-from memberships.payments.api.views import (
+from fanmo.payments.api.views import (
     BankAccountViewSet,
     PaymentViewSet,
     PayoutViewSet,
     BankAccountViewSet,
 )
 
-from memberships.users.api.views import (
+from fanmo.users.api.views import (
     FacebookLoginView,
     GoogleLoginView,
     OwnUserAPIView,
@@ -35,14 +35,14 @@ from memberships.users.api.views import (
     RegisterView,
     LoginView,
 )
-from memberships.posts.api.views import CommentViewSet, PostViewSet
-from memberships.analytics.api.views import AnalyticsAPIView
-from memberships.subscriptions.api.views import (
+from fanmo.posts.api.views import CommentViewSet, PostViewSet
+from fanmo.analytics.api.views import AnalyticsAPIView
+from fanmo.subscriptions.api.views import (
     MembershipViewSet,
     SubscriptionViewSet,
     TierViewSet,
 )
-from memberships.users.api.views import (
+from fanmo.users.api.views import (
     CreatorActivityViewSet,
     LoginView,
     OwnUserAPIView,
@@ -53,7 +53,7 @@ from memberships.users.api.views import (
     VerifyEmailView,
     PasswordResetView,
 )
-from memberships.webhooks.views import razorpay_webhook
+from fanmo.webhooks.views import razorpay_webhook
 
 
 def api_meta(request):
