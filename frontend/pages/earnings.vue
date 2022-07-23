@@ -2,11 +2,7 @@
 <div class="mt-6 lg:my-12 lg:mx-4">
 
   <!-- header start -->
-  <div class="container sm:pl-0">
-    <div class="text-2xl text-black font-bold">Earnings</div>
-    <!-- TODO: change -->
-    <div class="mt-1 text-gray-600">View your earnings and stats.</div>
-  </div>
+  <misc-page-header class="container sm:pl-0" :page="pages.earnings"></misc-page-header>
   <!-- header end -->
 
   <!-- container start -->
@@ -186,7 +182,7 @@
 
 <script>
 import debounce from 'lodash/debounce';
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapMutations, mapState } from 'vuex';
 
 const METHOD_NAME_MAP = {
   card: 'Card',
@@ -214,11 +210,14 @@ export default {
   },
   computed: {
     ...mapState('payments', { earnings: 'payments', stats: 'stats' }),
+    ...mapState('ui', ['pages']),
+
     hasActiveFilters() {
       return !!(this.filter.search || this.filter.type);
     }
   },
-  mounted() {
+  created() {
+    this.setCurrentPage('earnings');
     this.loadEarnings();
     this.fetchStats();
   },
@@ -228,6 +227,8 @@ export default {
       fetchMoreEarnings: 'fetchMorePayments',
       fetchStats: 'fetchStats'
     }),
+    ...mapMutations('ui', ['setCurrentPage']),
+
     exportCSV() {
       window.location.href = '/api/payments/export/';
     },

@@ -2,12 +2,7 @@
 <div class="mt-6 lg:my-12 lg:mx-4">
 
   <!-- header start -->
-  <div class="container sm:pl-0">
-    <div class="text-2xl text-black font-bold">
-      <template v-if="$auth.user.is_creator">My</template> Memberships
-    </div>
-    <div class="mt-1 text-gray-600">View and manage your memberships and review transaction history.</div>
-  </div>
+  <misc-page-header class="container sm:pl-0" :page="pages.memberships"></misc-page-header>
   <!-- header end -->
 
   <!-- container start -->
@@ -234,7 +229,7 @@
 
 <script>
 import debounce from 'lodash/debounce';
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapMutations, mapState } from 'vuex';
 import { STATUS_TEXT_MAP } from '~/utils';
 
 export default {
@@ -257,15 +252,20 @@ export default {
   },
   computed: {
     ...mapState('memberships', ['memberships', 'payments']),
+    ...mapState('ui', ['pages']),
+
     hasActiveFilters() {
       return !!(this.filter.search);
     }
   },
-  mounted() {
+  created() {
+    this.setCurrentPage('memberships');
     this.loadMemberships();
   },
   methods: {
     ...mapActions('memberships', ['fetchMemberships', 'fetchMoreMemberships', 'fetchPayments', 'fetchMorePayments', 'cancelMembership']),
+    ...mapMutations('ui', ['setCurrentPage']),
+
     loadMemberships() {
       const params = { fan_username: this.$auth.user.username, ordering: this.filter.orderBy };
       if (this.filter.search) {

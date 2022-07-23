@@ -2,10 +2,7 @@
 <div class="mt-6 lg:my-12 lg:mx-4">
 
   <!-- header start -->
-  <div class="container sm:pl-0">
-    <div class="text-2xl text-black font-bold">Dashboard</div>
-    <div class="mt-1 text-gray-600">View recent activities and analytics for your Fanmo page.</div>
-  </div>
+  <misc-page-header class="container sm:pl-0" :page="pages.dashboard"></misc-page-header>
   <!-- header end -->
 
   <!-- stats and chart start -->
@@ -180,7 +177,7 @@
 
 <script>
 import ApexCharts from 'apexcharts';
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapMutations, mapState } from 'vuex';
 import { UserPlus, UserX, UserCog, Coins, MessageSquare, MessageCircle, UserCheck } from 'lucide-vue';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -315,7 +312,8 @@ export default {
     title: 'Dashboard'
   },
   computed: {
-    ...mapState('users', ['analytics', 'activities'])
+    ...mapState('users', ['analytics', 'activities']),
+    ...mapState('ui', ['pages'])
   },
   watch: {
     'form.period'() {
@@ -323,6 +321,8 @@ export default {
     }
   },
   created() {
+    this.setCurrentPage('dashboard');
+
     if (!this.$auth.user.is_creator) {
       this.$router.replace({ name: 'feed' });
       return;
@@ -361,6 +361,8 @@ export default {
   },
   methods: {
     ...mapActions('users', ['loadAnalytics', 'loadActivities', 'loadNextActivities']),
+    ...mapMutations('ui', ['setCurrentPage']),
+
     async loadNextActivitiesLocal() {
       this.isNextActivitiesLoading = true;
       await this.loadNextActivities();

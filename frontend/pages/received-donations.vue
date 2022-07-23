@@ -2,10 +2,7 @@
 <div class="mt-6 lg:my-12 lg:mx-4">
 
   <!-- header start -->
-  <div class="container sm:pl-0">
-    <div class="text-2xl text-black font-bold">Donations Dashboard</div>
-    <div class="mt-1 text-gray-600">View and manage donations, donation settings, review transaction history and overall earnings from donations.</div>
-  </div>
+  <misc-page-header class="container sm:pl-0" :page="pages.receivedDonations"></misc-page-header>
   <!-- header end -->
 
   <!-- container start -->
@@ -33,6 +30,8 @@
 </template>
 
 <script>
+import { mapMutations, mapState } from 'vuex';
+
 export default {
   layout: 'with-sidebar',
   data() {
@@ -42,6 +41,15 @@ export default {
         { id: 'donation-settings', label: 'Settings', url: '/received-donations/settings/' }
       ]
     };
+  },
+  computed: {
+    ...mapState('ui', ['pages'])
+  },
+  created() {
+    this.setCurrentPage('receivedDonations');
+  },
+  methods: {
+    ...mapMutations('ui', ['setCurrentPage'])
   }
 };
 </script>

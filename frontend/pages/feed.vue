@@ -7,10 +7,7 @@
       <!-- posts start -->
       <div class="w-full md:max-w-2xl mx-auto flex-shrink-0">
         <div class="flex">
-          <div>
-            <div class="text-2xl text-black font-bold">Posts</div>
-            <div class="mt-1 text-gray-600 mb-5">Posts from all the creators you follow or subscribe to.</div>
-          </div>
+          <misc-page-header class="container sm:pl-0 mb-5" :page="pages.feed"></misc-page-header>
           <div class="ml-auto flex-shrink-0">
             <fm-button size="sm" class="touch-manipulation" :loading="feedPostsLoading" @click="loadFeedPostsLocal">
               <icon-refresh-cw class="h-em w-em"></icon-refresh-cw> Refresh
@@ -121,7 +118,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapMutations, mapState } from 'vuex';
 export default {
   auth: true,
   layout: 'with-sidebar',
@@ -143,15 +140,19 @@ export default {
   },
   computed: {
     ...mapGetters('posts', ['feedPosts']),
-    ...mapGetters('users', ['following'])
+    ...mapGetters('users', ['following']),
+    ...mapState('ui', ['pages'])
   },
-  mounted() {
+  created() {
+    this.setCurrentPage('feed');
     this.loadFeedPostsLocal();
     this.loadFollowingUsers();
   },
   methods: {
     ...mapActions('posts', ['loadFeedPosts', 'loadNextFeedPosts']),
     ...mapActions('users', ['loadFollowingUsers', 'loadNextFollowingUsers']),
+    ...mapMutations('ui', ['setCurrentPage']),
+
     async loadFeedPostsLocal() {
       this.feedPostsLoading = true;
       await this.loadFeedPosts();

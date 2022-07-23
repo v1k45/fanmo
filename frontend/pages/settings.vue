@@ -2,10 +2,7 @@
 <div class="mt-6 lg:my-12 lg:mx-4">
 
   <!-- header start -->
-  <div class="container sm:pl-0">
-    <div class="text-2xl text-black font-bold">Settings</div>
-    <div class="mt-1 text-gray-600">Manage your account, notifications and security settings.</div>
-  </div>
+  <misc-page-header class="container sm:pl-0" :page="pages.settings"></misc-page-header>
   <!-- header end -->
 
   <!-- container start -->
@@ -21,6 +18,8 @@
 </template>
 
 <script>
+import { mapMutations, mapState } from 'vuex';
+
 export default {
   layout: 'with-sidebar',
   data() {
@@ -29,6 +28,15 @@ export default {
   },
   head: {
     title: 'Settings'
+  },
+  computed: {
+    ...mapState('ui', ['pages'])
+  },
+  created() {
+    this.setCurrentPage('settings');
+  },
+  methods: {
+    ...mapMutations('ui', ['setCurrentPage'])
   }
 };
 </script>

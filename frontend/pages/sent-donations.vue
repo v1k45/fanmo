@@ -3,12 +3,7 @@
 <div class="mt-6 lg:my-12 lg:mx-4">
 
   <!-- header start -->
-  <div class="container sm:pl-0">
-    <div class="text-2xl text-black font-bold">
-      <template v-if="$auth.user.is_creator">My</template> Donations
-    </div>
-    <div class="mt-1 text-gray-600">Search and view your donations.</div>
-  </div>
+  <misc-page-header class="container sm:pl-0" :page="pages.sentDonations"></misc-page-header>
   <!-- header end -->
 
   <!-- container start -->
@@ -233,7 +228,7 @@
 
 <script>
 import debounce from 'lodash/debounce';
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapMutations, mapState } from 'vuex';
 
 export default {
   layout: 'with-sidebar',
@@ -254,15 +249,20 @@ export default {
   },
   computed: {
     ...mapState('donations', ['donations', 'payments']),
+    ...mapState('ui', ['pages']),
+
     hasActiveFilters() {
       return !!(this.filter.search);
     }
   },
-  mounted() {
+  created() {
+    this.setCurrentPage('sentDonations');
     this.loadDonations();
   },
   methods: {
     ...mapActions('donations', ['fetchSentDonations', 'fetchMoreDonations', 'fetchPayments', 'fetchMorePayments']),
+    ...mapMutations('ui', ['setCurrentPage']),
+
     handleSearchInput: debounce(function() {
       this.loadDonations();
     }, 250),
