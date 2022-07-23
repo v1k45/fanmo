@@ -50,14 +50,6 @@ if env("USE_DOCKER") == "yes":
 # https://django-extensions.readthedocs.io/en/latest/installation_instructions.html#configuration
 INSTALLED_APPS += ["django_extensions"]  # noqa F405
 
-# django-rest-framework
-# -------------------------------------------------------------------------------
-# django-rest-framework - https://www.django-rest-framework.org/api-guide/settings/
-REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"] = (
-    "rest_framework.authentication.SessionAuthentication",
-    "memberships.utils.authentication.UsernameAuthentication",
-)
-
 # Your stuff...
 # ------------------------------------------------------------------------------
 AUTH_PASSWORD_VALIDATORS = []
