@@ -8,7 +8,7 @@ from memberships.users.models import CreatorActivity
 
 class EmailNotificationChannel(BaseNotificationChannel):
     name = "email"
-    providers = ["console", "rich_email"]
+    providers = ["rich_email"]
 
     def build_payload(self, provider):
         if self.context.get("bulk"):
