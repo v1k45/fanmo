@@ -8,6 +8,7 @@ from dj_rest_auth.registration.views import SocialLoginView
 from dj_rest_auth.views import LoginView as BaseLoginView
 from dj_rest_auth.views import PasswordResetView as BasePasswordResetView
 from django.conf import settings
+from django.db.models import prefetch_related_objects
 from django.http.response import HttpResponse
 from django_filters.rest_framework import DjangoFilterBackend
 from django_otp.plugins.otp_totp.models import TOTPDevice
@@ -52,6 +53,7 @@ class UserViewSet(ReadOnlyModelViewSet):
     def follow(self, request, *args, **kwargs):
         user: User = self.get_object()
         user.follow(self.request.user)
+        self._refresh_user()
         return self.retrieve(request, *args, **kwargs)
 
     @extend_schema(request=None)
@@ -59,7 +61,16 @@ class UserViewSet(ReadOnlyModelViewSet):
     def unfollow(self, request, *args, **kwargs):
         user: User = self.get_object()
         user.unfollow(self.request.user)
+        self._refresh_user()
         return self.retrieve(request, *args, **kwargs)
+    
+    def _refresh_user(self):
+        """
+        is_following stays outdated because Authentication backend caches followings and memberships.
+        """
+        self.request.user.refresh_from_db()
+        users_to_prefetch = [self.request.user]
+        prefetch_related_objects(users_to_prefetch, "memberships", "followings")
 
 
 class OwnUserAPIView(RetrieveUpdateAPIView):
