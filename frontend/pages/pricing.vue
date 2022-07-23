@@ -6,7 +6,7 @@
     <div class="container flex flex-wrap">
       <div>
         <div class="lg:max-w-lg">
-          <h1 class="inline-block md:block font-title text-gray-500 text-2xl lg:text-3xl mb-6">Pricing</h1>
+          <h1 class="inline-block md:block uppercase text-gray-700 text-lg tracking-wider font-medium mb-4">Pricing</h1>
           <h1 class="mb-6 lg:mb-8 text-4xl font-semibold leading-tight font-title sm:text-5xl lg:text-6xl">Simple and most affordable</h1>
 
           <p class="mb-8 leading-relaxed sm:text-lg">

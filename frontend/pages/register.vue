@@ -1,6 +1,6 @@
 <template>
 <div>
-  <h1 class="font-title font-bold text-4xl text-center">Sign up</h1>
+  <h1 class="font-title font-bold text-4xl text-center">Create an account</h1>
 
   <div class="mt-4 text-center">
     Already have an account? <nuxt-link to="/login" class="text-fm-primary">Sign in here</nuxt-link>.
