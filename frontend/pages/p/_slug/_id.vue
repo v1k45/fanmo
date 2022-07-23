@@ -44,8 +44,7 @@
     <div v-if="postDeleted" class="max-w-md mt-[20vh] mx-auto">
       <fm-alert type="error" :show-icon="false">This post has been deleted.</fm-alert>
       <div class="flex mt-4">
-        <!-- TODO: wire to correct dashboard link -->
-        <fm-button block class="mr-2" @click="$router.replace('/dashboard')">Dashboard</fm-button>
+        <fm-button block class="mr-2" @click="$router.replace('/auth')">Dashboard</fm-button>
         <fm-button type="primary" block class="ml-2" @click="$router.replace(`/${$auth.user.username}`)">Go to your profile</fm-button>
       </div>
     </div>
