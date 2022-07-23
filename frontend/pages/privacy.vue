@@ -19,7 +19,7 @@
   <p>This Privacy Policy is governed by our Terms of Services.</p>
   <p>
     For any questions regarding this Policy or any requests regarding the
-    processing of personal data, please contact us at hello@fanmo.in.
+    processing of personal data, please contact us at help@fanmo.in.
   </p>
   <h3 class="font-bold text-xl mt-4">INFORMATION WE COLLECT FROM YOU</h3>
   <p>
@@ -275,7 +275,7 @@
   </p>
   <p>
     If you have any questions regarding the security of our Site or Services,
-    you are welcome to contact us at hello@fanmo.in.
+    you are welcome to contact us at help@fanmo.in.
   </p>
   <h3 class="font-bold text-xl mt-4">YOUR RIGHTS</h3>
   <p>

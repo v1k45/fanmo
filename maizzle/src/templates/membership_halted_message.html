@@ -9,12 +9,10 @@ bodyClass: bg-gray-100
       Your membership with @{{ obj.creator_user.display_name }} has been cancelled due to repeated payment failure. 
     </p>
     </p>
-      If you wish to continue the membership, please update your payment details on the membership page.
+      If you wish to continue the membership, you can follow the link below to update your payment details.
     </p>
     <div class="leading-full">
-      <component src="src/components/button.html" target="memberships" args="">
-        View Memberships
-      </component>
+      <component src="src/components/button.html" target="creator_page" args="obj.creator_user.username">Update Payment</component>
     </div>
   </block>
 </extends>

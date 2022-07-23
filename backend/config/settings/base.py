@@ -425,6 +425,7 @@ REST_AUTH_TOKEN_CREATOR = "memberships.utils.authentication.create_auth_token"
 REST_AUTH_SERIALIZERS = {
     "TOKEN_SERIALIZER": "memberships.users.api.serializers.UserSerializer",
     "USER_DETAILS_SERIALIZER": "memberships.users.api.serializers.UserSerializer",
+    "PASSWORD_CHANGE_SERIALIZER": "memberships.users.api.serializers.PasswordChangeSerializer",
     "PASSWORD_RESET_SERIALIZER": "memberships.users.api.serializers.PasswordResetSerializer",
     "PASSWORD_RESET_CONFIRM_SERIALIZER": "memberships.users.api.serializers.PasswordResetConfirmSerializer",
 }

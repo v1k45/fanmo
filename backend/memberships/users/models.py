@@ -179,6 +179,7 @@ class UserPreference(BaseModel):
             return self.notify_memberships
         elif email_type in MARKETING_NOTIFICATIONS:
             return self.notify_marketing
+        return True
 
 
 class UserOnboarding(BaseModel):

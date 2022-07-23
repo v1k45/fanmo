@@ -6,15 +6,21 @@ from allauth.account.utils import filter_users_by_email
 from dj_rest_auth.registration.serializers import (
     RegisterSerializer as BaseRegisterSerializer,
 )
+from dj_rest_auth.serializers import (
+    PasswordChangeSerializer as RestAuthPasswordResetSerializer,
+)
 from django.contrib.auth import password_validation
 from django.forms import ValidationError
 from django_otp.plugins.otp_email.models import EmailDevice
 from django_otp.plugins.otp_totp.models import TOTPDevice
 from drf_extra_fields.fields import Base64ImageField
 from drf_spectacular.utils import extend_schema_field
+from ipware import get_client_ip
 from rest_framework import serializers
 from rest_framework.exceptions import ErrorDetail
 
+from memberships.core.notifications import notify_new_post, notify_password_change
+from memberships.core.tasks import async_task
 from memberships.subscriptions.models import Tier
 from memberships.users.models import (
     CreatorActivity,
@@ -504,7 +510,15 @@ class PasswordResetConfirmSerializer(serializers.Serializer):
         )
         if not email.verified:
             get_adapter(request).confirm_email(request, email)
+        async_task(notify_password_change, user.pk, get_client_ip(request)[0])
         return user
+
+
+class PasswordChangeSerializer(RestAuthPasswordResetSerializer):
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        request = self.context["request"]._request
+        async_task(notify_password_change, request.user.pk, get_client_ip(request)[0])
 
 
 class CreatorActivitySerializer(serializers.ModelSerializer):

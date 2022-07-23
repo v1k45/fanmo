@@ -2,15 +2,14 @@ Hi {{ obj.fan_user.display_name }},
 
 Your membership with {{ obj.creator_user.display_name }} has been cancelled due to repeated payment failure.
 
-If you wish to continue the membership, please update your payment details on the membership page.
+If you wish to continue the membership, you can follow the link below to update your payment details.
 
-View Memberships
-         →
+Update Payment   →
 
-{{ settings.BASE_URL }}{% url 'memberships'  %}
+{{ settings.BASE_URL }}{% url 'creator_page' obj.creator_user.username %}
 
 Fanmo
-Need help? Email us on hello@fanmo.in mailto:hello@fanmo.in
+Need help? Email us on help@fanmo.in mailto:help@fanmo.in
 
 Website https://fanmo.in •
 Twitter https://twitter.com/getfanmo •

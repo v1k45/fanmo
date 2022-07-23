@@ -1,6 +1,6 @@
 Hi {{ obj.fan_user.display_name }},
 Your membership with {{ obj.creator_user.display_name }} couldn't be renewed due to payment failure. We will
-      retry the renewal on the next working day, please make sure payments are enabled on your Card or UPI.
+      retry the renewal on the next working day, please make sure payments are enabled on your Card, UPI or E-Mandate.
 If the payment continues to fail, your membership will be cancelled and require a payment update from you. If you
       think this was a mistake, please contact help@fanmo.in.
 
@@ -10,7 +10,7 @@ View Memberships
 {{ settings.BASE_URL }}{% url 'memberships'  %}
 
 Fanmo
-Need help? Email us on hello@fanmo.in mailto:hello@fanmo.in
+Need help? Email us on help@fanmo.in mailto:help@fanmo.in
 
 Website https://fanmo.in •
 Twitter https://twitter.com/getfanmo •

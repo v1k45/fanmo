@@ -38,8 +38,10 @@ class EmailNotificationChannel(BaseNotificationChannel):
         return render_to_string(
             f"maizzle/{self.notification.action}_{suffix}.{format}",
             {
+                **self.context,
                 "notification": self.notification,
                 "obj": self.notification.obj,
+                "settings": {"BASE_URL": settings.BASE_URL},
                 **context,
             },
         ).strip()

@@ -7,7 +7,7 @@ View Post   →
 {{ settings.BASE_URL }}{% url 'post_detail' obj.slug obj.id %}
 
 Fanmo
-Need help? Email us on hello@fanmo.in mailto:hello@fanmo.in
+Need help? Email us on help@fanmo.in mailto:help@fanmo.in
 
 Website https://fanmo.in •
 Twitter https://twitter.com/getfanmo •

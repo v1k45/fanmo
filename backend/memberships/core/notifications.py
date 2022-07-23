@@ -10,12 +10,6 @@ def notify_new_membership(membership_id):
     from memberships.subscriptions.models import Membership
 
     membership = Membership.objects.get(id=membership_id)
-    # ensure that membership is in correct state.
-    # TODO: use a better task queue.
-    if not membership.is_active:
-        time.sleep(10)
-        membership.refresh_from_db()
-        assert membership.is_active, "Membership is not active. Cannot proceed."
 
     notify(
         recipient=membership.creator_user,
@@ -244,3 +238,21 @@ def notify_comment(comment_id):
             silent=True,
             channels=("email",),
         )
+
+
+def notify_password_change(user_id, user_ip):
+    from memberships.users.models import User
+
+    user = User.objects.get(id=user_id)
+    notify(
+        recipient=user,
+        obj=user,
+        action=NotificationType.PASSWORD_CHANGE,
+        silent=True,
+        channels=("email",),
+        extra_data={
+            "context": {
+                "user_ip": user_ip,
+            }
+        },
+    )

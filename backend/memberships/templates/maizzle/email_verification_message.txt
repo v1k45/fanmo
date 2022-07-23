@@ -11,7 +11,7 @@ Confirm email address
 {{ settings.BASE_URL }}{% url 'email_verification' user.email_base64 %}
 
 Fanmo
-Need help? Email us on hello@fanmo.in mailto:hello@fanmo.in
+Need help? Email us on help@fanmo.in mailto:help@fanmo.in
 
 Website https://fanmo.in •
 Twitter https://twitter.com/getfanmo •

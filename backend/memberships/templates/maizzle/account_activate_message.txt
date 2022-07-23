@@ -9,7 +9,7 @@ Activate account   →
 {{ settings.BASE_URL }}{% url 'password_reset' user.email_base64 %}?s=1
 
 Fanmo
-Need help? Email us on hello@fanmo.in mailto:hello@fanmo.in
+Need help? Email us on help@fanmo.in mailto:help@fanmo.in
 
 Website https://fanmo.in •
 Twitter https://twitter.com/getfanmo •

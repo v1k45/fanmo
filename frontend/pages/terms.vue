@@ -12,7 +12,7 @@
   <p>
     Please read these terms of use carefully. &ldquo;We,&rdquo;
     &ldquo;our&rdquo; or &ldquo;us&rdquo; refers to Fanmo. To contact us,
-    please email hello@fanmo.in.
+    please email help@fanmo.in.
   </p>
   <h3 class="font-bold text-xl mt-4">Your Account</h3>
   <p>
@@ -310,7 +310,7 @@
   <p>
     If you have any questions about this Agreement, please contact us by email:
   </p>
-  <p>hello@fanmo.in</p>
+  <p>help@fanmo.in</p>
 </fm-markdown-styled>
 </template>
 

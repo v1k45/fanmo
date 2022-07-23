@@ -12,7 +12,7 @@ View Donations
 {{ settings.BASE_URL }}{% url 'sent-donations'  %}
 
 Fanmo
-Need help? Email us on hello@fanmo.in mailto:hello@fanmo.in
+Need help? Email us on help@fanmo.in mailto:help@fanmo.in
 
 Website https://fanmo.in •
 Twitter https://twitter.com/getfanmo •
