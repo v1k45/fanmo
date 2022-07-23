@@ -168,6 +168,7 @@ structlog.configure(
 # ------------------------------------------------------------------------------
 SENTRY_DSN = env("SENTRY_DSN")
 SENTRY_LOG_LEVEL = env.int("DJANGO_SENTRY_LOG_LEVEL", logging.INFO)
+SENTRY_RELEASE = env("BUILD_VERSION")
 
 sentry_logging = LoggingIntegration(
     level=SENTRY_LOG_LEVEL,  # Capture info and above as breadcrumbs
@@ -184,6 +185,7 @@ sentry_sdk.init(
     environment=STAGE,
     traces_sample_rate=env.float("SENTRY_TRACES_SAMPLE_RATE", default=0.0),
     send_default_pii=True,
+    release=SENTRY_RELEASE,
 )
 
 # Your stuff...
