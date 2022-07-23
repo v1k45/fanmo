@@ -38,5 +38,6 @@ class SessionAuthentication(authentication.SessionAuthentication):
             return None
 
         user, token = value
-        prefetched_users = prefetch_related_objects([user], "memberships", "followings")
-        return (prefetched_users[0], token)
+        users_to_prefetch = [user]
+        prefetch_related_objects(users_to_prefetch, "memberships", "followings")
+        return (users_to_prefetch[0], token)
