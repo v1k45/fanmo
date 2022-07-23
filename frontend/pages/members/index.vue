@@ -370,7 +370,7 @@ export default {
       return !!(this.filter.search || this.filter.isActive !== null);
     }
   },
-  mounted() {
+  created() {
     this.loadMemberships();
     this.fetchStats();
   },

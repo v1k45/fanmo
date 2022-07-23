@@ -6,7 +6,7 @@
 export default {
   auth: false,
   layout: 'empty',
-  async mounted() {
+  async created() {
     await this.$auth.loginWith('facebook');
   }
 };

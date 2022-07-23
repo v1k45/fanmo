@@ -370,7 +370,7 @@ export default {
       return this.isSelfProfile || hasTiers;
     }
   },
-  mounted() {
+  created() {
     loadRazorpay();
   },
   methods: {

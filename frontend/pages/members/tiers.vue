@@ -262,8 +262,6 @@ export default {
   },
   created() {
     this.fetchTiers();
-  },
-  mounted() {
     if (this.$route.params.add === '1') {
       this.isAddTierVisible = true;
     }
