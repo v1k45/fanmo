@@ -56,6 +56,9 @@ export default {
       errors: {}
     };
   },
+  head: {
+    title: 'Donation Settings'
+  },
   computed: {
     donationData() {
       return this.isPaymentSuccessPreviewVisible ? { amount: random(50, 2000) } : { amount: 0 };

@@ -51,7 +51,7 @@ export default {
     };
   },
   head: {
-    title: 'Sign in to Fanmo'
+    title: 'Sign in'
   },
   methods: {
     async userLogin() {

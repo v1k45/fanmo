@@ -228,6 +228,9 @@ export default {
       }
     };
   },
+  head: {
+    title: 'Design System playground'
+  },
   computed: {
     sectionAll: {
       get() {

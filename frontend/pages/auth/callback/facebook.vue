@@ -6,6 +6,9 @@
 export default {
   auth: false,
   layout: 'empty',
+  head: {
+    title: 'Redirecting to Facebook'
+  },
   async created() {
     await this.$auth.loginWith('facebook');
   }

@@ -55,7 +55,7 @@ export default {
     };
   },
   head: {
-    title: 'Sign up for Fanmo'
+    title: 'Create an account'
   },
   methods: {
     async register() {

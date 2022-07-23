@@ -298,6 +298,9 @@ export default {
         }
       ]
     };
+  },
+  head: {
+    title: 'Pricing'
   }
 };
 </script>

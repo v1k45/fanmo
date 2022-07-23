@@ -40,7 +40,7 @@ export default {
     return initialState();
   },
   head: {
-    title: 'Forgot password'
+    title: 'Reset password'
   },
   methods: {
     async resetPassword() {

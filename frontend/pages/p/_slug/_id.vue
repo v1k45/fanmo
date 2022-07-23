@@ -187,6 +187,11 @@ export default {
     ]);
     this.loading = false;
   },
+  head() {
+    return {
+      title: this.post ? `${this.post.title} - ${this.post.author_user.display_name}` : ''
+    };
+  },
   computed: {
     ...mapGetters('posts', ['currentPost', 'isDeleted']),
 

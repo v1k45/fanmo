@@ -31,6 +31,9 @@ export default {
       waiting: true
     };
   },
+  head: {
+    title: 'Logging you in...'
+  },
   mounted() {
     // consider the authorization request as failed if the user is not redirected in 5 seconds.
     setTimeout(() => {

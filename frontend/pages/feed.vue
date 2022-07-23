@@ -136,7 +136,7 @@ export default {
     };
   },
   head: {
-    title: 'Home'
+    title: 'Feed'
   },
   computed: {
     ...mapGetters('posts', ['feedPosts']),

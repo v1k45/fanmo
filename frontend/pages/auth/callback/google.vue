@@ -8,6 +8,9 @@
 export default {
   auth: false,
   layout: 'empty',
+  head: {
+    title: 'Redirecting to Google'
+  },
   async mounted() {
     await this.$auth.loginWith('google');
   }
