@@ -14,3 +14,10 @@ MEDIA_URL = "/media/"
 # AUTH
 # ------------------------------------------------------------------------------
 AUTH_PASSWORD_VALIDATORS = []
+
+# SECURITY
+# ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/dev/ref/settings/#session-cookie-secure
+SESSION_COOKIE_SECURE = False
+# https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-secure
+CSRF_COOKIE_SECURE = False
