@@ -10,7 +10,10 @@ const allowedRoutes = {
 };
 
 export default function(ctx) {
-  const { $auth, route, next } = ctx;
+  const { $auth, route, store, next } = ctx;
+
+  store.commit('ui/setCurrentPage', null);
+
   if (!$auth.loggedIn || !$auth.user) return;
 
   // if authentication is triggered by express checkout, let the parent tab know.
