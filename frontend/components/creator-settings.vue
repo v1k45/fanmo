@@ -301,8 +301,10 @@ export default {
 
       const { success, data } = await this.updateSelfUser(payload);
 
-      if (success) this.$toast.success('Your changes were saved successfully.');
-      else this.generalErrors = data;
+      if (success) {
+        this.$toast.success('Your changes were saved successfully.');
+        this.generalErrors = {};
+      } else this.generalErrors = data;
       this.isGeneralLoading = false;
     },
     async handlePasswordSubmit() {
