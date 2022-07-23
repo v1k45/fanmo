@@ -24,13 +24,14 @@
 
   # Serve static files if available
   root * /var/www/html
-  file_server
+  handle /media/* {
+    file_server
+  }
 
   # Fallback all requests to app server.
   reverse_proxy /api/* django:8000
   reverse_proxy /admin/* django:8000
   reverse_proxy /static/* django:8000
-  reverse_proxy /media/* django:8000
   reverse_proxy django:3000
 
   encode gzip
