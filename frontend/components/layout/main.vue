@@ -53,6 +53,31 @@
     </div>
   </header>
 
+  <!-- mobile optional top nav start -->
+  <header
+    v-if="$auth.loggedIn && currentPage && pages[currentPage]"
+    class="fm-layout__header z-20 py-2 shadow bg-white md:hidden">
+    <div class="container md:hidden h-full">
+      <div v-show="!isAltMobileNavVisible" class="flex justify-center items-center h-full animatecss animatecss-slideInDown" style="animation-duration: 100ms;">
+        <logo class="-ml-4 h-6"></logo>
+      </div>
+      <div v-show="isAltMobileNavVisible" class="flex items-center h-full animatecss animatecss-slideInUp" style="animation-duration: 100ms;">
+        <div class="rounded-xl bg-fm-primary h-9 w-9 flex justify-center items-center shrink-0">
+          <logo circle uncolored class="-ml-1 h-5 w-5 text-white"></logo>
+        </div>
+        <div class="ml-3 overflow-hidden">
+          <div class="font-bold leading-none truncate">
+            {{ (pages[currentPage].supporterTitle && !$auth.user.is_creator) ? pages[currentPage].supporterTitle : pages[currentPage].title }}
+          </div>
+          <div class="text-xs truncate mt-1">{{ pages[currentPage].description }}</div>
+        </div>
+      </div>
+    </div>
+  </header>
+  <!-- radar for visibility of the mobile top nav -->
+  <div v-intersect="handleIntersect" class="absolute top-[115px]"></div>
+  <!-- mobile optional top nav end -->
+
   <!-- onboarding banner start -->
   <fm-alert v-if="onboarding.isPending" :show-icon="false" class="fm-layout__banner !rounded-none z-[15]">
     <div class="sm:container flex items-center relative text-sm sm:text-base">
@@ -118,7 +143,7 @@ export default {
     };
   },
   computed: {
-    ...mapState('ui', ['showGlobalLoader']),
+    ...mapState('ui', ['showGlobalLoader', 'pages', 'currentPage']),
 
     /* eslint-disable camelcase */
     onboarding() {
@@ -151,6 +176,9 @@ export default {
     continueOnboarding() {
       skipOnboarding.unset(this.$auth.user.username);
       location.reload();
+    },
+    handleIntersect(_, __, isIntersecting) {
+      this.isAltMobileNavVisible = !isIntersecting;
     }
   }
 };
