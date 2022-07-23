@@ -9,3 +9,8 @@ EMAIL_PORT = 1025
 # MEDIA
 # ------------------------------------------------------------------------------
 DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
+MEDIA_URL = "/media/"
+
+# AUTH
+# ------------------------------------------------------------------------------
+AUTH_PASSWORD_VALIDATORS = []

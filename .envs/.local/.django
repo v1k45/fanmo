@@ -1,12 +1,13 @@
 # General
 # ------------------------------------------------------------------------------
-DJANGO_ALLOWED_HOSTS=fanmo.in
+DJANGO_ALLOWED_HOSTS=fanmo.in,localhost,django
 USE_DOCKER=yes
 IPYTHONDIR=/app/.ipython
 DOMAIN_NAME=localhost
 STORAGE_BUCKET_NAME=fanmo
-DJANGO_ADMIN_URL=admin
+DJANGO_ADMIN_URL=/admin/
 DATABASE_URL=postgres://debug:debug@postgres:5432/memberships
+DJANGO_SETTINGS_MODULE=config.settings.local
 
 # Third party
 # ------------------------------------------------------------------------------
@@ -28,10 +29,3 @@ SENTRY_DSN=FANMO_SECRET_CHANGE_ME
 # Redis
 # ------------------------------------------------------------------------------
 REDIS_URL=redis://redis:6379/0
-
-# Celery
-# ------------------------------------------------------------------------------
-
-# Flower
-CELERY_FLOWER_USER=debug
-CELERY_FLOWER_PASSWORD=debug
