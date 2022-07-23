@@ -10,9 +10,6 @@ SECRET_KEY = env(
     "DJANGO_SECRET_KEY",
     default="dtRvZY5MprTYDIAf5S5IGtnjfVhPbaUJxRe362k34CQ8qR7umLD8ySrgfYm2pASR",
 )
-HASHID_FIELD_SALT = env(
-    "HASHID_FIELD_SALT", default="946$pk^z&2ow-k2=sal&)f@p-0t0!_nz_js7*$xn$osnd3vids"
-)
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1", "django", env("DOMAIN_NAME")]
 
@@ -61,11 +58,6 @@ REST_FRAMEWORK["DEFAULT_AUTHENTICATION_CLASSES"] = (
     "memberships.utils.authentication.UsernameAuthentication",
 )
 
-# Celery
-# ------------------------------------------------------------------------------
-
-# http://docs.celeryproject.org/en/latest/userguide/configuration.html#task-eager-propagates
-CELERY_TASK_EAGER_PROPAGATES = True
 # Your stuff...
 # ------------------------------------------------------------------------------
 AUTH_PASSWORD_VALIDATORS = []

@@ -12,9 +12,6 @@ SECRET_KEY = env(
     "DJANGO_SECRET_KEY",
     default="uS4NKyRtwJqaYs3MHacspJIhiuYdnoQOghOUoUOv0bZh42kBnVC0xsKUa9AYOL0Z",
 )
-HASHID_FIELD_SALT = env(
-    "HASHID_FIELD_SALT", default="e^h6=azhukkwxqz&%d4vvq7o2_2w_&=o$rt4vx)zdx-d9pf&66"
-)
 # https://docs.djangoproject.com/en/dev/ref/settings/#test-runner
 TEST_RUNNER = "django.test.runner.DiscoverRunner"
 
