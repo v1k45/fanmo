@@ -39,9 +39,9 @@
   </header>
   <!-- sticky header end -->
 
-  <profile-above-the-tab v-intersect="handleIntersect" @add-post="addPost.isVisible = true;"></profile-above-the-tab>
+  <profile-above-the-tab ref="above-the-tab" v-intersect="handleIntersect" @add-post="addPost.isVisible = true;"></profile-above-the-tab>
 
-  <fm-tabs ref="tabs" v-model="activeTab" centered class="mt-8 md:mt-2 hide-tab-headers-on-phone" :class="{ 'min-h-[400px]': isLoading }">
+  <fm-tabs v-model="activeTab" centered class="mt-8 md:mt-2 hide-tab-headers-on-phone" :class="{ 'min-h-[400px]': isLoading }">
 
     <fm-tabs-pane :id="tabName.POSTS" lazy label="Feed" class="bg-gray-50 pb-10">
       <div class="container min-h-[300px]">
@@ -380,7 +380,7 @@ export default {
 
     gotoTab(tabId) {
       this.activeTab = tabId;
-      this.$refs.tabs.$el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      this.$refs['above-the-tab'].$el.scrollIntoView({ behavior: 'smooth', block: 'end' });
     },
 
     // logic is documented in createOrGetMembership
