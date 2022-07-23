@@ -114,7 +114,7 @@ export default {
   data() {
     return {
       isNavVisibleMobile: false,
-      currentYear: new Date().getFullYear()
+      isAltMobileNavVisible: false
     };
   },
   computed: {
