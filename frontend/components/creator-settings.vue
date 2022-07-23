@@ -30,7 +30,7 @@
 
         <fm-input
           v-model="form.general.username" uid="username" class="mt-6"
-          :placeholder="`${domainName}/${$auth.user.username}`"
+          :placeholder="`${$auth.user.username}`"
           description="Changing your username will invalidate all the shared profile links that use your old username. Old username will also become claimable by other creators. We recommend not changing your username too often.">
           <template #prepend>
             {{ domainName }}/
