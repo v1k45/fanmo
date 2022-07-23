@@ -155,5 +155,11 @@ export default {
         autoprefixer: {}
       }
     }
+  },
+
+  loadingIndicator: {
+    name: 'cube-grid',
+    color: '#626be9',
+    background: 'white'
   }
 };
