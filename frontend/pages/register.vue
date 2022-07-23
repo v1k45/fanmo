@@ -2,7 +2,7 @@
 <div>
   <h1 class="font-title font-bold text-4xl text-center">Sign up</h1>
 
-  <div class="mt-10 text-center">
+  <div class="mt-4 text-center">
     Already have an account? <nuxt-link to="/login" class="text-fm-primary">Sign in here</nuxt-link>.
   </div>
 

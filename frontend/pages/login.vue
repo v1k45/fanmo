@@ -1,7 +1,7 @@
 <template>
 <div>
   <h1 class="font-title font-bold text-4xl text-center">Sign in</h1>
-  <div class="mt-10 text-center">
+  <div class="mt-4 text-center">
     Don't have an account? <nuxt-link to="/register" class="text-fm-primary">Register here</nuxt-link>.
   </div>
 
