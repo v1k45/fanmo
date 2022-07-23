@@ -183,7 +183,7 @@ sentry_sdk.init(
     dsn=SENTRY_DSN,
     integrations=integrations,
     environment=STAGE,
-    traces_sample_rate=env.float("SENTRY_TRACES_SAMPLE_RATE", default=0.0),
+    traces_sample_rate=env.float("SENTRY_TRACES_SAMPLE_RATE", default=0.1),
     send_default_pii=True,
     release=SENTRY_RELEASE,
 )
