@@ -290,7 +290,7 @@ EMAIL_SUBJECT_PREFIX = env(
 # Django Admin URL.
 ADMIN_URL = "admin/"
 # https://docs.djangoproject.com/en/dev/ref/settings/#admins
-ADMINS = [("""Vikas""", "vikas@example.com")]
+ADMINS = [("Vikas", "vikas@fanmo.in")]
 # https://docs.djangoproject.com/en/dev/ref/settings/#managers
 MANAGERS = ADMINS
 
