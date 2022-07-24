@@ -9,7 +9,7 @@
 
       <fm-input v-model="form.code" uid="code" label="OTP" type="otp" block required autofocus></fm-input>
 
-      <div class="text-right mt-4 text-sm">
+      <div class="text-right my-4 text-sm">
         Don't have one?
         <fm-button type="link" class="mr-auto" @click="sendOTP">Get a password reset code</fm-button>
       </div>
