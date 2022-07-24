@@ -17,6 +17,7 @@ services:
       - redis
     volumes:
       - ./backend:/app:z
+      - ./frontend/dist:/var/www/html
     env_file:
       - ./.envs/.local/.django
       - ./.envs/.local/.postgres

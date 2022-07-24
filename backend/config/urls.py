@@ -5,9 +5,7 @@ from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import include, path
 from django.views import defaults as default_views
 from django.views.generic import TemplateView
-
-
-index_view = TemplateView.as_view(template_name="pages/home.html")
+from fanmo.core.views import index_view, page_view, post_view
 
 
 urlpatterns = [
@@ -46,8 +44,8 @@ urlpatterns = [
     path("earnings", index_view, name="earnings"),
     path("settings", index_view, name="settings"),
     # posts
-    path("p/<post_slug>/<post_id>/", index_view, name="post_detail"),
-    path("<username>", index_view, name="creator_page"),
+    path("p/<post_slug>/<post_id>/", post_view, name="post_detail"),
+    path("<username>", page_view, name="creator_page"),
     # API
     path("api/", include("config.api_router")),
     # Your stuff: custom urls includes go here

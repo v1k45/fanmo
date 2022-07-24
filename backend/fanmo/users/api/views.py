@@ -63,7 +63,7 @@ class UserViewSet(ReadOnlyModelViewSet):
         user.unfollow(self.request.user)
         self._refresh_user()
         return self.retrieve(request, *args, **kwargs)
-    
+
     def _refresh_user(self):
         """
         is_following stays outdated because Authentication backend caches followings and memberships.

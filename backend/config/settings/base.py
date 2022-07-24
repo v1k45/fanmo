@@ -171,6 +171,8 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "django_structlog.middlewares.RequestMiddleware",
 ]
+WHITENOISE_ROOT = "/var/www/html"
+WHITENOISE_INDEX_FILE = True
 
 # CACHES
 # ------------------------------------------------------------------------------
