@@ -1,4 +1,4 @@
-from decimal import Decimal
+import structlog
 
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
@@ -8,7 +8,6 @@ from django.db import models
 from django.utils import timezone
 from django_fsm import FSMField, can_proceed, transition
 from djmoney.models.fields import MoneyField
-from moneyed import INR, Money
 from simple_history.models import HistoricalRecords
 from versatileimagefield.fields import VersatileImageField
 
@@ -25,6 +24,9 @@ from fanmo.payments.models import Payment, Payout
 from fanmo.subscriptions.querysets import SubscriptionQuerySet
 from fanmo.utils import razorpay_client
 from fanmo.utils.models import BaseModel, IPAddressHistoricalModel
+
+
+logger = structlog.get_logger(__name__)
 
 
 class Tier(BaseModel):
@@ -96,8 +98,8 @@ class Membership(BaseModel):
         return f"{self.fan_user} -> {self.creator_user} ({self.tier})"
 
     def start(self, tier, period):
+        logger.info("membership_start", membership_id=self.id, tier_id=tier.id, period=period)
         plan = Plan.for_tier(tier, period)
-
         subscription = Subscription.objects.create(
             plan=plan,
             membership=self,
@@ -111,6 +113,7 @@ class Membership(BaseModel):
 
         self.scheduled_subscription = subscription
         self.save()
+        logger.info("membership_end", membership_id=self.id, tier_id=tier.id, period=period)
 
     def giveaway(self, tier, period):
         # TODO: Send different email for giveaway
@@ -261,11 +264,14 @@ class Plan(BaseModel):
 
     @classmethod
     def for_tier(cls, tier, period, interval=1, is_giveaway=False):
+        logger.info("plan_generation_start", tier_id=tier.id, period=period, is_giveaway=is_giveaway)
+
         existing_plan = cls.objects.filter(
             tier=tier, amount=tier.amount, period=period, interval=interval
         ).first()
 
         if existing_plan:
+            logger.info("existing_plan_found", plan_id=existing_plan.id, tier_id=tier.id, period=period, is_giveaway=is_giveaway)
             return existing_plan
 
         # todo - cleanup orpahed plans?
@@ -280,6 +286,7 @@ class Plan(BaseModel):
         if not is_giveaway:
             plan.create_external()
 
+        logger.info("plan_generation_end", tier_id=tier.id, period=period, is_giveaway=is_giveaway)
         return plan
 
     def subscribe(self, fan_user):
@@ -306,6 +313,7 @@ class Plan(BaseModel):
         return subscription
 
     def create_external(self):
+        logger.info("external_plan_create_start", plan_id=self.id)
         external_plan = razorpay_client.plan.create(
             {
                 "period": self.period,
@@ -320,6 +328,7 @@ class Plan(BaseModel):
         )
         self.external_id = external_plan["id"]
         self.save()
+        logger.info("external_plan_create_end", plan_id=self.id)
 
 
 class Subscription(BaseModel):
@@ -375,6 +384,7 @@ class Subscription(BaseModel):
     history = HistoricalRecords(bases=[IPAddressHistoricalModel])
 
     def create_external(self):
+        logger.info("external_subscription_create_start", subscription_id=self.id)
         subscription_data = {
             "plan_id": self.plan.external_id,
             "total_count": self.plan.get_term_count(),
@@ -387,6 +397,7 @@ class Subscription(BaseModel):
         external_subscription = razorpay_client.subscription.create(subscription_data)
         self.external_id = external_subscription["id"]
         self.save()
+        logger.info("external_subscription_create_end", subscription_id=self.id)
 
     def is_giveaway(self):
         return self.external_id == "giveaway"
