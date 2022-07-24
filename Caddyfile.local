@@ -28,11 +28,8 @@
     file_server
   }
 
-  # Fallback all requests to app server.
-  reverse_proxy /api/* django:8000
-  reverse_proxy /admin/* django:8000
-  reverse_proxy /static/* django:8000
-  reverse_proxy django:3000
+  # Send requests to app server.
+  reverse_proxy django:8000
 
   encode gzip
 }
