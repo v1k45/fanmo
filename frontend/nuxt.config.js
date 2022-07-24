@@ -27,6 +27,8 @@ export default {
       { name: 'viewport', content: 'height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0' },
       { name: 'description', content: 'Fanmo is the simplest way to offer memberships, accept donations and post member-exclusive content. Create your Fanmo page today, it takes less than 5 minutes to get started.', hid: 'description' },
       { name: 'keywords', content: 'fanmo, memberships, donations, patreon alternative, buymeacoffee alternative, india, creators, supporters, low cost', hid: 'keywords' },
+      // todo: use prod url or find out appropriate URL during build stage.
+      { property: 'og:image', content: 'https://dev.fanmo.in/ogimage.png', hid: 'og:image' },
       { name: 'format-detection', content: 'telephone=no' }
     ],
     link: []
