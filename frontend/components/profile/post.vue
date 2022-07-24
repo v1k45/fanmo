@@ -65,7 +65,9 @@
   <template v-if="post.content">
     <div v-if="post.content.text" class="post-body">
       <fm-read-more-height max-height="200" class="mt-4">
-        <fm-markdown-styled v-html="post.content.text"></fm-markdown-styled>
+        <fm-markdown-styled>
+          <div v-html="post.content.text"></div>
+        </fm-markdown-styled>
       </fm-read-more-height>
     </div>
 
