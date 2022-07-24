@@ -79,7 +79,7 @@ export default {
     redirect: {
       login: '/login',
       logout: '/',
-      callback: '/auth/callback',
+      callback: '/auth/callback/',
       home: '/auth/'
     },
     strategies: {
