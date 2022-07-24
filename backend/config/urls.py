@@ -57,7 +57,3 @@ handle500 = 'fanmo.core.views.handle_500'
 if settings.DEBUG:
     # Static file serving when using Gunicorn + Uvicorn for local web socket development
     urlpatterns += staticfiles_urlpatterns()
-    if "debug_toolbar" in settings.INSTALLED_APPS:
-        import debug_toolbar
-
-        urlpatterns = [path("__debug__/", include(debug_toolbar.urls))] + urlpatterns
