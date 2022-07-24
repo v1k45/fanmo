@@ -675,7 +675,6 @@ class TestNotificationSettings:
 
     @pytest.mark.parametrize("notification_type", NotificationType.values)
     def test_can_send_email_notification_all_allowed(self, user, notification_type):
-        print(notification_type)
         assert user.user_preferences.can_send_email_notification(notification_type)
 
     @pytest.mark.parametrize("notification_type", whitelisted_notification_types)

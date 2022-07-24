@@ -1,4 +1,4 @@
-## Deployements
+## Deployments
 
 ### How to publish a new release
 

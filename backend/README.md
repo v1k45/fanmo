@@ -8,7 +8,7 @@ docker-compose -f local.yml up
 
 ### How to read
 
-Start from `config/api_urls.py`
+Start from `config/api_router.py`
 
 ### How are settings managed?
 
