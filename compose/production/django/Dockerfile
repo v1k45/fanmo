@@ -105,6 +105,6 @@ RUN chown django:django ${APP_HOME}
 
 USER django
 
-EXPOSE 8000 3000
+EXPOSE 8000
 ENTRYPOINT ["/entrypoint"]
 CMD ["supervisord"]
