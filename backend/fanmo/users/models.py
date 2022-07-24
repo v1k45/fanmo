@@ -240,7 +240,7 @@ class CreatorActivity(BaseModel):
     message = models.TextField()
 
     membership = models.ForeignKey(
-        "subscriptions.Membership", on_delete=models.CASCADE, null=True, blank=True
+        "memberships.Membership", on_delete=models.CASCADE, null=True, blank=True
     )
     donation = models.ForeignKey(
         "donations.Donation", on_delete=models.CASCADE, null=True, blank=True

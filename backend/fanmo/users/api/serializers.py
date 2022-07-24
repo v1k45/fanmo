@@ -21,7 +21,7 @@ from rest_framework.exceptions import ErrorDetail
 
 from fanmo.core.notifications import notify_new_post, notify_password_change
 from fanmo.core.tasks import async_task
-from fanmo.subscriptions.models import Tier
+from fanmo.memberships.models import Tier
 from fanmo.users.models import (
     CreatorActivity,
     SocialLink,
@@ -540,8 +540,8 @@ class CreatorActivitySerializer(serializers.ModelSerializer):
 
     def get_fields(self):
         from fanmo.donations.api.serializers import DonationSerializer
+        from fanmo.memberships.api.serializers import MembershipPreviewSerializer
         from fanmo.posts.api.serializers import CommentPreviewSerializer
-        from fanmo.subscriptions.api.serializers import MembershipPreviewSerializer
 
         fields = super().get_fields()
         fields["membership"] = MembershipPreviewSerializer(read_only=True)

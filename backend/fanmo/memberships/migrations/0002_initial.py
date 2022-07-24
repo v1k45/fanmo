@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("subscriptions", "0001_initial"),
+        ("memberships", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
@@ -49,7 +49,7 @@ class Migration(migrations.Migration):
                 null=True,
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="subscriptions",
-                to="subscriptions.membership",
+                to="memberships.membership",
             ),
         ),
         migrations.AddField(
@@ -58,7 +58,7 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="subscriptions",
-                to="subscriptions.plan",
+                to="memberships.plan",
             ),
         ),
         migrations.AddField(
@@ -68,7 +68,7 @@ class Migration(migrations.Migration):
                 null=True,
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="plans",
-                to="subscriptions.tier",
+                to="memberships.tier",
             ),
         ),
         migrations.AddField(
@@ -78,7 +78,7 @@ class Migration(migrations.Migration):
                 null=True,
                 on_delete=django.db.models.deletion.SET_NULL,
                 related_name="+",
-                to="subscriptions.subscription",
+                to="memberships.subscription",
             ),
         ),
         migrations.AddField(
@@ -106,7 +106,7 @@ class Migration(migrations.Migration):
                 null=True,
                 on_delete=django.db.models.deletion.SET_NULL,
                 related_name="+",
-                to="subscriptions.subscription",
+                to="memberships.subscription",
             ),
         ),
         migrations.AddField(
@@ -116,7 +116,7 @@ class Migration(migrations.Migration):
                 null=True,
                 on_delete=django.db.models.deletion.SET_NULL,
                 related_name="memberships",
-                to="subscriptions.tier",
+                to="memberships.tier",
             ),
         ),
         migrations.AddField(
@@ -184,7 +184,7 @@ class Migration(migrations.Migration):
                 null=True,
                 on_delete=django.db.models.deletion.DO_NOTHING,
                 related_name="+",
-                to="subscriptions.membership",
+                to="memberships.membership",
             ),
         ),
         migrations.AddField(
@@ -196,7 +196,7 @@ class Migration(migrations.Migration):
                 null=True,
                 on_delete=django.db.models.deletion.DO_NOTHING,
                 related_name="+",
-                to="subscriptions.plan",
+                to="memberships.plan",
             ),
         ),
         migrations.AddField(
@@ -208,7 +208,7 @@ class Migration(migrations.Migration):
                 null=True,
                 on_delete=django.db.models.deletion.DO_NOTHING,
                 related_name="+",
-                to="subscriptions.subscription",
+                to="memberships.subscription",
             ),
         ),
         migrations.AddField(
@@ -254,7 +254,7 @@ class Migration(migrations.Migration):
                 null=True,
                 on_delete=django.db.models.deletion.DO_NOTHING,
                 related_name="+",
-                to="subscriptions.subscription",
+                to="memberships.subscription",
             ),
         ),
         migrations.AddField(
@@ -266,7 +266,7 @@ class Migration(migrations.Migration):
                 null=True,
                 on_delete=django.db.models.deletion.DO_NOTHING,
                 related_name="+",
-                to="subscriptions.tier",
+                to="memberships.tier",
             ),
         ),
         migrations.AddConstraint(

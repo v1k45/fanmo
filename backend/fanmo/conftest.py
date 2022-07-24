@@ -9,15 +9,15 @@ from rest_framework.test import APIClient
 from fanmo.analytics.utils import register_metrics
 from fanmo.core.tasks import register_scheduled_tasks
 from fanmo.donations.models import Donation
-from fanmo.payments.models import BankAccount
-from fanmo.payments.tests.factories import BankAccountFactory
-from fanmo.subscriptions.models import Membership, Subscription
-from fanmo.subscriptions.tests.factories import (
+from fanmo.memberships.models import Membership, Subscription
+from fanmo.memberships.tests.factories import (
     MembershipFactory,
     PlanFactory,
     SubscriptionFactory,
     TierFactory,
 )
+from fanmo.payments.models import BankAccount
+from fanmo.payments.tests.factories import BankAccountFactory
 from fanmo.users.models import User
 from fanmo.users.tests.factories import UserFactory
 

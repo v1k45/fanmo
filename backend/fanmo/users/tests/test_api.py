@@ -672,6 +672,7 @@ class TestNotificationSettings:
     all_notification_types = [*NotificationType.values]
     whitelisted_notification_types = all_notification_types
     whitelisted_notification_types.remove(NotificationType.PASSWORD_CHANGE)
+    whitelisted_notification_types.remove(NotificationType.CREATOR_APPROVED)
 
     @pytest.mark.parametrize("notification_type", NotificationType.values)
     def test_can_send_email_notification_all_allowed(self, user, notification_type):

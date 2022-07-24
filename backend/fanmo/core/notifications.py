@@ -7,7 +7,7 @@ from fanmo.core.models import NotificationType
 
 
 def notify_new_membership(membership_id):
-    from fanmo.subscriptions.models import Membership
+    from fanmo.memberships.models import Membership
 
     membership = Membership.objects.get(id=membership_id)
 
@@ -32,7 +32,7 @@ def notify_new_membership(membership_id):
 
 
 def notify_membership_renewed(membership_id):
-    from fanmo.subscriptions.models import Membership
+    from fanmo.memberships.models import Membership
 
     membership = Membership.objects.get(id=membership_id)
 
@@ -57,7 +57,7 @@ def notify_membership_renewed(membership_id):
 
 
 def notify_membership_change(membership_id):
-    from fanmo.subscriptions.models import Membership
+    from fanmo.memberships.models import Membership
 
     membership = Membership.objects.get(id=membership_id)
     old_tier = membership.tier
@@ -90,7 +90,7 @@ def notify_membership_change(membership_id):
 
 
 def notify_membership_stop(membership_id):
-    from fanmo.subscriptions.models import Membership
+    from fanmo.memberships.models import Membership
 
     membership = Membership.objects.get(id=membership_id)
 
@@ -115,7 +115,7 @@ def notify_membership_stop(membership_id):
 
 
 def notify_membership_pending(membership_id):
-    from fanmo.subscriptions.models import Membership
+    from fanmo.memberships.models import Membership
 
     membership = Membership.objects.get(id=membership_id)
 
@@ -140,7 +140,7 @@ def notify_membership_pending(membership_id):
 
 
 def notify_membership_halted(membership_id):
-    from fanmo.subscriptions.models import Membership
+    from fanmo.memberships.models import Membership
 
     membership = Membership.objects.get(id=membership_id)
     notify(

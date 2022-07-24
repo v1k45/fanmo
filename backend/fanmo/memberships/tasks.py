@@ -3,7 +3,7 @@ from django_fsm import can_proceed
 
 from fanmo.analytics.tasks import refresh_stats
 from fanmo.core.tasks import async_task
-from fanmo.subscriptions.models import Membership, Subscription
+from fanmo.memberships.models import Membership, Subscription
 from fanmo.users.models import User
 
 

@@ -5,10 +5,10 @@ from dateutil.relativedelta import relativedelta
 from django.utils import timezone
 from moneyed import INR, Money
 
+from fanmo.memberships.models import Membership, Plan, Subscription
+from fanmo.memberships.tests.factories import TierFactory
 from fanmo.payments.models import Payment
 from fanmo.payments.tests.factories import BankAccountFactory
-from fanmo.subscriptions.models import Membership, Plan, Subscription
-from fanmo.subscriptions.tests.factories import TierFactory
 from fanmo.users.models import User
 from fanmo.users.tests.factories import UserFactory
 
@@ -152,11 +152,11 @@ class TestMembershipFlow:
 
     def test_create_anonymous(self, creator_user, api_client, mocker):
         rzp_plan_mock = mocker.patch(
-            "fanmo.subscriptions.models.razorpay_client.plan.create",
+            "fanmo.memberships.models.razorpay_client.plan.create",
             return_value={"id": "plan_123"},
         )
         rzp_sub_mock = mocker.patch(
-            "fanmo.subscriptions.models.razorpay_client.subscription.create",
+            "fanmo.memberships.models.razorpay_client.subscription.create",
             return_value={"id": "sub_123"},
         )
         mocker.patch(
@@ -229,11 +229,11 @@ class TestMembershipFlow:
 
     def test_create(self, creator_user, user, api_client, mocker):
         rzp_plan_mock = mocker.patch(
-            "fanmo.subscriptions.models.razorpay_client.plan.create",
+            "fanmo.memberships.models.razorpay_client.plan.create",
             return_value={"id": "plan_123"},
         )
         rzp_sub_mock = mocker.patch(
-            "fanmo.subscriptions.models.razorpay_client.subscription.create",
+            "fanmo.memberships.models.razorpay_client.subscription.create",
             return_value={"id": "sub_123"},
         )
 
@@ -299,7 +299,7 @@ class TestMembershipFlow:
 
     def test_cancel(self, api_client, active_membership, user, mocker):
         rzp_cancel_mock = mocker.patch(
-            "fanmo.subscriptions.models.razorpay_client.subscription.cancel",
+            "fanmo.memberships.models.razorpay_client.subscription.cancel",
         )
 
         api_client.force_authenticate(user)
@@ -332,7 +332,7 @@ class TestMembershipFlow:
     ):
         api_client.force_authenticate(user)
         mocker.patch(
-            "fanmo.subscriptions.models.razorpay_client.subscription.cancel",
+            "fanmo.memberships.models.razorpay_client.subscription.cancel",
         )
 
         active_membership.active_subscription.schedule_to_cancel()
@@ -354,11 +354,11 @@ class TestMembershipFlow:
 
     def test_update(self, api_client, active_membership, mocker):
         rzp_plan_mock = mocker.patch(
-            "fanmo.subscriptions.models.razorpay_client.plan.create",
+            "fanmo.memberships.models.razorpay_client.plan.create",
             return_value={"id": "plan_456"},
         )
         rzp_sub_mock = mocker.patch(
-            "fanmo.subscriptions.models.razorpay_client.subscription.patch_url",
+            "fanmo.memberships.models.razorpay_client.subscription.patch_url",
             return_value={"id": "sub_456"},
         )
 
@@ -417,11 +417,11 @@ class TestMembershipFlow:
         self, api_client, active_membership, mocker
     ):
         mocker.patch(
-            "fanmo.subscriptions.models.razorpay_client.plan.create",
+            "fanmo.memberships.models.razorpay_client.plan.create",
             return_value={"id": "plan_456"},
         )
         mocker.patch(
-            "fanmo.subscriptions.models.razorpay_client.subscription.patch_url",
+            "fanmo.memberships.models.razorpay_client.subscription.patch_url",
             return_value={"id": "sub_456"},
         )
 
@@ -461,11 +461,11 @@ class TestMembershipFlow:
 
     def test_update_upi_membership(self, api_client, active_membership, mocker):
         rzp_plan_mock = mocker.patch(
-            "fanmo.subscriptions.models.razorpay_client.plan.create",
+            "fanmo.memberships.models.razorpay_client.plan.create",
             return_value={"id": "plan_456"},
         )
         rzp_sub_mock = mocker.patch(
-            "fanmo.subscriptions.models.razorpay_client.subscription.create",
+            "fanmo.memberships.models.razorpay_client.subscription.create",
             return_value={"id": "sub_456"},
         )
 

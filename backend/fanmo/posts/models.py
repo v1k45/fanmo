@@ -98,7 +98,7 @@ class Post(BaseModel):
     visibility = models.CharField(
         max_length=16, choices=Visiblity.choices, default=Visiblity.PUBLIC
     )
-    allowed_tiers = models.ManyToManyField("subscriptions.Tier")
+    allowed_tiers = models.ManyToManyField("memberships.Tier")
 
     is_published = models.BooleanField(default=True)
 

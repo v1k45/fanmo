@@ -9,17 +9,17 @@ from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.response import Response
 
-from fanmo.payments.models import Payment
-from fanmo.subscriptions.api.filters import MembershipFilter
-from fanmo.subscriptions.api.serializers import (
+from fanmo.memberships.api.filters import MembershipFilter
+from fanmo.memberships.api.serializers import (
     MembershipGiveawaySerializer,
     MembershipSerializer,
     MemebershipStatsSerializer,
     SubscriptionSerializer,
     TierSerializer,
 )
-from fanmo.subscriptions.exports import MembershipExportResource
-from fanmo.subscriptions.models import Membership, Subscription
+from fanmo.memberships.exports import MembershipExportResource
+from fanmo.memberships.models import Membership, Subscription
+from fanmo.payments.models import Payment
 from fanmo.users.api.permissions import IsCreator
 from fanmo.utils.throttling import Throttle
 

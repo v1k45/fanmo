@@ -8,9 +8,9 @@ from moneyed import Money, get_currency
 
 from fanmo.analytics.tasks import refresh_stats
 from fanmo.donations.models import Donation
+from fanmo.memberships.models import Subscription
+from fanmo.memberships.tasks import refresh_membership
 from fanmo.payments.models import Payment, Payout
-from fanmo.subscriptions.models import Subscription
-from fanmo.subscriptions.tasks import refresh_membership
 from fanmo.utils import razorpay_client
 from fanmo.webhooks.models import WebhookMessage
 

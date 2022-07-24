@@ -4,8 +4,8 @@ import pytest
 from dateutil.relativedelta import relativedelta
 
 from fanmo.conftest import active_membership
-from fanmo.subscriptions.models import Subscription
-from fanmo.subscriptions.tasks import refresh_membership
+from fanmo.memberships.models import Subscription
+from fanmo.memberships.tasks import refresh_membership
 
 pytestmark = pytest.mark.django_db
 
@@ -56,7 +56,7 @@ class TestMembershipTasks:
         self, membership_with_scheduled_change, time_machine, mocker
     ):
         mocker.patch(
-            "fanmo.subscriptions.models.razorpay_client.subscription.cancel",
+            "fanmo.memberships.models.razorpay_client.subscription.cancel",
         )
 
         active_membership = membership_with_scheduled_change
@@ -87,7 +87,7 @@ class TestMembershipTasks:
         self, membership_with_scheduled_change, time_machine, mocker
     ):
         mocker.patch(
-            "fanmo.subscriptions.models.razorpay_client.subscription.cancel",
+            "fanmo.memberships.models.razorpay_client.subscription.cancel",
         )
 
         active_membership = membership_with_scheduled_change

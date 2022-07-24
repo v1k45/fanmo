@@ -1,6 +1,6 @@
 from import_export import resources
 
-from fanmo.subscriptions.models import Membership
+from fanmo.memberships.models import Membership
 from fanmo.utils.resources import ModelResource
 
 

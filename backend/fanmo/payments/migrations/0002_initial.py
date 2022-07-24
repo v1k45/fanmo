@@ -10,7 +10,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("subscriptions", "0001_initial"),
+        ("memberships", "0001_initial"),
         ("donations", "0002_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ("payments", "0001_initial"),
@@ -56,7 +56,7 @@ class Migration(migrations.Migration):
                 null=True,
                 on_delete=django.db.models.deletion.CASCADE,
                 related_name="payments",
-                to="subscriptions.subscription",
+                to="memberships.subscription",
             ),
         ),
         migrations.AddField(

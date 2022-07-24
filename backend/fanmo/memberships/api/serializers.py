@@ -6,7 +6,7 @@ from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from fanmo.core.serializers import PaymentIntentSerializerMixin
-from fanmo.subscriptions.models import Membership, Plan, Subscription, Tier
+from fanmo.memberships.models import Membership, Plan, Subscription, Tier
 from fanmo.users.api.serializers import FanUserPreviewSerializer, UserPreviewSerializer
 from fanmo.users.models import User
 from fanmo.utils.fields import VersatileImageFieldSerializer

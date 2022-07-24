@@ -4,8 +4,8 @@ import pytest
 from micawber.exceptions import ProviderException
 from moneyed import INR, Money
 
+from fanmo.memberships.tests.factories import MembershipFactory, TierFactory
 from fanmo.posts.models import Comment, Content, Post, Reaction
-from fanmo.subscriptions.tests.factories import MembershipFactory, TierFactory
 
 pytestmark = pytest.mark.django_db
 

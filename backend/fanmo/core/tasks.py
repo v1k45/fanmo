@@ -11,7 +11,7 @@ def register_scheduled_tasks():
         {
             "name": "refresh_all_memberships",
             "defaults": {
-                "func": "fanmo.subscriptions.tasks.refresh_all_memberships",
+                "func": "fanmo.memberships.tasks.refresh_all_memberships",
                 "schedule_type": Schedule.DAILY,
             },
         },

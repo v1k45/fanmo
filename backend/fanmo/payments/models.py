@@ -30,7 +30,7 @@ class Payment(BaseModel):
         WALLET = "wallet"
 
     subscription = models.ForeignKey(
-        "subscriptions.Subscription", on_delete=models.CASCADE, null=True, blank=True
+        "memberships.Subscription", on_delete=models.CASCADE, null=True, blank=True
     )
     donation = models.ForeignKey(
         "donations.Donation", on_delete=models.CASCADE, null=True, blank=True
@@ -66,7 +66,7 @@ class Payment(BaseModel):
 
     @classmethod
     def authenticate_subscription(cls, payload):
-        from fanmo.subscriptions.models import Subscription
+        from fanmo.memberships.models import Subscription
 
         # only usable for "created" subscription
         razorpay_client.utility.verify_payment_signature(payload)

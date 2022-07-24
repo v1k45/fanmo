@@ -37,7 +37,7 @@ from fanmo.users.api.views import (
 )
 from fanmo.posts.api.views import CommentViewSet, PostViewSet
 from fanmo.analytics.api.views import AnalyticsAPIView
-from fanmo.subscriptions.api.views import (
+from fanmo.memberships.api.views import (
     MembershipViewSet,
     SubscriptionViewSet,
     TierViewSet,

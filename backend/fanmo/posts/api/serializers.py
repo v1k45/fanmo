@@ -3,9 +3,9 @@ from drf_extra_fields.fields import Base64FileField, Base64ImageField
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
+from fanmo.memberships.api.serializers import TierPreviewSerializer
+from fanmo.memberships.models import Tier
 from fanmo.posts.models import Comment, Content, ContentFile, Post, Reaction
-from fanmo.subscriptions.api.serializers import TierPreviewSerializer
-from fanmo.subscriptions.models import Tier
 from fanmo.users.api.serializers import PublicUserSerializer, UserPreviewSerializer
 from fanmo.utils.fields import FileField, VersatileImageFieldSerializer
 

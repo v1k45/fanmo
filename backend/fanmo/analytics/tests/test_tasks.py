@@ -9,15 +9,15 @@ from trackstats.models import Metric, Period
 
 from fanmo.analytics.models import StatisticByDateAndObject
 from fanmo.analytics.tasks import refresh_stats
-from fanmo.payments.models import Payment, Payout
-from fanmo.subscriptions.models import Membership, Plan
-from fanmo.subscriptions.tasks import refresh_creator_memberships, refresh_membership
-from fanmo.subscriptions.tests.factories import (
+from fanmo.memberships.models import Membership, Plan
+from fanmo.memberships.tasks import refresh_creator_memberships, refresh_membership
+from fanmo.memberships.tests.factories import (
     MembershipFactory,
     PlanFactory,
     SubscriptionFactory,
     TierFactory,
 )
+from fanmo.payments.models import Payment, Payout
 from fanmo.users.tests.factories import UserFactory
 
 pytestmark = pytest.mark.django_db
@@ -153,11 +153,11 @@ class TestRefreshStats:
 
     def test_refresh_membership_stats(self, creator_user, mocker, time_machine):
         rzp_plan_mock = mocker.patch(
-            "fanmo.subscriptions.models.razorpay_client.plan.create",
+            "fanmo.memberships.models.razorpay_client.plan.create",
             return_value={"id": "plan_456"},
         )
         rzp_sub_mock = mocker.patch(
-            "fanmo.subscriptions.models.razorpay_client.subscription.patch_url",
+            "fanmo.memberships.models.razorpay_client.subscription.patch_url",
             return_value={"id": "sub_456"},
         )
 

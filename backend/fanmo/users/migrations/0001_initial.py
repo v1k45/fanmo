@@ -18,7 +18,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("subscriptions", "0001_initial"),
+        ("memberships", "0001_initial"),
         ("posts", "0001_initial"),
         ("auth", "0012_alter_user_first_name_max_length"),
         ("donations", "0001_initial"),
@@ -468,7 +468,7 @@ class Migration(migrations.Migration):
                         null=True,
                         on_delete=django.db.models.deletion.CASCADE,
                         related_name="creator_activities",
-                        to="subscriptions.membership",
+                        to="memberships.membership",
                     ),
                 ),
             ],

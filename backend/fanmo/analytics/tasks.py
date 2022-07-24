@@ -1,8 +1,8 @@
 from trackstats.models import Metric, Period
 
 from fanmo.core.tasks import async_task
+from fanmo.memberships.models import Subscription
 from fanmo.payments.models import Payment, Payout
-from fanmo.subscriptions.models import Subscription
 
 from .trackers import MembershipCountTracker, PaymentAmountTracker, PayoutAmountTracker
 

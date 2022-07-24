@@ -7,7 +7,7 @@ pytestmark = pytest.mark.django_db
 def test_scheduled_tasks():
     assert list(Schedule.objects.values("func", "schedule_type")) == [
         {
-            "func": "fanmo.subscriptions.tasks.refresh_all_memberships",
+            "func": "fanmo.memberships.tasks.refresh_all_memberships",
             "schedule_type": Schedule.DAILY,
         },
         {

@@ -5,7 +5,7 @@ from factory import Faker, SubFactory, post_generation
 from factory.django import DjangoModelFactory
 from moneyed import Money
 
-from fanmo.subscriptions.models import Membership, Plan, Subscription, Tier
+from fanmo.memberships.models import Membership, Plan, Subscription, Tier
 
 
 class TierFactory(DjangoModelFactory):

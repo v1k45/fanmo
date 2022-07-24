@@ -4,9 +4,9 @@ from django.conf import settings
 from razorpay.errors import SignatureVerificationError
 
 from fanmo.donations.models import Donation
+from fanmo.memberships.models import Subscription
 from fanmo.payments.models import BankAccount, Payment
 from fanmo.payments.tests.factories import BankAccountFactory
-from fanmo.subscriptions.models import Subscription
 
 pytestmark = pytest.mark.django_db
 
@@ -163,7 +163,7 @@ class TestSubscriptionPaymentProcessingFlow:
             return_value=True,
         )
         rzp_cancel_mock = mocker.patch(
-            "fanmo.subscriptions.models.razorpay_client.subscription.cancel",
+            "fanmo.memberships.models.razorpay_client.subscription.cancel",
         )
         mocker.patch(
             "fanmo.payments.models.razorpay_client.payment.fetch",

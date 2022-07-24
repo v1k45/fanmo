@@ -13,7 +13,7 @@ from trackstats.models import Metric
 from fanmo.analytics.api.serializers import AnalyticsSerializer
 from fanmo.analytics.models import StatisticByDateAndObject
 from fanmo.donations.models import Donation
-from fanmo.subscriptions.models import Membership
+from fanmo.memberships.models import Membership
 from fanmo.users.api.permissions import IsCreator
 from fanmo.utils.helpers import datestamp
 from fanmo.utils.money import percent_change

@@ -4,9 +4,9 @@ from rest_framework import serializers
 
 from fanmo.donations.api.serializers import DonationSerializer
 from fanmo.donations.models import Donation
+from fanmo.memberships.api.serializers import SubscriptionSerializer
+from fanmo.memberships.models import Subscription
 from fanmo.payments.models import BankAccount, Payment, Payout
-from fanmo.subscriptions.api.serializers import SubscriptionSerializer
-from fanmo.subscriptions.models import Subscription
 from fanmo.users.api.serializers import FanUserPreviewSerializer, UserPreviewSerializer
 from fanmo.utils import razorpay_client
 

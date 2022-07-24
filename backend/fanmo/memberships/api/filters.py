@@ -1,6 +1,6 @@
 from django_filters import rest_framework as filters
 
-from fanmo.subscriptions.models import Membership
+from fanmo.memberships.models import Membership
 
 
 class MembershipFilter(filters.FilterSet):

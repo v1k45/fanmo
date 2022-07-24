@@ -1,5 +1,4 @@
 import structlog
-
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.contrib.postgres.fields import ArrayField
@@ -20,11 +19,10 @@ from fanmo.core.notifications import (
     notify_new_membership,
 )
 from fanmo.core.tasks import async_task
+from fanmo.memberships.querysets import SubscriptionQuerySet
 from fanmo.payments.models import Payment, Payout
-from fanmo.subscriptions.querysets import SubscriptionQuerySet
 from fanmo.utils import razorpay_client
 from fanmo.utils.models import BaseModel, IPAddressHistoricalModel
-
 
 logger = structlog.get_logger(__name__)
 
@@ -63,7 +61,7 @@ class Tier(BaseModel):
 
 
 class Membership(BaseModel):
-    tier = models.ForeignKey("subscriptions.Tier", on_delete=models.SET_NULL, null=True)
+    tier = models.ForeignKey("memberships.Tier", on_delete=models.SET_NULL, null=True)
     creator_user = models.ForeignKey(
         "users.User", related_name="members", on_delete=models.CASCADE
     )
@@ -72,13 +70,13 @@ class Membership(BaseModel):
     )
 
     active_subscription = models.OneToOneField(
-        "subscriptions.Subscription",
+        "memberships.Subscription",
         null=True,
         on_delete=models.SET_NULL,
         related_name="+",
     )
     scheduled_subscription = models.OneToOneField(
-        "subscriptions.Subscription",
+        "memberships.Subscription",
         null=True,
         on_delete=models.SET_NULL,
         related_name="+",
@@ -98,7 +96,9 @@ class Membership(BaseModel):
         return f"{self.fan_user} -> {self.creator_user} ({self.tier})"
 
     def start(self, tier, period):
-        logger.info("membership_start", membership_id=self.id, tier_id=tier.id, period=period)
+        logger.info(
+            "membership_start", membership_id=self.id, tier_id=tier.id, period=period
+        )
         plan = Plan.for_tier(tier, period)
         subscription = Subscription.objects.create(
             plan=plan,
@@ -113,7 +113,9 @@ class Membership(BaseModel):
 
         self.scheduled_subscription = subscription
         self.save()
-        logger.info("membership_end", membership_id=self.id, tier_id=tier.id, period=period)
+        logger.info(
+            "membership_end", membership_id=self.id, tier_id=tier.id, period=period
+        )
 
     def giveaway(self, tier, period):
         # TODO: Send different email for giveaway
@@ -231,7 +233,7 @@ class Plan(BaseModel):
         YEARLY = "yearly"
 
     name = models.CharField(max_length=255)
-    tier = models.ForeignKey("subscriptions.Tier", on_delete=models.CASCADE, null=True)
+    tier = models.ForeignKey("memberships.Tier", on_delete=models.CASCADE, null=True)
 
     period = models.CharField(
         max_length=16, choices=Period.choices, default=Period.MONTHLY
@@ -264,14 +266,25 @@ class Plan(BaseModel):
 
     @classmethod
     def for_tier(cls, tier, period, interval=1, is_giveaway=False):
-        logger.info("plan_generation_start", tier_id=tier.id, period=period, is_giveaway=is_giveaway)
+        logger.info(
+            "plan_generation_start",
+            tier_id=tier.id,
+            period=period,
+            is_giveaway=is_giveaway,
+        )
 
         existing_plan = cls.objects.filter(
             tier=tier, amount=tier.amount, period=period, interval=interval
         ).first()
 
         if existing_plan:
-            logger.info("existing_plan_found", plan_id=existing_plan.id, tier_id=tier.id, period=period, is_giveaway=is_giveaway)
+            logger.info(
+                "existing_plan_found",
+                plan_id=existing_plan.id,
+                tier_id=tier.id,
+                period=period,
+                is_giveaway=is_giveaway,
+            )
             return existing_plan
 
         # todo - cleanup orpahed plans?
@@ -286,7 +299,12 @@ class Plan(BaseModel):
         if not is_giveaway:
             plan.create_external()
 
-        logger.info("plan_generation_end", tier_id=tier.id, period=period, is_giveaway=is_giveaway)
+        logger.info(
+            "plan_generation_end",
+            tier_id=tier.id,
+            period=period,
+            is_giveaway=is_giveaway,
+        )
         return plan
 
     def subscribe(self, fan_user):
@@ -357,7 +375,7 @@ class Subscription(BaseModel):
         UPI = "upi"
         WALLET = "wallet"
 
-    plan = models.ForeignKey("subscriptions.Plan", on_delete=models.CASCADE)
+    plan = models.ForeignKey("memberships.Plan", on_delete=models.CASCADE)
     status = FSMField(default=Status.CREATED)
     external_id = models.CharField(max_length=255)
 
@@ -372,7 +390,7 @@ class Subscription(BaseModel):
     is_active = models.BooleanField(default=False)
 
     membership = models.ForeignKey(
-        "subscriptions.Membership", on_delete=models.CASCADE, null=True
+        "memberships.Membership", on_delete=models.CASCADE, null=True
     )
 
     creator_user = models.ForeignKey(

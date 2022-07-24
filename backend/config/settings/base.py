@@ -99,7 +99,7 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "fanmo.users.apps.UsersConfig",
-    "fanmo.subscriptions.apps.SubscriptionsConfig",
+    "fanmo.memberships.apps.MembershipsConfig",
     "fanmo.posts.apps.PostsConfig",
     "fanmo.payments.apps.PaymentsConfig",
     "fanmo.core.apps.CoreConfig",

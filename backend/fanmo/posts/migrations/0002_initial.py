@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ("subscriptions", "0001_initial"),
+        ("memberships", "0001_initial"),
         ("posts", "0001_initial"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
@@ -51,7 +51,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name="post",
             name="allowed_tiers",
-            field=models.ManyToManyField(related_name="posts", to="subscriptions.Tier"),
+            field=models.ManyToManyField(related_name="posts", to="memberships.Tier"),
         ),
         migrations.AddField(
             model_name="post",
