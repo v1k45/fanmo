@@ -26,6 +26,7 @@ class NotificationType(models.TextChoices):
 
     MARKETING = "marketing"
     PASSWORD_CHANGE = "password_change"
+    CREATOR_APPROVED = "creator_approved"
 
 
 POST_NOTIFICATIONS = [NotificationType.NEW_POST]

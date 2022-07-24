@@ -256,3 +256,16 @@ def notify_password_change(user_id, user_ip):
             }
         },
     )
+
+
+def notify_creator_approved(user_id):
+    from fanmo.users.models import User
+
+    user = User.objects.get(id=user_id)
+    notify(
+        recipient=user,
+        obj=user,
+        action=NotificationType.CREATOR_APPROVED,
+        silent=True,
+        channels=("email",),
+    )
