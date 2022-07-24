@@ -16,7 +16,7 @@
             <fm-tabs-pane id="text" label="Text" lazy>
               <template v-if="contentType === 'text'">
                 <fm-input v-model="form.title" uid="title" type="text" placeholder="Title" input-class="font-bold !text-lg" required></fm-input>
-                <fm-input v-model="form.content.text" uid="content.text" type="rich" preset="advanced" :props="{ minHeight: '200px' }"></fm-input>
+                <fm-input-rich v-model="form.content.text" uid="content.text" preset="advanced" :props="{ minHeight: '200px' }"></fm-input-rich>
               </template>
             </fm-tabs-pane>
             <!-- text only post end -->
@@ -157,6 +157,7 @@ import dayjs from 'dayjs';
 import get from 'lodash/get';
 import cloneDeep from 'lodash/cloneDeep';
 import { mapActions } from 'vuex';
+import FmInputRich from '~/components/fm/input/rich.vue';
 
 const contentPreset = () => ({
   text: {
@@ -176,6 +177,9 @@ const contentPreset = () => ({
 });
 
 export default {
+  components: {
+    FmInputRich
+  },
   props: {
     value: { type: Boolean, default: false }
   },

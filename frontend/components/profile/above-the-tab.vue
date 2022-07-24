@@ -137,7 +137,7 @@
     <fm-form id="editProfileForm" :errors="editFormErrors" @submit.prevent="saveEditForm">
       <fm-input v-model="editForm.name" uid="name" type="text" label="Page name" autofocus required></fm-input>
       <fm-input v-model="editForm.one_liner" uid="one_liner" type="text" label="What are you creating?" placeholder="is creating space documentaries"></fm-input>
-      <fm-input v-model="editForm.about" uid="about" type="rich" label="About"></fm-input>
+      <fm-input-rich v-model="editForm.about" uid="about" label="About"></fm-input-rich>
 
       <label class="block mt-8">Social links <small>(leave empty to hide)</small></label>
 
@@ -193,13 +193,15 @@ import {
   Globe as IconGlobe
 } from 'lucide-vue';
 import get from 'lodash/get';
+import FmInputRich from '~/components/fm/input/rich.vue';
 
 export default {
   components: {
     IconCheck,
     IconPlus,
     IconCamera,
-    IconGlobe
+    IconGlobe,
+    FmInputRich
   },
   data() {
     const tabName = {
