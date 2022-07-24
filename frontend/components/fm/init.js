@@ -11,7 +11,7 @@ import Dialog from './dialog';
 import Dropdown from './dropdown';
 import DropdownDivider from './dropdown/divider';
 import DropdownItem from './dropdown/item';
-import Editor from './editor';
+// import Editor from './editor'; too heavy! import explicitly where needed
 import Form from './form';
 import Input from './input';
 import Lazy from './lazy';
@@ -44,7 +44,7 @@ export default (context, inject, ...args) => {
   Vue.component('FmDropdown', Dropdown);
   Vue.component('FmDropdownDivider', DropdownDivider);
   Vue.component('FmDropdownItem', DropdownItem);
-  Vue.component('FmEditor', Editor);
+  // Vue.component('FmEditor', Editor);
   Vue.component('FmForm', Form);
   Vue.component('FmInput', Input);
   Vue.component('FmLazy', Lazy);

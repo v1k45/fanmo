@@ -30,12 +30,6 @@
     </template>
     <!-- otp input end -->
 
-    <!-- rich input start -->
-    <template v-else-if="type === 'rich'">
-      <fm-editor ref="input" v-model="model" v-bind="props" :preset="preset" :class="inputClass"></fm-editor>
-    </template>
-    <!-- rich input end -->
-
     <!-- file input start -->
     <template v-else-if="type === 'file'">
       <fm-input-file ref="input" v-model="model" v-bind="{ ...$attrs, ...props }" :multiple="multiple" :class="inputClass"></fm-input-file>
@@ -146,9 +140,8 @@ export default {
     horizontal: { type: Boolean, default: false },
     block: { type: Boolean, default: false },
     size: { type: String, default: '' },
-    preset: { type: String, default: undefined }, // for fm-editor (type=rich)
     multiple: { type: Boolean, default: false }, // for file input
-    props: { type: Object, default: () => {} } // for any nested components like otp/editor
+    props: { type: Object, default: () => {} } // for any nested components like otp
   },
   data() {
     return {
