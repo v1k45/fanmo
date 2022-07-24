@@ -136,7 +136,10 @@ class Content(BaseModel):
         try:
             self.link_og = {"og": None, "page": None, "meta": None}
             metadata = metadata_parser.MetadataParser(
-                url=self.link, support_malformed=True, search_head_only=False
+                url=self.link,
+                support_malformed=True,
+                search_head_only=False,
+                requests_timeout=10,
             ).metadata
             if metadata.get("og"):
                 self.link_og["og"] = self._truncate_metadata(metadata["og"])
