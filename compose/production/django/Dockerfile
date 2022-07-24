@@ -67,12 +67,6 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && rm -rf /var/lib/apt/lists/*
 
-# Install nuxt-start
-RUN curl -fsSL https://deb.nodesource.com/setup_14.x | bash - && apt-get install -y nodejs
-RUN npm install --global yarn
-RUN yarn add nuxt-start 
-ENV PATH="$PATH:./node_modules/.bin"
-
 # tag version data
 ARG VERSION
 ARG BUILD_TIMESTAMP
@@ -100,15 +94,8 @@ COPY --chown=django:django ./compose/production/django/qcluster /qcluster
 RUN sed -i 's/\r$//g' /qcluster
 RUN chmod +x /qcluster
 
-COPY --chown=django:django ./compose/production/django/nuxt /nuxt
-RUN sed -i 's/\r$//g' /nuxt
-RUN chmod +x /nuxt
-
-# copy application code to WORKDIR
-COPY --chown=django:django ./frontend/nuxt.config.js ${APP_HOME}
 # copy nuxt generated files
-COPY --chown=django:django --from=node-build-stage /var/www/html /var/www/html/
-
+COPY --chown=django:django --from=node-build-stage /app/dist /var/www/html/
 COPY --chown=django:django ./backend ${APP_HOME}
 COPY --chown=django:django ./backend ${APP_HOME}
 COPY --chown=django:django ./supervisord.conf /etc/
