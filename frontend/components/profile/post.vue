@@ -64,7 +64,7 @@
 
   <template v-if="post.content">
     <div v-if="post.content.text" class="post-body">
-      <fm-read-more-height max-height="200" class="mt-4">
+      <fm-read-more-height :max-height="$route.name == 'p-slug-id' ? null : '200'" class="mt-4">
         <fm-markdown-styled>
           <div v-html="post.content.text"></div>
         </fm-markdown-styled>
