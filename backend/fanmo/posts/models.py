@@ -1,3 +1,4 @@
+import structlog
 import metadata_parser
 from django.core.cache import cache
 from django.db import models
@@ -10,6 +11,9 @@ from versatileimagefield.fields import VersatileImageField
 
 from fanmo.utils.helpers import slugify
 from fanmo.utils.models import BaseModel
+
+
+logger = structlog.get_logger(__name__)
 
 
 def annotate_post_permissions(object_list, fan_user):
@@ -131,7 +135,7 @@ class Content(BaseModel):
             oembed_providers = bootstrap_oembed(cache)
             self.link_embed = oembed_providers.request(self.link)
         except ProviderException:
-            pass
+            logger.exception("link_preview_embed_failed", link=self.link)
 
         try:
             self.link_og = {"og": None, "page": None, "meta": None}
@@ -149,7 +153,7 @@ class Content(BaseModel):
                 self.link_og["meta"] = self._truncate_metadata(metadata["meta"])
 
         except metadata_parser.NotParsable:
-            pass
+            logger.exception("link_preview_meta_failed", link=self.link)
 
         if commit:
             self.save()
