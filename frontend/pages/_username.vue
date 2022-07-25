@@ -339,7 +339,7 @@ export default {
     const routeData = (this.$route.params.data || {});
     if (routeData.intent === 'subscribe-through-post') {
       this.activeTab = this.tabName.TIERS;
-      this.handleSubscribeClick(routeData.tier);
+      await this.handleSubscribeClick(routeData.tier);
       this.setGlobalLoader(false);
     } else if (routeData.intent === 'preselect-tab') {
       this.activeTab = routeData.tab === this.tabName.TIERS && !this.shouldShowTiersTab ? this.tabName.POSTS : routeData.tab;
