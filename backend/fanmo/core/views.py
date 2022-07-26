@@ -62,28 +62,28 @@ def serve_index(title=None, description=None, status=200):
         response_text = replace_format(
             response_text,
             'name="twitter:title" content="%s" data-hid="twitter:title"',
-            description
+            suffixed_title,
         )
         response_text = replace_format(
             response_text,
             'property="og:title" content="%s" data-hid="og:title"',
-            description
+            suffixed_title,
         )
 
     if description:
         response_text = replace_format(
             response_text,
             'name="description" content="%s" data-hid="description"',
-            description
+            description,
         )
         response_text = replace_format(
             response_text,
             'name="twitter:description" content="%s" data-hid="twitter:description"',
-            description
+            description,
         )
         response_text = replace_format(
             response_text,
             'property="og:description" content="%s" data-hid="og:description"',
-            description
+            description,
         )
     return HttpResponse(response_text, "text/html", status=status)
