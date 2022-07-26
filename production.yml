@@ -1,51 +1,27 @@
-version: '3'
-
-volumes:
-  production_postgres_data: {}
+version: '3.9'
 
 services:
   django: &django
-    image: v1k45/fanmo:latest
-    depends_on:
-      - postgres
-      - redis
+    image: v1k45/fanmo:2022.07.1063
+    ports:
+      - "127.0.0.1:8000:8000"
     env_file:
       - ./.envs/.prod/.django
-      - ./.envs/.local/.postgres
-    command: /start
-
-  qcluster:
-    <<: *django
-    ports: []
-    command: /qcluster
-
-  nuxt:
-    <<: *django
-    ports: []
-    command: /nuxt
-
-  caddy:
-    image: "caddy:2.1.1"
-    restart: unless-stopped
-    depends_on:
-      - django
-      - nuxt
-    env_file: ./.envs/.local/.caddy
-    volumes:
-      - ./Caddyfile.local:/etc/caddy/Caddyfile
-      - ./caddy/data:/data
-      - ./caddy/config:/config
-      - ./build:/var/www/html
-    ports:
-      - "80:80"
-      - "443:443"
-
-  redis:
-    image: redis:6
-
-  postgres:
-    image: postgres:13.2
-    volumes:
-      - production_postgres_data:/var/lib/postgresql/data:Z
-    env_file:
-      - ./.envs/.local/.postgres
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/meta/"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      replicas: 2
+      update_config:
+        order: start-first
+        failure_action: rollback
+        delay: 10s
+      rollback_config:
+        parallelism: 0
+        order: stop-first
+      restart_policy:
+        condition: any
+        delay: 10s
+        max_attempts: 50
