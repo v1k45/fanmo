@@ -1,5 +1,5 @@
-import structlog
 import metadata_parser
+import structlog
 from django.core.cache import cache
 from django.db import models
 from django.template.defaultfilters import truncatewords
@@ -11,7 +11,6 @@ from versatileimagefield.fields import VersatileImageField
 
 from fanmo.utils.helpers import slugify
 from fanmo.utils.models import BaseModel
-
 
 logger = structlog.get_logger(__name__)
 

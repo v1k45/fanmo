@@ -11,5 +11,6 @@ def datestamp(date):
 def slugify(value):
     return dj_slugify(value) or "post"
 
+
 def replace_format(html, template, value):
     return re.sub(template % "(.*)", template % value, html, 1)
