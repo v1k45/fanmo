@@ -1,3 +1,11 @@
+const seoValues = {
+  title: 'Fanmo - Home for your most passionate fans',
+  description: 'Fanmo is the simplest way to offer memberships, accept donations and post member-exclusive content. Create your Fanmo page today, it takes less than 5 minutes to get started.',
+  keywords: 'fanmo, memberships, donations, patreon alternative, buymeacoffee alternative, india, creators, supporters, low cost',
+  // todo: use prod url or find out appropriate URL during build stage.
+  image: 'https://dev.fanmo.in/ogimage.png'
+};
+
 export default {
   // Disable server-side rendering: https://go.nuxtjs.dev/ssr-mode
   ssr: false,
@@ -13,7 +21,7 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: titleChunk => titleChunk ? `${titleChunk} | Fanmo` : 'Fanmo - Home for your most passionate fans',
+    titleTemplate: titleChunk => titleChunk ? `${titleChunk} | Fanmo` : seoValues.title,
     htmlAttrs: {
       lang: 'en',
       'data-theme': 'brand'
@@ -21,15 +29,28 @@ export default {
     bodyAttrs: {
       id: 'app'
     },
+    /**
+     * !!!!!!!!!!!!!!!! DO NOT CHANGE META SECTION WITHOUT DOUBLE CHECKING THE REGEX IN BACKEND !!!!!!!!!!!!!!!!!!!!
+     */
     meta: [
       { charset: 'utf-8' },
       // https://stackoverflow.com/questions/44679794/position-fixed-on-chrome-mobile-causing-element-to-move-on-scroll-up-down
       { name: 'viewport', content: 'height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=5.0' },
-      { name: 'description', content: 'Fanmo is the simplest way to offer memberships, accept donations and post member-exclusive content. Create your Fanmo page today, it takes less than 5 minutes to get started.', hid: 'description' },
-      { name: 'keywords', content: 'fanmo, memberships, donations, patreon alternative, buymeacoffee alternative, india, creators, supporters, low cost', hid: 'keywords' },
-      // todo: use prod url or find out appropriate URL during build stage.
-      { property: 'og:image', content: 'https://dev.fanmo.in/ogimage.png', hid: 'og:image' },
-      { name: 'format-detection', content: 'telephone=no' }
+      { name: 'format-detection', content: 'telephone=no' },
+      // seo
+      { name: 'description', content: seoValues.description, hid: 'description' },
+      { name: 'keywords', content: seoValues.keywords, hid: 'keywords' },
+      // facebook
+      { property: 'og:title', content: seoValues.title, hid: 'og:title' },
+      { property: 'og:description', content: seoValues.description, hid: 'og:description' },
+      { property: 'og:image', content: seoValues.image, hid: 'og:image' },
+      { property: 'og:site_name', content: 'Fanmo', hid: 'og:site_name' },
+      // twitter
+      { name: 'twitter:card', content: 'summary', hid: 'twitter:card' },
+      { name: 'twitter:title', content: seoValues.title, hid: 'twitter:title' },
+      { name: 'twitter:description', content: seoValues.description, hid: 'twitter:description' },
+      { name: 'twitter:image', content: seoValues.image, hid: 'twitter:image' },
+      { name: 'twitter:site', content: '@getfanmo', hid: 'twitter:site' }
     ],
     link: []
   },

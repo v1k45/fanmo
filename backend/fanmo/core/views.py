@@ -1,9 +1,8 @@
-import re
-
 from django.http.response import HttpResponse
 
 from fanmo.posts.models import Post
 from fanmo.users.models import User
+from fanmo.utils.helpers import replace_format
 
 
 def index_view(request, *args, **kwargs):
@@ -56,20 +55,35 @@ def serve_index(title=None, description=None, status=200):
     """
     response_text = open("/var/www/html/200.html").read()
     if title:
-        title_template = "<title>%s</title>"
-        response_text = re.sub(
-            title_template % "(.*)",
-            title_template % f"{title.strip()} | Fanmo",
+        suffixed_title = f"{title.strip()} | Fanmo"
+        response_text = replace_format(
+            response_text, "<title>%s</title>", suffixed_title
+        )
+        response_text = replace_format(
             response_text,
-            1,
+            'name="twitter:title" content="%s" data-hid="twitter:title"',
+            description
+        )
+        response_text = replace_format(
+            response_text,
+            'property="og:title" content="%s" data-hid="og:title"',
+            description
         )
 
     if description:
-        description_template = 'name="description" content="%s" data-hid="description"'
-        response_text = re.sub(
-            description_template % "(.*)",
-            description_template % description,
+        response_text = replace_format(
             response_text,
-            1,
+            'name="description" content="%s" data-hid="description"',
+            description
+        )
+        response_text = replace_format(
+            response_text,
+            'name="twitter:description" content="%s" data-hid="twitter:description"',
+            description
+        )
+        response_text = replace_format(
+            response_text,
+            'property="og:description" content="%s" data-hid="og:description"',
+            description
         )
     return HttpResponse(response_text, "text/html", status=status)
