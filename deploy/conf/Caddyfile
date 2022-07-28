@@ -1,15 +1,15 @@
 www.fanmo.in {
-	redir http://fanmo.in{uri}
+	redir https://fanmo.in{uri}
 }
 
 fanmo.in {
-#   request_header +X-Forwarded-Proto https
+  request_header +X-Forwarded-Proto https
   request_header +X-Forwarded-For {http.request.remote}
   header {
     -server
 
     # enable HSTS
-    # Strict-Transport-Security max-age=31536000;
+    Strict-Transport-Security max-age=31536000;
 
     # disable clients from sniffing the media type
     X-Content-Type-Options nosniff
@@ -22,7 +22,7 @@ fanmo.in {
   }
 
   # Send requests to app server.
-  reverse_proxy 127.0.0.1:8000:80
+  reverse_proxy 127.0.0.1:8000
 
   encode gzip
 }
