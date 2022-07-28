@@ -4,7 +4,7 @@ services:
   django: &django
     image: v1k45/fanmo:2022.07.1063
     ports:
-      - "127.0.0.1:8000:8000"
+      - "8000:8000"
     env_file:
       - ./.envs/.prod/.django
     extra_hosts:
@@ -15,7 +15,6 @@ services:
       timeout: 5s
       retries: 5
     deploy:
-      replicas: 2
       update_config:
         order: start-first
         failure_action: rollback
