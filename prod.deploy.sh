@@ -14,7 +14,7 @@ aws ssm get-parameter --name "/django/settings" --output text --query Parameter.
 
 # update and reload caddy
 sudo cp ./deploy/conf/Caddyfile /etc/caddy/Caddyfile
-sudo chown caddy:caddy /etc/caddy/Caddyfile
+sudo chown -R caddy:caddy /etc/caddy/Caddyfile
 sudo caddy reload
 
 # deploy server

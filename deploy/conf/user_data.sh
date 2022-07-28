@@ -43,16 +43,20 @@ cp /home/ubuntu/memberships/deploy/conf/fanmo.cron /etc/cron.d/fanmo
 
 # setup redis
 cp /home/ubuntu/memberships/deploy/conf/redis.conf /etc/redis/redis.conf
-chown redis:redis /etc/redis/redis.conf
+chown -R redis:redis /etc/redis/redis.conf
+sudo SYSTEMD_EDITOR=tee systemctl edit redis-server.service <<EOF
+[Service]
+Type=notify
+EOF
 systemctl enable redis-server 
 systemctl restart redis-server 
 
 # setup caddy
 cp /home/ubuntu/memberships/deploy/conf/Caddyfile.prod /etc/caddy/Caddyfile
-chown caddy:caddy /etc/caddy/Caddyfile
+chown -R caddy:caddy /etc/caddy/Caddyfile
 systemctl restart caddy
 
 # setup docker
-aws ssm get-parameter --name "docker-token" --output text --query Parameter.Value --region ap-south-1 | docker login -u v1k45 -p --password-stdin
+aws ssm get-parameter --name "docker-token" --output text --query Parameter.Value --region ap-south-1 | docker login -u v1k45 --password-stdin
 docker swarm init
 docker swarm join-token manager
