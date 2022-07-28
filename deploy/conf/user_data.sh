@@ -35,6 +35,7 @@ sudo -u ubuntu bash -c "
   mkdir -p logs;
   git clone git@github.com:v1k45/memberships.git;
   cd memberships;
+  mkdir -p .envs/.prod/
   sudo at now +10 minutes -f ./prod.deploy.sh;
 "
 
@@ -52,7 +53,7 @@ systemctl enable redis-server
 systemctl restart redis-server 
 
 # setup caddy
-cp /home/ubuntu/memberships/deploy/conf/Caddyfile.prod /etc/caddy/Caddyfile
+cp /home/ubuntu/memberships/deploy/conf/Caddyfile /etc/caddy/Caddyfile
 chown -R caddy:caddy /etc/caddy/Caddyfile
 systemctl restart caddy
 
