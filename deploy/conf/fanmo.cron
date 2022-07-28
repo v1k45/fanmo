@@ -1,1 +1,1 @@
-0 */3 * * *   ubuntu    cd /home/ubuntu/memberships; bash /home/ubuntu/memberships/prod.deploy.sh 1> /dev/null 2> /home/ubuntu/logs/deploy-cron.err
+0 */1 * * *   ubuntu    cd /home/ubuntu/memberships; bash /home/ubuntu/memberships/prod.deploy.sh 1> /dev/null 2> /home/ubuntu/logs/deploy-cron.err
