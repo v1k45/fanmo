@@ -27,7 +27,16 @@
         <nuxt-link class="unstyled py-2 mr-4 hover:text-fm-primary" to="/pricing#faq">FAQ</nuxt-link>
         <nuxt-link class="unstyled p-2 mr-2 hover:text-fm-primary" to="/terms">Terms &amp; Conditions</nuxt-link>
         <nuxt-link class="unstyled p-2 mr-2 hover:text-fm-primary" to="/privacy">Privacy Policy</nuxt-link>
-        <nuxt-link class="unstyled p-2 hover:text-fm-primary" to="/refunds">Cancellation policy</nuxt-link>
+        <nuxt-link class="unstyled p-2 hover:text-fm-primary" to="/refunds">Cancellation Policy</nuxt-link>
+        <fm-dropdown class="p-2" placement="top-end">
+          <button class="hover:text-fm-primary">Contact us</button>
+
+          <template #items>
+            <fm-dropdown-item @click="link('mailto:help@fanmo.in')"><icon-mail class="h-5 w-5 mr-1"></icon-mail> via email</fm-dropdown-item>
+            <fm-dropdown-item @click="link('https://twitter.com/messages/compose?recipient_id=1479251344871485450')"><icon-twitter class="h-5 w-5 mr-1"></icon-twitter> via Twitter</fm-dropdown-item>
+            <fm-dropdown-item @click="link('https://m.me/getfanmo')"><icon-facebook class="h-5 w-5 mr-1"></icon-facebook> via Facebook</fm-dropdown-item>
+          </template>
+        </fm-dropdown>
       </div>
     </div>
   </div>
@@ -40,6 +49,11 @@ export default {
     return {
       currentYear: new Date().getFullYear()
     };
+  },
+  methods: {
+    link(url) {
+      window.open(url, '_blank');
+    }
   }
 };
 </script>
