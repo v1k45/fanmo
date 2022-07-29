@@ -6,7 +6,7 @@
         v-for="(image, idx) in images" :key="idx" class="fm-carousel__item"
         :style="{ left: `${idx * 100}%` }" title="Click to view the full size image"
         @click="showFullSize(image)">
-        <img :src="image" :alt="`Image ${idx + 1}`">
+        <img :src="getImage(image, 'medium')" :alt="`Image ${idx + 1}`">
       </div>
     </div>
     <button v-if="currentItem > 0" type="button" class="fm-carousel__previous" @click="navigate(-1)">
@@ -23,7 +23,7 @@
     <button v-for="(image, idx) in images" :key="idx" type="button" class="fm-carousel__index-item" :class="{
       'fm-carousel__index-item--active': currentItem === idx
     }" @click="currentItem = idx;">
-      <img :src="image" :alt="`Image ${idx + 1}`">
+      <img :src="getImage(image, 'small')" :alt="`Image ${idx + 1}`">
     </button>
   </div>
 
@@ -52,10 +52,14 @@ export default {
     navigate(by) {
       this.currentItem = (this.currentItem + by) % (this.images.length);
     },
+    getImage(image, size) {
+      if (typeof image !== 'object') return image;
+      return image[size];
+    },
     showFullSize(image) {
       this.fullSize = {
         isVisible: true,
-        image
+        image: this.getImage(image, 'full')
       };
     }
   }

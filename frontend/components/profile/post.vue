@@ -175,7 +175,7 @@ export default {
     },
     images() {
       if (!this.post || !this.post.content || !this.post.content.files) return [];
-      return this.post.content.files.filter(file => file.type === 'image').map(file => file.image.full);
+      return this.post.content.files.filter(file => file.type === 'image').map(file => file.image);
     },
     linkPreviewOGComputed() {
       const { content } = this.post;
