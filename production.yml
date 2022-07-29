@@ -2,7 +2,7 @@ version: '3.9'
 
 services:
   django: &django
-    image: v1k45/fanmo:2022.07.1063
+    image: v1k45/fanmo:2022.07.1066
     ports:
       - "8000:8000"
     env_file:

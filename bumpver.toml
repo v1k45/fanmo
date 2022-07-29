@@ -10,6 +10,9 @@ push = false
 "dev.yml" = [
     '    image: v1k45/fanmo:{version}',
 ]
+"production.yml" = [
+    '    image: v1k45/fanmo:{version}',
+]
 "bumpver.toml" = [
     'current_version = "{version}"',
 ]
