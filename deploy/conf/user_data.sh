@@ -45,10 +45,9 @@ cp /home/ubuntu/memberships/deploy/conf/fanmo.cron /etc/cron.d/fanmo
 # setup redis
 cp /home/ubuntu/memberships/deploy/conf/redis.conf /etc/redis/redis.conf
 chown -R redis:redis /etc/redis/redis.conf
-sudo SYSTEMD_EDITOR=tee systemctl edit redis-server.service <<EOF
-[Service]
-Type=notify
-EOF
+mkdir -p /etc/systemd/system/redis-server.service.d/
+{ echo "[Service]"; echo "Type=notify"; } | tee /etc/systemd/system/redis-server.service.d/override.conf
+systemctl daemon-reload
 systemctl enable redis-server 
 systemctl restart redis-server 
 
