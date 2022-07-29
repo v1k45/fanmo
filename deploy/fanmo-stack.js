@@ -78,8 +78,9 @@ class FanmoStack extends cdk.Stack {
     this.iamRole = new iam.Role(this, 'fanmo-service-role', {
       assumedBy: new iam.ServicePrincipal('ec2.amazonaws.com'),
       managedPolicies: [
-        iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonS3ReadOnlyAccess'),
+        iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonS3FullAccess'),
         iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMReadOnlyAccess'),
+        iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonSESFullAccess'),
       ],
     });
   }
