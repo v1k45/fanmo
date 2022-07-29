@@ -21,7 +21,8 @@ export default {
 
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
-    titleTemplate: titleChunk => titleChunk ? `${titleChunk} | Fanmo` : seoValues.title,
+    // title has to be hardcoded because nuxt is pasting the function contents over to the component  https://github.com/nuxt/nuxt.js/issues/4457
+    titleTemplate: titleChunk => titleChunk ? `${titleChunk} | Fanmo` : 'Fanmo - Home for your most passionate fans',
     htmlAttrs: {
       lang: 'en',
       'data-theme': 'brand'
