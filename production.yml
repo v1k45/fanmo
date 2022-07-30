@@ -13,7 +13,7 @@ services:
       test: ["CMD", "curl", "-f", "http://localhost:8000/api/meta/"]
       interval: 10s
       timeout: 5s
-      retries: 5
+      retries: 10
     deploy:
       update_config:
         order: start-first
@@ -25,7 +25,7 @@ services:
       restart_policy:
         condition: any
         delay: 10s
-        max_attempts: 10
+        max_attempts: 50
     logging:
       driver: awslogs
       options:
