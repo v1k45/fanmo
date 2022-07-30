@@ -493,8 +493,8 @@ VERSATILEIMAGEFIELD_RENDITION_KEY_SETS = {
     ],
     "post_image": [
         ("full", "url"),
-        ("medium", "thumbnail__512x512"),
-        ("small", "thumbnail__128x128"),
+        ("medium", "thumbnail__990x600"),
+        ("small", "thumbnail__198x120"),
     ],
 }
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
