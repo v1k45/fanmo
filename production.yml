@@ -30,4 +30,4 @@ services:
       driver: awslogs
       options:
         awslogs-group: fanmo
-        awslogs-create-group: true
+        awslogs-create-group: "true"
