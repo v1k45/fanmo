@@ -81,6 +81,7 @@ class FanmoStack extends cdk.Stack {
         iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonS3FullAccess'),
         iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonSSMReadOnlyAccess'),
         iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonSESFullAccess'),
+        iam.ManagedPolicy.fromAwsManagedPolicyName('CloudWatchAgentServerPolicy'),
       ],
     });
   }

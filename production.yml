@@ -26,3 +26,8 @@ services:
         condition: any
         delay: 10s
         max_attempts: 50
+    logging:
+      driver: awslogs
+      options:
+        awslogs-group: fanmo
+        awslogs-create-group: true
