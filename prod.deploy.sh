@@ -17,5 +17,8 @@ sudo cp ./deploy/conf/Caddyfile /etc/caddy/Caddyfile
 sudo chown -R caddy:caddy /etc/caddy/Caddyfile
 sudo systemctl reload caddy
 
+# update cron
+sudo cp ./deploy/conf/fanmo.cron /etc/cron.d/fanmo
+
 # deploy server
 sudo docker stack deploy --compose-file production.yml fanmo --with-registry-auth
