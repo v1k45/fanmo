@@ -94,7 +94,7 @@ class FanmoStack extends cdk.Stack {
       securityGroup: this.securityGroup,
       instanceType: ec2.InstanceType.of(
         ec2.InstanceClass.BURSTABLE2,
-        ec2.InstanceSize.MICRO,
+        ec2.InstanceSize.SMALL,
       ),
       machineImage: ec2.MachineImage.genericLinux({
         'ap-south-1': config.ec2.machineImage
