@@ -11,7 +11,7 @@
 
 module.exports = {
   baseURL: {
-    tags: { img: { src: 'https://dev.fanmo.in/static/' } }
+    tags: { img: { src: 'https://fanmo.in/static/' } }
   },
   build: {
     templates: {
