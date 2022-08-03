@@ -3,11 +3,17 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.urls import include, path
-from fanmo.core.views import index_view, page_view, post_view
+from django.views.generic import RedirectView
 
+from fanmo.core.views import index_view, page_view, post_view
 
 urlpatterns = [
     # Django Admin, use {% url 'admin:index' %}
+    path(
+        f"{settings.ADMIN_URL}login/",
+        RedirectView.as_view(url="/login/"),
+        name="admin:login",
+    ),
     path(settings.ADMIN_URL, admin.site.urls),
     path("", index_view, name="home"),
     path("pricing", index_view, name="pricing"),
@@ -49,10 +55,10 @@ urlpatterns = [
     # Your stuff: custom urls includes go here
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-handler404 = 'fanmo.core.views.handle_404'
-handler403 = 'fanmo.core.views.handle_403'
-handle400 = 'fanmo.core.views.handle_404'
-handle500 = 'fanmo.core.views.handle_500'
+handler404 = "fanmo.core.views.handle_404"
+handler403 = "fanmo.core.views.handle_403"
+handle400 = "fanmo.core.views.handle_404"
+handle500 = "fanmo.core.views.handle_500"
 
 if settings.DEBUG:
     # Static file serving when using Gunicorn + Uvicorn for local web socket development
