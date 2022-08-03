@@ -8,5 +8,4 @@ class StaticRootS3Boto3Storage(S3Boto3Storage):
 
 class MediaRootS3Boto3Storage(S3Boto3Storage):
     location = "media"
-    default_acl = "public-read"
     file_overwrite = False
