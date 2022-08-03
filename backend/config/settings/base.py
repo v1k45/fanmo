@@ -339,12 +339,12 @@ structlog.configure(
 # -----------------------------------------------------------------------------
 # https://django-q.readthedocs.io/en/latest/configure.html#redis-configuration
 Q_CLUSTER = {
-    'name': 'taskrunner',
-    'workers': 4,
-    'timeout': 90,
-    'max_attempts': 3,
-    'retry': 120,
-    'django_redis': 'default'
+    "name": "taskrunner",
+    "workers": 4,
+    "timeout": 90,
+    "max_attempts": 3,
+    "retry": 120,
+    "django_redis": "default",
 }
 
 # django-allauth
@@ -404,15 +404,15 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "fanmo.utils.authentication.SessionAuthentication",
     ),
-    'DEFAULT_THROTTLE_RATES': {
-        'register_hour': '100/h',
-        'login_hour': '100/h',
-        'otp_minute': '5/m',
-        'otp_hour': '100/h',
-        'transaction_hour': '500/h',
-        'post_hour': '100/h',
-        'comment_hour': '100/h',
-        'tier_hour': '50/h',
+    "DEFAULT_THROTTLE_RATES": {
+        "register_hour": "100/h",
+        "login_hour": "100/h",
+        "otp_minute": "5/m",
+        "otp_hour": "100/h",
+        "transaction_hour": "500/h",
+        "post_hour": "100/h",
+        "comment_hour": "100/h",
+        "tier_hour": "50/h",
     },
     "DEFAULT_PAGINATION_CLASS": "fanmo.utils.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,
