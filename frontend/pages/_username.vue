@@ -75,7 +75,7 @@
               <!-- no posts action end -->
 
               <!-- no posts public start -->
-              <div v-else-if="!isSelfProfile && !profilePosts.results.length" class="italic text-center text-gray-500">
+              <div v-else-if="!isSelfProfile && !profilePosts.results.length" class="text-center text-gray-500">
                 {{ user.display_name }} hasn't posted anything yet.
               </div>
               <!-- no posts public end -->
