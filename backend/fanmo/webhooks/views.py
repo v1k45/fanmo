@@ -5,10 +5,10 @@ from django.db.transaction import non_atomic_requests
 from django.http import HttpResponse, HttpResponseForbidden
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
-from django_q.tasks import async_task
 from razorpay.errors import SignatureVerificationError
 
 from fanmo.utils import razorpay_client
+from fanmo.core.tasks import async_task
 from fanmo.webhooks.models import WebhookMessage
 from fanmo.webhooks.tasks import process_razorpay_webhook
 
