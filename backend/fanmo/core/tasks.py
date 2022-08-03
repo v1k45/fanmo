@@ -32,5 +32,5 @@ def async_task(func, *args, **kwargs):
         # task scheduling does not work while running tests
         q_async_task(func, *args, **kwargs)
     else:
-        kwargs["next_run"] = timezone.now() + relativedelta(seconds=5)
+        kwargs["next_run"] = timezone.now() + relativedelta(seconds=3)
         schedule(f"{func.__module__}.{func.__name__}", *args, **kwargs)
