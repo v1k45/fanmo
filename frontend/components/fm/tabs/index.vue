@@ -1,12 +1,12 @@
 <template>
 <div class="fm-tabs">
   <div class="fm-tabs__header" :class="{ 'fm-tabs__header--centered': centered }">
-    <div v-for="tab in tabs" :key="tab.id" class="fm-tabs__header-item" :class="{
+    <button v-for="tab in tabs" :key="tab.id" class="fm-tabs__header-item" :class="{
       'fm-tabs__header-item--active': tab.id === localValue,
       'fm-tabs__header-item--stretched': stretched
     }" @click="localValue = tab.id;">
       {{ tab.header }}
-    </div>
+    </button>
   </div>
   <div class="fm-tabs__content">
     <slot></slot>
