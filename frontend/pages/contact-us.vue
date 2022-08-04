@@ -20,7 +20,7 @@
 export default {
   auth: false,
   head: {
-    title: 'Refunds and Cancellation'
+    title: 'Contact us'
   }
 };
 </script>
