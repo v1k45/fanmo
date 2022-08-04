@@ -56,7 +56,7 @@ def post_view(request, post_slug, post_id):
     if post.author_user.cover:
         serializer = VersatileImageFieldSerializer("user_cover")
         serializer._context = {"request": request}
-        cover_renditions = serializer.to_representation(post.athor_user.cover)
+        cover_renditions = serializer.to_representation(post.author_user.cover)
         image_url = cover_renditions["social"] if cover_renditions else None
 
     return serve_index(
