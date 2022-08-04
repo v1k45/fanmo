@@ -482,6 +482,7 @@ VERSATILEIMAGEFIELD_RENDITION_KEY_SETS = {
     "user_cover": [
         ("full", "url"),
         ("big", "crop__1800x400"),
+        ("social", "crop__900x470"),
         ("medium", "crop__900x200"),
         ("small", "crop__300x70"),
     ],
