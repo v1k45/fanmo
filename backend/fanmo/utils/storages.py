@@ -18,13 +18,13 @@ class MediaRootS3Boto3Storage(S3Boto3Storage):
         """
         Re-use already generated signed S3 URLs to make use of browser cache.
         """
-        key = hashlib.md5(f"cachedmedia:{name}".encode()).hexdigest()
-        result = cache.get(key)
+        cache_key = "cachedmedia:" + hashlib.md5(name.encode()).hexdigest()
+        result = cache.get(cache_key)
         if result:
             return result
 
         # cache miss
         result = super().url(name)
         timeout = int(settings.AWS_QUERYSTRING_EXPIRE * 0.75)
-        cache.set(key, result, timeout)
+        cache.set(cache_key, result, timeout)
         return result
