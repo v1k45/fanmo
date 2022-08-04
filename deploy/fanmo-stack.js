@@ -3,6 +3,8 @@ import * as s3 from 'aws-cdk-lib/aws-s3';
 import * as ec2 from 'aws-cdk-lib/aws-ec2';
 import * as rds from 'aws-cdk-lib/aws-rds';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
+import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
 import { readFileSync } from 'fs';
 
 
@@ -25,12 +27,14 @@ class FanmoStack extends cdk.Stack {
 
     this.setupNetworking()
     this.setupRole()
+    this.setupStorage()
     this.setupWebserver()
-    this.s3Bucket = new s3.Bucket(this, 'fanmo-media');
     this.setupDbServer()
 
     new cdk.CfnOutput(this, 'server-ip', { value: this.ec2Instance.instancePublicIp })
     new cdk.CfnOutput(this, 'bucket-name', { value: this.s3Bucket.bucketName })
+    new cdk.CfnOutput(this, 'cf-dist', { value: this.cfDistribution.distributionDomainName })
+    new cdk.CfnOutput(this, 'cf-key-group-ip', { value: this.cfKeyGroup.keyGroupId })
     new cdk.CfnOutput(this, 'db-host', { value: this.dbInstance.instanceEndpoint.hostname });
     new cdk.CfnOutput(this, 'db-secret-name', { value: this.dbInstance.secret.secretName });
   }
@@ -86,6 +90,37 @@ class FanmoStack extends cdk.Stack {
     });
   }
 
+  setupStorage() {
+    this.s3Bucket = new s3.Bucket(this, 'fanmo-media');
+
+    // Grant access to cloudfront
+    const cloudfrontOAI = new cloudfront.OriginAccessIdentity(this, 'fanmo-cf-ident');
+    this.s3Bucket.addToResourcePolicy(new iam.PolicyStatement({
+      actions: ['s3:GetObject'],
+      resources: [this.s3Bucket.arnForObjects('*')],
+      principals: [new iam.CanonicalUserPrincipal(cloudfrontOAI.cloudFrontOriginAccessIdentityS3CanonicalUserId)]
+    }));
+
+    // key group for private content
+    this.cfKeyGroup = new cloudfront.KeyGroup(this, 'cf-keygroup', { 
+      items: [
+        new cloudfront.PublicKey(this, 'cf-public', { encodedKey: readFileSync('./conf/cdn.pub', 'utf-8') })
+      ]
+    })
+
+    // CloudFront distribution
+    this.cfDistribution = new cloudfront.Distribution(this, 'fanmo-cdn', {
+      defaultBehavior: {
+        origin: new origins.S3Origin(this.s3Bucket, { originAccessIdentity: cloudfrontOAI }),
+        compress: true,
+        allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
+        viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+        trustedKeyGroups: [this.cfKeyGroup]
+      }
+    })
+
+  }
+
   setupWebserver() {
     this.ec2Instance = new ec2.Instance(this, 'fanmo-web-server', {
       vpc: this.vpc,
@@ -102,7 +137,7 @@ class FanmoStack extends cdk.Stack {
       keyName: config.ec2.keyPair,
     });
     this.ec2Instance.addUserData(readFileSync('./conf/user_data.sh', 'utf-8'))
-    new ec2.CfnEIPAssociation(this, 'web-server-ip', { eip: this.ip.ref, instanceId: this.ec2Instance.instanceId } )
+    new ec2.CfnEIPAssociation(this, 'web-server-ip', { eip: this.ip.ref, instanceId: this.ec2Instance.instanceId })
   }
 
   setupDbServer() {
