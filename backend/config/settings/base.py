@@ -468,7 +468,10 @@ SUBSCRIPTION_GRACE_PERIOD_DAYS = 3
 CORS_URLS_REGEX = r"^/api/.*$"
 
 # django-versatileimagefield - https://github.com/respondcreate/django-versatileimagefield
-VERSATILEIMAGEFIELD_SETTINGS = {"jpeg_resize_quality": 100}
+VERSATILEIMAGEFIELD_SETTINGS = {
+    "jpeg_resize_quality": 100,
+    "progressive_jpeg": True,
+}
 VERSATILEIMAGEFIELD_RENDITION_KEY_SETS = {
     "user_avatar": [
         ("full", "url"),
