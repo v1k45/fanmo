@@ -1,0 +1,1 @@
+Fanmo is built by a small team of devs who want to disrupt this space for chai and samosa. We use Django on the backend, Vue on the frontend, Docker and AWS shitfuckery for devops. Send us an e-mail on help@fanmo.in if you fancy a tech chat.
