@@ -28,7 +28,8 @@
         <nuxt-link class="unstyled p-2 mr-2 hover:text-fm-primary" to="/terms">Terms &amp; Conditions</nuxt-link>
         <nuxt-link class="unstyled p-2 mr-2 hover:text-fm-primary" to="/privacy">Privacy Policy</nuxt-link>
         <nuxt-link class="unstyled p-2 hover:text-fm-primary" to="/refunds">Cancellation Policy</nuxt-link>
-        <fm-dropdown class="p-2" placement="top-end">
+        <nuxt-link class="unstyled p-2 hover:text-fm-primary" to="/contact-us">Contact us</nuxt-link>
+        <fm-dropdown v-if="false" class="p-2" placement="top-end">
           <button class="hover:text-fm-primary">Contact us</button>
 
           <template #items>

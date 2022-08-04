@@ -23,8 +23,8 @@
       Log into
       <a href="https://fanmo.in" target="_blank" rel="noopener">https://fanmo.in</a>
     </li>
-    <li>Go to Subscriptions</li>
-    <li>Select the subscription of your choice, click cancel.</li>
+    <li>Go to Memberships</li>
+    <li>Select the membership of your choice, click cancel.</li>
   </ul>
   <p>
     We will not investigate or be held liable in any way for payments given in
