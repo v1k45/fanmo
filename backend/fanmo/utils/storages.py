@@ -25,6 +25,6 @@ class MediaRootS3Boto3Storage(S3Boto3Storage):
 
         # cache miss
         result = super().url(name)
-        timeout = int(settings.AWS_QUERYSTRING_EXPIRY * 0.75)
+        timeout = int(settings.AWS_QUERYSTRING_EXPIRE * 0.75)
         cache.set(key, result, timeout)
         return result

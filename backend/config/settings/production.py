@@ -56,11 +56,12 @@ INSTALLED_APPS += ["storages"]  # noqa F405
 AWS_STORAGE_BUCKET_NAME = env("STORAGE_BUCKET_NAME")
 # https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html#settings
 AWS_QUERYSTRING_AUTH = True
+AWS_QUERYSTRING_EXPIRE = 3600
 # DO NOT change these unless you know what you're doing.
-AWS_QUERYSTRING_EXPIRY = 60 * 60 * 24 * 7
+_S3_CACHE_EXPIRY = 60 * 60 * 24 * 7
 # https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html#settings
 AWS_S3_OBJECT_PARAMETERS = {
-    "CacheControl": f"max-age={AWS_QUERYSTRING_EXPIRY}, s-maxage={AWS_QUERYSTRING_EXPIRY}, must-revalidate"
+    "CacheControl": f"max-age={_S3_CACHE_EXPIRY}, s-maxage={_S3_CACHE_EXPIRY}, must-revalidate"
 }
 # https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html#settings
 AWS_S3_REGION_NAME = env("DJANGO_AWS_S3_REGION_NAME", default=None)
