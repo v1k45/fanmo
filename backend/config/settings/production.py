@@ -67,8 +67,8 @@ AWS_S3_OBJECT_PARAMETERS = {
 AWS_S3_REGION_NAME = env("DJANGO_AWS_S3_REGION_NAME", default=None)
 # https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html#cloudfront
 AWS_S3_CUSTOM_DOMAIN = env("DJANGO_AWS_S3_CUSTOM_DOMAIN", default=None)
-AWS_CLOUDFRONT_KEY = env("AWS_CLOUDFRONT_KEY", "").encode('ascii')
-AWS_CLOUDFRONT_KEY_ID = env("AWS_CLOUDFRONT_KEY_ID", "")
+AWS_CLOUDFRONT_KEY = env("AWS_CLOUDFRONT_KEY", default="").encode('ascii')
+AWS_CLOUDFRONT_KEY_ID = env("AWS_CLOUDFRONT_KEY_ID", default="")
 
 # STATIC
 # ------------------------
