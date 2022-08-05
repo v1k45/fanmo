@@ -164,7 +164,7 @@
 
     <div class="bg-gray-100 rounded-lg mt-4 p-2" v-html="misc.editor.model"></div>
 
-    <fm-editor :key="misc.editor.preset" v-model="misc.editor.model" class="mt-6" :preset="misc.editor.preset"></fm-editor>
+    <fm-input-rich :key="misc.editor.preset" v-model="misc.editor.model" class="mt-6" :preset="misc.editor.preset"></fm-input-rich>
   </section>
   <!-- editors end -->
 
