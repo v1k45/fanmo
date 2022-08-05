@@ -6,7 +6,7 @@ bodyClass: bg-gray-100
   <block name="template">
     <p class="text-xl sm:leading-32 text-black font-semibold m-0 mb-24">Hi @{{ obj.fan_user.display_name }},</p>
     <p>
-      You have sucessfully donated <strong>@{{ obj.amount }}</strong> to <strong>@{{ obj.creator_user.display_name}}</strong>.
+      You have sucessfully tipped <strong>@{{ obj.amount }}</strong> to <strong>@{{ obj.creator_user.display_name}}</strong>.
     </p>
     <p class="mb-10 mt-10">
     {% if obj.creator_user.user_preferences.thank_you_message %}

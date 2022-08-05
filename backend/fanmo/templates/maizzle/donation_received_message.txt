@@ -1,5 +1,5 @@
 Hi {{ obj.creator_user.display_name }},
-{{ obj.fan_user.display_name }} donated {{ obj.amount }}.
+{{ obj.fan_user.display_name }} tipped {{ obj.amount }}.
 {% if obj.message %} {{ obj.message }} {% endif %}
 If you wish to contact {{ obj.fan_user.display_name }} directly, you can send email on {{ obj.fan_user.email }} mailto:{{ obj.fan_user.email }}
 

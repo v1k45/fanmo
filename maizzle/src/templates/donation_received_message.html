@@ -5,7 +5,7 @@ bodyClass: bg-gray-100
 <extends src="src/layouts/main.html">
   <block name="template">
     <p class="text-xl sm:leading-32 text-black font-semibold m-0 mb-24">Hi @{{ obj.creator_user.display_name }},</p>
-    <p><strong>@{{ obj.fan_user.display_name }}</strong> donated <strong>@{{ obj.amount }}</strong>.</p>
+    <p><strong>@{{ obj.fan_user.display_name }}</strong> tipped <strong>@{{ obj.amount }}</strong>.</p>
     {% if obj.message %}<blockquote>@{{ obj.message }}</blockquote>{% endif %}
     <p class="m-0 mb-24">If you wish to contact @{{ obj.fan_user.display_name }} directly, you can send email on <a
         href="mailto:@{{ obj.fan_user.email }}">@{{ obj.fan_user.email }}</a></p>
