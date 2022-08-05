@@ -1,7 +1,7 @@
 const seoValues = {
   title: 'Fanmo - Home for your most passionate fans',
-  description: 'Fanmo is the simplest way to offer memberships, accept donations and post member-exclusive content. Create your Fanmo page today, it takes less than 5 minutes to get started.',
-  keywords: 'fanmo, memberships, donations, patreon alternative, buymeacoffee alternative, india, creators, supporters, low cost',
+  description: 'Fanmo is the simplest way to offer memberships, accept tips and post member-exclusive content. Create your Fanmo page today, it takes less than 5 minutes to get started.',
+  keywords: 'fanmo, memberships, donations, tips, patreon alternative, buymeacoffee alternative, india, creators, supporters, low cost',
   // todo: use prod url or find out appropriate URL during build stage.
   image: 'https://dev.fanmo.in/ogimage.png'
 };

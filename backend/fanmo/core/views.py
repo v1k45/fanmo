@@ -42,7 +42,7 @@ def page_view(request, username):
 
     return serve_index(
         f"{user.display_name} {user.one_liner}",
-        f"Support {user.display_name} on Fanmo. Become a member, get access to exclusive content, send donations and much more on Fanmo.",
+        f"Support {user.display_name} on Fanmo. Become a member, get access to exclusive content, send tips and much more on Fanmo.",
         image_url,
     )
 
@@ -61,7 +61,7 @@ def post_view(request, post_slug, post_id):
 
     return serve_index(
         f"{post.title} - {post.author_user.display_name}",
-        f"Support {post.author_user.display_name} on Fanmo. Become a member, get access to exclusive content, send donations and much more on Fanmo.",
+        f"Support {post.author_user.display_name} on Fanmo. Become a member, get access to exclusive content, send tips and much more on Fanmo.",
         image_url,
     )
 
