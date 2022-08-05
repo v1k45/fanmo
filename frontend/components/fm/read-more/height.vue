@@ -1,5 +1,5 @@
 <template>
-<div>
+<div class="relative">
   <div
     ref="content"
     :style="styles"
@@ -9,7 +9,7 @@
     }">
     <slot></slot>
   </div>
-  <div class="text-right">
+  <div :class="[showMoreClass, !showingMore ? 'absolute right-0 bottom-0 z-10' : 'text-right leading-none']">
     <fm-button
       v-if="hasOverflow"
       type="link"
@@ -42,7 +42,8 @@ export default {
     IconChevronUp
   },
   props: {
-    maxHeight: { type: [Number, String], default: null }
+    maxHeight: { type: [Number, String], default: null },
+    showMoreClass: { type: [String, Array, Object], default: 'bg-white' }
   },
   data() {
     return {

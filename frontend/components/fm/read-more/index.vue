@@ -1,9 +1,10 @@
 <template>
-<div>
+<div class="relative">
   <div ref="content" :class="classes">
     <slot></slot>
   </div>
-  <div class="text-right mt-1">
+  <div class="ml-auto" :class="[showMoreClass, !showingMore ? 'absolute right-0 bottom-0' : 'text-right leading-none']">
+    <template v-if="!showingMore">...</template>
     <fm-button v-if="hasExtraText" type="link" class="inline-flex items-center" @click="toggleShowMore">
       <template v-if="showingMore">Show less <icon-chevron-up class="ml-1 inline-block h-em w-em"></icon-chevron-up></template>
       <template v-else>Show more <icon-chevron-down class="ml-1 inline-block h-em w-em"></icon-chevron-down></template>
@@ -30,7 +31,8 @@ export default {
     IconChevronUp
   },
   props: {
-    lines: { type: [Number, String], default: 3, validator: val => !!classMap[val] }
+    lines: { type: [Number, String], default: 3, validator: val => !!classMap[val] },
+    showMoreClass: { type: [String, Array, Object], default: 'bg-white' }
   },
   data() {
     return {
