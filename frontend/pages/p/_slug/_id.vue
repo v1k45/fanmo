@@ -19,7 +19,7 @@
         <option :value="null" disabled selected>Jump to</option>
         <option :value="tabName.POSTS">Feed</option>
         <option v-if="shouldShowTiersTab" :value="tabName.TIERS">Memberships</option>
-        <option :value="tabName.DONATION">Donations</option>
+        <option :value="tabName.DONATION">Tip</option>
       </fm-input>
 
       <fm-button :type="user.is_following ? 'success' : 'primary'" class="w-36 hidden md:block" :loading="isFollowLoading" @click="toggleFollow">
@@ -138,7 +138,7 @@
           @click="gotoTab(tabName.DONATION)">
 
           <icon-coins class="h-6 w-6"></icon-coins>
-          <div class="mt-1 truncate" title="Feed">Donations</div>
+          <div class="mt-1 truncate" title="Feed">Tips</div>
         </div>
       </li>
     </ul>

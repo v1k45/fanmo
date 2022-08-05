@@ -38,7 +38,7 @@
 
           <ul class="space-y-4 mt-6 font-bold">
             <li
-              v-for="feature in ['Membership tiers', 'Donations', 'Posts', 'Fast payouts', 'Various payment methods', 'Responsive support']" :key="feature"
+              v-for="feature in ['Membership tiers', 'Tips', 'Posts', 'Fast payouts', 'Various payment methods', 'Responsive support']" :key="feature"
               class="flex items-center">
               <icon-check class="mr-3"></icon-check> {{ feature }}
             </li>
@@ -81,7 +81,7 @@
               <td><icon-check-circle-2 class="icon-check"></icon-check-circle-2></td>
             </tr>
             <tr>
-              <th>Donations</th>
+              <th>Tips</th>
               <td><icon-check-circle-2 class="icon-check"></icon-check-circle-2></td>
               <td><icon-x-circle class="icon-x"></icon-x-circle></td>
               <td><icon-check-circle-2 class="icon-check"></icon-check-circle-2></td>
@@ -257,7 +257,7 @@ export default {
         {
           question: 'Do you support UPI?',
           answer: `
-            Yes! We love UPI. Your fans can use any UPI app for paying for donations. <br><br>
+            Yes! We love UPI. Your fans can use any UPI app for paying for tips. <br><br>
             For memberships, currently only PhonePe, Amazon Pay, Paytm and BHIM UPI are supported. This list will expand as soon as other UPI apps start supporting UPI AutoPay.
           `
         },
@@ -293,7 +293,7 @@ export default {
           answer: `
             Fanmo is a cheaper and easier alternative to Patreon, specifically for Indian users. We support practically all Indian payment methods, thus making it easier for your fans to support you.
             <br><br>
-            Unlike Patreon, with Fanmo you can also accept donations from your fans.
+            Unlike Patreon, with Fanmo you can also accept tips from your fans.
           `
         }
       ]

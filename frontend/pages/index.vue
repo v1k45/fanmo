@@ -12,7 +12,7 @@
       <div class="text-center lg:max-w-lg lg:text-left">
         <h1 class="mb-6 text-4xl font-semibold leading-tight font-title sm:text-5xl lg:text-6xl">Home for your most passionate fans</h1>
 
-        <p class="mb-8 leading-relaxed sm:text-lg">Simplest way to offer memberships, accept donations and post member-exclusive content.</p>
+        <p class="mb-8 leading-relaxed sm:text-lg">Simplest way to offer memberships, accept tips and post member-exclusive content.</p>
 
         <nuxt-link
           :to="$auth.loggedIn ? '/dashboard' : '/register'"
@@ -104,12 +104,12 @@
           <header>
             <h2 class="font-bold mt-6 text-2xl leading-snug sm:text-3xl sm:leading-snug lg:leading-relaxed">
               Let your fans support you in more ways with
-              <span class="inline-block text-white px-4 leading-snug rounded bg-fm-success-700">donations</span>
+              <span class="inline-block text-white px-4 leading-snug rounded bg-fm-success-700">tips</span>
               💸
             </h2>
           </header>
           <p class="text-base lg:text-xl mt-6">
-            Let your fans show you some love by donating whatever amount they like. Showcase your fan donations and messages.
+            Let your fans show you some love by tipping whatever amount they like. Showcase your fan tips and messages.
           </p>
         </div>
       </div>

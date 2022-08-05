@@ -1,7 +1,7 @@
 <template>
 <fm-card class="flex-grow pt-2 pb-6">
   <div class="font-bold text-2xl">
-    Donate
+    Tip
   </div>
   <fm-form class="mt-4" :errors="errors" @submit.prevent="$emit('donate-click', form)">
 
@@ -21,7 +21,7 @@
         <div class="flex justify-between space-x-1 overflow-auto pb-1 mb-1">
           <button
             v-for="amount in presetAmounts" :key="amount" type="button"
-            :title="`Donate ₹${amount}`"
+            :title="`Tip ₹${amount}`"
             class="py-1 px-2 text-sm rounded border border-fm-primary-400 text-fm-primary-400 hover:border-fm-primary-500 hover:bg-fm-primary-500 hover:text-white"
             :class="{'border-fm-primary-500 bg-fm-primary-500 text-white': amount == form.amount}"
             @click="form.amount = amount;">

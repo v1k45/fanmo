@@ -18,7 +18,7 @@
         <option disabled>Jump to</option>
         <option :value="tabName.POSTS">Feed</option>
         <option v-if="shouldShowTiersTab" :value="tabName.TIERS">Memberships</option>
-        <option :value="tabName.DONATION">Donations</option>
+        <option :value="tabName.DONATION">Tips</option>
       </fm-input>
 
       <fm-button :type="user.is_following ? 'success' : 'primary'" class="w-36 hidden md:block" :loading="isFollowLoading" @click="toggleFollow">
@@ -166,12 +166,12 @@
       </div>
     </fm-tabs-pane>
 
-    <fm-tabs-pane :id="tabName.DONATION" lazy label="Donations" class="bg-gray-50 pb-10">
+    <fm-tabs-pane :id="tabName.DONATION" lazy label="Tips" class="bg-gray-50 pb-10">
       <div class="container min-h-[300px]">
         <div class="row gx-0 lg:gx-4 max-w-6xl mx-auto justify-center">
           <div v-if="donations" class="col-12 order-2 lg:col-7 lg:order-1">
             <hr class="mt-6 mb-8 lg:hidden">
-            <div class="text-xl font-bold mb-4">Recent donations</div>
+            <div class="text-xl font-bold mb-4">Recent tips</div>
             <fm-lazy v-for="(donation, idx) in donations" :key="donation.id"
               :class="{ 'mb-4 lg:mb-6': idx !== donations.length - 1 }" min-height="100">
               <profile-donation :donation="donation">
@@ -179,7 +179,7 @@
             </fm-lazy>
             <div v-if="!donations.length" class="text-gray-500 text-center max-w-md mx-auto my-24">
               <template v-if="isSelfProfile">
-                Your recent donations will show up here.
+                Your recent tips will show up here.
               </template>
               <template v-else>
                 Become the first one to show your support for {{ user.display_name }}. Your contribution will show up here.
@@ -238,7 +238,7 @@
           @click="gotoTab(tabName.DONATION)">
 
           <icon-coins class="h-6 w-6"></icon-coins>
-          <div class="mt-1 truncate" title="Feed">Donations</div>
+          <div class="mt-1 truncate" title="Feed">Tips</div>
         </div>
       </li>
     </ul>
