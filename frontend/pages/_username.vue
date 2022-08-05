@@ -1,6 +1,6 @@
 <template>
-<div v-if="user" v-loading="isLoading" class="bg-white" :class="{ 'disable-donation-and-join': isPreviewMode }">
-
+<div v-if="user" v-loading="isLoading || showGlobalLoader" class="bg-white relative" :class="{ 'disable-donation-and-join': isPreviewMode }">
+  <div v-if="loadingLockedPostId || loadingTierId" class="z-20 fixed h-full w-full top-0 left-0"></div>
   <!-- sticky header start -->
   <header v-show="showStickyNav" class="bg-white fixed z-20 top-0 w-full border-b animatecss animatecss-slideInDown" style="animation-duration: 100ms;">
     <div class="lg:container px-4 lg:px-0 flex items-center py-2">
@@ -52,8 +52,8 @@
               <div v-if="profilePosts.results.length">
                 <profile-post
                   v-for="post in profilePosts.results" :key="post.id"
-                  :post="post" :hide-options="isPreviewMode" class="mb-6 md:mb-8"
-                  @share-click="handleShareClick" @subscribe-click="handleSubscribeClick">
+                  :post="post" :hide-options="isPreviewMode" class="mb-6 md:mb-8" :join-action-loading="loadingLockedPostId === post.id"
+                  @share-click="handleShareClick" @subscribe-click="handleSubscribeClick($event, { postId: post.id })">
                 </profile-post>
               </div>
               <div v-if="profilePosts.next" class="text-center mt-4">
@@ -296,7 +296,7 @@ export default {
       tabName,
       showStickyNav: false,
       activeTab: null,
-      isLoading: true, // NOT being used. Use it if profile loading becomes slow
+      isLoading: true,
       donationFormErrors: null,
       expressCheckout: {
         isVisible: false,
@@ -316,6 +316,7 @@ export default {
         isVisible: false
       },
       loadingTierId: null,
+      loadingLockedPostId: null, // when someone clicks on Join on a locked post, this will store the id of the post to show the loading state on
       donationLoading: false,
       nextPostsLoading: false,
       isFollowLoading: false,
@@ -361,6 +362,7 @@ export default {
   },
   computed: {
     ...mapState('profile', ['user', 'donations', 'posts', 'isPreviewMode']),
+    ...mapState('ui', ['showGlobalLoader']),
     ...mapGetters('profile', ['isSelfProfile', 'currentUserHasActiveSubscription']),
     ...mapGetters('posts', ['profilePosts']),
 
@@ -384,7 +386,7 @@ export default {
     },
 
     // logic is documented in createOrGetMembership
-    async handleSubscribeClick(tier) {
+    async handleSubscribeClick(tier, { postId = null } = {}) {
       if (!this.$auth.loggedIn) {
         this.expressCheckout = {
           isVisible: true,
@@ -409,6 +411,7 @@ export default {
         }
       }
 
+      this.loadingLockedPostId = postId;
       this.loadingTierId = tier.id;
       const { success, data } = await this.createOrGetMembership({
         creator_username: this.user.username,
@@ -419,6 +422,7 @@ export default {
         if (get(data, 'creator_username[0]')) this.$toast.error(data.creator_username[0].message);
         else this.$toast.error(data);
         this.loadingTierId = null;
+        this.loadingLockedPostId = null;
         return;
       }
 
@@ -484,6 +488,7 @@ export default {
       // success
       paymentOptions.handler = async (paymentResponse) => {
         this.loadingTierId = null;
+        this.loadingLockedPostId = null;
         this.donationLoading = false;
         const { error, response } = await this.processPayment({ donationOrSubscription, paymentResponse, supportType });
         if (error) {
@@ -504,6 +509,7 @@ export default {
       // cancel
       paymentOptions.modal = {
         ondismiss: () => {
+          this.loadingLockedPostId = null;
           this.loadingTierId = null;
           this.donationLoading = false;
         }
@@ -514,6 +520,7 @@ export default {
       // failed
       rzp1.on('payment.failed', (response) => {
         // response.error.description, response.error.reason
+        this.loadingLockedPostId = null;
         this.loadingTierId = null;
         this.donationLoading = false;
       });

@@ -102,7 +102,7 @@
       </div>
       <div class="mt-6 rounded-l-full rounded-r-full">
         <fm-button
-          type="" class="text-body" block @click="handleSubscribeIntent">
+          type="" class="text-body" :loading="joinActionLoading" block @click="handleSubscribeIntent">
           Join now for {{ $currency(post.minimum_tier.amount) }}/month
         </fm-button>
       </div>
@@ -146,7 +146,8 @@ export default {
   props: {
     post: { type: Object, required: true },
     showCreatorInfo: { type: Boolean, default: false },
-    hideOptions: { type: Boolean, default: false } // useful for profile page to hide the post options when preview mode is active
+    hideOptions: { type: Boolean, default: false }, // useful for profile page to hide the post options when preview mode is active
+    joinActionLoading: { type: Boolean, default: false } // whether the join button should be in loading state
   },
   data() {
     return {
