@@ -15,7 +15,9 @@
     }
   }"
   :toggle-on-click="false" class="fm-tooltip">
-  <div v-if="!reference" v-bind="$reference" class="fm-tooltip__reference" @mouseover="localShow(show)" @mouseleave="localHide(hide)">
+  <div
+    v-if="!reference" v-bind="$reference" class="fm-tooltip__reference" tabindex="0"
+    @mouseover="localShow(show)" @mouseleave="localHide(hide)" @focus="localShow(show)" @blur="localHide(hide)">
     <slot></slot>
   </div>
   <div v-show="isVisible" v-bind="$popper" class="fm-tooltip__content-wrapper">
@@ -40,8 +42,8 @@ export default {
     return {
       timer: null,
       handlers: { // handlers for manual binding when using directive
-        mouseover: null,
-        mouseleave: null
+        show: null,
+        hide: null
       }
     };
   },
@@ -50,17 +52,21 @@ export default {
       immediate: true,
       handler(reference) {
         if (!reference) return;
-        this.handlers.mouseover = () => this.localShow(this.$refs.popper.show);
-        this.handlers.mouseleave = () => this.localHide(this.$refs.popper.hide);
-        reference.addEventListener('mouseover', this.handlers.mouseover);
-        reference.addEventListener('mouseleave', this.handlers.mouseleave);
+        this.handlers.show = () => this.localShow(this.$refs.popper.show);
+        this.handlers.hide = () => this.localHide(this.$refs.popper.hide);
+        reference.addEventListener('mouseover', this.handlers.show);
+        reference.addEventListener('mouseleave', this.handlers.hide);
+        reference.addEventListener('focus', this.handlers.show);
+        reference.addEventListener('blur', this.handlers.hide);
       }
     }
   },
   beforeDestroy() {
     if (!this.reference) return;
-    this.reference.removeEventListener('mouseover', this.handlers.mouseover);
-    this.reference.removeEventListener('mouseleave', this.handlers.mouseleave);
+    this.reference.removeEventListener('mouseover', this.handlers.show);
+    this.reference.removeEventListener('mouseleave', this.handlers.hide);
+    this.reference.removeEventListener('focus', this.handlers.show);
+    this.reference.removeEventListener('blur', this.handlers.hide);
   },
   methods: {
     localShow(show) {
@@ -88,7 +94,7 @@ export default {
   @apply inline-block;
 }
 .fm-tooltip__content-wrapper {
-  @apply absolute z-20 transition-opacity;
+  @apply absolute z-30 transition-opacity;
 }
 .fm-tooltip__arrow {
   &, &:before {
