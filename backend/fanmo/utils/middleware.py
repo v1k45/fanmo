@@ -21,3 +21,7 @@ class StaticServerMiddleware(WhiteNoiseMiddleware):
             # auth/callback/?code=123 - serve -> white noise
             return None
         return WhiteNoiseMiddleware.serve(static_file, request)
+
+    def immutable_file_test(self, path, url):
+        is_nuxt_asset = "_nuxt" in url
+        return is_nuxt_asset or super().immutable_file_test(path, url)
