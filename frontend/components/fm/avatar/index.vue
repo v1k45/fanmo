@@ -7,7 +7,7 @@
     :class="color" :style="{ fontSize }">
     {{ initials }}
   </div>
-  <img v-else src="~/assets/avatar-placeholder.png" class="fm-avatar__image">
+  <img v-else src="~/assets/logo-circle.png" class="fm-avatar__image">
 </div>
 </template>
 
