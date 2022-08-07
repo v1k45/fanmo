@@ -145,7 +145,7 @@
 
   <template #footer>
     <div class="text-right">
-      <fm-button @click="isVisible = false;">Close</fm-button>
+      <fm-button :disabled="loading" @click="isVisible = false;">Close</fm-button>
       <fm-button native-type="submit" form="createPostForm" type="primary" :loading="loading">Create post</fm-button>
     </div>
   </template>
