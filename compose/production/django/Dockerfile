@@ -25,6 +25,8 @@ RUN pip wheel --wheel-dir /usr/src/app/wheels  \
 
 # Build UI
 FROM node:${NODE_VERSION} as node-build-stage
+ARG STAGE=prod
+ENV STAGE ${STAGE}
 
 WORKDIR /app
 COPY ./frontend/package.json .
