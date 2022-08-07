@@ -62,3 +62,15 @@ pytest
 
 All payments are processed by Razorpay and code makes heavy assumptions of its reliability.
 Emails are sent by AWS SES in production.
+
+
+### Docker debugging
+
+Drop this code in some module
+
+```python
+import debugpy
+debugpy.listen(("0.0.0.0", 5678))
+```
+
+Attach VS Code debugger: F5
