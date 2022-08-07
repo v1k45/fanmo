@@ -135,7 +135,17 @@
     <template #header>Edit page</template>
 
     <fm-form id="editProfileForm" :errors="editFormErrors" @submit.prevent="saveEditForm">
-      <fm-input v-model="editForm.name" uid="name" type="text" label="Page name" autofocus required></fm-input>
+      <fm-input v-model="editForm.name" uid="name" type="text" label="Page name" autofocus required>
+        <template #label>
+          <div class="flex">
+            Page name
+
+            <button v-tooltip="'To change your username, go to account settings.'" type="button" class="ml-auto">
+              <icon-info class="h-em w-em"></icon-info>
+            </button>
+          </div>
+        </template>
+      </fm-input>
       <fm-input v-model="editForm.one_liner" uid="one_liner" type="text" label="What are you creating?" placeholder="is creating space documentaries"></fm-input>
       <fm-input-rich v-model="editForm.about" uid="about" label="About"></fm-input-rich>
 
