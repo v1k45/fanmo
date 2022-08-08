@@ -19,11 +19,11 @@ def handle_400(request, *args, **kwargs):
 
 
 def handle_500(request, *args, **kwargs):
-    return serve_index(title="Internal Server Error", status=404)
+    return serve_index(title="Internal Server Error", status=500)
 
 
 def handle_403(request, *args, **kwargs):
-    return serve_index(title="Permission Denied", status=404)
+    return serve_index(title="Permission Denied", status=403)
 
 
 def page_view(request, username):
