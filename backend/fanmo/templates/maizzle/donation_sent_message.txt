@@ -6,10 +6,10 @@ You have sucessfully tipped {{ obj.amount }} to {{ obj.creator_user.display_name
 {{obj.creator_user.user_preferences.thank_you_message }}
 {% endif %}
 
-View Donations
+View Tips
          →
 
-{{ settings.BASE_URL }}{% url 'sent-donations'  %}
+{{ settings.BASE_URL }}{% url 'sent-tips'  %}
 
 Fanmo
 Need help? Email us on help@fanmo.in mailto:help@fanmo.in
