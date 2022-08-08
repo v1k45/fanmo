@@ -16,7 +16,6 @@ urlpatterns = [
     ),
     path(settings.ADMIN_URL, admin.site.urls),
     path("", index_view, name="home"),
-    path("kek/", lambda x: 0/0, name="kek"),
     path("pricing", index_view, name="pricing"),
     path("privacy", index_view, name="privacy"),
     path("terms", index_view, name="terms"),
