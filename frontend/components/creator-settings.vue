@@ -168,7 +168,7 @@
 
         <fm-alert type="warning" class="mt-6">
           We do not support changing bank account details from this page for security reasons.
-          Please reach out to us via email or the chat widget if you need any help.
+          Please reach out to us via email at help@fanmo.in if you need any help.
         </fm-alert>
       </fm-form>
       <!-- account static form end -->

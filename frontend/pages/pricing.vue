@@ -286,7 +286,7 @@ export default {
         },
         {
           question: 'Will you help my fans with their questions and issues?',
-          answer: 'Of course! Your fans can contact us through email and other means, we usually respond within 2 hours. We also have a Help Site where we have detailed articles.'
+          answer: 'Of course! Your fans can contact us through email and other means, we usually respond within 2 hours.'
         },
         {
           question: 'Is Fanmo right for me? Why should I use it instead of Patreon?',
