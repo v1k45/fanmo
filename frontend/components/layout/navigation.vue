@@ -208,7 +208,7 @@ export default {
           { id: 'creator-pages', label: 'Creator pages' },
           { id: 'dashboard', label: 'Dashboard', icon: Home, url: '/dashboard/' },
           { id: 'members', label: 'Members', icon: Users, url: '/members/' },
-          { id: 'creator-donations', label: 'Tips', icon: Coins, url: '/received-donations/' },
+          { id: 'creator-donations', label: 'Tips', icon: Coins, url: '/received-tips/' },
           { id: 'earnings', label: 'Earnings', icon: Wallet, url: '/earnings/' },
           { id: 'profile', label: 'View page', icon: LayoutTemplate, url: `/${user.username}` },
           { id: 'settings', label: 'Settings', icon: Sliders, url: '/settings/' },
@@ -216,12 +216,12 @@ export default {
           { id: 'supporter-pages', label: 'Supporter pages' },
           { id: 'feed', label: 'Feed', icon: LayoutList, url: '/feed/' },
           { id: 'memberships', label: 'Memberships', icon: UserCheck, url: '/memberships/' },
-          { id: 'supporter-donations', label: 'Tips', icon: Coins, url: '/sent-donations/' }
+          { id: 'supporter-donations', label: 'Tips', icon: Coins, url: '/sent-tips/' }
         ],
         supporter: [
           { id: 'feed', label: 'Feed', icon: LayoutList, url: '/feed/' },
           { id: 'memberships', label: 'Memberships', icon: UserCheck, url: '/memberships/' },
-          { id: 'donations', label: 'Tips', icon: Coins, url: '/sent-donations/' },
+          { id: 'donations', label: 'Tips', icon: Coins, url: '/sent-tips/' },
           { id: 'settings', label: 'Settings', icon: Sliders, url: '/settings/' }
         ]
       };
@@ -230,13 +230,13 @@ export default {
       return {
         creator: [
           { id: 'members', label: 'Members', icon: Users, url: '/members/' },
-          { id: 'donations', label: 'Tips', icon: Coins, url: '/received-donations/' },
+          { id: 'donations', label: 'Tips', icon: Coins, url: '/received-tips/' },
           { id: 'home', label: 'Home', url: '/dashboard/' }, // has special behavior based on the id
           { id: 'earnings', label: 'Earnings', icon: Wallet, url: '/earnings/' }
         ],
         supporter: [
           { id: 'memberships', label: 'Memberships', icon: UserCheck, url: '/memberships/' },
-          { id: 'donations', label: 'Tips', icon: Coins, url: '/sent-donations/' },
+          { id: 'donations', label: 'Tips', icon: Coins, url: '/sent-tips/' },
           { id: 'home', label: 'Feed', url: '/feed/' }, // has special behavior based on the id
           { id: 'settings', label: 'Settings', icon: Sliders, url: '/settings/' }
         ]
