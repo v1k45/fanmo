@@ -76,7 +76,7 @@
     <fm-tabs v-model="misc.tabs.model">
       <fm-tabs-pane id="home" label="Home">Create account</fm-tabs-pane>
       <fm-tabs-pane id="memberships" label="Memberships">Complete profile</fm-tabs-pane>
-      <fm-tabs-pane id="donations" label="Donations">Add payment details</fm-tabs-pane>
+      <fm-tabs-pane id="donations" label="Tips">Add payment details</fm-tabs-pane>
     </fm-tabs>
   </section>
   <!-- tabs end -->

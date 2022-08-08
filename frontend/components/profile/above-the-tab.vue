@@ -214,13 +214,7 @@ export default {
     FmInputRich
   },
   data() {
-    const tabName = {
-      POSTS: 'posts',
-      TIERS: 'tiers',
-      DONATION: 'donation'
-    };
     return {
-      tabName,
       isProfileShareVisible: false,
       isEditing: false,
       editForm: {

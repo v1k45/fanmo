@@ -95,7 +95,7 @@
     <fm-card class="max-w-lg overflow-hidden" body-class="bg-gray-100 text-center !pt-8 !pb-12">
       <logo circle class="h-16 w-16 animatecss animatecss-tada inline-block mr-6"></logo>
       <div class="mt-2">
-        Start offering memberships and accepting donations on Fanmo.
+        Start offering memberships and accepting tips on Fanmo.
         It takes less than 5 minutes to get started!
       </div>
       <fm-button type="primary" block class="mt-4" @click="restartOnboarding">Become a creator &rarr;</fm-button>

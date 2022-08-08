@@ -50,7 +50,7 @@
 
         <!-- stats: donation earnings start -->
         <div class="w-1/2 sm:w-1/3 xl:w-[unset] text-sm md:text-base mt-6">
-          <div class="text-gray-500">Donation earnings</div>
+          <div class="text-gray-500">Tip earnings</div>
           <div class="flex items-end">
             <div class="text-lg md:text-xl font-medium">{{ $currency(analytics.total_donation_amount.current) }}</div>
             <!-- delta start -->
@@ -351,7 +351,7 @@ export default {
           data: this.analytics.total_membership_amount.series
         },
         {
-          name: 'Donation earnings',
+          name: 'Tip earnings',
           data: this.analytics.total_donation_amount.series
         }
       ]);

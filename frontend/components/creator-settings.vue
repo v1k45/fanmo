@@ -56,7 +56,7 @@
         <div class="mb-4 font-medium">Notify me for</div>
 
         <fm-input v-model="form.notification.notify_memberships" class="!mt-2" type="checkbox">Every new membership and renewal</fm-input>
-        <fm-input v-model="form.notification.notify_donations" class="!mt-2" type="checkbox">Every donation</fm-input>
+        <fm-input v-model="form.notification.notify_donations" class="!mt-2" type="checkbox">Every tip</fm-input>
         <fm-input v-model="form.notification.notify_post_comments" class="!mt-2" type="checkbox">Comments on my posts</fm-input>
         <fm-input v-model="form.notification.notify_comment_replies" class="!mt-2" type="checkbox">Comment replies</fm-input>
         <fm-input v-model="form.notification.notify_following_posts" class="!mt-2" type="checkbox">Every new post from creators I follow</fm-input>

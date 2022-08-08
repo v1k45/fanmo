@@ -5,7 +5,7 @@
       <fm-input
         v-model="form.donation_description" :disabled="loading"
         uid="preferences.donation_description" type="textarea" rows="4" label="Description"
-        description="This will be shown in the donation widget. Tell your audience how their support will help you."
+        description="This will be shown in the tip widget. Tell your audience how their support will help you."
         :placeholder="`Show your appreciation for ${$auth.user.display_name} with a one time payment.`">
       </fm-input>
 
@@ -18,7 +18,7 @@
             <label class="mr-auto">Thank you message</label>
             <fm-button size="sm" @click="isPaymentSuccessPreviewVisible = true;">Preview</fm-button>
           </div>
-          <div class="text-sm text-gray-500 mt-1">This will be shown to your supporters after they make a donation. A copy will also be sent to their email.</div>
+          <div class="text-sm text-gray-500 mt-1">This will be shown to your supporters after they tip. A copy will also be sent to their email.</div>
         </template>
       </fm-input>
 
@@ -57,7 +57,7 @@ export default {
     };
   },
   head: {
-    title: 'Donation Settings'
+    title: 'Tip Settings'
   },
   computed: {
     donationData() {

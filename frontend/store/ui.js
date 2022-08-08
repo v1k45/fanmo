@@ -24,13 +24,13 @@ export const state = () => ({
       description: 'View and manage your memberships and review transaction history.'
     },
     receivedDonations: {
-      title: 'Donations Dashboard',
-      description: 'View and manage donations, donation settings, review transaction history and overall earnings from donations.'
+      title: 'Tips Dashboard',
+      description: 'View and manage tips, tip settings, review transaction history and overall earnings from tips.'
     },
     sentDonations: {
-      title: 'My Donations',
-      supporterTitle: 'Donations',
-      description: 'Search and view your donations.'
+      title: 'My Tips',
+      supporterTitle: 'Tips',
+      description: 'Search and view your tips.'
     },
     settings: {
       title: 'Settings',

@@ -255,29 +255,4 @@ $top-offset-with-banner: $header-height + $banner-height;
     top: $top-offset-with-banner;
   }
 }
-
-// TODO: delete this comment after all the pages are implemented
-/*
-  For creator:
-    Dashboard
-    Members
-      List view
-      Tier management
-    Donations
-      List view
-      Settings (thank you message etc.)
-    Payment history
-    Profile
-    Settings
-
-    Feed (Supporter dashboard)
-    My memberships
-    My donations
-  For supporter
-    Dashboard
-    My memberships
-    My donations
-    My account
-*/
-
 </style>

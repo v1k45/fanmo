@@ -14,7 +14,7 @@
 
       <!-- search start -->
       <div class="mr-auto lg:max-w-sm flex-grow">
-        <label class="text-sm block font-bold mb-2">Search for donations</label>
+        <label class="text-sm block font-bold mb-2">Search for tips</label>
         <fm-input v-model="filter.search" placeholder="Search by creator name" @input="handleSearchInput">
           <template #prepend>
             <icon-search class="w-em"></icon-search>
@@ -29,10 +29,10 @@
       <div class="w-full sm:w-[unset] lg:ml-4">
         <label class="text-sm block font-bold mb-2">Sort by</label>
         <fm-input v-model="filter.orderBy" type="select" @change="loadDonations">
-          <option value="-created_at">Newest donation first</option>
-          <option value="created_at">Oldest donation first</option>
-          <option value="-amount">Highest donation first</option>
-          <option value="amount">Lowest donation first</option>
+          <option value="-created_at">Newest tip first</option>
+          <option value="created_at">Oldest tip first</option>
+          <option value="-amount">Highest tip first</option>
+          <option value="amount">Lowest tip first</option>
           <option value="-lifetime_amount">Highest lifetime amount first</option>
           <option value="lifetime_amount">Lowest lifetime amount first</option>
         </fm-input>
@@ -97,7 +97,7 @@
     <div v-if="!donations.results.length" class="flex items-center justify-center min-h-[200px] bg-gray-50 rounded-b-lg border border-t-0">
       <div class="text-sm">
         <template v-if="hasActiveFilters">No results matched your filtering criteria.</template>
-        <template v-else>You haven't made any donations yet.</template>
+        <template v-else>You haven't given any tips yet.</template>
       </div>
     </div>
     <!-- table end -->
@@ -114,7 +114,7 @@
   <fm-dialog v-model="showDialog" drawer>
     <template #header>
       <div v-if="activeDonation" class="text-base">
-        Donation details for {{ activeDonation.creator_user.display_name }}
+        Tip details for {{ activeDonation.creator_user.display_name }}
       </div>
     </template>
 
@@ -179,7 +179,7 @@
             <fm-read-more-height v-if="activeDonation.message" max-height="200">
               <div class="whitespace-pre-wrap overflow-auto">{{ activeDonation.message }}</div>
             </fm-read-more-height>
-            <div v-else class="text-gray-600 text-sm italic">No message was included with this donation.</div>
+            <div v-else class="text-gray-600 text-sm italic">No message was included with this tip.</div>
           </dd>
         </div>
         <!-- message end -->
@@ -210,7 +210,7 @@
         </tbody>
       </fm-table>
       <div v-if="!payments || !payments.results.length" class="flex items-center justify-center min-h-[200px] bg-gray-50 rounded-b-lg border border-t-0">
-        <div class="text-sm">You haven't made any donation transactions yet.</div>
+        <div class="text-sm">You haven't made any tip transactions yet.</div>
       </div>
       <!-- payment history table end -->
 
@@ -245,7 +245,7 @@ export default {
     };
   },
   head: {
-    title: 'Sent Donations'
+    title: 'Sent tips'
   },
   computed: {
     ...mapState('donations', ['donations', 'payments']),

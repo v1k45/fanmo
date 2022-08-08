@@ -3,7 +3,7 @@
 
   <div v-if="stats" class="flex xl:space-x-12 flex-wrap mb-6">
     <div class="w-1/2 sm:w-1/3 xl:w-[unset] text-sm md:text-base">
-      <div class="text-gray-500">Total donations</div>
+      <div class="text-gray-500">Total tips</div>
       <div class="flex items-end">
         <div class="text-lg md:text-xl font-medium">{{ stats.total }}</div>
       </div>
@@ -27,7 +27,7 @@
 
     <!-- search start -->
     <div class="mr-auto lg:max-w-sm flex-grow">
-      <label class="text-sm block font-bold mb-2">Search for donations</label>
+      <label class="text-sm block font-bold mb-2">Search for tips</label>
       <fm-input v-model="filter.search" placeholder="Search by name or email" @input="handleSearchInput">
         <template #prepend>
           <icon-search class="w-em"></icon-search>
@@ -42,10 +42,10 @@
     <div class="w-full sm:w-[unset] lg:ml-4">
       <label class="text-sm block font-bold mb-2">Sort by</label>
       <fm-input v-model="filter.orderBy" type="select" @change="loadDonations">
-        <option value="-created_at">Newest donation first</option>
-        <option value="created_at">Oldest donation first</option>
-        <option value="-amount">Highest donation first</option>
-        <option value="amount">Lowest donation first</option>
+        <option value="-created_at">Newest tip first</option>
+        <option value="created_at">Oldest tip first</option>
+        <option value="-amount">Highest tip first</option>
+        <option value="amount">Lowest tip first</option>
         <option value="-lifetime_amount">Highest lifetime amount first</option>
         <option value="lifetime_amount">Lowest lifetime amount first</option>
       </fm-input>
@@ -112,7 +112,7 @@
   <div v-if="!donations.results.length" class="flex items-center justify-center min-h-[200px] bg-gray-50 rounded-b-lg border border-t-0">
     <div class="text-sm">
       <template v-if="hasActiveFilters">No results matched your filtering criteria.</template>
-      <template v-else>You don't have any donations yet.</template>
+      <template v-else>You haven't received any tips yet.</template>
     </div>
   </div>
   <!-- table end -->
@@ -127,7 +127,7 @@
   <fm-dialog v-model="showDialog" drawer>
     <template #header>
       <div v-if="activeDonation" class="text-base">
-        Donation details for {{ activeDonation.fan_user.display_name }}
+        Tip details for {{ activeDonation.fan_user.display_name }}
       </div>
     </template>
 
@@ -200,7 +200,7 @@
             <fm-read-more-height v-if="activeDonation.message" max-height="200">
               <div class="whitespace-pre-wrap overflow-auto">{{ activeDonation.message }}</div>
             </fm-read-more-height>
-            <div v-else class="text-gray-600 text-sm italic">No message was included with this donation.</div>
+            <div v-else class="text-gray-600 text-sm italic">No message was included with this tip.</div>
           </dd>
         </div>
         <!-- message end -->
@@ -295,7 +295,7 @@ export default {
     };
   },
   head: {
-    title: 'Received Donations'
+    title: 'Received Tips'
   },
   computed: {
     ...mapState('donations', ['donations', 'payments', 'stats']),

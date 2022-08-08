@@ -37,7 +37,7 @@ export default {
   data() {
     return {
       nav: [
-        { id: 'index', label: 'Donations', url: '/received-donations/' },
+        { id: 'index', label: 'Tips', url: '/received-donations/' },
         { id: 'donation-settings', label: 'Settings', url: '/received-donations/settings/' }
       ]
     };

@@ -75,7 +75,7 @@
         <label class="text-sm block font-bold mb-2">Payment type</label>
         <fm-input v-model="filter.type" type="select" @change="loadEarnings">
           <option value="">All</option>
-          <option value="donation">Donation</option>
+          <option value="donation">Tip</option>
           <option value="subscription">Membership</option>
         </fm-input>
       </div>
@@ -140,7 +140,7 @@
               </template>
             </div>
           </td>
-          <td>{{ earning.type === 'subscription' ? 'Membership' : 'Donation' }}</td>
+          <td>{{ earning.type === 'subscription' ? 'Membership' : 'Tip' }}</td>
           <td>{{ METHOD_NAME_MAP[earning.method] || earning.method }}</td>
           <td><code class="text-xs">{{ earning.external_id }}</code></td>
         </tr>
