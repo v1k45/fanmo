@@ -542,7 +542,11 @@ export default {
         this.fetchProfile(this.user.username);
         this.activeTab = this.tabName.POSTS;
       } else if (actionType === 'unauthenticated-next') {
-        this.$router.push({ name: 'set-password-token', params: { token: base64.encode(fanUser.email) } });
+        this.$router.push({
+          name: 'set-password-token',
+          params: { token: base64.encode(fanUser.email) },
+          query: { s: '1' }
+        });
       } else if (actionType === 'donation-close') {
         this.fetchProfile(this.user.username);
       }
