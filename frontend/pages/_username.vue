@@ -151,7 +151,7 @@
           <!-- no tier action start -->
           <fm-card
             v-if="!user.tiers.length"
-            class="mx-auto max-w-xl overflow-hidden" body-class="text-center !pt-16 !pb-20">
+            class="mx-auto max-w-xl overflow-hidden mt-6" body-class="text-center !pt-16 !pb-20">
             <icon-crown class="h-16 w-16 stroke-1 animatecss animatecss-tada"></icon-crown>
             <div class="mt-2">
               Make a steady monthly income while offering exclusive content and experience based on membership tiers to your fans.
