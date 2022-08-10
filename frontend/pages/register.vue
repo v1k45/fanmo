@@ -12,7 +12,12 @@
 
       <fm-input v-model="signupForm.email" uid="email" type="email" placeholder="Email address" required></fm-input>
 
-      <fm-input v-model="signupForm.password" uid="password" type="password" placeholder="Password" required></fm-input>
+      <fm-input v-model.trim="signupForm.password" uid="password" type="password" placeholder="Password" required @focus="showPasswordHint = true;"></fm-input>
+
+      <div v-if="showPasswordHint" class="text-xs mt-2">
+        <div :class="{ 'text-fm-success-600': signupForm.password.length >= 8 }">Password must be at least 8 characters long.</div>
+        <div :class="{ 'text-fm-success-600': /[a-z]/i.test(signupForm.password) }">Password should contain at least one alphabetic character.</div>
+      </div>
 
       <div class="text-sm mt-6 leading-relaxed">
         By creating an account, you agree to the <nuxt-link to="/terms">Terms &amp; conditions</nuxt-link>
@@ -51,7 +56,8 @@ export default {
         email: '',
         password: ''
       },
-      signupErrors: {}
+      signupErrors: {},
+      showPasswordHint: false
     };
   },
   head: {
