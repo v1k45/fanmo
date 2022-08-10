@@ -2,7 +2,7 @@
 <button class="fm-dropdown__item" :class="{
   'fm-dropdown__item--error': type === 'error',
   'fm-dropdown__item--static': $props.static
-}" v-on="$listeners">
+}" type="button" v-on="$listeners">
   <slot></slot>
 </button>
 </template>

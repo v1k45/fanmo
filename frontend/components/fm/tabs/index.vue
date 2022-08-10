@@ -4,7 +4,7 @@
     <button v-for="tab in tabs" :key="tab.id" class="fm-tabs__header-item" :class="{
       'fm-tabs__header-item--active': tab.id === localValue,
       'fm-tabs__header-item--stretched': stretched
-    }" @click="localValue = tab.id;">
+    }" type="button" @click="localValue = tab.id;">
       {{ tab.header }}
     </button>
   </div>
