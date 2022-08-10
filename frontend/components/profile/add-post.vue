@@ -66,63 +66,97 @@
           <!-- TODO: once breakpoint service is available, add a preview tab for phones -->
           <div class="text-lg font-bold mb-4">Preview</div>
           <!-- preview card start -->
-          <fm-card>
-            <div class="flex items-center">
-              <fm-avatar
-                :src="$auth.user.avatar && $auth.user.avatar.small"
-                :name="$auth.user.display_name"
-                size="w-10 h-10 flex-shrink-0">
-              </fm-avatar>
-              <div class="ml-3 mr-auto min-w-0">
-                <div class="font-bold truncate" :title="$auth.user.name || $auth.user.username">
-                  {{ $auth.user.name || $auth.user.username }}
-                </div>
-                <div class="flex">
-                  <div class="text-xs text-gray-500">{{ sampleCreatedAt }}</div>
+          <div class="bg-white rounded-xl border pt-4 pb-1">
+            <div class="post-body">
+
+              <div v-if="form.title" class="flex items-center">
+                <div class="flex flex-wrap flex-grow mr-auto">
+                  <div class="w-full basis-auto unstyled" title="Open post">
+                    <div class="text-lg md:text-xl text-black font-bold w-full">{{ form.title }}</div>
+                  </div>
                 </div>
               </div>
+
+              <div class="flex flex-wrap items-center mt-1 text-xs">
+
+                <!-- avatar and name start -->
+                <div class="unstyled flex items-center mr-auto mt-1 overflow-hidden md:max-w-[47.5%]">
+                  <!-- avatar start -->
+                  <fm-avatar
+                    :src="$auth.user.avatar && $auth.user.avatar.small"
+                    :name="$auth.user.display_name"
+                    size="w-5 h-5 flex-shrink-0">
+                  </fm-avatar>
+                  <!-- avatar end -->
+
+                  <!-- name start -->
+                  <div class="ml-2 min-w-0 text-sm truncate">
+                    <div class="truncate" :title="$auth.user.display_name">{{ $auth.user.display_name }}</div>
+                  </div>
+                  <!-- name end -->
+                </div>
+                <!-- avatar and name end -->
+
+                <div class="ml-7 md:ml-0 flex items-center text-gray-500 overflow-hidden mt-1 md:max-w-[47.5%]">
+                  <div class="text-gray-500 flex-shrink-0">{{ sampleCreatedAt }}</div>
+                  <span class="mx-2">&bull;</span>
+                  <div
+                    v-tooltip="{ content: visibilityPreviewNormalized, disabled: form.visibility === 'public' }"
+                    tabindex="0" class="truncate">
+                    <icon-lock v-if="form.visibility !== 'public'" class="h-em w-em -mt-1"></icon-lock>
+                    <icon-globe v-if="form.visibility === 'public'" class="h-em w-em -mt-1"></icon-globe>
+                    {{ visibilityPreviewNormalized }}
+                  </div>
+                </div>
+              </div>
+
             </div>
 
-            <div class="text-xl text-black font-bold mt-4">
-              <template v-if="form.title">{{ form.title }}</template>
-            </div>
 
-            <fm-read-more-height v-if="form.content.text" max-height="200" class="mt-3">
-              <fm-markdown-styled v-html="form.content.text"></fm-markdown-styled>
-            </fm-read-more-height>
-
-            <fm-carousel v-if="imagePreviews.length" :images="imagePreviews" class="mt-4">
-            </fm-carousel>
-
-            <template v-if="contentType === 'link' && form.content.link">
-              <fm-markdown-styled class="mt-4">
-                <a :href="form.content.link" target="_blank" class="mt-4">{{ form.content.link }}</a>
-              </fm-markdown-styled>
-              <div
-                v-if="(linkPreview.link && linkPreview.link.toString()) !== form.content.link"
-                class="p-16 rounded-lg mt-4 bg-gray-100 text-center" @click="getPreview">
-                <fm-button type="info" :loading="loading"><icon-refresh-cw class="h-em w-em"></icon-refresh-cw> Load preview</fm-button>
+            <template v-if="form.content">
+              <div v-if="form.content.text" class="post-body">
+                <fm-read-more-height :max-height="$route.name == 'p-slug-id' ? null : '200'" class="mt-4">
+                  <fm-markdown-styled>
+                    <div class="whitespace-pre-line" v-html="form.content.text"></div>
+                  </fm-markdown-styled>
+                </fm-read-more-height>
               </div>
-              <div v-else-if="linkPreview.link_embed" class="mt-4 aspect-w-16 aspect-h-9" v-html="linkPreview.link_embed.html">
+
+              <fm-carousel v-if="imagePreviews.length" :images="imagePreviews" class="mt-4"></fm-carousel>
+
+              <div v-if="contentType === 'link' && form.content.link" class="post-body">
+
+                <fm-markdown-styled class="mt-4">
+                  <a :href="form.content.link" target="_blank" class="mt-4">{{ form.content.link }}</a>
+                </fm-markdown-styled>
+
+                <div
+                  v-if="(linkPreview.link && linkPreview.link.toString()) !== form.content.link"
+                  class="p-16 rounded-lg mt-4 bg-gray-100 text-center" @click="getPreview">
+                  <fm-button type="info" :loading="loading"><icon-refresh-cw class="h-em w-em"></icon-refresh-cw> Load preview</fm-button>
+                </div>
+
+                <div v-else-if="linkPreview.link_embed" class="mt-4 aspect-w-16 aspect-h-9" v-html="linkPreview.link_embed.html">
+                </div>
+
+                <a
+                  v-else-if="linkPreview.link_og && linkPreviewComputed"
+                  class="unstyled block border overflow-hidden rounded-lg bg-gray-50 mt-3"
+                  :href="linkPreviewComputed.link" target="_blank" rel="noopener noreferrer nofollow">
+                  <div v-if="linkPreviewComputed.image" class="overflow-hidden flex-none">
+                    <img :src="linkPreviewComputed.image" class="w-full max-h-48 object-cover" alt="">
+                  </div>
+                  <div class="p-4 pt-3 flex-grow overflow-hidden">
+                    <div class="block font-bold max-w-full">{{ linkPreviewComputed.title }}</div>
+                    <div v-if="linkPreviewComputed.description" class="mt-1 text-sm">{{ linkPreviewComputed.description }}</div>
+                    <div class="text-gray-500 text-sm mt-1">{{ linkPreviewComputed.hostname }}</div>
+                  </div>
+                </a>
               </div>
-              <a
-                v-else-if="linkPreview.link_og && linkPreviewComputed"
-                class="unstyled block border overflow-hidden rounded-lg bg-gray-50 mt-3"
-                :href="linkPreviewComputed.link" target="_blank" rel="noopener noreferrer nofollow">
-                <div v-if="linkPreviewComputed.image" class="overflow-hidden flex-none">
-                  <img :src="linkPreviewComputed.image" class="w-full max-h-48 object-cover" alt="">
-                </div>
-                <div class="p-4 pt-3 flex-grow overflow-hidden">
-                  <div class="block font-bold max-w-full">{{ linkPreviewComputed.title }}</div>
-                  <div v-if="linkPreviewComputed.description" class="mt-1 text-sm">{{ linkPreviewComputed.description }}</div>
-                  <div class="text-gray-500 text-sm mt-1">{{ linkPreviewComputed.hostname }}</div>
-                </div>
-              </a>
             </template>
 
-
-            <hr class="mt-4">
-            <div class="mt-4 flex items-center">
+            <hr v-if="!imagePreviews.length && form.content" class="mt-4">
+            <div class="mt-4 mb-3 post-body flex items-center">
               <button type="link" class="inline-flex items-center mr-6">
                 <icon-heart class="inline mr-2 h-em w-em"></icon-heart>
                 Like
@@ -136,7 +170,7 @@
                 Share
               </button>
             </div>
-          </fm-card>
+          </div>
           <!-- preview card end -->
         </div>
       </div>
@@ -231,6 +265,16 @@ export default {
         description,
         image
       };
+    },
+    visibilityPreviewNormalized() {
+      const visibilityMap = {
+        public: 'Public',
+        all_members: 'All members',
+        allowed_tiers: this.$auth.user.tiers
+          .filter(tier => this.form.allowed_tiers_ids.includes(tier.id))
+          .map(tier => tier.name).join(', ')
+      };
+      return visibilityMap[this.form.visibility];
     }
   },
   watch: {
