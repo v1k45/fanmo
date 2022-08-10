@@ -426,9 +426,13 @@ export default {
         return;
       }
 
-      const membership = data.scheduled_subscription;
+      const membership = data ? data.scheduled_subscription : null;
 
       if (!membership) {
+        this.loadingTierId = null;
+        this.loadingLockedPostId = null;
+        this.donationLoading = false;
+
         this.paymentSuccess = {
           isVisible: true,
           successMessage: 'Your membership level was scheduled to update. Changes will be reflected during the next subscription cycle.',
