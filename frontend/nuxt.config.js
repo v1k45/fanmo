@@ -104,8 +104,13 @@ export default {
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
-    '@nuxtjs/auth-next'
+    '@nuxtjs/auth-next',
+    '@nuxtjs/gtm'
   ],
+
+  gtm: {
+    id: 'G-S7RPVV0MPE'
+  },
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
