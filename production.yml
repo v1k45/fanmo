@@ -31,3 +31,5 @@ services:
       options:
         awslogs-group: fanmo
         awslogs-create-group: "true"
+        max-size: "10m"
+        max-file: "3"
