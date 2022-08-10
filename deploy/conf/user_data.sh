@@ -36,7 +36,6 @@ sudo -u ubuntu bash -c "
   git clone git@github.com:v1k45/memberships.git;
   cd memberships;
   mkdir -p .envs/.prod/
-  sudo at now +10 minutes -f ./prod.deploy.sh;
 "
 
 # copy cronjob
