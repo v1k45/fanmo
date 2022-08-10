@@ -71,7 +71,7 @@
       <input
         ref="input" v-model="model" v-bind="$attrs"
         :type="isPasswordVisible ? 'text' : 'password'" class="fm-input__input pr-8"
-        :class="inputClass">
+        :class="inputClass" v-on="listeners">
       <button
         class="absolute right-0 top-0 flex items-center justify-center h-full px-2" aria-hidden="true" type="button"
         :title="isPasswordVisible ? 'Hide password' : 'Show password'"
@@ -95,9 +95,9 @@
         <div class="fm-input__prepend">
           <slot name="prepend"></slot>
         </div>
-        <input ref="input" v-model="model" v-bind="$attrs" :type="type" class="fm-input__input" :class="inputClass">
+        <input ref="input" v-model="model" v-bind="$attrs" :type="type" class="fm-input__input" :class="inputClass" v-on="listeners">
       </div>
-      <input v-else ref="input" v-model="model" v-bind="$attrs" :type="type" class="fm-input__input" :class="inputClass">
+      <input v-else ref="input" v-model="model" v-bind="$attrs" :type="type" class="fm-input__input" :class="inputClass" v-on="listeners">
     </template>
     <!-- default input end -->
 
