@@ -56,6 +56,8 @@ chown -R caddy:caddy /etc/caddy/Caddyfile
 systemctl restart caddy
 
 # setup docker
+cp /home/ubuntu/memberships/deploy/conf/docker.json /etc/docker/daemon.json
+systemctl restart docker
 aws ssm get-parameter --name "docker-token" --output text --query Parameter.Value --region ap-south-1 | docker login -u v1k45 --password-stdin
 # use a custom address pool; default pool is 10.20.0.0/16 which clashes with AWS VPC
 docker swarm init --default-addr-pool 30.30.0.0/16

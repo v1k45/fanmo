@@ -11,7 +11,7 @@ import { readFileSync } from 'fs';
 const config = {
   ec2: {
     machineImage: 'ami-0325e3016099f9112',
-    keyPair: 'fanmo-test'
+    keyPair: 'fanmo'
   },
   rds: {
     dbName: 'fanmo',
@@ -31,19 +31,19 @@ class FanmoStack extends cdk.Stack {
     this.setupWebserver()
     this.setupDbServer()
 
-    new cdk.CfnOutput(this, 'server-ip', { value: this.ec2Instance.instancePublicIp })
-    new cdk.CfnOutput(this, 'bucket-name', { value: this.s3Bucket.bucketName })
-    new cdk.CfnOutput(this, 'cf-dist', { value: this.cfDistribution.distributionDomainName })
-    new cdk.CfnOutput(this, 'cf-key-group-ip', { value: this.cfKeyGroup.keyGroupId })
-    new cdk.CfnOutput(this, 'db-host', { value: this.dbInstance.instanceEndpoint.hostname });
-    new cdk.CfnOutput(this, 'db-secret-name', { value: this.dbInstance.secret.secretName });
+    new cdk.CfnOutput(this, 'ServerIP', { value: this.ec2Instance.instancePublicIp })
+    new cdk.CfnOutput(this, 'BucketName', { value: this.s3Bucket.bucketName })
+    new cdk.CfnOutput(this, 'CDN', { value: this.cfDistribution.distributionDomainName })
+    new cdk.CfnOutput(this, 'CDNKeyGroupId', { value: this.cfKeyGroup.keyGroupId })
+    new cdk.CfnOutput(this, 'DBHost', { value: this.dbInstance.instanceEndpoint.hostname });
+    new cdk.CfnOutput(this, 'DBSecret', { value: this.dbInstance.secret.secretName });
   }
 
   /**
    * Create VPC and Security Group
    */
   setupNetworking() {
-    this.vpc = new ec2.Vpc(this, 'fanmo-vpc', {
+    this.vpc = new ec2.Vpc(this, 'VPC', {
       cidr: '10.0.0.0/16',
       natGateways: 0,
       subnetConfiguration: [
@@ -52,7 +52,7 @@ class FanmoStack extends cdk.Stack {
       ],
     });
 
-    this.securityGroup = new ec2.SecurityGroup(this, 'fanmo-sg', {
+    this.securityGroup = new ec2.SecurityGroup(this, 'SecurityGroup', {
       vpc: this.vpc,
       allowAllOutbound: true,
     });
@@ -75,11 +75,11 @@ class FanmoStack extends cdk.Stack {
       'Allow HTTPS traffic from anywhere',
     );
 
-    this.ip = new ec2.CfnEIP(this, 'fanno-ip')
+    this.ip = new ec2.CfnEIP(this, 'PublicIP')
   }
 
   setupRole() {
-    this.iamRole = new iam.Role(this, 'fanmo-service-role', {
+    this.iamRole = new iam.Role(this, 'ServiceRole', {
       assumedBy: new iam.ServicePrincipal('ec2.amazonaws.com'),
       managedPolicies: [
         iam.ManagedPolicy.fromAwsManagedPolicyName('AmazonS3FullAccess'),
@@ -91,10 +91,10 @@ class FanmoStack extends cdk.Stack {
   }
 
   setupStorage() {
-    this.s3Bucket = new s3.Bucket(this, 'fanmo-media');
+    this.s3Bucket = new s3.Bucket(this, 'MediaStorage');
 
     // Grant access to cloudfront
-    const cloudfrontOAI = new cloudfront.OriginAccessIdentity(this, 'fanmo-cf-ident');
+    const cloudfrontOAI = new cloudfront.OriginAccessIdentity(this, 'CDNIdentity');
     this.s3Bucket.addToResourcePolicy(new iam.PolicyStatement({
       actions: ['s3:GetObject'],
       resources: [this.s3Bucket.arnForObjects('*')],
@@ -102,14 +102,14 @@ class FanmoStack extends cdk.Stack {
     }));
 
     // key group for private content
-    this.cfKeyGroup = new cloudfront.KeyGroup(this, 'cf-keygroup', { 
+    this.cfKeyGroup = new cloudfront.KeyGroup(this, 'KeyGroup', {
       items: [
-        new cloudfront.PublicKey(this, 'cf-public', { encodedKey: readFileSync('./conf/cdn.pub', 'utf-8') })
+        new cloudfront.PublicKey(this, 'PublicKey', { encodedKey: readFileSync('./conf/cdn.pub', 'utf-8') })
       ]
     })
 
     // CloudFront distribution
-    this.cfDistribution = new cloudfront.Distribution(this, 'fanmo-cdn', {
+    this.cfDistribution = new cloudfront.Distribution(this, 'CDN', {
       defaultBehavior: {
         origin: new origins.S3Origin(this.s3Bucket, { originAccessIdentity: cloudfrontOAI }),
         compress: true,
@@ -122,7 +122,7 @@ class FanmoStack extends cdk.Stack {
   }
 
   setupWebserver() {
-    this.ec2Instance = new ec2.Instance(this, 'fanmo-web-server', {
+    this.ec2Instance = new ec2.Instance(this, 'WebServer', {
       vpc: this.vpc,
       vpcSubnets: { subnetType: ec2.SubnetType.PUBLIC },
       role: this.iamRole,
@@ -137,11 +137,11 @@ class FanmoStack extends cdk.Stack {
       keyName: config.ec2.keyPair,
     });
     this.ec2Instance.addUserData(readFileSync('./conf/user_data.sh', 'utf-8'))
-    new ec2.CfnEIPAssociation(this, 'web-server-ip', { eip: this.ip.ref, instanceId: this.ec2Instance.instanceId })
+    new ec2.CfnEIPAssociation(this, 'WebServerIP', { eip: this.ip.ref, instanceId: this.ec2Instance.instanceId })
   }
 
   setupDbServer() {
-    this.dbInstance = new rds.DatabaseInstance(this, 'fanmo-db', {
+    this.dbInstance = new rds.DatabaseInstance(this, 'DBServer', {
       vpc: this.vpc,
       vpcSubnets: {
         subnetType: ec2.SubnetType.PRIVATE_ISOLATED,
@@ -159,7 +159,7 @@ class FanmoStack extends cdk.Stack {
       maxAllocatedStorage: 15,
       allowMajorVersionUpgrade: false,
       autoMinorVersionUpgrade: true,
-      backupRetention: cdk.Duration.days(0),
+      backupRetention: cdk.Duration.days(1),
       deleteAutomatedBackups: true,
       deletionProtection: false,
       databaseName: config.rds.dbName,
