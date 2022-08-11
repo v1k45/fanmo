@@ -33,7 +33,7 @@ class FanmoStack extends cdk.Stack {
 
     new cdk.CfnOutput(this, 'ServerIP', { value: this.ec2Instance.instancePublicIp })
     new cdk.CfnOutput(this, 'BucketName', { value: this.s3Bucket.bucketName })
-    new cdk.CfnOutput(this, 'CDN', { value: this.cfDistribution.distributionDomainName })
+    new cdk.CfnOutput(this, 'CDNDist', { value: this.cfDistribution.distributionDomainName })
     new cdk.CfnOutput(this, 'CDNKeyGroupId', { value: this.cfKeyGroup.keyGroupId })
     new cdk.CfnOutput(this, 'DBHost', { value: this.dbInstance.instanceEndpoint.hostname });
     new cdk.CfnOutput(this, 'DBSecret', { value: this.dbInstance.secret.secretName });
