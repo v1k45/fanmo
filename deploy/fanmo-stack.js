@@ -134,6 +134,12 @@ class FanmoStack extends cdk.Stack {
       machineImage: ec2.MachineImage.genericLinux({
         'ap-south-1': config.ec2.machineImage
       }),
+      blockDevices: [
+        {
+          deviceName: '/dev/sda1',
+          volume: ec2.BlockDeviceVolume.ebs(20)
+        }
+      ],
       keyName: config.ec2.keyPair,
     });
     this.ec2Instance.addUserData(readFileSync('./conf/user_data.sh', 'utf-8'))
