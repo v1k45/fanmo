@@ -15,7 +15,11 @@ const dialog = ({ dialogType, message, title, html, type, okButtonText, cancelBu
   const instance = new Dialog();
   const container = document.body;
 
-  Object.assign(instance, { message, title, type, dialogType, html, okButtonText, cancelButtonText });
+  const options = { message, title, type, dialogType, html };
+  if (okButtonText) options.okButtonText = okButtonText;
+  if (cancelButtonText) options.cancelButtonText = cancelButtonText;
+  Object.assign(instance, options);
+
   instance.vm = instance.$mount();
   container.appendChild(instance.$el);
 
