@@ -91,8 +91,9 @@ def subscription_cancelled(payload):
         external_id=subscription_payload["id"],
         plan__external_id=subscription_payload["plan_id"],
     )
-    subscription.status = Subscription.Status.CANCELLED
+    subscription.status = Subscription.Status.SCHEDULED_TO_CANCEL
     subscription.save()
+    refresh_membership(subscription.membership_id)
     refresh_stats(subscription.creator_user_id)
 
 
