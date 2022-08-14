@@ -17,8 +17,10 @@
   </fm-form>
   <div v-else-if="$auth.loggedIn" class="post-body mt-4 mb-8">
     <div class="py-4 bg-gray-100 text-center rounded-xl">
-      <!-- TODO: sub-route and redirect to memberships tab and open the minimum_membership tier -->
-      <!-- <fm-button @click="$router.push({ name: 'login' })">Become a member to comment</fm-button> -->
+      <fm-button
+        type="" class="text-body" @click="handleSubscribeIntent">
+        Join now for {{ $currency(post.minimum_tier.amount) }}/month to comment
+      </fm-button>
     </div>
   </div>
   <div v-else class="post-body mt-4 mb-8">
@@ -43,7 +45,7 @@
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapActions, mapMutations } from 'vuex';
 export default {
   props: {
     post: { type: Object, default: null },
@@ -61,6 +63,8 @@ export default {
   },
   methods: {
     ...mapActions('posts', ['createComment', 'loadNextComments']),
+    ...mapMutations('ui', ['setGlobalLoader']),
+
     async createCommentLocal() {
       const { success, data } = await this.createComment({ postId: this.post.id, body: this.commentForm.body });
       if (!success) this.commentErrors = data;
@@ -73,6 +77,19 @@ export default {
       this.nextCommentsLoading = true;
       await this.loadNextComments(this.post.id);
       this.nextCommentsLoading = false;
+    },
+    handleSubscribeIntent() {
+      this.setGlobalLoader('Just a moment...');
+      this.$router.push({
+        name: 'username',
+        params: {
+          username: this.post.author_user.username,
+          data: {
+            intent: 'subscribe-through-post',
+            tier: this.post.minimum_tier
+          }
+        }
+      });
     }
   }
 };
