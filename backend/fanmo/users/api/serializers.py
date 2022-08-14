@@ -10,6 +10,8 @@ from dj_rest_auth.serializers import (
     PasswordChangeSerializer as RestAuthPasswordResetSerializer,
 )
 from django.contrib.auth import password_validation
+from django.db.models import Value
+from django.db.models.functions import Replace
 from django.forms import ValidationError
 from django_otp.plugins.otp_email.models import EmailDevice
 from django_otp.plugins.otp_totp.models import TOTPDevice
@@ -19,7 +21,7 @@ from ipware import get_client_ip
 from rest_framework import serializers
 from rest_framework.exceptions import ErrorDetail
 
-from fanmo.core.notifications import notify_new_post, notify_password_change
+from fanmo.core.notifications import notify_password_change
 from fanmo.core.tasks import async_task
 from fanmo.memberships.models import Tier
 from fanmo.users.models import (
@@ -340,6 +342,15 @@ class UserSerializer(ComputedUserFieldSerializer, serializers.ModelSerializer):
                 else UserOnboarding.Status.IN_PROGRESS
             )
         instance.user_onboarding.save()
+
+        # update activities if user changes display name
+        # this is only a temporary hack
+        current_name = instance.name
+        new_name = validated_data.get("name", current_name)
+        if current_name != new_name:
+            CreatorActivity.objects.filter(fan_user=instance).update(
+                message=Replace("message", Value(current_name), Value(new_name))
+            )
 
         return super().update(instance, validated_data)
 

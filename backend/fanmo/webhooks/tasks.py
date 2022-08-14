@@ -56,7 +56,9 @@ def subscription_charged(payload):
             datetime.fromtimestamp(subscription_payload["current_end"])
         )
         # only renew if needed.
-        if timezone.localdate(cycle_end_at) != timezone.localdate(subscription.cycle_end_at):
+        if timezone.localdate(cycle_end_at) != timezone.localdate(
+            subscription.cycle_end_at
+        ):
             subscription.renew(cycle_end_at)
     subscription.save()
 
