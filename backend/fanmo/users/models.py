@@ -66,6 +66,10 @@ class User(BaseModel, AbstractUser):
     subscriber_count = models.PositiveSmallIntegerField(default=0)
     follower_count = models.PositiveSmallIntegerField(default=0)
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.get_membership = lru_cache()(self._get_membership)
+
     def public_tiers(self):
         return self.tiers.filter(is_public=True)
 
@@ -101,8 +105,7 @@ class User(BaseModel, AbstractUser):
     def email_base64(self):
         return base64.urlsafe_b64encode(self.email.encode()).decode("utf-8")
 
-    @lru_cache
-    def get_membership(self, creator_user_id):
+    def _get_membership(self, creator_user_id):
         # PERF: assumes memberships are prefetched!
         return next(
             (
