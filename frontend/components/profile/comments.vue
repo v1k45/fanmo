@@ -15,7 +15,7 @@
       <fm-button type="primary" native-type="submit">Comment</fm-button>
     </div>
   </fm-form>
-  <div v-else-if="$auth.loggedIn" class="post-body mt-4 mb-8">
+  <div v-else class="post-body mt-4 mb-8">
     <div class="py-4 bg-gray-100 text-center rounded-xl">
       <fm-button
         type="" class="text-body" @click="handleSubscribeIntent">
@@ -23,13 +23,6 @@
       </fm-button>
     </div>
   </div>
-  <div v-else class="post-body mt-4 mb-8">
-    <div class="py-4 bg-gray-100 text-center rounded-xl">
-      <!-- TODO: sub-route and redirect to memberships tab and open the minimum_membership tier -->
-      <fm-button @click="$router.push({ name: 'login' })">Become a member to comment</fm-button>
-    </div>
-  </div>
-
 
   <div class="mt-4 post-body">
     <profile-comment
