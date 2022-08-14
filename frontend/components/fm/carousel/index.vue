@@ -1,6 +1,6 @@
 <template>
 <div class="fm-carousel">
-  <div class="fm-carousel__items" :class="height">
+  <div v-swipe class="fm-carousel__items" :class="height" @swiped="handleSwipe">
     <div class="fm-carousel-items-translator" :style="{ transform: `translateX(-${currentItem * 100}%)` }">
       <div
         v-for="(image, idx) in images" :key="idx" class="fm-carousel__item"
@@ -34,6 +34,7 @@
 </template>
 
 <script>
+import debounce from 'lodash/debounce';
 export default {
   props: {
     height: { type: String, default: 'h-[300px] lg:h-[400px]' },
@@ -52,6 +53,14 @@ export default {
     navigate(by) {
       this.currentItem = (this.currentItem + by) % (this.images.length);
     },
+    handleSwipe: debounce(function(evt) {
+      const direction = evt.detail.dir;
+      if (direction === 'left') {
+        if (this.currentItem < this.images.length - 1) this.navigate(1);
+      } else if (direction === 'right') {
+        if (this.currentItem > 0) this.navigate(-1);
+      }
+    }, 100, { leading: true, trailing: false }),
     getImage(image, size) {
       if (typeof image !== 'object') return image;
       return image[size];
