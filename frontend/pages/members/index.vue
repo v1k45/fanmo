@@ -177,10 +177,7 @@
         <div class="flex items-baseline mb-2">
           <dt class="text-sm text-gray-500 w-1/3 mr-2 md:w-1/4">Status</dt>
           <dd class="flex items-center flex-grow flex-wrap">
-            <div class="font-medium mr-auto" :class="{
-              'text-fm-success-600': activeMember.status === 'active',
-              'text-fm-error': activeMember.status !== 'active'
-            }">
+            <div class="font-medium mr-auto" :class="[STATUS_COLOR_MAP[activeMember.status]]">
               {{ STATUS_TEXT_MAP[activeMember.status] }}
             </div>
             <fm-button
@@ -335,12 +332,13 @@
 <script>
 import debounce from 'lodash/debounce';
 import { mapActions, mapState } from 'vuex';
-import { copy, delay, STATUS_TEXT_MAP } from '~/utils';
+import { copy, delay, STATUS_TEXT_MAP, STATUS_COLOR_MAP } from '~/utils';
 
 export default {
   data() {
     return {
       STATUS_TEXT_MAP,
+      STATUS_COLOR_MAP,
       filter: {
         search: '',
         isActive: null,

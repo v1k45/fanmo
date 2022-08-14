@@ -118,10 +118,25 @@ export const STATUS_TEXT_MAP = {
   pending: 'Pending', // renewing at end of cycle
   halted: 'Halted',
   scheduled_to_cancel: 'Scheduled to cancel', // used when updating current subscription
+  scheduled_to_update: 'Scheduled to update', // used when updating current subscription
   cancelled: 'Cancelled',
   paused: 'Paused',
   expired: 'Expired',
   completed: 'Completed'
+};
+export const STATUS_COLOR_MAP = {
+  created: 'text-fm-success-600',
+  authenticated: 'text-fm-success-600',
+  active: 'text-fm-success-600',
+  scheduled_to_activate: 'text-fm-success-600',
+  pending: 'text-fm-error',
+  halted: 'text-fm-error',
+  scheduled_to_cancel: 'text-fm-error',
+  scheduled_to_update: 'text-fm-success-600',
+  cancelled: 'text-fm-error',
+  paused: 'text-fm-error',
+  expired: 'text-fm-error',
+  completed: 'text-fm-error'
 };
 
 /**
