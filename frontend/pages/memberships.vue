@@ -283,7 +283,11 @@ export default {
     }, 250),
     async cancelMembershipLocal(userId) {
       try {
-        await this.$confirm.error('This will schedule the membership to cancel on next renewal date. Are you sure you want cancel this membership?', 'Cancel membership');
+        await this.$confirm.error(
+          'This will schedule the membership to cancel on next renewal date. Are you sure you want cancel this membership?',
+          'Cancel membership',
+          { cancelButtonText: 'No', okButtonText: 'Cancel membership' }
+        );
       } catch (err) {
         return;
       }
