@@ -1,7 +1,7 @@
 <template>
 <transition enter-active-class="animatecss-fadeIn" leave-to-class="animatecss-fadeOut" @after-leave="$emit('hidden')">
   <div v-show="isVisible" class="fm-dialog animatecss" :class="classes">
-    <div class="fm-dialog__backdrop" @click="closeOnBackdropClick ? close() : () => {}"></div>
+    <div class="fm-dialog__backdrop" @click="requireExplicitClose ? () => {} : close()"></div>
     <transition
       :enter-active-class="drawer ? 'animatecss-slideInRight' : 'animatecss-slideInUp md:animatecss-zoomIn'"
       :leave-to-class="drawer ? 'animatecss-slideOutRight' : 'animatecss-slideOutDown md:animatecss-zoomOut'">
@@ -40,7 +40,7 @@ export default {
     showClose: { type: Boolean, default: true },
     fullscreen: { type: Boolean, default: false },
     alert: { type: Boolean, default: false },
-    closeOnBackdropClick: { type: Boolean, default: true },
+    requireExplicitClose: { type: Boolean, default: false },
     dialogClass: { type: String, default: '' },
     customWidth: { type: Boolean, default: false },
     noPadding: { type: Boolean, default: false },

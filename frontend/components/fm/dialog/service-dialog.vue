@@ -1,7 +1,7 @@
 <template>
 <fm-dialog
   v-model="isVisible" class="fm-service-dialog" :class="classes"
-  alert :show-close="false" :close-on-backdrop-click="false"
+  alert :show-close="false" require-explicit-close
   @hidden="$emit('closed')">
   <div class="flex">
     <!-- icon start -->

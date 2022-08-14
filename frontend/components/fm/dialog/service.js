@@ -11,11 +11,11 @@ const destroyInstance = (instance) => {
   instance.$destroy();
 };
 
-const dialog = ({ dialogType, message, title, html, type, returnPromise = false }) => {
+const dialog = ({ dialogType, message, title, html, type, okButtonText, cancelButtonText, returnPromise = false }) => {
   const instance = new Dialog();
   const container = document.body;
 
-  Object.assign(instance, { message, title, type, dialogType, html });
+  Object.assign(instance, { message, title, type, dialogType, html, okButtonText, cancelButtonText });
   instance.vm = instance.$mount();
   container.appendChild(instance.$el);
 

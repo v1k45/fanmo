@@ -1,5 +1,5 @@
 <template>
-<fm-dialog v-model="isVisible" :close-on-backdrop-click="false" custom-width dialog-class="max-w-lg">
+<fm-dialog v-model="isVisible" require-explicit-close custom-width dialog-class="max-w-lg">
 
   <!-- creator's avatar start -->
   <div class="w-24 h-24 lg:w-32 lg:h-32 rounded-full relative overflow-hidden mx-auto mt-4">

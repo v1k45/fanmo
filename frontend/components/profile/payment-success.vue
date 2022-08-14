@@ -1,5 +1,5 @@
 <template>
-<fm-dialog v-model="isVisible" :close-on-backdrop-click="false" :show-close="showClose">
+<fm-dialog v-model="isVisible" require-explicit-close :show-close="showClose">
   <!-- creator's avatar start -->
   <div class="w-24 h-24 lg:w-32 lg:h-32 rounded-full relative overflow-hidden mx-auto mt-4">
     <img v-if="user.avatar" :src="user.avatar.medium" class="h-full w-full object-cover">
