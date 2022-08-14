@@ -1,5 +1,5 @@
 <template>
-<div class="fm-table" :class="{ 'fm-table--first-column-sticky': firstColumnSticky }">
+<div class="fm-table" :class="{ 'fm-table--first-column-sticky': firstColumnSticky }" data-swipe-ignore>
   <table>
     <slot></slot>
   </table>

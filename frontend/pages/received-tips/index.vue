@@ -194,7 +194,7 @@
 
 
         <!-- message start -->
-        <div class="mb-2">
+        <div class="mb-2" data-swipe-ignore>
           <dt class="text-sm text-gray-500">Message <icon-corner-right-down class="h-em w-em"></icon-corner-right-down></dt>
           <dd class="border rounded-lg p-3 mt-4">
             <fm-read-more-height v-if="activeDonation.message" max-height="200">

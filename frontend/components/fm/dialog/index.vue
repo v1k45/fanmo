@@ -1,6 +1,6 @@
 <template>
 <transition enter-active-class="animatecss-fadeIn" leave-to-class="animatecss-fadeOut" @after-leave="$emit('hidden')">
-  <div v-show="isVisible" class="fm-dialog animatecss" :class="classes">
+  <div v-show="isVisible" v-swipe class="fm-dialog animatecss" :class="classes" @swiped="handleSwipe">
     <div class="fm-dialog__backdrop" @click="requireExplicitClose ? () => {} : close()"></div>
     <transition
       :enter-active-class="drawer ? 'animatecss-slideInRight' : 'animatecss-slideInUp md:animatecss-zoomIn'"
@@ -30,6 +30,7 @@
 
 <script>
 import { X as IconX } from 'lucide-vue';
+import debounce from 'lodash/debounce';
 
 export default {
   components: {
@@ -80,6 +81,16 @@ export default {
       if (this.isVisible) document.documentElement.classList.add('overflow-hidden');
       else if (this.$el && this.$el.parentElement && !this.$el.parentElement.closest('.fm-dialog')) document.documentElement.classList.remove('overflow-hidden');
     },
+    handleSwipe: debounce(function(evt) {
+      const direction = evt.detail.dir;
+      if (this.drawer) {
+        if (direction !== 'right') return;
+        this.close();
+      } else {
+        if (direction !== 'down' || this.alert || this.requireExplicitClose) return;
+        this.close();
+      }
+    }, 100, { leading: true, trailing: false }),
     async trapFocus() {
       await this.$nextTick();
       const el = this.$refs['focus-trap'];
