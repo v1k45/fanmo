@@ -2,21 +2,20 @@
 <!-- sidebar nav items start -->
 <ul v-if="type === 'sidebar'">
   <!-- no loggedIn check, consumer should do it -->
-  <template v-if="$auth.user.is_creator">
-    <li>
-      <fm-avatar :src="$auth.user.avatar && $auth.user.avatar.small" :name="$auth.user.display_name" size="h-24 w-24" class="mx-auto"></fm-avatar>
-    </li>
-    <li class="text-center mt-2">
-      <nuxt-link :to="`/${$auth.user.username}`">
-        <fm-button>
-          <icon-layout-template class="h-4 w-4 -mt-0.5"></icon-layout-template> View page
-        </fm-button>
-      </nuxt-link>
-    </li>
-    <li class="my-3">
-      <hr>
-    </li>
-  </template>
+  <li>
+    <fm-avatar :src="$auth.user.avatar && $auth.user.avatar.small" :name="$auth.user.display_name" size="h-24 w-24" class="mx-auto"></fm-avatar>
+  </li>
+  <li class="text-center mt-2">
+    <nuxt-link v-if="$auth.user.is_creator" :to="`/${$auth.user.username}`">
+      <fm-button>
+        <icon-layout-template class="h-4 w-4 -mt-0.5"></icon-layout-template> View page
+      </fm-button>
+    </nuxt-link>
+    <div v-else class="text-black font-medium truncate">{{ $auth.user.display_name }}</div>
+  </li>
+  <li class="my-3">
+    <hr>
+  </li>
   <template v-for="(item, idx) in ($auth.user.is_creator ? nav.creator : nav.supporter)">
     <template v-if="item.id === 'profile'"></template>  <!-- don't render profile in sidebar -->
     <li
@@ -68,18 +67,21 @@
 
   <fm-dialog v-model="isBottomPaneDrawerVisible" dialog-class="!max-w-xs" drawer no-padding>
     <div class="!border-t-0 mt-4">
-      <template v-if="$auth.user.is_creator">
-        <div>
-          <fm-avatar :src="$auth.user.avatar && $auth.user.avatar.small" :name="$auth.user.display_name" size="h-24 w-24" class="mx-auto"></fm-avatar>
+      <div>
+        <!-- v-if is a workaround to get this to re-render so the font-size is recalculated when the dialog is shown -->
+        <fm-avatar v-if="isBottomPaneDrawerVisible" :src="$auth.user.avatar && $auth.user.avatar.small" :name="$auth.user.display_name" size="h-24 w-24" class="mx-auto"></fm-avatar>
+      </div>
+      <div class="text-center mt-2">
+        <nuxt-link v-if="$auth.user.is_creator" :to="`/${$auth.user.username}`">
+          <fm-button>
+            <icon-layout-template class="h-4 w-4 -mt-0.5"></icon-layout-template> View page
+          </fm-button>
+        </nuxt-link>
+        <div v-else>
+          <div class="text-black font-medium px-4">{{ $auth.user.display_name }}</div>
+          <hr class="mt-6">
         </div>
-        <div class="text-center mt-2">
-          <nuxt-link :to="`/${$auth.user.username}`">
-            <fm-button>
-              <icon-layout-template class="h-4 w-4 -mt-0.5"></icon-layout-template> View page
-            </fm-button>
-          </nuxt-link>
-        </div>
-      </template>
+      </div>
       <template v-for="(item) in ($auth.user.is_creator ? nav.creator : nav.supporter)">
         <template v-if="item.id === 'profile'"></template>  <!-- don't render profile in sidebar -->
         <div
