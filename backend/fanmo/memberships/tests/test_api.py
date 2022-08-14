@@ -189,7 +189,7 @@ class TestMembershipFlow:
                 "image": None,
                 "subscription_id": "sub_123",
                 "subscription_card_change": 0,
-                "name": f"{tier.name} ({tier.amount}) - {creator_user.name}",
+                "name": f"{tier.name} - {creator_user.name}",
                 "prefill": {"name": "confused racoon", "email": "peter@griffins.com"},
                 "notes": {"subscription_id": membership.scheduled_subscription_id},
                 "theme": {"color": "#6266f1"},
@@ -207,7 +207,7 @@ class TestMembershipFlow:
                 "period": "monthly",
                 "interval": 1,
                 "item": {
-                    "name": f"{tier.name} ({tier.amount}) - {creator_user.name}",
+                    "name": f"{tier.name} - {creator_user.name}",
                     "amount": 100_00,
                     "currency": "INR",
                 },
@@ -224,6 +224,12 @@ class TestMembershipFlow:
                 "total_count": 12 * 5,
                 "notes": {"external_id": response_data["scheduled_subscription"]["id"]},
                 "customer_notify": 0,
+                "expire_by": int(
+                    (
+                        membership.scheduled_subscription.cycle_start_at
+                        + relativedelta(hours=1)
+                    ).timestamp()
+                ),
             }
         )
 
@@ -262,7 +268,7 @@ class TestMembershipFlow:
                 "image": None,
                 "subscription_id": "sub_123",
                 "subscription_card_change": 0,
-                "name": f"{tier.name} ({tier.amount}) - {creator_user.name}",
+                "name": f"{tier.name} - {creator_user.name}",
                 "prefill": {"name": user.name, "email": user.email},
                 "notes": {"subscription_id": membership.scheduled_subscription_id},
                 "theme": {"color": "#6266f1"},
@@ -277,7 +283,7 @@ class TestMembershipFlow:
                 "period": "monthly",
                 "interval": 1,
                 "item": {
-                    "name": f"{tier.name} ({tier.amount}) - {creator_user.name}",
+                    "name": f"{tier.name} - {creator_user.name}",
                     "amount": 100_00,
                     "currency": "INR",
                 },
@@ -294,6 +300,12 @@ class TestMembershipFlow:
                 "total_count": 12 * 5,
                 "notes": {"external_id": response_data["scheduled_subscription"]["id"]},
                 "customer_notify": 0,
+                "expire_by": int(
+                    (
+                        membership.scheduled_subscription.cycle_start_at
+                        + relativedelta(hours=1)
+                    ).timestamp()
+                ),
             }
         )
 
@@ -397,7 +409,7 @@ class TestMembershipFlow:
                 "period": "monthly",
                 "interval": 1,
                 "item": {
-                    "name": f"{new_tier.name} ({new_tier.amount}) - {new_tier.creator_user.name}",
+                    "name": f"{new_tier.name} - {new_tier.creator_user.name}",
                     "amount": 500_00,
                     "currency": "INR",
                 },
@@ -510,7 +522,7 @@ class TestMembershipFlow:
                 "period": "monthly",
                 "interval": 1,
                 "item": {
-                    "name": f"{new_tier.name} ({new_tier.amount}) - {new_tier.creator_user.name}",
+                    "name": f"{new_tier.name} - {new_tier.creator_user.name}",
                     "amount": 500_00,
                     "currency": "INR",
                 },
@@ -527,6 +539,12 @@ class TestMembershipFlow:
                 "total_count": 12 * 5,
                 "start_at": int(
                     active_membership.scheduled_subscription.cycle_start_at.timestamp()
+                ),
+                "expire_by": int(
+                    (
+                        active_membership.scheduled_subscription.cycle_start_at
+                        + relativedelta(hours=1)
+                    ).timestamp()
                 ),
                 "notes": {"external_id": response_data["scheduled_subscription"]["id"]},
                 "customer_notify": 0,

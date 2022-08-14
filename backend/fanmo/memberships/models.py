@@ -289,7 +289,7 @@ class Plan(BaseModel):
 
         # todo - cleanup orpahed plans?
         plan = cls.objects.create(
-            name=f"{tier.name} ({tier.amount}) - {tier.creator_user.display_name}",
+            name=f"{tier.name} - {tier.creator_user.display_name}",
             amount=tier.amount,
             tier=tier,
             period=period,
@@ -408,7 +408,9 @@ class Subscription(BaseModel):
             "total_count": self.plan.get_term_count(),
             "notes": {"external_id": self.id},
             "customer_notify": 0,
-            "expire_by": int((timezone.now() + relativedelta(days=1)).timestamp()),
+            "expire_by": int(
+                (self.cycle_start_at + relativedelta(hours=1)).timestamp()
+            ),
         }
         if self.cycle_start_at > timezone.now():
             subscription_data["start_at"] = int(self.cycle_start_at.timestamp())
