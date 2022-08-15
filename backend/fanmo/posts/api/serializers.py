@@ -344,6 +344,7 @@ class CommentSerializer(serializers.ModelSerializer):
         allow_null=True,
         write_only=True,
     )
+    body = serializers.CharField(max_length=3000)
     author_user = UserPreviewSerializer(read_only=True)
     reactions = serializers.SerializerMethodField()
 
