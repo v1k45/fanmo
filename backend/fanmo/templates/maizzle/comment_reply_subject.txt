@@ -1,1 +1,1 @@
-{{ obj.author_user.display_name }} replied your comment
+{{ obj.author_user.display_name }} replied to your comment

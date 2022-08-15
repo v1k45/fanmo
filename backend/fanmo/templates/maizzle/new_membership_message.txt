@@ -1,7 +1,7 @@
 Hi {{ obj.fan_user.display_name }},
 {{ obj.tier.name }} has been successfully activated.
 
-You'll be charged {{ obj.active_subscription.plan.amount }} per month.
+You will be charged {{ obj.active_subscription.plan.amount }} per month.
       Your membership will automatically renew on {{ obj.active_subscription.cycle_end_at|date:"d F Y" }}.
 
 {% if obj.tier.welcome_message %} {{ obj.tier.welcome_user }} {% endif %}

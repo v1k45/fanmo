@@ -59,7 +59,7 @@
                     <td class="sm-px-24" style="border-radius: 4px; background-color: #fff; padding: 48px; text-align: left; font-size: 16px; line-height: 24px; color: #1f2937">    <p class="sm-leading-32" style="margin: 0; margin-bottom: 24px; font-size: 20px; font-weight: 600; color: #000">Hi {{ obj.fan_user.display_name }},</p>
     <p><strong>{{ obj.tier.name }}</strong> has been successfully activated.</p>
     <p>
-      You'll be charged {{ obj.active_subscription.plan.amount }} per month.
+      You will be charged {{ obj.active_subscription.plan.amount }} per month.
       Your membership will automatically renew on {{ obj.active_subscription.cycle_end_at|date:"d F Y" }}.
     </p>
     <p style="margin-bottom: 10px; margin-top: 10px">
