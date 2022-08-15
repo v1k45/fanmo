@@ -1,9 +1,12 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.sitemaps.views import sitemap
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-from django.urls import include, path
+from django.urls import path, include
 from django.views.generic import RedirectView
+from fanmo.core.sitemaps import sitemaps
+
 
 from fanmo.core.views import index_view, page_view, post_view
 
@@ -15,6 +18,12 @@ urlpatterns = [
         name="admin:login",
     ),
     path(settings.ADMIN_URL, admin.site.urls),
+    path(
+        "sitemap.xml",
+        sitemap,
+        {"sitemaps": sitemaps},
+        name="django.contrib.sitemaps.views.sitemap",
+    ),
     path("", index_view, name="home"),
     path("pricing", index_view, name="pricing"),
     path("privacy", index_view, name="privacy"),

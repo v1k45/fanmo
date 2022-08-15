@@ -3,6 +3,7 @@ import structlog
 from django.core.cache import cache
 from django.db import models
 from django.template.defaultfilters import truncatewords
+from django.urls import reverse
 from django_extensions.db.fields import AutoSlugField
 from micawber.exceptions import ProviderException
 from micawber.providers import bootstrap_oembed
@@ -107,6 +108,9 @@ class Post(BaseModel):
 
     def annotate_permissions(self, fan_user):
         annotate_post_permissions([self], fan_user)
+
+    def get_absolute_url(self):
+        return reverse("post_detail", args=[self.slug, self.id])
 
 
 class Content(BaseModel):

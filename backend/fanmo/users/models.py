@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.core.serializers.json import DjangoJSONEncoder
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from djmoney.models.fields import MoneyField
 from simple_history.models import HistoricalRecords
@@ -70,12 +71,15 @@ class User(BaseModel, AbstractUser):
         super().__init__(*args, **kwargs)
         self.get_membership = lru_cache()(self._get_membership)
 
-    def public_tiers(self):
-        return self.tiers.filter(is_public=True)
-
     @property
     def display_name(self):
         return self.name or self.username
+
+    def get_absolute_url(self):
+        return reverse("creator_page", args=[self.username])
+
+    def public_tiers(self):
+        return self.tiers.filter(is_public=True)
 
     @cached_property
     def can_accept_payments(self):
