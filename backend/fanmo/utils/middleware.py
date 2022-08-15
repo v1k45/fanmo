@@ -1,3 +1,4 @@
+from django.conf import settings
 from whitenoise.middleware import WhiteNoiseMiddleware
 from whitenoise.responders import Redirect as WhitenoiseRedirect
 
@@ -25,3 +26,17 @@ class StaticServerMiddleware(WhiteNoiseMiddleware):
     def immutable_file_test(self, path, url):
         is_nuxt_asset = "_nuxt" in url
         return is_nuxt_asset or super().immutable_file_test(path, url)
+
+
+def robots_tag_middleware(get_response):
+    """
+    Instruct search engines to not index site if it is not production.
+    """
+
+    def middleware(request):
+        response = get_response(request)
+        if settings.STAGE != "prod":
+            response["X-Robots-Tag"] = "noindex, nofollow, noarchive"
+        return response
+
+    return middleware
