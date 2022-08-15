@@ -25,7 +25,7 @@ fanmo.in {
   reverse_proxy 127.0.0.1:8000
 
   request_body {
-    max_size 15MB
+    max_size 50MB
   }
 
   encode gzip
