@@ -5,7 +5,7 @@ bodyClass: bg-gray-100
 <extends src="src/layouts/main.html">
   <block name="template">
     <p class="text-xl sm:leading-32 text-black font-semibold m-0 mb-24">Hi @{{ obj.fan_user.display_name }},</p>
-    <p>Your <strong>@{{ obj.creator_user.display_name }}</strong> membership tier has been successfully updated to @{{ obj.scheduled_subscription.plan.tier.name }}.</p>
+    <p>Your membership tier for <strong>@{{ obj.creator_user.display_name }}</strong> has been successfully updated to @{{ obj.scheduled_subscription.plan.tier.name }}.</p>
     <p>You will be charged @{{ obj.scheduled_subscription.plan.amount }} per month from @{{ obj.scheduled_subscription.cycle_start_at|date:"d F Y" }}.</p>
     <div class="leading-full">
       <component src="src/components/button.html" target="memberships" args="">

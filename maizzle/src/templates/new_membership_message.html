@@ -7,7 +7,7 @@ bodyClass: bg-gray-100
     <p class="text-xl sm:leading-32 text-black font-semibold m-0 mb-24">Hi @{{ obj.fan_user.display_name }},</p>
     <p><strong>@{{ obj.tier.name }}</strong> has been successfully activated.</p>
     <p>
-      You'll be charged @{{ obj.active_subscription.plan.amount }} per month.
+      You will be charged @{{ obj.active_subscription.plan.amount }} per month.
       Your membership will automatically renew on @{{ obj.active_subscription.cycle_end_at|date:"d F Y" }}.
     </p>
     <p class="mb-10 mt-10">
