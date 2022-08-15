@@ -162,7 +162,9 @@ class Payout(BaseModel):
     )
 
     amount = MoneyField(decimal_places=2, max_digits=7)
-    bank_account = models.ForeignKey("payments.BankAccount", on_delete=models.CASCADE)
+    bank_account = models.ForeignKey(
+        "payments.BankAccount", on_delete=models.SET_NULL, null=True
+    )
 
     external_id = models.CharField(max_length=255)
 

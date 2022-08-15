@@ -1,3 +1,5 @@
+from decimal import Decimal
+
 import structlog
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
@@ -7,6 +9,7 @@ from django.db import models
 from django.utils import timezone
 from django_fsm import FSMField, can_proceed, transition
 from djmoney.models.fields import MoneyField
+from moneyed import INR, Money
 from simple_history.models import HistoricalRecords
 from versatileimagefield.fields import VersatileImageField
 
@@ -118,6 +121,8 @@ class Membership(BaseModel):
         )
 
     def giveaway(self, tier, period):
+        from fanmo.analytics.tasks import refresh_stats
+
         # TODO: Send different email for giveaway
         plan = Plan.for_tier(tier, period, is_giveaway=True)
 
@@ -154,6 +159,11 @@ class Membership(BaseModel):
         subscription.authenticate()
         subscription.activate()
         subscription.save()
+
+        # force follow the creator
+        self.creator_user.follow(self.fan_user)
+
+        async_task(refresh_stats, self.creator_user.pk)
 
     def update(self, tier, period=None):
         """Update membership with active subscription to a new tier"""
@@ -273,8 +283,9 @@ class Plan(BaseModel):
             is_giveaway=is_giveaway,
         )
 
+        tier_amount = tier.amount if not is_giveaway else Money(Decimal("0"), INR)
         existing_plan = cls.objects.filter(
-            tier=tier, amount=tier.amount, period=period, interval=interval
+            tier=tier, amount=tier_amount, period=period, interval=interval
         ).first()
 
         if existing_plan:
@@ -290,7 +301,7 @@ class Plan(BaseModel):
         # todo - cleanup orpahed plans?
         plan = cls.objects.create(
             name=f"{tier.name} - {tier.creator_user.display_name}",
-            amount=tier.amount,
+            amount=tier_amount,
             tier=tier,
             period=period,
             interval=interval,
