@@ -513,6 +513,12 @@ class Subscription(BaseModel):
         self.membership.save()
 
     def update(self, plan):
+        # start cycle immediately if the current one is expired
+        if self.cycle_end_at < timezone.now():
+            next_cycle_start_at = timezone.now()
+        else:
+            next_cycle_start_at = self.cycle_end_at
+
         # when using upi, subscription cannot be updated
         # create a new one
         # and schedule current one for cancellation only after new one is authorized.
@@ -522,8 +528,8 @@ class Subscription(BaseModel):
                 plan=plan,
                 status=Subscription.Status.CREATED,
                 # pad time to day end?
-                cycle_start_at=self.cycle_end_at,
-                cycle_end_at=self.cycle_end_at + plan.get_delta(),
+                cycle_start_at=next_cycle_start_at,
+                cycle_end_at=next_cycle_start_at + plan.get_delta(),
                 fan_user=self.fan_user,
                 creator_user=self.creator_user,
             )
@@ -549,8 +555,8 @@ class Subscription(BaseModel):
                 plan=plan,
                 status=Subscription.Status.SCHEDULED_TO_ACTIVATE,
                 # pad time to day end?
-                cycle_start_at=self.cycle_end_at,
-                cycle_end_at=self.cycle_end_at + plan.get_delta(),
+                cycle_start_at=next_cycle_start_at,
+                cycle_end_at=next_cycle_start_at + plan.get_delta(),
                 fan_user=self.fan_user,
                 creator_user=self.creator_user,
                 external_id=self.external_id,
