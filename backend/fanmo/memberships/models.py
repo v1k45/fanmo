@@ -9,7 +9,8 @@ from django.db import models
 from django.utils import timezone
 from django_fsm import FSMField, can_proceed, transition
 from djmoney.models.fields import MoneyField
-from moneyed import INR, Money
+from djmoney.money import Money
+from moneyed import INR
 from simple_history.models import HistoricalRecords
 from versatileimagefield.fields import VersatileImageField
 
@@ -26,6 +27,7 @@ from fanmo.memberships.querysets import SubscriptionQuerySet
 from fanmo.payments.models import Payment, Payout
 from fanmo.utils import razorpay_client
 from fanmo.utils.models import BaseModel, IPAddressHistoricalModel
+from fanmo.utils.money import money_to_sub_unit
 
 logger = structlog.get_logger(__name__)
 
@@ -349,7 +351,7 @@ class Plan(BaseModel):
                 "interval": self.interval,
                 "item": {
                     "name": self.name,
-                    "amount": self.amount.get_amount_in_sub_unit(),
+                    "amount": money_to_sub_unit(self.amount),
                     "currency": self.amount.currency.code,
                 },
                 "notes": {"external_id": self.id},

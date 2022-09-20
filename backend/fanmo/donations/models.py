@@ -5,6 +5,7 @@ from simple_history.models import HistoricalRecords
 
 from fanmo.utils import razorpay_client
 from fanmo.utils.models import BaseModel, IPAddressHistoricalModel
+from fanmo.utils.money import money_to_sub_unit
 
 
 class Donation(BaseModel):
@@ -30,7 +31,7 @@ class Donation(BaseModel):
     def create_external(self):
         external_data = razorpay_client.order.create(
             {
-                "amount": self.amount.get_amount_in_sub_unit(),
+                "amount": money_to_sub_unit(self.amount),
                 "currency": self.amount.currency.code,
                 "notes": {"donation_id": self.pk},
             }

@@ -1,8 +1,9 @@
 from decimal import Decimal
 
 import pytest
+from djmoney.money import Money
 from micawber.exceptions import ProviderException
-from moneyed import INR, Money
+from moneyed import INR
 
 from fanmo.memberships.tests.factories import MembershipFactory, TierFactory
 from fanmo.posts.models import Comment, Content, Post, Reaction

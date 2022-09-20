@@ -3,7 +3,8 @@ from decimal import Decimal
 import pytest
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone
-from moneyed import INR, Money
+from djmoney.money import Money
+from moneyed import INR
 from rest_framework.test import APIClient
 
 from fanmo.analytics.utils import register_metrics

@@ -2,7 +2,8 @@ from decimal import Decimal
 
 import pytest
 from django.conf import settings
-from moneyed import INR, Money
+from djmoney.money import Money
+from moneyed import INR
 
 from fanmo.core.models import NotificationType
 from fanmo.donations.models import Donation

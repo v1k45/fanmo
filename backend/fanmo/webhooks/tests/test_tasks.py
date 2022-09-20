@@ -2,7 +2,8 @@ from decimal import Decimal
 
 import pytest
 from dateutil.relativedelta import relativedelta
-from moneyed import INR, Money
+from djmoney.money import Money
+from moneyed import INR
 
 from fanmo.donations.models import Donation
 from fanmo.payments.models import Payment, Payout
@@ -222,7 +223,7 @@ class TestProcessRazorpayWebhook:
         donation = Donation.objects.create(
             creator_user=creator_user,
             fan_user=user,
-            amount=Money(Decimal("100"), INR),
+            amount=Money(Decimal("6"), INR),
             external_id="don_123",
             status=Donation.Status.SUCCESSFUL,
         )
@@ -231,7 +232,7 @@ class TestProcessRazorpayWebhook:
             donation=donation,
             creator_user=creator_user,
             fan_user=user,
-            amount=Money(Decimal("100"), INR),
+            amount=Money(Decimal("6"), INR),
             method=Payment.Status.CAPTURED,
         )
         webhook_payload = {
@@ -245,7 +246,7 @@ class TestProcessRazorpayWebhook:
                 "payment": {
                     "entity": {
                         "id": payment.external_id,
-                        "amount": 100_00,
+                        "amount": 6_00,
                         "currency": "INR",
                         "method": "upi",
                         "status": "captured",
@@ -262,7 +263,7 @@ class TestProcessRazorpayWebhook:
         process_razorpay_webhook(webhook_message.id)
 
         payout = Payout.objects.get(payment=payment)
-        assert payout.amount.amount == Decimal("95.10")
+        assert payout.amount.amount == Decimal("5.71")
         assert payout.external_id == "trf_123"
         transfer_mock.assert_called_once_with(
             payment.external_id,
@@ -270,7 +271,7 @@ class TestProcessRazorpayWebhook:
                 "transfers": [
                     {
                         "account": creator_user.bank_accounts.first().external_id,
-                        "amount": 95_10,
+                        "amount": 5_71,
                         "currency": "INR",
                     }
                 ]

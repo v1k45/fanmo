@@ -1,7 +1,8 @@
 from decimal import Decimal
 
 import pytest
-from moneyed import INR, Money
+from djmoney.money import Money
+from moneyed import INR
 
 from fanmo.donations.models import Donation
 from fanmo.payments.models import Payment

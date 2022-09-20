@@ -4,7 +4,8 @@ from decimal import Decimal
 from django.db.transaction import atomic
 from django.utils import timezone
 from django_fsm import can_proceed
-from moneyed import Money, get_currency
+from djmoney.money import Money
+from moneyed import get_currency
 
 from fanmo.analytics.tasks import refresh_stats
 from fanmo.donations.models import Donation

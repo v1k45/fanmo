@@ -7,7 +7,11 @@ from fanmo.core.notifications import notify_donation
 from fanmo.core.tasks import async_task
 from fanmo.utils import razorpay_client
 from fanmo.utils.models import BaseModel
-from fanmo.utils.money import deduct_platform_fee, money_from_sub_unit
+from fanmo.utils.money import (
+    deduct_platform_fee,
+    money_from_sub_unit,
+    money_to_sub_unit,
+)
 
 
 class Payment(BaseModel):
@@ -124,7 +128,7 @@ class Payment(BaseModel):
         donation = Donation.objects.get(external_id=payload["razorpay_order_id"])
         razorpay_payment = razorpay_client.payment.capture(
             payload["razorpay_payment_id"],
-            donation.amount.get_amount_in_sub_unit(),
+            money_to_sub_unit(donation.amount),
             {"currency": donation.amount.currency.code},
         )
         donation.status = Donation.Status.SUCCESSFUL
@@ -186,7 +190,7 @@ class Payout(BaseModel):
                 "transfers": [
                     {
                         "account": self.bank_account.external_id,
-                        "amount": self.amount.get_amount_in_sub_unit(),
+                        "amount": money_to_sub_unit(self.amount),
                         "currency": self.amount.currency.code,
                     }
                 ],

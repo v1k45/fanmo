@@ -1,16 +1,17 @@
 from decimal import Decimal
 
 from django.contrib.auth import get_user_model
+from djmoney.money import Money
 from factory import Faker, SubFactory, post_generation
 from factory.django import DjangoModelFactory
-from moneyed import Money
+from moneyed import INR
 
 from fanmo.memberships.models import Membership, Plan, Subscription, Tier
 
 
 class TierFactory(DjangoModelFactory):
     name = Faker("name")
-    amount = Money(amount=Decimal(100), currency="INR")
+    amount = Money(Decimal(100), INR)
     benefits = ["Membership!"]
 
     class Meta:
@@ -21,7 +22,7 @@ class PlanFactory(DjangoModelFactory):
     name = Faker("name")
     tier = SubFactory(TierFactory)
     external_id = Faker("uuid4")
-    amount = Money(amount=Decimal(100), currency="INR")
+    amount = Money(Decimal(100), INR)
     period = Plan.Period.MONTHLY
 
     class Meta:
