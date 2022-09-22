@@ -10,8 +10,6 @@
     <li><a href="tel:+91FANMO_SECRET_CHANGE_ME">Phone: +91 FANMO_SECRET_CHANGE_ME</a></li>
   </ul>
   <p>We usually respond within 2 working days.</p>
-  <hr>
-  <p><em>Fanmo</em><br>FANMO_SECRET_CHANGE_ME</p>
 </fm-markdown-styled>
 </template>
 
