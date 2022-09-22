@@ -667,6 +667,21 @@ class TestActivitiesAPI:
         )
         assert response_data["results"][3]["membership"]["id"] == active_membership.id
         assert response_data["results"][3]["fan_user"]["username"] == user.username
+    
+    def test_activity_name_is_updated_when_user_changes_display_name(self, active_membership, api_client):
+        # verify existence of activity
+        api_client.force_authenticate(active_membership.creator_user)
+        activity = api_client.get("/api/activities/").json()["results"][0]
+        assert activity["message"].startswith(active_membership.fan_user.display_name)
+
+        # update name
+        api_client.force_authenticate(active_membership.fan_user)
+        assert api_client.patch("/api/me/", {"name": "Sheela"}).status_code == 200
+
+        # verify activity name has changed
+        api_client.force_authenticate(active_membership.creator_user)
+        activity = api_client.get("/api/activities/").json()["results"][0]
+        assert activity["message"].startswith("Sheela")
 
 
 class TestNotificationSettings:
