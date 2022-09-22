@@ -32,6 +32,7 @@ reserved_usernames = list(
             "earnings",
             "memberships",
             "settings",
+            "brand",
             ".git",
             ".htaccess",
             ".htpasswd",
