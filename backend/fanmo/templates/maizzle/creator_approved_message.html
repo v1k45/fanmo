@@ -58,7 +58,8 @@
                   <tr>
                     <td class="sm-px-24" style="border-radius: 4px; background-color: #fff; padding: 48px; text-align: left; font-size: 16px; line-height: 24px; color: #1f2937">    <p class="sm-leading-32" style="margin: 0; margin-bottom: 24px; font-size: 24px; font-weight: 600; color: #000">Hi {{ recipient.display_name }}!</p>
     <p>Your account was sucessfully processed and approved. You are all set to start accepting payments on your Fanmo page!</p>
-    <p>Get started by sharing your Fanmo page with your fans. Feel free to contact us at help@fanmo.in for any help.</p>
+    <p>Get started by sharing your Fanmo page with your fans. <a href="{{ settings.BASE_URL }}{% url 'brand' %}">Check out our Brand Kit</a> to use our logos, buttons and colours in your content.</p>
+    <p>Feel free to contact us at help@fanmo.in for any help.</p>
     <div style="line-height: 100%">
       <a href="{{ settings.BASE_URL }}{% url 'creator_dashboard'  %}" class="hover-bg-fm-primary-600" style="display: inline-block; border-radius: 4px; background-color: #6366f1; padding-top: 16px; padding-bottom: 16px; padding-left: 24px; padding-right: 24px; text-align: center; font-size: 16px; font-weight: 600; color: #fff; text-decoration-line: none">
     <!--[if mso]><i style="letter-spacing: 24px; mso-font-width: -100%; mso-text-raise:30px;">&#8202;</i><![endif]-->

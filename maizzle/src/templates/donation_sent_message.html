@@ -8,12 +8,10 @@ bodyClass: bg-gray-100
     <p>
       You have sucessfully tipped <strong>@{{ obj.amount }}</strong> to <strong>@{{ obj.creator_user.display_name}}</strong>.
     </p>
-    <p class="mb-10 mt-10">
     {% if obj.creator_user.user_preferences.thank_you_message %}
-    <blockquote>@{{obj.creator_user.user_preferences.thank_you_message }}</blockquote>
+    <p><em>@{{ obj.creator_user.user_preferences.thank_you_message }}</em></p>
     {% endif %}
-    </p>
-    <div class="leading-full">
+    <div class="leading-full mt-20">
       <component src="src/components/button.html" target="sent-tips" args="">
         View Tips
       </component>

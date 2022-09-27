@@ -29,6 +29,7 @@ urlpatterns = [
     path("privacy", index_view, name="privacy"),
     path("terms", index_view, name="terms"),
     path("refunds", index_view, name="refunds"),
+    path("brand", index_view, name="brand"),
     # authentication
     path("login/", index_view, name="account_login"),
     path("logout/", index_view, name="account_logout"),

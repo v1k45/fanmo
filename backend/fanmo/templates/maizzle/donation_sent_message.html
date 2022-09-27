@@ -60,12 +60,10 @@
     <p>
       You have sucessfully tipped <strong>{{ obj.amount }}</strong> to <strong>{{ obj.creator_user.display_name}}</strong>.
     </p>
-    <p style="margin-bottom: 10px; margin-top: 10px">
     {% if obj.creator_user.user_preferences.thank_you_message %}
-    </p><blockquote>{{obj.creator_user.user_preferences.thank_you_message }}</blockquote>
+    <p><em>{{ obj.creator_user.user_preferences.thank_you_message }}</em></p>
     {% endif %}
-    <p></p>
-    <div style="line-height: 100%">
+    <div style="margin-top: 20px; line-height: 100%">
       <a href="{{ settings.BASE_URL }}{% url 'sent-tips'  %}" class="hover-bg-fm-primary-600" style="display: inline-block; border-radius: 4px; background-color: #6366f1; padding-top: 16px; padding-bottom: 16px; padding-left: 24px; padding-right: 24px; text-align: center; font-size: 16px; font-weight: 600; color: #fff; text-decoration-line: none">
     <!--[if mso]><i style="letter-spacing: 24px; mso-font-width: -100%; mso-text-raise:30px;">&#8202;</i><![endif]-->
     <span style="mso-text-raise: 16px">
