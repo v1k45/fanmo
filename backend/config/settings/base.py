@@ -378,17 +378,18 @@ SOCIALACCOUNT_PROVIDERS = {
         },
     },
     "discord_user": {
-        "SCOPE": ["email", "identity"],
+        "SCOPE": ["email", "identify", "guilds.join"],
         "APP": {
             "client_id": env("DISCORD_OAUTH2_CLIENT_ID"),
             "secret": env("DISCORD_OAUTH2_SECRET"),
         },
     },
     "discord_server": {
-        "SCOPE": ["email", "identity", "guids", "guilds.join"],
+        "SCOPE": ["email", "identify", "bot"],
         "APP": {
             "client_id": env("DISCORD_OAUTH2_CLIENT_ID"),
             "secret": env("DISCORD_OAUTH2_SECRET"),
+            "access_token": env("DISCORD_BOT_TOKEN"),
         },
     },
 }
@@ -426,6 +427,7 @@ REST_FRAMEWORK = {
 # Mock token authentication
 REST_AUTH_TOKEN_MODEL = "fanmo.users.models.User"
 REST_AUTH_TOKEN_CREATOR = "fanmo.utils.authentication.create_auth_token"
+
 REST_AUTH_SERIALIZERS = {
     "TOKEN_SERIALIZER": "fanmo.users.api.serializers.UserSerializer",
     "USER_DETAILS_SERIALIZER": "fanmo.users.api.serializers.UserSerializer",

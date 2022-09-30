@@ -11,7 +11,11 @@ export const state = () => ({
   },
   accounts: null, // authenticated user's bank accounts
   analytics: null, // authenticated user's analytics
-  activities: null // authenticated user's recent activities
+  activities: null, // authenticated user's recent activities
+  integrations: {
+    discord_server: null,
+    discord_user: null
+  } // authenticated user's integrations
 });
 
 export const getters = {
@@ -108,6 +112,16 @@ export const actions = {
       handleGenericError(err);
       return ERROR(err.response.data);
     }
+  },
+  async loadIntegrations({ commit, state }) {
+    try {
+      const integrations = await this.$axios.$get('/api/integrations/');
+      commit('setIntegrations', { integrations });
+      return SUCCESS(integrations);
+    } catch (err) {
+      handleGenericError(err, true);
+      return ERROR(err.response.data);
+    }
   }
 };
 
@@ -145,5 +159,8 @@ export const mutations = {
   setNextActivities(state, { activities }) {
     state.activities.results.push(...activities.results);
     Object.assign(state.activities, { previous: activities.previous, next: activities.next, count: activities.count });
+  },
+  setIntegrations(state, { integrations }) {
+    state.integrations = integrations;
   }
 };

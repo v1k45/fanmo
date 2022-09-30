@@ -21,3 +21,4 @@ class DiscordRole(BaseModel):
 class DiscordUser(BaseModel):
     name = models.CharField(max_length=50)
     social_account = models.OneToOneField(SocialAccount, on_delete=models.CASCADE)
+    external_id = models.CharField(max_length=50)
