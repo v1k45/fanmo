@@ -6,7 +6,7 @@
 
       <breakpoint-helper></breakpoint-helper>
 
-      <nuxt-link :to="`/${user.username}/`" class="flex flex-grow mr-auto max-w-[65%] md:max-w-[55%]">
+      <nuxt-link :to="`/${user.username}/`" class="flex flex-grow items-center mr-auto max-w-[65%] md:max-w-[55%]">
         <fm-avatar :src="user.avatar && user.avatar.medium" :name="user.display_name" size="w-8 h-8 lg:w-10 lg:h-10" class="flex-shrink-0"></fm-avatar>
 
         <div class="ml-2 lg:ml-3 max-w-full">
