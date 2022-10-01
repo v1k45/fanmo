@@ -1,5 +1,5 @@
 <template>
-<fm-dialog v-model="isVisible" fullscreen no-padding>
+<fm-dialog v-model="isVisible" fullscreen no-padding require-explicit-close>
   <template #header>
     <div class="relative">
       <div class="container">Create post</div>

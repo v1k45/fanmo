@@ -25,7 +25,7 @@
   <!-- tier list end -->
 
   <!-- add/update tier start -->
-  <fm-dialog v-model="isAddTierVisible" fullscreen no-padding>
+  <fm-dialog v-model="isAddTierVisible" fullscreen no-padding require-explicit-close>
     <!-- dialog heading start -->
     <template #header>
       <div class="relative">

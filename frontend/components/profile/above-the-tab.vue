@@ -131,7 +131,7 @@
   <!-- avatar, name, short description, actions end -->
 
 
-  <fm-dialog v-model="isEditing">
+  <fm-dialog v-model="isEditing" require-explicit-close>
     <template #header>Edit page</template>
 
     <fm-form id="editProfileForm" :errors="editFormErrors" @submit.prevent="saveEditForm">
