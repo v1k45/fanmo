@@ -1,6 +1,6 @@
 <template>
 <div>
-  <div class="absolute z-10 flex space-x-4" :class="{ 'top-1 right-1': !user.cover && !isSelfProfile, 'top-1 right-1 md:top-5 md:right-10': user.cover || isSelfProfile }">
+  <div class="absolute z-20 flex space-x-4" :class="{ 'top-1 right-1': !user.cover && !isSelfProfile, 'top-1 right-1 md:top-5 md:right-10': user.cover || isSelfProfile }">
     <fm-button v-if="isSelfProfile" class="hidden md:block" @click="$emit('add-post')">
       <icon-image-plus class="mr-1 -mt-0.5" :size="16"></icon-image-plus>
       Add a post
