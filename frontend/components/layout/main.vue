@@ -208,6 +208,10 @@ $top-offset-with-banner: $header-height + $banner-height;
     @apply flex mx-auto;
     width: 100%;
     max-width: 250px + 1140px;
+    @apply pb-16;
+    @screen md {
+      @apply pb-0;
+    }
   }
   .fm-layout__sidebar {
     @apply flex-shrink-0 overflow-auto sticky mr-4 hidden lg:block;
@@ -246,7 +250,7 @@ $top-offset-with-banner: $header-height + $banner-height;
 .fm-layout__bottom-pane {
   grid-area: bottom-pane;
   height: 78px;
-  @apply sticky bottom-0 md:hidden;
+  @apply fixed bottom-0 w-full md:hidden;
 }
 
 .fm-layout--with-header-banner {

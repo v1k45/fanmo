@@ -100,7 +100,7 @@
   </div>
 
   <!-- footer start -->
-  <footer class="mt-auto py-4 px-6 text-center">
+  <footer class="mt-auto pt-4 pb-20 md:pb-4 px-6 text-center">
     <div class="text-sm ml-7">Powered by</div>
     <nuxt-link to="/" class="mx-auto inline-block">
       <logo class="h-6"></logo>
@@ -109,7 +109,7 @@
   <!-- footer end -->
 
   <!-- phone bottom pane tab nav start -->
-  <nav class="bottom-0 sticky z-20 w-full bg-white border-t md:hidden py-1 shadow">
+  <nav class="bottom-0 fixed z-20 w-full bg-white border-t md:hidden py-1 shadow">
     <ul class="flex items-center h-full max-w-full sm:max-w-md md:max-w-lg mx-2 sm:mx-auto justify-around">
       <li class="mx-2 cursor-pointer text-center text-xs sm:text-sm font-medium flex-1 min-w-0">
         <div
