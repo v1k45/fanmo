@@ -66,10 +66,11 @@
   </ul>
 
   <fm-dialog v-model="isBottomPaneDrawerVisible" dialog-class="!max-w-xs" drawer no-padding>
-    <div class="!border-t-0 mt-4">
+    <div class="!border-t-0 mt-6">
       <div>
         <!-- v-if is a workaround to get this to re-render so the font-size is recalculated when the dialog is shown -->
         <fm-avatar v-if="isBottomPaneDrawerVisible" :src="$auth.user.avatar && $auth.user.avatar.small" :name="$auth.user.display_name" size="h-24 w-24" class="mx-auto"></fm-avatar>
+        <div class="mx-4 mt-2 text-xl font-semibold text-center">{{ $auth.user.display_name }}</div>
       </div>
       <div class="text-center mt-2">
         <nuxt-link v-if="$auth.user.is_creator" :to="`/${$auth.user.username}`">
@@ -102,7 +103,7 @@
         Log out
       </div>
     </div>
-    <layout-footer></layout-footer>
+    <layout-footer class="py-6 border-t-0"></layout-footer>
   </fm-dialog>
 </div>
 <!-- bottom pane nav items & hamburger end -->
