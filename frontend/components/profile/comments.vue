@@ -15,7 +15,7 @@
       <fm-button type="primary" native-type="submit">Comment</fm-button>
     </div>
   </fm-form>
-  <div v-else class="post-body mt-4 mb-8">
+  <div v-else-if="post.minimum_tier" class="post-body mt-4 mb-8">
     <div class="py-4 bg-gray-100 text-center rounded-xl">
       <fm-button
         type="" class="text-body" @click="handleSubscribeIntent">

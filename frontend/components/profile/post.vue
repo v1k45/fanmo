@@ -94,17 +94,23 @@
       </a>
     </div>
   </template>
-  <div v-else-if="post.minimum_tier" class="mt-6 min-h-[300px] bg-gradient-to-tr from-fm-primary-400 to-fm-primary-700 flex items-center justify-center">
+  <div v-else class="mt-6 min-h-[300px] bg-gradient-to-tr from-fm-primary-400 to-fm-primary-700 flex items-center justify-center">
     <div class="text-center text-white">
       <icon-lock class="h-16 w-16 animatecss animatecss-shake animatecss-delay-3s"></icon-lock>
-      <div class="mt-4 px-4">
-        Join <strong>{{ post.minimum_tier.name }}</strong> to unlock this post now!
-      </div>
-      <div class="mt-6 rounded-l-full rounded-r-full">
-        <fm-button
-          type="" class="text-body" :loading="joinActionLoading" block @click="handleSubscribeIntent">
-          Join now for {{ $currency(post.minimum_tier.amount) }}/month
-        </fm-button>
+      <template v-if="post.minimum_tier">
+        <div class="mt-4 px-4">
+          Join <strong>{{ post.minimum_tier.name }}</strong> to unlock this post now!
+        </div>
+        <div class="mt-6 rounded-l-full rounded-r-full">
+          <fm-button
+            type="" class="text-body" :loading="joinActionLoading" block @click="handleSubscribeIntent">
+            Join now for {{ $currency(post.minimum_tier.amount) }}/month
+          </fm-button>
+        </div>
+      </template>
+      <!-- super edge case when a user does not have a tier, but has Members Only posts. -->
+      <div v-else class="mt-4 px-4">
+        Become a member to unlock this post now!
       </div>
     </div>
   </div>
