@@ -50,6 +50,10 @@ class Tier(BaseModel):
 
     amount = MoneyField(max_digits=7, decimal_places=2)
 
+    discord_role = models.ForeignKey(
+        "integrations.DiscordRole", on_delete=models.SET_NULL, null=True, blank=True
+    )
+
     is_active = models.BooleanField(default=True)
     is_public = models.BooleanField(default=True)
     is_recommended = models.BooleanField(default=False)

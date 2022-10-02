@@ -124,8 +124,12 @@ class DiscordServerConnectSerializer(serializers.ModelSerializer):
                 "discord_error",
             )
 
-        if SocialAccount.objects.filter(provider="discord_server", uid=user_response["id"]).exists():
-            raise serializers.ValidationError("This discord server is already in use.", "already_connected")
+        if SocialAccount.objects.filter(
+            provider="discord_server", uid=user_response["id"]
+        ).exists():
+            raise serializers.ValidationError(
+                "This discord server is already in use.", "already_connected"
+            )
 
         return {**token_response, **user_response}
 
@@ -216,9 +220,13 @@ class DiscordUserConnectSerializer(serializers.ModelSerializer):
                 "Error retrieving your discord user information. Please try again.",
                 "discord_error",
             )
-        
-        if SocialAccount.objects.filter(provider="discord_user", uid=user_response["id"]).exists():
-            raise serializers.ValidationError("This discord account is already in use.", "already_connected")
+
+        if SocialAccount.objects.filter(
+            provider="discord_user", uid=user_response["id"]
+        ).exists():
+            raise serializers.ValidationError(
+                "This discord account is already in use.", "already_connected"
+            )
 
         return {**token_response, **user_response}
 
