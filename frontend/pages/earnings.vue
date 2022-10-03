@@ -233,7 +233,7 @@ export default {
       window.location.href = '/api/payments/export/';
     },
     loadEarnings() {
-      const params = { creator_username: this.$auth.user.username, ordering: this.filter.orderBy };
+      const params = { creatorUsername: this.$auth.user.username, ordering: this.filter.orderBy };
       if (this.filter.search) {
         params.search = this.filter.search;
       }

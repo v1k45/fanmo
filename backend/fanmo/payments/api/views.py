@@ -39,8 +39,6 @@ class PaymentViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
             .get_queryset()
             .filter(Q(creator_user=self.request.user) | Q(fan_user=self.request.user))
         )
-        if self.action == "list":
-            queryset = queryset.filter(creator_user=self.request.user)
         return queryset
 
     def get_serializer_class(self):
