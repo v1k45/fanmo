@@ -154,6 +154,7 @@
       :user="$auth.user"
       :tier="previewTier"
       :success-message="tierForm.welcome_message"
+      is-preview
       show-close>
     </profile-payment-success>
     <!-- nested dialog end -->

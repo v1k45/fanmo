@@ -33,7 +33,8 @@
     :user="$auth.user"
     :donation-data="donationData"
     :success-message="form.thank_you_message"
-    @donation-close-click="isPaymentSuccessPreviewVisible = false;">
+    is-preview
+    show-close>
   </profile-payment-success>
   <!-- nested dialog end -->
 </div>

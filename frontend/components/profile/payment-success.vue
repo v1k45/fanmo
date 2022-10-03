@@ -9,15 +9,13 @@
 
   <!-- support {creator} & support-type success start -->
   <div class="mt-4 text-black font-bold text-xl text-center">
-    <span class="mr-2">
-      <icon-check-circle class="inline-block text-fm-success h-7 w-7 stroke-[3]"></icon-check-circle>
-    </span>
     <span v-if="supportType === 'membership'">
       You have successfully joined <span class="text-fm-primary">{{ tier.name }}</span>.
     </span>
     <span v-else-if="supportType === 'donation'">
       Your one-time payment of <span class="text-fm-primary">{{ $currency(donationData.amount) }}</span> was successful.
     </span>
+    <icon-check-circle-2 class="inline-block text-white bg-fm-success h-em w-em rounded-full mx-1 mb-1"></icon-check-circle-2>
   </div>
 
   <div class="mt-4 text-center whitespace-pre-line">{{ successMessage }}</div>
@@ -25,11 +23,11 @@
 
   <!-- buttons start -->
   <div v-if="$auth.loggedIn" class="mt-8 mb-6">
-    <div v-if="supportType === 'membership'" class="flex space-x-3">
+    <div v-if="supportType === 'membership' && !isPreview" class="flex space-x-3">
       <fm-button block @click="$emit('dashboard-click')">Dashboard</fm-button>
       <fm-button block type="primary" @click="$emit('authenticated-next-click')">Done</fm-button>
     </div>
-    <div v-else-if="supportType === 'donation'" class="text-center">
+    <div v-else-if="supportType === 'donation' && !isPreview" class="text-center">
       <fm-button class="w-36" @click="$emit('donation-close-click')">Done</fm-button>
     </div>
   </div>
@@ -49,13 +47,9 @@
 
 <script>
 import confetti from 'canvas-confetti';
-import { CheckCircle as IconCheckCircle } from 'lucide-vue';
 import { delay } from '~/utils';
 
 export default {
-  components: {
-    IconCheckCircle
-  },
   props: {
     value: { type: Boolean, default: true },
     tier: { type: Object, default: null },
@@ -63,7 +57,8 @@ export default {
     successMessage: { type: String, default: null },
     donationData: { type: Object, default: null },
     showClose: { type: Boolean, default: false },
-    supportType: { type: String, default: 'membership', validator: val => ['membership', 'donation'].includes(val) }
+    supportType: { type: String, default: 'membership', validator: val => ['membership', 'donation'].includes(val) },
+    isPreview: { type: Boolean, default: false }
   },
   data() {
     return {
