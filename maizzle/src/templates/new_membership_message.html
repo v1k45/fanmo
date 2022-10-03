@@ -10,7 +10,7 @@ bodyClass: bg-gray-100
       You will be charged @{{ obj.active_subscription.plan.amount }} per month.
       Your membership will automatically renew on @{{ obj.active_subscription.cycle_end_at|date:"d F Y" }}.
     </p>
-    {% if obj.tier.welcome_message %}<p>@{{ obj.tier.welcome_user }}</p>{% endif %}
+    {% if obj.tier.welcome_message %}<p><em>@{{ obj.tier.welcome_message }}</em></p>{% endif %}
     <div class="leading-full mt-20">
       <component src="src/components/button.html" target="memberships" args="">
         View Memberships
