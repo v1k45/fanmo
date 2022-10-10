@@ -7,9 +7,7 @@ bodyClass: bg-gray-100
     <p class="text-xl sm:leading-32 text-black font-semibold m-0 mb-24">Hi @{{ notification.recipient.display_name }},
     </p>
     <p><strong>@{{ obj.author_user.display_name }}</strong> replied to your comment on <strong>@{{ obj.post.title}}</strong>.</p>
-    <p class="mb-10 mt-10">
-    <blockquote>@{{ obj.body }}</blockquote>
-    </p>
+    <p><em>@{{ obj.body }}</em></p>
     <div class="leading-full">
       <component src="src/components/button.html" target="post_detail" args="obj.post.slug obj.post.id">
         View Post

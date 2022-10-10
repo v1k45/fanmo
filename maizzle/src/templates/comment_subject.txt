@@ -1,1 +1,1 @@
-{{ obj.author_user.display_name }} commented on your post
+{{ obj.author_user.display_name }} commented on your {% if obj.post %}post{% else %}tip{% endif %}

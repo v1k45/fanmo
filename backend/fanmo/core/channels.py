@@ -163,10 +163,15 @@ class CreatorActivityChannel(BaseNotificationChannel):
         )
 
     def build_comment(self, comment):
+        if comment.post:
+            message = f"{comment.author_user.display_name} commmented on {comment.post.title}."
+        else:
+            message = f"{comment.author_user.display_name} commmented on their {comment.donation.amount} tip."
+
         return CreatorActivity(
             type=CreatorActivity.Type.COMMENT,
             comment=comment,
-            message=f"{comment.author_user.display_name} commmented on {comment.post.title}.",
-            creator_user=comment.post.author_user,
+            message=message,
+            creator_user=comment.creator_user,
             fan_user=comment.author_user,
         )
