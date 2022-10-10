@@ -4,6 +4,7 @@ from django.core.cache import cache
 from django.db import models
 from django.template.defaultfilters import truncatewords
 from django.urls import reverse
+from django.utils.functional import cached_property
 from django_extensions.db.fields import AutoSlugField
 from micawber.exceptions import ProviderException
 from micawber.providers import bootstrap_oembed
@@ -198,7 +199,12 @@ class CommentModelMeta(type(BaseModel), type(MPTTModel)):
 
 
 class Comment(BaseModel, MPTTModel, metaclass=CommentModelMeta):
-    post = models.ForeignKey("posts.Post", on_delete=models.CASCADE)
+    post = models.ForeignKey(
+        "posts.Post", on_delete=models.CASCADE, null=True, blank=True
+    )
+    donation = models.ForeignKey(
+        "donations.Donation", on_delete=models.CASCADE, null=True, blank=True
+    )
     parent = TreeForeignKey(
         "self", on_delete=models.CASCADE, null=True, blank=True, related_name="children"
     )
@@ -208,6 +214,13 @@ class Comment(BaseModel, MPTTModel, metaclass=CommentModelMeta):
 
     class MPTTMeta:
         order_insertion_by = ["created_at"]
+
+    @cached_property
+    def creator_user(self):
+        if self.post:
+            return self.post.author_user
+        else:
+            return self.donation.creator_user
 
 
 class Reaction(BaseModel):
@@ -220,5 +233,8 @@ class Reaction(BaseModel):
     )
     comment = models.ForeignKey(
         "posts.Comment", on_delete=models.CASCADE, null=True, blank=True
+    )
+    donation = models.ForeignKey(
+        "donations.Donation", on_delete=models.CASCADE, null=True, blank=True
     )
     author_user = models.ForeignKey("users.User", on_delete=models.CASCADE)

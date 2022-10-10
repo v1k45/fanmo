@@ -123,5 +123,12 @@ def unpaid_donation(creator_user, user):
 
 
 @pytest.fixture
+def donation(unpaid_donation):
+    unpaid_donation.status = Donation.Status.SUCCESSFUL
+    unpaid_donation.save()
+    return unpaid_donation
+
+
+@pytest.fixture
 def api_client():
     return APIClient()

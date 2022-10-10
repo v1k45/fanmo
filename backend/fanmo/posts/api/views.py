@@ -12,6 +12,7 @@ from rest_framework.response import Response
 
 from fanmo.core.notifications import notify_comment, notify_new_post
 from fanmo.core.tasks import async_task
+from fanmo.donations.models import Donation
 from fanmo.posts.api.filters import PostFilter
 from fanmo.posts.api.serializers import (
     CommentReactionSerializer,
@@ -126,16 +127,25 @@ class CommentViewSet(
             .prefetch_related("reactions")
         )
         if self.action == "list":
-            post = self.get_post()
-            if post.can_access:
-                return queryset.filter(post=post).get_cached_trees()
+            if "post_id" in self.request.query_params:
+                post = self.get_post()
+                if post.can_access:
+                    return queryset.filter(post=post).get_cached_trees()
+                else:
+                    return queryset.none()
+            elif "donation_id" in self.request.query_params:
+                return queryset.filter(donation=self.get_donation()).get_cached_trees()
             else:
-                return queryset.none()
+                raise ValidationError(
+                    "Either post_id or donation_id are required.", "required"
+                )
+
         # let comment and post authors delete the comment
         elif self.action == "destroy":
             return queryset.filter(
                 Q(author_user=self.request.user)
                 | Q(post__author_user=self.request.user)
+                | Q(donation__creator_user=self.request.user)
             )
 
         return queryset
@@ -160,6 +170,17 @@ class CommentViewSet(
 
         post.annotate_permissions(self.request.user)
         return post
+
+    @lru_cache
+    def get_donation(self):
+        try:
+            return Donation.objects.filter(
+                Q(is_hidden=False)
+                | Q(creator_user_id=self.request.user.pk)
+                | Q(fan_user_id=self.request.user.pk)
+            ).get(id=self.request.query_params.get("donation_id"))
+        except (Donation.DoesNotExist, ValueError):
+            raise ValidationError("Invalid donation_id.")
 
     def perform_destroy(self, instance):
         instance.get_descendants(include_self=True).update(is_published=False)

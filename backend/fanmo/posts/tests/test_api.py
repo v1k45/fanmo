@@ -7,6 +7,7 @@ from moneyed import INR
 
 from fanmo.memberships.tests.factories import MembershipFactory, TierFactory
 from fanmo.posts.models import Comment, Content, Post, Reaction
+from fanmo.users.tests.factories import UserFactory
 
 pytestmark = pytest.mark.django_db
 
@@ -697,11 +698,7 @@ class TestPostCrudAPI:
 
 
 class TestCommentAPI:
-    def test_list_without_post_id(self, api_client):
-        response = api_client.get("/api/comments/")
-        assert response.status_code == 400
-
-    def test_list_with_post_id(self, api_client):
+    def test_list_without_post_id_or_donation_id(self, api_client):
         response = api_client.get("/api/comments/")
         assert response.status_code == 400
 
@@ -867,6 +864,82 @@ class TestCommentAPI:
         assert response.status_code == 400
         assert response.json()["post_id"][0]["code"] == "permission_denied"
 
+    def test_create_comment_on_donation(self, api_client, donation):
+        # creator comment
+        api_client.force_authenticate(donation.creator_user)
+        response = api_client.post(
+            "/api/comments/",
+            {
+                "donation_id": donation.id,
+                "body": "thanks man",
+            },
+        )
+        assert response.status_code == 201
+
+        # supporter comment
+        api_client.force_authenticate(donation.fan_user)
+        response = api_client.post(
+            "/api/comments/",
+            {
+                "donation_id": donation.id,
+                "body": "thanks man",
+            },
+        )
+        assert response.status_code == 201
+
+    def test_donation_comment_by_non_participant(self, api_client, donation):
+        user = UserFactory()
+        # creator comment
+        api_client.force_authenticate(user)
+        response = api_client.post(
+            "/api/comments/",
+            {
+                "donation_id": donation.id,
+                "body": "thanks man",
+            },
+        )
+        assert response.status_code == 400
+        assert response.json()["donation_id"][0]["code"] == "permission_denied"
+
+    def test_unpaid_donation_comment(self, api_client, unpaid_donation):
+        # creator comment
+        api_client.force_authenticate(unpaid_donation.creator_user)
+        response = api_client.post(
+            "/api/comments/",
+            {
+                "donation_id": unpaid_donation.id,
+                "body": "thanks man",
+            },
+        )
+        assert response.status_code == 400
+        assert response.json()["donation_id"][0]["code"] == "does_not_exist"
+
+    def test_create_comment_reply_on_donation(self, api_client, donation):
+        # creator comment
+        api_client.force_authenticate(donation.creator_user)
+        response = api_client.post(
+            "/api/comments/",
+            {
+                "donation_id": donation.id,
+                "body": "thanks man",
+            },
+        )
+        assert response.status_code == 201
+        comment_id = response.json()["id"]
+
+        # supporter comment
+        api_client.force_authenticate(donation.fan_user)
+        response = api_client.post(
+            "/api/comments/",
+            {
+                "donation_id": donation.id,
+                "body": "welcome dude",
+                "parent_id": comment_id,
+            },
+        )
+        assert response.status_code == 400
+        assert response.json()["non_field_errors"][0]["code"] == "invalid"
+
     def test_create_comment_reply_member_on_public_post(
         self, api_client, active_membership
     ):
@@ -945,6 +1018,70 @@ class TestCommentAPI:
         assert response.status_code == 404
 
         response = api_client.delete(f"/api/comments/{fan_comment.id}/")
+        assert response.status_code == 204
+
+    def test_delete_comment_on_donation_as_creator(self, api_client, donation):
+        # creator comment
+        api_client.force_authenticate(donation.creator_user)
+        response = api_client.post(
+            "/api/comments/",
+            {
+                "donation_id": donation.id,
+                "body": "thanks man",
+            },
+        )
+        assert response.status_code == 201
+        comment_id_1 = response.json()["id"]
+
+        # supporter comment
+        api_client.force_authenticate(donation.fan_user)
+        response = api_client.post(
+            "/api/comments/",
+            {
+                "donation_id": donation.id,
+                "body": "thanks man",
+            },
+        )
+        assert response.status_code == 201
+        comment_id_2 = response.json()["id"]
+
+        api_client.force_authenticate(donation.creator_user)
+
+        response = api_client.delete(f"/api/comments/{comment_id_1}/")
+        assert response.status_code == 204
+
+        response = api_client.delete(f"/api/comments/{comment_id_2}/")
+        assert response.status_code == 204
+
+    def test_delete_comment_on_donation_as_fan(self, api_client, donation):
+        # creator comment
+        api_client.force_authenticate(donation.creator_user)
+        response = api_client.post(
+            "/api/comments/",
+            {
+                "donation_id": donation.id,
+                "body": "thanks man",
+            },
+        )
+        assert response.status_code == 201
+        comment_id_1 = response.json()["id"]
+
+        # supporter comment
+        api_client.force_authenticate(donation.fan_user)
+        response = api_client.post(
+            "/api/comments/",
+            {
+                "donation_id": donation.id,
+                "body": "thanks man",
+            },
+        )
+        assert response.status_code == 201
+        comment_id_2 = response.json()["id"]
+
+        response = api_client.delete(f"/api/comments/{comment_id_1}/")
+        assert response.status_code == 404
+
+        response = api_client.delete(f"/api/comments/{comment_id_2}/")
         assert response.status_code == 204
 
     def test_add_reactions(self, creator_user, user, api_client):

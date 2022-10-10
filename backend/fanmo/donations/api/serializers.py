@@ -5,6 +5,8 @@ from rest_framework import serializers
 
 from fanmo.core.serializers import PaymentIntentSerializerMixin
 from fanmo.donations.models import Donation
+from fanmo.posts.api.serializers import PostReactionSummarySerializer
+from fanmo.posts.models import Reaction
 from fanmo.users.api.serializers import FanUserPreviewSerializer, UserPreviewSerializer
 from fanmo.utils.fields import VersatileImageFieldSerializer
 
@@ -55,6 +57,55 @@ class DonationPaymentSerializer(serializers.ModelSerializer):
         fields = ["processor", "payload", "is_required"]
 
 
+class DonationReactionSerializer(serializers.ModelSerializer):
+    action = serializers.ChoiceField(choices=["add", "remove"])
+    emoji = serializers.ChoiceField(choices=Reaction.Emoji.choices)
+
+    class Meta:
+        model = Donation
+        fields = ["action", "emoji"]
+
+    def update(self, instance, validated_data):
+        user = self.context["request"].user
+        if validated_data["action"] == "add":
+            Reaction.objects.update_or_create(
+                donation=instance, author_user=user, emoji=validated_data["emoji"]
+            )
+        else:
+            Reaction.objects.filter(
+                donation=instance, author_user=user, emoji=validated_data["emoji"]
+            ).delete()
+        return instance
+
+
+class DonationSocialStatsSerializer(serializers.ModelSerializer):
+    reactions = serializers.SerializerMethodField()
+    comment_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Donation
+        fields = ["reactions", "comment_count"]
+
+    @extend_schema_field(PostReactionSummarySerializer(many=True))
+    def get_reactions(self, post):
+        reaction_summary = {}
+        for reaction in post.reactions.all():
+            reaction_summary.setdefault(
+                reaction.emoji,
+                {"count": 0, "is_reacted": False, "emoji": reaction.emoji},
+            )
+            reaction_summary[reaction.emoji]["count"] += 1
+
+            if reaction.author_user_id == self.context["request"].user.pk:
+                reaction_summary[reaction.emoji]["is_reacted"] = True
+
+        return reaction_summary.values()
+
+    @extend_schema_field(serializers.IntegerField())
+    def get_comment_count(self, donation):
+        return getattr(donation, "comment_count", 0)
+
+
 class DonationCreateSerializer(
     PaymentIntentSerializerMixin, serializers.ModelSerializer
 ):
@@ -66,6 +117,8 @@ class DonationCreateSerializer(
     payment = DonationPaymentSerializer(source="*", read_only=True)
     fan_user = FanUserPreviewSerializer(read_only=True)
     creator_user = UserPreviewSerializer(read_only=True)
+    stats = DonationSocialStatsSerializer(source="*", read_only=True)
+    can_comment = serializers.SerializerMethodField()
 
     class Meta:
         model = Donation
@@ -78,14 +131,29 @@ class DonationCreateSerializer(
             "amount",
             "message",
             "is_hidden",
+            "stats",
+            "can_comment",
             "payment",
             "created_at",
         ]
-        read_only_fields = ["id", "fan_user", "creator_user", "created_at"]
+        read_only_fields = [
+            "id",
+            "fan_user",
+            "creator_user",
+            "stats",
+            "can_comment",
+            "created_at",
+        ]
 
     def validate(self, attrs):
         attrs["fan_user"] = self.get_fan_user(attrs.pop("email", None))
         return attrs
+
+    def get_can_comment(self, donation):
+        return self.context["request"].user.pk in [
+            donation.creator_user_id,
+            donation.fan_user_id,
+        ]
 
     def create(self, validated_data):
         donation = super().create(validated_data)
@@ -98,6 +166,8 @@ class DonationSerializer(serializers.ModelSerializer):
     creator_user = UserPreviewSerializer()
     message = serializers.SerializerMethodField()
     lifetime_amount = serializers.SerializerMethodField()
+    stats = DonationSocialStatsSerializer(source="*", read_only=True)
+    can_comment = serializers.SerializerMethodField()
 
     class Meta:
         model = Donation
@@ -110,6 +180,8 @@ class DonationSerializer(serializers.ModelSerializer):
             "is_hidden",
             "lifetime_amount",
             "status",
+            "stats",
+            "can_comment",
             "created_at",
         ]
 
@@ -121,6 +193,12 @@ class DonationSerializer(serializers.ModelSerializer):
         ):
             return None
         return donation.message
+
+    def get_can_comment(self, donation):
+        return self.context["request"].user.pk in [
+            donation.creator_user_id,
+            donation.fan_user_id,
+        ]
 
     @extend_schema_field(serializers.DecimalField(max_digits=7, decimal_places=2))
     def get_lifetime_amount(self, donation):
@@ -139,18 +217,24 @@ class DonationUpdateSerializer(DonationSerializer):
         fields = [
             "id",
             "fan_user",
+            "creator_user",
             "message",
             "amount",
             "is_hidden",
             "status",
+            "stats",
+            "can_comment",
             "created_at",
         ]
         read_only_fields = [
             "id",
             "fan_user",
+            "creator_user",
             "message",
             "amount",
             "status",
+            "stats",
+            "can_comment",
             "created_at",
         ]
 
