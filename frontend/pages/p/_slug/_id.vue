@@ -56,7 +56,19 @@
           :post="post"
           @share-click="sharePost.isVisible = true;" @deleted="handleDeleted">
           <template #bottom>
-            <profile-comments v-bind="{ post, comments }"></profile-comments>
+            <hr>
+            <comments class="post-body mb-4" v-bind="{ post }">
+              <template #locked>
+                <div v-if="post.minimum_tier" class="mt-4">
+                  <div class="py-4 bg-gray-100 text-center rounded-xl">
+                    <fm-button
+                      type="" class="text-body" @click="handleSubscribeIntent">
+                      Join now for {{ $currency(post.minimum_tier.amount) }}/month to comment
+                    </fm-button>
+                  </div>
+                </div>
+              </template>
+            </comments>
           </template>
         </profile-post>
       </div>
@@ -182,8 +194,7 @@ export default {
   async fetch() {
     this.loading = true;
     await Promise.allSettled([
-      this.loadPost(this.$route.params.id),
-      this.loadComments(this.$route.params.id)
+      this.loadPost(this.$route.params.id)
     ]);
     this.loading = false;
   },
@@ -200,9 +211,6 @@ export default {
     },
     user() {
       return this.currentPost ? this.currentPost.author_user : null;
-    },
-    comments() {
-      return this.currentPost ? this.currentPost.comments : null;
     },
     url() {
       return location.href;
@@ -237,9 +245,10 @@ export default {
     this.unsetCurrentPost();
   },
   methods: {
-    ...mapActions('posts', ['loadPost', 'loadComments']),
+    ...mapActions('posts', ['loadPost']),
     ...mapActions('profile', ['follow', 'unfollow']),
     ...mapMutations('posts', ['unsetCurrentPost', 'updatePostUser']),
+    ...mapMutations('ui', ['setGlobalLoader']),
 
     handleDeleted() {
       this.postDeleted = true;
@@ -260,6 +269,19 @@ export default {
           data: {
             intent: 'preselect-tab',
             tab: tabName || this.activeTab
+          }
+        }
+      });
+    },
+    handleSubscribeIntent() {
+      this.setGlobalLoader('Just a moment...');
+      this.$router.push({
+        name: 'username',
+        params: {
+          username: this.post.author_user.username,
+          data: {
+            intent: 'subscribe-through-post',
+            tier: this.post.minimum_tier
           }
         }
       });

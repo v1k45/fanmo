@@ -131,6 +131,17 @@ export const actions = {
       return ERROR(err.response.data);
     }
   },
+  async addOrRemoveReaction({ commit, state }, { donationId, action, emoji = 'heart' }) {
+    try {
+      const stats = await this.$axios.$post(`/api/donations/${donationId}/reactions/`, { action, emoji });
+      const donation = state.donations.find(d => d.id === donationId);
+      commit('replaceDonation', { ...donation, stats });
+      return SUCCESS(stats);
+    } catch (err) {
+      handleGenericError(err, true);
+      return ERROR(err.response.data);
+    }
+  },
   async fetchExistingMemberships({ commit }, { creatorUsername, fanUsername }) {
     try {
       const memberships = await this.$axios.$get('/api/memberships/', { params: { creator_username: creatorUsername, fan_username: fanUsername } });

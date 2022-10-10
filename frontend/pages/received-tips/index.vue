@@ -178,7 +178,7 @@
         <!-- lifetime amount end -->
 
         <!-- message visibility start -->
-        <div v-if="activeDonation.message" class="flex items-baseline mb-2">
+        <div class="flex items-baseline mb-2">
           <dt class="text-sm text-gray-500 w-1/3 mr-2 md:w-1/4">Message visibility</dt>
           <dd class="flex items-center flex-grow flex-wrap">
             <div class="mr-auto">{{ activeDonation.is_hidden ? 'Hidden' : 'Visible to everyone' }}</div>
@@ -207,6 +207,13 @@
 
       </dl>
       <!-- key value pairs end -->
+
+      <hr class="my-4">
+
+      <!-- comments start -->
+      <h3 class="font-medium">Comments</h3>
+      <comments :key="activeDonation.id" size="sm" :donation="activeDonation" :input-first="false"></comments>
+      <!-- comments end -->
 
       <hr class="my-4">
 
