@@ -6,6 +6,8 @@ from moneyed import INR
 
 from fanmo.donations.models import Donation
 from fanmo.payments.models import Payment
+from fanmo.posts.models import Reaction
+from fanmo.users.tests.factories import UserFactory
 
 pytestmark = pytest.mark.django_db
 
@@ -219,3 +221,40 @@ class TestDonationAPI:
         assert response.status_code == 403
         response_data = response.json()
         assert response_data["detail"]["code"] == "permission_denied"
+
+    def test_add_reactions(self, api_client, donation):
+        user = UserFactory()
+        api_client.force_authenticate(user)
+
+        response = api_client.post(
+            f"/api/donations/{donation.id}/reactions/",
+            {
+                "action": "add",
+                "emoji": "heart",
+            },
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data["reactions"] == [
+            {
+                "count": 1,
+                "is_reacted": True,
+                "emoji": Reaction.Emoji.HEART.value,
+            }
+        ]
+
+    def test_remove_reactions(self, api_client, donation):
+        user = UserFactory()
+        api_client.force_authenticate(user)
+
+        Reaction.objects.create(
+            author_user=user, emoji=Reaction.Emoji.HEART, donation=donation
+        )
+
+        response = api_client.post(
+            f"/api/donations/{donation.id}/reactions/",
+            {"action": "remove", "emoji": "heart"},
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data["reactions"] == []

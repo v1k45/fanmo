@@ -51,7 +51,7 @@ class DonationViewSet(
                 "comments", filter=Q(comments__is_published=True), distinct=True
             ),
         )
-        if self.action != "recent":
+        if self.action not in ["recent", "reactions"]:
             queryset = queryset.filter(
                 Q(creator_user=self.request.user.pk) | Q(fan_user=self.request.user.pk)
             )
