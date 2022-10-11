@@ -73,7 +73,7 @@
       <template v-if="reaction.heart.count">{{ reaction.heart.count }}</template>
       <template v-else>Like</template>
     </button>
-    <button type="link" class="inline-flex items-center mr-auto">
+    <button v-if="donation.stats.comment_count || donation.can_comment" type="link" class="inline-flex items-center mr-auto">
       <icon-message-square class="inline mr-2 h-em w-em"></icon-message-square>
       <template v-if="donation.stats.comment_count">{{ donation.stats.comment_count }}</template>
       <template v-else>Comment</template>
