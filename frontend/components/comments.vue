@@ -5,7 +5,7 @@
       <fm-avatar
         :src="$auth.user.avatar && $auth.user.avatar.small"
         :name="$auth.user.display_name"
-        :size="{'w-6 h-6': size == 'sm', 'w-12 h-12': size == 'md', 'flex-shrink-0 mr-6': true}">
+        :size="`${size == 'sm' ? 'w-6 h-6' : 'w-12 h-12'} sm:w-8 sm:h-8 flex-shrink-0 mr-6`">
       </fm-avatar>
       <fm-input
         v-model="commentForm.body" uid="body" type="textarea" class="flex-grow"
