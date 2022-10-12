@@ -9,7 +9,7 @@
     <fm-read-more-height max-height="200">
       <div
         class="font-bold max-w-[75%] truncate float-left"
-        :class="{ 'bg-fm-primary text-white px-2 sm:px-3 rounded-xl font-normal': post.author_user.username === comment.author_user.username }"
+        :class="{ 'bg-fm-primary text-white px-2 sm:px-3 rounded-xl font-normal': creatorUser.username === comment.author_user.username }"
         :title="comment.author_user.name || comment.author_user.username">
         {{ comment.author_user.name || comment.author_user.username }}
       </div>
@@ -38,8 +38,7 @@
       <span class="text-xs sm:text-sm truncate">{{ dayjs(comment.created_at).format('D MMM, YYYY hh:mma') }}</span>
     </div>
 
-
-    <fm-form v-if="$auth.loggedIn && post.can_comment && showReplyForm" class="mt-4" @submit.prevent="createReply">
+    <fm-form v-if="$auth.loggedIn && canComment && showReplyForm" :errors="commentErrors" class="mt-4" @submit.prevent="createReply">
       <div class="flex">
         <fm-avatar
           :src="$auth.user.avatar && $auth.user.avatar.small"
@@ -48,19 +47,21 @@
         </fm-avatar>
         <fm-input
           v-model="commentForm.body" uid="body" type="textarea" class="flex-grow"
-          placeholder="Leave a comment" :rows="(isCommentTextareaFocused || commentForm.body) ? 3 : 1"
+          :size="size"
+          placeholder="Leave a comment" :rows="(isCommentTextareaFocused || commentForm.body) ? 2 : 1"
           @focus="isCommentTextareaFocused = true;" @blur="isCommentTextareaFocused = false;"></fm-input>
       </div>
       <div v-if="commentForm.body || isCommentTextareaFocused" class="text-right mt-3">
-        <fm-button type="primary" native-type="submit">Comment</fm-button>
+        <fm-button type="primary" native-type="submit" :size="size">Comment</fm-button>
       </div>
     </fm-form>
 
     <div v-if="!isNested" class="pt-2">
-      <profile-comment
+      <comment
         v-for="childComment in comment.children" :key="childComment.id"
-        :post="post" :comment="childComment" :parent-comment="comment" is-nested class="mt-4">
-      </profile-comment>
+        :size="size" :input-first="inputFirst"
+        :post="post" :donation="donation" :comment="childComment" :parent-comment="comment" :can-comment="canComment" is-nested class="mt-4">
+      </comment>
 
       <hr v-if="comment.children.length" class="mt-4">
     </div>
@@ -77,14 +78,19 @@ import get from 'lodash/get';
 export default {
   props: {
     isNested: { type: Boolean, default: false },
-    post: { type: Object, required: true },
+    post: { type: Object, required: false, default: null },
+    donation: { type: Object, required: false, default: null },
     comment: { type: Object, required: true },
-    parentComment: { type: Object, default: null }
+    parentComment: { type: Object, default: null },
+    canComment: { type: Boolean, default: false },
+    size: { type: String, default: 'md' },
+    inputFirst: { type: Boolean, default: false }
   },
   data() {
     return {
       dayjs,
       showReplyForm: false,
+      commentErrors: {},
       isCommentTextareaFocused: false,
       likedInThisSession: false,
       commentForm: {
@@ -93,10 +99,13 @@ export default {
     };
   },
   computed: {
+    creatorUser() {
+      return this.post ? this.post.author_user : this.donation.creator_user;
+    },
     canDelete() {
       return this.$auth.loggedIn && (
         this.comment.author_user.username === this.$auth.user.username ||
-        this.post.author_user.username === this.$auth.user.username
+            this.creatorUser.username === this.$auth.user.username
       );
     },
 
@@ -109,9 +118,15 @@ export default {
     }
   },
   methods: {
-    ...mapActions('posts', ['createComment', 'deleteComment', 'addOrRemoveCommentReaction']),
+    ...mapActions('comments', ['createComment', 'deleteComment', 'addOrRemoveCommentReaction']),
     async createReply() {
-      const { success, data } = await this.createComment({ postId: this.post.id, parentId: this.comment.id, body: this.commentForm.body });
+      const { success, data } = await this.createComment({
+        postId: get(this.post, 'id'),
+        donationId: get(this.donation, 'id'),
+        parentId: this.comment.id,
+        body: this.commentForm.body,
+        pushToTop: this.inputFirst
+      });
       if (!success) this.commentErrors = data;
       else {
         this.commentForm.body = '';
@@ -151,3 +166,4 @@ export default {
   }
 };
 </script>
+

@@ -4,16 +4,27 @@ bodyClass: bg-gray-100
 
 <extends src="src/layouts/main.html">
   <block name="template">
-    <p class="text-xl sm:leading-32 text-black font-semibold m-0 mb-24">Hi @{{ obj.post.author_user.display_name }},</p>
-    <p><strong>@{{ obj.author_user.display_name }}</strong> commented on <strong>@{{ obj.post.title }}</strong>.</p>
-    <p>
-    <blockquote>@{{ obj.body }}</blockquote>
-    </p>
-    <p class="m-0 mb-24">You can moderate this comment from the post page.</p>
+    <p class="text-xl sm:leading-32 text-black font-semibold m-0 mb-24">Hi @{{ recipient.display_name }},</p>
+    <p><strong>@{{ obj.author_user.display_name }}</strong> commented on <strong>{% if obj.post %}@{{ obj.post.title }}{% else %}@{{ obj.donation.amount }} tip{% endif %}</strong>.</p>
+    <p><em>@{{ obj.body }}</em></p>
+    {% if obj.post %}
     <div class="leading-full">
       <component src="src/components/button.html" target="post_detail" args="obj.post.slug obj.post.id">
         View Post
       </component>
     </div>
+    {% elif obj.donation and obj.recipient == obj.creator_user %}
+    <div class="leading-full">
+      <component src="src/components/button.html" target="received-tips" args="">
+        View Tips
+      </component>
+    </div>
+    {% elif obj.donation and obj.recipient != obj.creator_user %}
+    <div class="leading-full">
+      <component src="src/components/button.html" target="sent-tips" args="">
+        View Tips
+      </component>
+    </div>
+    {% endif %}
   </block>
 </extends>

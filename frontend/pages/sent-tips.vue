@@ -189,6 +189,13 @@
 
       <hr class="my-4">
 
+      <!-- comments start -->
+      <h3 class="font-medium">Comments</h3>
+      <comments :donation="activeDonation" size="sm" :input-first="false"></comments>
+      <!-- comments end -->
+
+      <hr class="my-4">
+
       <!-- payment history table start -->
       <h3 class="font-medium">Payment History <template v-if="payments && payments.count">({{ payments.count }})</template></h3>
       <fm-table class="mt-4">

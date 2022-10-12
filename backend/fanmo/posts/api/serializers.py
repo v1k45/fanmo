@@ -3,6 +3,7 @@ from drf_extra_fields.fields import Base64FileField, Base64ImageField
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
+from fanmo.donations.models import Donation
 from fanmo.memberships.api.serializers import TierPreviewSerializer
 from fanmo.memberships.models import Tier
 from fanmo.posts.models import Comment, Content, ContentFile, Post, Reaction
@@ -289,13 +290,23 @@ class CommentReactionSerializer(serializers.ModelSerializer):
 
     def validate(self, attrs):
         user = self.context["request"].user
-
-        post = self.instance.post
-        post.annotate_permissions(user)
-        if not post.can_access:
-            raise serializers.ValidationError(
-                "You do not have permission to perform this action", "permission_denied"
-            )
+        if post := self.instance.post:
+            post.annotate_permissions(user)
+            if not post.can_access:
+                raise serializers.ValidationError(
+                    "You do not have permission to perform this action",
+                    "permission_denied",
+                )
+        elif donation := self.instance.donation:
+            user_id = self.context["request"].user.pk
+            if donation.is_hidden and user_id not in [
+                donation.creator_user_id,
+                donation.fan_user_id,
+            ]:
+                raise serializers.ValidationError(
+                    "You do not have permission to perform this action",
+                    "permission_denied",
+                )
         return super().validate(attrs)
 
     def update(self, instance, validated_data):
@@ -335,7 +346,16 @@ class PostCreateSerializer(PostSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     post_id = serializers.PrimaryKeyRelatedField(
-        source="post", queryset=Post.objects.filter(is_published=True), write_only=True
+        source="post",
+        queryset=Post.objects.filter(is_published=True),
+        write_only=True,
+        required=False,
+    )
+    donation_id = serializers.PrimaryKeyRelatedField(
+        source="donation",
+        queryset=Donation.objects.filter(status=Donation.Status.SUCCESSFUL),
+        write_only=True,
+        required=False,
     )
     parent_id = serializers.PrimaryKeyRelatedField(
         source="parent",
@@ -353,6 +373,7 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = [
             "id",
             "post_id",
+            "donation_id",
             "parent_id",
             "body",
             "author_user",
@@ -384,10 +405,24 @@ class CommentSerializer(serializers.ModelSerializer):
         return reaction_summary.values()
 
     def validate(self, attrs):
-        if attrs.get("parent") and attrs["parent"].post_id != attrs["post"].id:
+        if not attrs.get("post") and not attrs.get("donation"):
             raise serializers.ValidationError(
-                "Parent comment does not exists in the post."
+                "One of post_id or donation_id is required", "required"
             )
+        if attrs.get("post") and attrs.get("donation"):
+            raise serializers.ValidationError(
+                "Only one of post_id or donation_id are allowed", "multiple_values"
+            )
+
+        if attrs.get("parent"):
+            if attrs.get("donation"):
+                raise serializers.ValidationError(
+                    "Comment replies are not allowed in tips."
+                )
+            elif attrs["parent"].post_id != attrs["post"].id:
+                raise serializers.ValidationError(
+                    "Parent comment does not exists in the post."
+                )
         return attrs
 
     def validate_post_id(self, post):
@@ -397,6 +432,17 @@ class CommentSerializer(serializers.ModelSerializer):
                 "Only members can comment on this post.", "permission_denied"
             )
         return post
+
+    def validate_donation_id(self, donation):
+        if self.context["request"].user.pk not in [
+            donation.creator_user_id,
+            donation.fan_user_id,
+        ]:
+            raise serializers.ValidationError(
+                "You don't have permission to comment on this tip.",
+                "permission_denied",
+            )
+        return donation
 
     def create(self, validated_data):
         validated_data["author_user"] = self.context["request"].user

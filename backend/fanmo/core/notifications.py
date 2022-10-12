@@ -219,15 +219,30 @@ def notify_new_post(post_id):
 def notify_comment(comment_id):
     from fanmo.posts.models import Comment
 
-    # do not send notification if the commentor is same as post author
-    comment = Comment.objects.get(id=comment_id)
-    if comment.post.author_user_id != comment.author_user_id:
+    comment = Comment.objects.select_related(
+        "post__author_user",
+        "donation__creator_user",
+        "author_user",
+        "parent__author_user",
+    ).get(id=comment_id)
+
+    # comment was posted by a user
+    if comment.creator_user != comment.author_user:
         notify(
-            recipient=comment.post.author_user,
+            recipient=comment.creator_user,
             obj=comment,
             action=NotificationType.COMMENT,
             silent=True,
             channels=("email", "creator_activity"),
+        )
+    # comment was posted by a creator on a donation
+    elif comment.creator_user == comment.author_user and comment.donation:
+        notify(
+            recipient=comment.donation.fan_user,
+            obj=comment,
+            action=NotificationType.COMMENT,
+            silent=True,
+            channels=("email",),
         )
 
     if comment.parent and comment.parent.author_user_id != comment.author_user_id:

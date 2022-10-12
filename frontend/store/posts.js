@@ -1,6 +1,5 @@
 /* eslint no-console: ["warn", { allow: ["error"] }] */
 import Vue from 'vue';
-import get from 'lodash/get';
 import { handleGenericError } from '~/utils';
 
 const SUCCESS = (data) => ({ success: true, data });
@@ -8,9 +7,6 @@ const ERROR = (data) => ({ success: false, data });
 
 export const state = () => ({
   postsById: {}, // { [postId]: { ...post } }
-  commentsById: {}, // { [commentId]: comment }
-  postCommentsMap: {}, // { [postId]: { previous, next, commentIds: [] } }
-
   // post detail
   currentPostId: null,
 
@@ -51,13 +47,7 @@ export const getters = {
   currentPost(state) {
     const post = state.postsById[state.currentPostId];
     if (!post) return null;
-    return {
-      ...post,
-      comments: get(state.postCommentsMap, `${post.id}.commentIds`, [])
-        .map(commentId => state.commentsById[commentId])
-        .filter(comment => !!comment),
-      hasMoreComments: get(state.postCommentsMap, `${post.id}.next`, false)
-    };
+    return post;
   }
 };
 
@@ -113,28 +103,6 @@ export const actions = {
     }
   },
 
-  async loadComments({ commit, state }, postId) {
-    try {
-      const comments = await this.$axios.$get('/api/comments/', { params: { post_id: postId } });
-      commit('setComments', { postId, comments });
-      return SUCCESS(comments);
-    } catch (err) {
-      handleGenericError(err, true);
-      return ERROR(err.response.data);
-    }
-  },
-
-  async loadNextComments({ commit, state }, postId) {
-    try {
-      const comments = await this.$axios.$get(state.postCommentsMap[postId].next);
-      commit('setNextComments', { postId, comments });
-      return SUCCESS(comments);
-    } catch (err) {
-      handleGenericError(err, true);
-      return ERROR(err.response.data);
-    }
-  },
-
   async addOrRemoveReaction({ commit, state }, { postId, action, emoji = 'heart' }) {
     try {
       const postStats = await this.$axios.$post(`/api/posts/${postId}/reactions/`, { action, emoji });
@@ -145,28 +113,6 @@ export const actions = {
       return ERROR(err.response.data);
     }
   },
-  async addOrRemoveCommentReaction({ commit, state }, { parentId, commentId, action, emoji = 'heart' }) {
-    try {
-      const updatedComment = await this.$axios.$post(`/api/comments/${commentId}/reactions/`, { action, emoji });
-      commit('updateComment', { parentId, commentId, comment: updatedComment });
-      return SUCCESS(updatedComment);
-    } catch (err) {
-      handleGenericError(err, true);
-      return ERROR(err.response.data);
-    }
-  },
-  async createComment({ commit, dispatch }, { postId, parentId = undefined, body }) {
-    try {
-      const comment = await this.$axios.$post('/api/comments/', { post_id: postId, parent_id: parentId, body });
-      commit('createComment', { postId, parentId, comment });
-      // dispatch('updatePostStats'); TODO: refresh stats
-      return SUCCESS(comment);
-    } catch (err) {
-      handleGenericError(err);
-      return ERROR(err.response.data);
-    }
-  },
-
   // delete
   async deletePost({ commit, state }, postId) {
     try {
@@ -175,17 +121,6 @@ export const actions = {
       return SUCCESS();
     } catch (err) {
       return handleGenericError(err, true);
-    }
-  },
-
-  async deleteComment({ commit }, { parentId, commentId }) {
-    try {
-      await this.$axios.$delete(`/api/comments/${commentId}/`);
-      commit('deleteComment', { parentId, commentId });
-      return SUCCESS();
-    } catch (err) {
-      handleGenericError(err, true);
-      return ERROR(err.response.data);
     }
   }
 };
@@ -246,48 +181,5 @@ export const mutations = {
   },
   deletePost(state, postId) {
     Vue.delete(state.postsById, postId);
-  },
-  deleteComment(state, { parentId, commentId }) {
-    if (!parentId) Vue.delete(state.commentsById, commentId);
-    else {
-      const idx = state.commentsById[parentId].children.findIndex(comment => comment.id === commentId);
-      state.commentsById[parentId].children.splice(idx, 1);
-    }
-  },
-  createComment(state, { postId, parentId, comment }) {
-    if (!parentId) {
-      Vue.set(state.commentsById, comment.id, comment);
-      if (!state.postCommentsMap[postId]) {
-        Vue.set(state.postCommentsMap, postId, { previous: null, next: null, commentIds: [] });
-      }
-      state.postCommentsMap[postId].commentIds.unshift(comment.id);
-    } else {
-      state.commentsById[parentId].children.push(comment);
-    }
-  },
-  setComments(state, { postId, comments }) {
-    const { previous, next, results } = comments;
-    results.forEach(comment => {
-      Vue.set(state.commentsById, comment.id, comment);
-    });
-    Vue.set(state.postCommentsMap, postId, { previous, next, commentIds: results.map(c => c.id) });
-  },
-  setNextComments(state, { postId, comments }) {
-    const { previous, next, results } = comments;
-    results.forEach(comment => {
-      Vue.set(state.commentsById, comment.id, comment);
-      state.postCommentsMap[postId].commentIds.push(comment.id);
-    });
-    Object.assign(state.postCommentsMap[postId], { previous, next });
-  },
-  updateComment(state, { parentId, commentId, comment }) {
-    state.commentsById[commentId] = comment;
-
-    if (!parentId) {
-      state.commentsById[commentId] = comment;
-    } else {
-      const idx = state.commentsById[parentId].children.findIndex(c => c.id === commentId);
-      state.commentsById[parentId].children.splice(idx, 1, comment);
-    }
   }
 };

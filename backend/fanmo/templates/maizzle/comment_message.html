@@ -56,12 +56,10 @@
               <td align="center" class="sm-px-24">
                 <table style="width: 100%" cellpadding="0" cellspacing="0" role="presentation">
                   <tr>
-                    <td class="sm-px-24" style="border-radius: 4px; background-color: #fff; padding: 48px; text-align: left; font-size: 16px; line-height: 24px; color: #1f2937">    <p class="sm-leading-32" style="margin: 0; margin-bottom: 24px; font-size: 20px; font-weight: 600; color: #000">Hi {{ obj.post.author_user.display_name }},</p>
-    <p><strong>{{ obj.author_user.display_name }}</strong> commented on <strong>{{ obj.post.title }}</strong>.</p>
-    <p>
-    </p><blockquote>{{ obj.body }}</blockquote>
-    <p></p>
-    <p style="margin: 0; margin-bottom: 24px">You can moderate this comment from the post page.</p>
+                    <td class="sm-px-24" style="border-radius: 4px; background-color: #fff; padding: 48px; text-align: left; font-size: 16px; line-height: 24px; color: #1f2937">    <p class="sm-leading-32" style="margin: 0; margin-bottom: 24px; font-size: 20px; font-weight: 600; color: #000">Hi {{ recipient.display_name }},</p>
+    <p><strong>{{ obj.author_user.display_name }}</strong> commented on <strong>{% if obj.post %}{{ obj.post.title }}{% else %}{{ obj.donation.amount }} tip{% endif %}</strong>.</p>
+    <p><em>{{ obj.body }}</em></p>
+    {% if obj.post %}
     <div style="line-height: 100%">
       <a href="{{ settings.BASE_URL }}{% url 'post_detail' obj.post.slug obj.post.id %}" class="hover-bg-fm-primary-600" style="display: inline-block; border-radius: 4px; background-color: #6366f1; padding-top: 16px; padding-bottom: 16px; padding-left: 24px; padding-right: 24px; text-align: center; font-size: 16px; font-weight: 600; color: #fff; text-decoration-line: none">
     <!--[if mso]><i style="letter-spacing: 24px; mso-font-width: -100%; mso-text-raise:30px;">&#8202;</i><![endif]-->
@@ -70,7 +68,28 @@
        &nbsp; &rarr;</span>
     <!--[if mso]><i style="letter-spacing: 24px; mso-font-width: -100%;">&#8202;</i><![endif]-->
 </a>
-    </div>                    </td>
+    </div>
+    {% elif obj.donation and obj.recipient == obj.creator_user %}
+    <div style="line-height: 100%">
+      <a href="{{ settings.BASE_URL }}{% url 'received-tips'  %}" class="hover-bg-fm-primary-600" style="display: inline-block; border-radius: 4px; background-color: #6366f1; padding-top: 16px; padding-bottom: 16px; padding-left: 24px; padding-right: 24px; text-align: center; font-size: 16px; font-weight: 600; color: #fff; text-decoration-line: none">
+    <!--[if mso]><i style="letter-spacing: 24px; mso-font-width: -100%; mso-text-raise:30px;">&#8202;</i><![endif]-->
+    <span style="mso-text-raise: 16px">
+        View Tips
+       &nbsp; &rarr;</span>
+    <!--[if mso]><i style="letter-spacing: 24px; mso-font-width: -100%;">&#8202;</i><![endif]-->
+</a>
+    </div>
+    {% elif obj.donation and obj.recipient != obj.creator_user %}
+    <div style="line-height: 100%">
+      <a href="{{ settings.BASE_URL }}{% url 'sent-tips'  %}" class="hover-bg-fm-primary-600" style="display: inline-block; border-radius: 4px; background-color: #6366f1; padding-top: 16px; padding-bottom: 16px; padding-left: 24px; padding-right: 24px; text-align: center; font-size: 16px; font-weight: 600; color: #fff; text-decoration-line: none">
+    <!--[if mso]><i style="letter-spacing: 24px; mso-font-width: -100%; mso-text-raise:30px;">&#8202;</i><![endif]-->
+    <span style="mso-text-raise: 16px">
+        View Tips
+       &nbsp; &rarr;</span>
+    <!--[if mso]><i style="letter-spacing: 24px; mso-font-width: -100%;">&#8202;</i><![endif]-->
+</a>
+    </div>
+    {% endif %}                    </td>
                   </tr>
                   <tr>
                     <td style="height: 48px"></td>
