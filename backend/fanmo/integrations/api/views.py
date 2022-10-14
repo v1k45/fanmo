@@ -2,6 +2,7 @@ from django.conf import settings
 from django.shortcuts import get_object_or_404
 from rest_framework import generics
 
+from fanmo.core.tasks import async_task
 from fanmo.integrations.api.serializers import (
     DiscordServerConnectSerializer,
     DiscordServerSerializer,
@@ -10,6 +11,7 @@ from fanmo.integrations.api.serializers import (
     IntegrationSerializer,
 )
 from fanmo.integrations.models import DiscordServer, DiscordUser
+from fanmo.integrations.tasks import join_creator_servers, leave_creator_servers
 
 
 class IntegrationView(generics.RetrieveAPIView):
@@ -47,8 +49,14 @@ class DiscordUserConnectView(
         return get_object_or_404(DiscordUser, social_account__user=self.request.user)
 
     def perform_destroy(self, instance):
-        # todo: remove user from all servers
+        leave_creator_servers(self.request.user.pk)
         instance.social_account.delete()
+
+    def perform_create(self, serializer):
+        super().perform_create(serializer)
+        # add user to all creator discord server
+        # todo: think about the usecase when user connects and disconnects discord account quickly
+        async_task(join_creator_servers, self.request.user.pk)
 
 
 class DiscordServerConnectView(

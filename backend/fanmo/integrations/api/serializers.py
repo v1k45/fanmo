@@ -30,20 +30,23 @@ class DiscordServerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DiscordServer
-        fields = ["id", "name", "roles", "refresh"]
+        fields = ["id", "name", "roles", "refresh", "kick_inactive_members"]
         read_only_fields = ["id", "name", "roles"]
 
     def validate(self, attrs):
         try:
-            return discord_api.get_guild(self.instance.external_id)
+            guild_response = discord_api.get_guild(self.instance.external_id)
         except requests.RequestException:
             logger.exception("discord_guild_reponse_failed")
             raise serializers.ValidationError(
                 "Failed to retrieve discord server information. Please try again after some time."
             )
+        return {**guild_response, **attrs}
 
     def update(self, instance, validated_data):
         instance.name = validated_data["name"]
+        if "kick_inactive_members" in validated_data:
+            instance.kick_inactive_members = validated_data["kick_inactive_members"]
         instance.save()
 
         roles = [role for role in validated_data["roles"] if not role["managed"]]
@@ -74,8 +77,8 @@ class DiscordServerConnectSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = DiscordServer
-        fields = ["id", "name", "roles", "code"]
-        read_only_fields = ["id", "name", "roles"]
+        fields = ["id", "name", "roles", "kick_inactive_members", "code"]
+        read_only_fields = ["id", "name", "roles", "kick_inactive_members"]
 
     def validate(self, attrs):
         if DiscordServer.objects.filter(

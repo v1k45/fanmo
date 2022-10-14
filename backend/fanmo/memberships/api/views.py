@@ -9,6 +9,8 @@ from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.response import Response
 
+from fanmo.core.tasks import async_task
+from fanmo.integrations.tasks import invite_members_to_discord_server
 from fanmo.memberships.api.filters import MembershipFilter
 from fanmo.memberships.api.serializers import (
     MembershipGiveawaySerializer,
@@ -33,6 +35,10 @@ class TierViewSet(
 
     def get_queryset(self):
         return self.request.user.tiers.all()
+
+    def perform_update(self, serializer):
+        tier = serializer.save()
+        async_task(invite_members_to_discord_server, self.request.user.pk, tier.id)
 
 
 class MembershipViewSet(

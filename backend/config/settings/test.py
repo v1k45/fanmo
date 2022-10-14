@@ -49,5 +49,40 @@ RAZORPAY_WEBHOOK_SECRET = "rzp_webook_secret"
 # ------------------------------------------------------------------------------
 Q_CLUSTER["sync"] = True
 
+# Social auth
+
+SOCIALACCOUNT_PROVIDERS = {
+    "google": {
+        "SCOPE": ["email", "profile"],
+        "APP": {
+            "client_id": "google_client",
+            "secret": "google_secret",
+        },
+    },
+    "facebook": {
+        "SCOPE": ["email", "public_profile"],
+        "APP": {
+            "client_id": "facebook_client",
+            "secret": "facebook_secret",
+        },
+    },
+    "discord_user": {
+        "SCOPE": ["email", "identify", "guilds.join"],
+        "APP": {
+            "client_id": "discord_client",
+            "secret": "discord_secret",
+        },
+    },
+    "discord_server": {
+        "SCOPE": ["email", "identify", "bot"],
+        "APP": {
+            "client_id": "discord_client",
+            "secret": "discord_secret",
+            "access_token": "discord_token",
+        },
+    },
+}
+
+
 # Your stuff...
 # ------------------------------------------------------------------------------

@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
                     "social_account",
                     models.OneToOneField(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="discord_users",
+                        related_name="discord_user",
                         to="socialaccount.socialaccount",
                     ),
                 ),
@@ -63,7 +63,7 @@ class Migration(migrations.Migration):
                     "social_account",
                     models.OneToOneField(
                         on_delete=django.db.models.deletion.CASCADE,
-                        related_name="discord_servers",
+                        related_name="discord_server",
                         to="socialaccount.socialaccount",
                     ),
                 ),
