@@ -17,7 +17,15 @@
       <ul class="list-disc ml-4">
         <li v-for="role in integrations.discord_server.roles" :key="role.id">{{ role.name }}</li>
       </ul>
-      <div class="my-4">
+      <div class="my-4 p-4 border rounded">
+        <fm-input :value="integrations.discord_server.kick_inactive_members" :disabled="isIntegrationLoading" type="checkbox" @input="updateDiscordServer">
+          Kick inactive members from server
+        </fm-input>
+        <div class="text-gray-500 mt-2 text-xs">
+          By default, only the associated role is removed. This is useful when you have a public Discord with private channels for members of specific roles.
+        </div>
+      </div>
+      <div class="flex space-x-2 my-4">
         <fm-button :loading="isIntegrationLoading" @click="refreshDiscordRoles"><icon-refresh-cw class="h-em w-em"></icon-refresh-cw> Refresh roles</fm-button>
         <fm-button type="error" :loading="isIntegrationLoading" @click="removeDiscordServer"><icon-slash class="h-em w-em"></icon-slash> Remove Connection</fm-button>
       </div>
@@ -80,11 +88,14 @@ export default {
   },
   methods: {
     ...mapActions('users', ['loadIntegrations']),
-    async refreshDiscordRoles() {
+    refreshDiscordRoles() {
+      this.updateDiscordServer(this.integrations.discord_server.kick_inactive_members);
+    },
+    async updateDiscordServer(kick) {
       this.isIntegrationLoading = true;
       try {
-        await this.$axios.$patch('/api/integrations/discord_server/', { refresh: true });
-        await this.$toast.info('Refreshed roles successfully.');
+        await this.$axios.$patch('/api/integrations/discord_server/', { refresh: true, kick_inactive_members: kick });
+        await this.$toast.info('Discord server updated successfully.');
       } catch (err) {
         handleGenericError(err, true);
       }
