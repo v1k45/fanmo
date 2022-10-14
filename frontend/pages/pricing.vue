@@ -38,7 +38,7 @@
 
           <ul class="space-y-4 mt-6 font-bold">
             <li
-              v-for="feature in ['Membership tiers', 'Tips', 'Posts', 'Fast payouts', 'Various payment methods', 'Responsive support']" :key="feature"
+              v-for="feature in ['Membership tiers', 'Tips', 'Posts', 'Fast payouts', 'UPI, Netbanking, Cards', 'Responsive support']" :key="feature"
               class="flex items-center">
               <icon-check class="mr-3"></icon-check> {{ feature }}
             </li>
@@ -113,9 +113,9 @@
             </tr>
             <tr>
               <th>Payment methods</th>
-              <td>Credit Card, Debit Card, <br> Net banking, UPI</td>
-              <td>Credit Card, PayPal</td>
-              <td>Credit Card, Debit Card, <br> Net banking, UPI</td>
+              <td>UPI, Cards,<br> Net banking, E-mandate</td>
+              <td>Cards, PayPal</td>
+              <td>Cards, <br> Net banking, UPI</td>
             </tr>
             <tr>
               <th>Currency</th>
@@ -131,15 +131,28 @@
             </tr>
             <tr>
               <th>Discord integration</th>
-              <td>Coming soon</td>
-              <td>Yes</td>
+              <td><icon-check-circle-2 class="icon-check"></icon-check-circle-2></td>
+              <td><icon-check-circle-2 class="icon-check"></icon-check-circle-2></td>
               <td><icon-x-circle class="icon-x"></icon-x-circle></td>
             </tr>
             <tr>
-              <th>Signup required</th>
-              <td>No (Automatic signup)</td>
-              <td>Yes</td>
-              <td>Yes</td>
+              <th>
+                Express checkout
+                <fm-tooltip class="inline" content="Your fans don't have to signup for supporting you.">
+                  <span class="cursor-pointer">
+                    <icon-info class="h-4 w-4 text-fm-info fill-current stroke-white"></icon-info>
+                  </span>
+                </fm-tooltip>
+              </th>
+              <td><icon-check-circle-2 class="icon-check"></icon-check-circle-2></td>
+              <td><icon-x-circle class="icon-x"></icon-x-circle></td>
+              <td><icon-x-circle class="icon-x"></icon-x-circle></td>
+            </tr>
+            <tr>
+              <th>Email Notifications</th>
+              <td><icon-check-circle-2 class="icon-check"></icon-check-circle-2></td>
+              <td><icon-check-circle-2 class="icon-check"></icon-check-circle-2></td>
+              <td><icon-check-circle-2 class="icon-check"></icon-check-circle-2></td>
             </tr>
             <tr>
               <th>Live support</th>
