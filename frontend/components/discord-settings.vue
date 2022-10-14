@@ -68,7 +68,7 @@ export default {
     discordAuth() {
       const authUrl = new URL('https://discord.com/api/oauth2/authorize');
       authUrl.searchParams.append('redirect_uri', `${window.location.origin}/auth/callback/discord/`);
-      authUrl.searchParams.append('client_id', 'FANMO_SECRET_CHANGE_ME');
+      authUrl.searchParams.append('client_id', this.$config.discord);
       authUrl.searchParams.append('response_type', 'code');
 
       const serverUrl = new URL(authUrl.href);

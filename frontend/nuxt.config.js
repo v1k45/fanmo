@@ -2,12 +2,14 @@ const config = {
   dev: {
     google: 'FANMO_SECRET_CHANGE_ME',
     facebook: 'FANMO_SECRET_CHANGE_ME',
-    ogImage: 'https://dev.fanmo.in/ogimage.png'
+    ogImage: 'https://dev.fanmo.in/ogimage.png',
+    discord: 'FANMO_SECRET_CHANGE_ME'
   },
   prod: {
     google: 'FANMO_SECRET_CHANGE_ME',
     facebook: 'FANMO_SECRET_CHANGE_ME',
-    ogImage: 'https://fanmo.in/ogimage.png'
+    ogImage: 'https://fanmo.in/ogimage.png',
+    discord: 'FANMO_SECRET_CHANGE_ME'
   }
 };
 
@@ -29,6 +31,8 @@ export default {
   server: {
     host: '0.0.0.0'
   },
+
+  publicRuntimeConfig: envConfig,
 
   // Target: https://go.nuxtjs.dev/config-target
   target: 'static',
