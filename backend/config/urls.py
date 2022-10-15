@@ -38,6 +38,7 @@ urlpatterns = [
     path("auth/callback/", index_view, name="auth_callback"),
     path("auth/callback/facebook/", index_view, name="facebook_callback"),
     path("auth/callback/google/", index_view, name="google_callback"),
+    path("auth/callback/discord/", index_view, name="discord_callback"),
     path("forgot-password", index_view, name="forgot_password"),
     path("set-password/<key>/", index_view, name="password_reset"),
     path("accept-invite/<key>/", index_view, name="account_invite"),

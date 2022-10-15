@@ -50,7 +50,7 @@ export default {
     try {
       await this.$axios.$post(`/api/integrations/${provider}/`, {
         code: this.$route.query.code,
-        redirect_uri: 'http://localhost:3000/auth/callback/discord/'
+        redirect_uri: `${window.location.origin}/auth/callback/discord/`
       });
       this.$router.push({ name: 'settings', query: { tab: 'discord' } });
     } catch (e) {

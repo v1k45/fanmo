@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.shortcuts import get_object_or_404
+from django.urls import reverse
 from rest_framework import generics
 
 from fanmo.core.tasks import async_task
@@ -43,7 +44,7 @@ class DiscordUserConnectView(
         if settings.DEBUG and "redirect_uri" in self.request.data:
             self.callback_url = self.request.data.get("redirect_uri")
         else:
-            self.callback_url = f"https://{settings.DOMAIN_NAME}/auth/callback"
+            self.callback_url = settings.BASE_URL + reverse("discord_callback")
 
     def get_object(self):
         return get_object_or_404(DiscordUser, social_account__user=self.request.user)
@@ -78,7 +79,7 @@ class DiscordServerConnectView(
         if settings.DEBUG and "redirect_uri" in self.request.data:
             self.callback_url = self.request.data.get("redirect_uri")
         else:
-            self.callback_url = f"https://{settings.DOMAIN_NAME}/auth/callback"
+            self.callback_url = settings.BASE_URL + reverse("discord_callback")
 
     def get_object(self):
         return get_object_or_404(
