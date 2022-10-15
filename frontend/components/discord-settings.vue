@@ -55,7 +55,7 @@
 
 <script>
 import { mapActions, mapState } from 'vuex';
-import { handleGenericError } from '~/utils';
+import { handleGenericError, oauthState } from '~/utils';
 
 export default {
   data() {
@@ -70,6 +70,7 @@ export default {
       authUrl.searchParams.append('redirect_uri', `${window.location.origin}/auth/callback/discord/`);
       authUrl.searchParams.append('client_id', this.$config.discord);
       authUrl.searchParams.append('response_type', 'code');
+      authUrl.searchParams.append('state', oauthState.generate());
 
       const serverUrl = new URL(authUrl.href);
       serverUrl.searchParams.append('permissions', 268435459);

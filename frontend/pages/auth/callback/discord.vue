@@ -25,7 +25,7 @@
 
 <script>
 import get from 'lodash/get';
-import { handleGenericError } from '~/utils';
+import { handleGenericError, oauthState } from '~/utils';
 
 export default {
   auth: true,
@@ -42,6 +42,10 @@ export default {
     this.waiting = true;
     if (this.$route.query.error) {
       this.errorMessage = 'You seem to have cancelled the connection request.';
+      this.waiting = false;
+      return;
+    } else if (!oauthState.isValid(this.$route.query.state)) {
+      this.errorMessage = 'Invalid OAuth state. Please try again.';
       this.waiting = false;
       return;
     }
