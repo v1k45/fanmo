@@ -5,7 +5,7 @@
     <div class="text-gray-500 mt-2 text-sm mt-4 max-w-xl">
       Automatically manage invitations and role assignments of your members using Discord Integration.
     </div>
-    <div class="text-gray-500 mt-2 text-sm mt-4 max-w-xl">
+    <div v-if="!integrations.discord_server" class="text-gray-500 mt-2 text-sm mt-4 max-w-xl">
       Members who connect their discord account to Fanmo will be automatically granted permissions to access your Discord Server.
       Their Discord role will be updated when they upgrade, downgrade or cancel their membership.
     </div>
@@ -14,11 +14,14 @@
         Your discord server "{{ integrations.discord_server.name }}" is connected.
       </fm-alert>
       <div class="text-lg font-medium mt-4">Roles</div>
-      <ul class="list-disc ml-4">
+      <div class="text-gray-500 mt-2 text-sm">
+        Make sure you have kept Fanmo role to higher priority in your Discord Server. <a href="" @click.prevent="showDiscordHelp = true">See how to do it.</a>
+      </div>
+      <ul class="list-disc ml-4 mt-4">
         <li v-for="role in integrations.discord_server.roles" :key="role.id">{{ role.name }}</li>
       </ul>
       <div class="my-4 p-4 border rounded">
-        <fm-input :value="integrations.discord_server.kick_inactive_members" :disabled="isIntegrationLoading" type="checkbox" @input="updateDiscordServer">
+        <fm-input :value="integrations.discord_server.kick_inactive_members" :disabled="isIntegrationLoading" type="checkbox" size="sm" @input="updateDiscordServer">
           Kick inactive members from server
         </fm-input>
         <div class="text-gray-500 mt-2 text-xs">
@@ -29,6 +32,18 @@
         <fm-button :loading="isIntegrationLoading" @click="refreshDiscordRoles"><icon-refresh-cw class="h-em w-em"></icon-refresh-cw> Refresh roles</fm-button>
         <fm-button type="error" :loading="isIntegrationLoading" @click="removeDiscordServer"><icon-slash class="h-em w-em"></icon-slash> Remove Connection</fm-button>
       </div>
+      <fm-dialog v-model="showDiscordHelp">
+        <template #header><div class="text-base">How to configure Discord Integration</div></template>
+        <div class="text-sm">
+          <div>
+            Make sure you keep Fanmo role as high as possible in your Discord Server. Fanmo Bot won't be able to assign roles to your members if this is not set correctly.
+          </div>
+          <div class="mt-2">
+            Go to Discord > Server Settings > Roles, and then drag the "Fanmo" role to the top position.
+          </div>
+          <img class="mt-4 rounded" src="~/assets/images/role_sort.gif"></img>
+        </div>
+      </fm-dialog>
     </div>
     <a v-else :href="discordAuth.server">
       <fm-button type="primary" class="mt-4">Connect Discord Server</fm-button>
@@ -60,7 +75,8 @@ import { handleGenericError, oauthState } from '~/utils';
 export default {
   data() {
     return {
-      isIntegrationLoading: false
+      isIntegrationLoading: false,
+      showDiscordHelp: false
     };
   },
   computed: {
