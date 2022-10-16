@@ -1,5 +1,10 @@
 {
     "python.formatting.provider": "black",
-    "python.pythonPath": "./backend/venv/bin/python",
-    "vim.vimrc.path": "~/.vimrc"
+    "python.pythonPath": "./venv/bin/python",
+    "python.autoComplete.extraPaths": ["${workspaceFolder}/backend"],
+    "vim.vimrc.path": "~/.vimrc",
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}/backend"
+    ],
+    "python.languageServer": "Pylance",
 }
