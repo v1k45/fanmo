@@ -186,6 +186,12 @@
     </div>
     <!-- bank account settings end -->
 
+    <!-- discord settings start -->
+    <div v-show="currentTab === 'discord'">
+      <discord-settings></discord-settings>
+    </div>
+    <!-- discord settings end -->
+
   </div>
 
 </div>
@@ -233,7 +239,8 @@ export default {
       currentTab: 'account',
       nav: [
         { id: 'account', label: 'Account' },
-        { id: 'payment', label: 'Payment' }
+        { id: 'payment', label: 'Payment' },
+        { id: 'discord', label: 'Discord' }
       ],
 
       ACCOUNT_TYPES,
@@ -283,6 +290,9 @@ export default {
   },
   created() {
     this.loadAccounts();
+    if (['account', 'payment', 'discord'].includes(this.$route.query.tab)) {
+      this.currentTab = this.$route.query.tab;
+    }
   },
   methods: {
     ...mapActions('users', ['loadAccounts', 'updateSelfUser', 'updatePassword']),

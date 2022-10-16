@@ -23,6 +23,7 @@ from fanmo.core.notifications import (
     notify_new_membership,
 )
 from fanmo.core.tasks import async_task
+from fanmo.integrations.tasks import refresh_discord_membership
 from fanmo.memberships.querysets import SubscriptionQuerySet
 from fanmo.payments.models import Payment, Payout
 from fanmo.utils import razorpay_client
@@ -49,6 +50,10 @@ class Tier(BaseModel):
     benefits = ArrayField(models.CharField(max_length=50), size=8, default=list)
 
     amount = MoneyField(max_digits=7, decimal_places=2)
+
+    discord_role = models.ForeignKey(
+        "integrations.DiscordRole", on_delete=models.SET_NULL, null=True, blank=True
+    )
 
     is_active = models.BooleanField(default=True)
     is_public = models.BooleanField(default=True)
@@ -470,6 +475,7 @@ class Subscription(BaseModel):
         self.membership.activate(self)
         self.membership.save()
         async_task(notify_new_membership, self.membership_id)
+        async_task(refresh_discord_membership, self.membership_id)
 
     @transition(
         field=status,
@@ -513,6 +519,7 @@ class Subscription(BaseModel):
         self.is_active = False
         self.membership.is_active = False
         self.membership.save()
+        refresh_discord_membership(self.membership_id)
 
     def update(self, plan):
         # start cycle immediately if the current one is expired
@@ -594,6 +601,7 @@ class Subscription(BaseModel):
         self.cycle_end_at = cycle_end_at
         self.membership.activate(self)
         async_task(notify_membership_renewed, self.membership_id)
+        async_task(refresh_discord_membership, self.membership_id)
 
     def can_halt(self):
         halt_date = self.cycle_end_at + relativedelta(
@@ -612,3 +620,4 @@ class Subscription(BaseModel):
         self.membership.is_active = False
         self.membership.save()
         async_task(notify_membership_halted, self.membership_id)
+        async_task(refresh_discord_membership, self.membership_id)

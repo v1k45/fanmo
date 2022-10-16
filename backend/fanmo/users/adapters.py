@@ -12,6 +12,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.http import HttpRequest
+from django.urls import reverse
 from django.utils import timezone
 from django_otp.plugins.otp_email.models import EmailDevice
 
@@ -104,6 +105,22 @@ class AccountAdapter(DefaultAccountAdapter):
 
 
 class SocialAccountAdapter(DefaultSocialAccountAdapter):
+    def get_app(self, request, provider):
+        from allauth.socialaccount import app_settings
+        from allauth.socialaccount.models import SocialApp
+
+        config = app_settings.PROVIDERS.get(provider, {}).get("APP")
+        app, _ = SocialApp.objects.update_or_create(
+            provider=provider,
+            defaults={
+                "name": provider,
+                "client_id": config["client_id"],
+                "secret": config["secret"],
+                "key": config.get("key", ""),
+            },
+        )
+        return app
+
     def pre_social_login(self, request, sociallogin):
         """
         Connect social login with existing account.
@@ -111,15 +128,17 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
         """
         if sociallogin.is_existing:
             return
+        elif request.user.is_authenticated:
+            existing_email = EmailAddress.objects.filter(user=request.user).first()
+        else:
+            email = sociallogin.account.extra_data.get("email", None)
+            if not email:
+                return
 
-        email = sociallogin.account.extra_data.get("email", None)
-        if not email:
-            return
-
-        try:
-            existing_email = EmailAddress.objects.get(email__iexact=email)
-        except EmailAddress.DoesNotExist:
-            return
+            try:
+                existing_email = EmailAddress.objects.get(email__iexact=email)
+            except EmailAddress.DoesNotExist:
+                return
 
         sociallogin.connect(request, existing_email.user)
 
@@ -144,3 +163,7 @@ class SocialAccountAdapter(DefaultSocialAccountAdapter):
         return SimpleUploadedFile(
             f"{uuid.uuid4()}.jpg", response.content, response.headers["content-type"]
         )
+
+    def get_connect_redirect_url(self, request, socialaccount):
+        assert request.user.is_authenticated
+        return reverse("home")

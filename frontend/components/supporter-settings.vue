@@ -40,6 +40,10 @@
 
   <hr class="my-8">
 
+  <discord-settings></discord-settings>
+
+  <hr class="my-8">
+
   <!-- password form start -->
   <fm-form class="max-w-md mx-auto lg:mx-0" :errors="passwordErrors" @submit.prevent="handlePasswordSubmit">
     <div class="text-xl font-medium text-black flex items-center mb-4">Change password</div>

@@ -98,6 +98,22 @@
 
             <hr class="my-4">
 
+            <!-- discord role start -->
+            <div>
+              <div>Discord Role</div>
+              <div class="text-sm text-gray-500 mb-4">Automatically assign discord role when a someone joins this tier.</div>
+              <fm-input v-if="integrations.discord_server" v-model="tierForm.discord_role_id" uid="discord_role_id" type="select">
+                <option :value="null">Select a role</option>
+                <option v-for="role in integrations.discord_server.roles" :key="role.id" :value="role.id">{{ role.name }}</option>
+              </fm-input>
+              <div v-else class="text-sm text-gray-500 mb-4">
+                Connect your Discord Server to enable this integration. <nuxt-link :to="{ name: 'settings', query: { tab: 'discord' } }">Go to settings <icon-external-link class="h-em w-em"></icon-external-link>.</nuxt-link>
+              </div>
+            </div>
+            <!-- discord role end -->
+
+            <hr class="my-4">
+
             <!-- settings start -->
             <div>
               <div class="mb-4">Settings</div>
@@ -190,6 +206,7 @@ const initialFormState = () => ({
   description: '',
   welcome_message: 'Thank you for supporting me! 🎉',
   benefits: [''],
+  discord_role_id: null,
   is_public: true,
   is_recommended: false
 });
@@ -209,6 +226,7 @@ export default {
   },
   computed: {
     ...mapState('memberships', ['tiers']),
+    ...mapState('users', ['integrations']),
 
     isEditing() {
       return !!this.tierToUpdate;
@@ -263,12 +281,14 @@ export default {
   },
   created() {
     this.fetchTiers();
+    this.loadIntegrations();
     if (this.$route.params.add === '1') {
       this.isAddTierVisible = true;
     }
   },
   methods: {
     ...mapActions('memberships', ['fetchTiers', 'createTier', 'updateTier']),
+    ...mapActions('users', ['loadIntegrations']),
 
     openTierDialog(tier) {
       this.tierToUpdate = tier || null;

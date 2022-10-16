@@ -6,6 +6,7 @@ from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from fanmo.core.serializers import PaymentIntentSerializerMixin
+from fanmo.integrations.models import DiscordRole
 from fanmo.memberships.models import Membership, Plan, Subscription, Tier
 from fanmo.users.api.serializers import FanUserPreviewSerializer, UserPreviewSerializer
 from fanmo.users.models import User
@@ -15,6 +16,12 @@ from fanmo.utils.fields import VersatileImageFieldSerializer
 class TierSerializer(serializers.ModelSerializer):
     cover = VersatileImageFieldSerializer("tier_cover", read_only=True)
     cover_base64 = Base64ImageField(write_only=True, source="cover", required=False)
+    discord_role_id = serializers.PrimaryKeyRelatedField(
+        queryset=DiscordRole.objects.all(),
+        source="discord_role",
+        required=False,
+        allow_null=True,
+    )
 
     class Meta:
         model = Tier
@@ -28,10 +35,19 @@ class TierSerializer(serializers.ModelSerializer):
             "cover_background_style",
             "welcome_message",
             "benefits",
+            "discord_role_id",
             "is_public",
             "is_recommended",
         ]
         extra_kwargs = {"benefits": {"allow_empty": True}}
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["discord_role_id"].queryset = self.fields[
+            "discord_role_id"
+        ].queryset.filter(
+            discord_server__social_account__user_id=self.context["request"].user.pk
+        )
 
     def validate_is_recommended(self, is_recommended):
         if not is_recommended:

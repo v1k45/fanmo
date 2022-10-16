@@ -2,6 +2,8 @@
 import dayjs from 'dayjs';
 import get from 'lodash/get';
 import set from 'lodash/set';
+import times from 'lodash/times';
+import random from 'lodash/random';
 import { encode, decode } from 'js-base64/base64.mjs';
 import toast from '~/components/fm/alert/service';
 
@@ -201,4 +203,23 @@ export const validator = {
   phone: () => val => !val || /^[6-9]\d{9}$/.test(val) || 'Not a valid phone number',
   otp: () => val => !val || /^\d{6}$/.test(val) || 'Please enter the 6 digit OTP',
   email: () => val => !val || /\S+@\S+\.\S+/.test(val) || 'Please enter a valid email'
+};
+
+// OAuth state for preventing CSRF attacks.
+export const oauthState = {
+  // generates an oauth state token valid for 15 minutes
+  generate: () => {
+    const state = times(20, () => random(35).toString(36)).join('');
+    localStorage.setItem('oauth:state', state);
+    localStorage.setItem('oauth:state:expiry', dayjs().add(15, 'minute').unix());
+    return state;
+  },
+  // checks a state against local state token and expiration
+  isValid: (state) => {
+    const expiresAt = dayjs.unix(parseInt(localStorage.getItem('oauth:state:expiry') || '0'));
+    if (!state || dayjs().isAfter(expiresAt)) {
+      return false;
+    }
+    return state === localStorage.getItem('oauth:state');
+  }
 };
