@@ -573,8 +573,7 @@ class Subscription(BaseModel):
         return new_subscription
 
     def can_start_renew(self):
-        # allow starting renewal from a day before the expiry date.
-        return (self.cycle_end_at - relativedelta(days=1)) < timezone.now()
+        return self.cycle_end_at < timezone.now()
 
     @transition(
         field=status,
