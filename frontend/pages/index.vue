@@ -4,7 +4,7 @@
   <!-- hero start -->
   <section class="relative flex flex-wrap py-8 lg:py-24 xl:py-36 items-center min-h-[550px] 2xl:max-w-7xl mx-auto z-0">
     <img src="~/assets/marketing/hero.optimized.svg" :class="{
-      'w-auto mx-auto max-h-72': true,
+      'w-auto mx-auto max-h-72 px-4': true,
       'md:max-h-80': true,
       'lg:absolute lg:top-1/2 lg:transform lg:-translate-y-1/2 lg:right-0 lg:max-w-[50%] lg:max-h-full -z-10': true
     }" alt="Cheerful animated character representing a creator sitting in front of the computer">
