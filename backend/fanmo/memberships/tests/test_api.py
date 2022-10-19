@@ -228,7 +228,7 @@ class TestMembershipFlow:
                 "expire_by": int(
                     (
                         membership.scheduled_subscription.cycle_start_at
-                        + relativedelta(hours=1)
+                        + relativedelta(days=7)
                     ).timestamp()
                 ),
             }
@@ -304,7 +304,7 @@ class TestMembershipFlow:
                 "expire_by": int(
                     (
                         membership.scheduled_subscription.cycle_start_at
-                        + relativedelta(hours=1)
+                        + relativedelta(days=7)
                     ).timestamp()
                 ),
             }
@@ -544,7 +544,7 @@ class TestMembershipFlow:
                 "expire_by": int(
                     (
                         active_membership.scheduled_subscription.cycle_start_at
-                        + relativedelta(hours=1)
+                        + relativedelta(days=7)
                     ).timestamp()
                 ),
                 "notes": {"external_id": response_data["scheduled_subscription"]["id"]},

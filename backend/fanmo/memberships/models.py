@@ -426,9 +426,7 @@ class Subscription(BaseModel):
             "total_count": self.plan.get_term_count(),
             "notes": {"external_id": self.id},
             "customer_notify": 0,
-            "expire_by": int(
-                (self.cycle_start_at + relativedelta(hours=1)).timestamp()
-            ),
+            "expire_by": int((self.cycle_start_at + relativedelta(days=7)).timestamp()),
         }
         if self.cycle_start_at > timezone.now():
             subscription_data["start_at"] = int(self.cycle_start_at.timestamp())
