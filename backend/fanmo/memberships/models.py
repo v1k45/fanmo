@@ -47,7 +47,7 @@ class Tier(BaseModel):
         default=CoverBackgroundStyle.CONTAIN,
     )
     welcome_message = models.TextField(blank=True)
-    benefits = ArrayField(models.CharField(max_length=50), size=8, default=list)
+    benefits = ArrayField(models.CharField(max_length=255), size=10, default=list)
 
     amount = MoneyField(max_digits=7, decimal_places=2)
 
@@ -307,7 +307,7 @@ class Plan(BaseModel):
 
         # todo - cleanup orpahed plans?
         plan = cls.objects.create(
-            name=f"{tier.name} - {tier.creator_user.display_name}",
+            name=f"{tier.name} - {tier.creator_user.display_name}"[:255],
             amount=tier_amount,
             tier=tier,
             period=period,
