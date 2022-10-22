@@ -43,6 +43,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   gettext \
   # image processing
   libmagic-dev \
+  libmagickwand-dev \
   # cleaning up unused files
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
   && rm -rf /var/lib/apt/lists/*

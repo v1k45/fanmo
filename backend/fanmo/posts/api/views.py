@@ -25,6 +25,7 @@ from fanmo.posts.api.serializers import (
     PostStatsSerializer,
 )
 from fanmo.posts.models import Comment, Post, annotate_post_permissions
+from fanmo.posts.tasks import refresh_post_social_image
 from fanmo.users.api.permissions import IsCreator
 from fanmo.utils.throttling import Throttle
 
@@ -81,6 +82,7 @@ class PostViewSet(
 
     def perform_create(self, serializer):
         super().perform_create(serializer)
+        async_task(refresh_post_social_image, serializer.instance.pk)
         async_task(notify_new_post, serializer.instance.pk)
 
     @extend_schema(responses=PostStatsSerializer)

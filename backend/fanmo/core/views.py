@@ -34,11 +34,8 @@ def page_view(request, username):
         return serve_index(status=404)
 
     image_url = None
-    if user.cover:
-        serializer = VersatileImageFieldSerializer("user_cover")
-        serializer._context = {"request": request}
-        cover_renditions = serializer.to_representation(user.cover)
-        image_url = cover_renditions["social"] if cover_renditions else None
+    if user.social_image:
+        image_url = request.build_absolute_uri(user.social_image.url)
 
     return serve_index(
         f"{user.display_name} {user.one_liner}",
@@ -53,11 +50,10 @@ def post_view(request, post_slug, post_id):
         return serve_index(status=404)
 
     image_url = None
-    if post.author_user.cover:
-        serializer = VersatileImageFieldSerializer("user_cover")
-        serializer._context = {"request": request}
-        cover_renditions = serializer.to_representation(post.author_user.cover)
-        image_url = cover_renditions["social"] if cover_renditions else None
+    if post.social_image:
+        image_url = request.build_absolute_uri(post.social_image.url)
+    elif post.author_user.social_image:
+        image_url = request.build_absolute_uri(post.author_user.social_image.url)
 
     return serve_index(
         f"{post.title} - {post.author_user.display_name}",

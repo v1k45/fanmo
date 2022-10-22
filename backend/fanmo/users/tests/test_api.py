@@ -225,11 +225,12 @@ class TestMeAPI:
             "is_member": False,
         }
 
-    def test_update(self, user, api_client):
-        api_client.force_authenticate(user)
+    def test_update(self, creator_user, api_client):
+        api_client.force_authenticate(creator_user)
         response = api_client.patch(
             "/api/me/",
             {
+                "name": "Mussadi Lal",
                 "one_liner": "is creating podcast",
                 "about": "Hello world! this is me!",
                 "social_links": {
@@ -256,6 +257,7 @@ class TestMeAPI:
         )
         assert response.status_code == 200
         response_data = response.json()
+        assert response_data["name"] == "Mussadi Lal"
         assert response_data["one_liner"] == "is creating podcast"
         assert response_data["about"] == "Hello world! this is me!"
         assert response_data["social_links"] == {
@@ -525,7 +527,7 @@ class TestUserAPI:
             "username": creator_user.username,
             "name": creator_user.name,
             "display_name": creator_user.name,
-            "one_liner": "",
+            "one_liner": "is creating code",
             "about": "",
             "avatar": None,
             "cover": None,
