@@ -22,8 +22,10 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
+from fanmo.core.tasks import async_task
 from fanmo.users.api.filters import UserFilter
 from fanmo.users.models import User
+from fanmo.users.tasks import refresh_user_social_image
 from fanmo.utils.throttling import Throttle
 
 from .serializers import (
@@ -79,6 +81,14 @@ class OwnUserAPIView(RetrieveUpdateAPIView):
 
     def get_object(self):
         return self.request.user
+
+    def perform_update(self, serializer):
+        super().perform_update(serializer)
+        # determine if social image has to be refreshed
+        changed_fields = set(serializer.validated_data.keys())
+        watched_fields = {"username", "name", "one_liner", "avatar", "cover"}
+        if serializer.instance.is_creator and watched_fields & changed_fields:
+            async_task(refresh_user_social_image, serializer.instance.pk)
 
 
 class CreatorActivityViewSet(ReadOnlyModelViewSet):

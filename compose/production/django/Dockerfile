@@ -63,6 +63,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   git \
   wget \
   libmagic-dev \
+  libmagickwand-dev \
   # emergency hotfix companion
   vim \
   # cleaning up unused files

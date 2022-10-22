@@ -65,7 +65,7 @@ export default {
       { property: 'og:image', content: seoValues.image, hid: 'og:image' },
       { property: 'og:site_name', content: 'Fanmo', hid: 'og:site_name' },
       // twitter
-      { name: 'twitter:card', content: 'summary', hid: 'twitter:card' },
+      { name: 'twitter:card', content: 'summary_large_image', hid: 'twitter:card' },
       { name: 'twitter:title', content: seoValues.title, hid: 'twitter:title' },
       { name: 'twitter:description', content: seoValues.description, hid: 'twitter:description' },
       { name: 'twitter:image', content: seoValues.image, hid: 'twitter:image' },

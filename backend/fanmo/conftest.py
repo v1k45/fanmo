@@ -41,7 +41,7 @@ def user() -> User:
 
 @pytest.fixture
 def creator_user() -> User:
-    user = UserFactory(is_creator=True)
+    user = UserFactory(is_creator=True, one_liner="is creating code")
     TierFactory(creator_user=user, welcome_message="Thanks!")
 
     # mock internal approval.

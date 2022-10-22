@@ -67,6 +67,8 @@ class User(BaseModel, AbstractUser):
     subscriber_count = models.PositiveSmallIntegerField(default=0)
     follower_count = models.PositiveSmallIntegerField(default=0)
 
+    social_image = models.ImageField(upload_to="profiles/social/", blank=True)
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.get_membership = lru_cache()(self._get_membership)
@@ -77,6 +79,10 @@ class User(BaseModel, AbstractUser):
 
     def get_absolute_url(self):
         return reverse("creator_page", args=[self.username])
+
+    @property
+    def page_link(self):
+        return f"{settings.DOMAIN_NAME}{self.get_absolute_url()}"
 
     def public_tiers(self):
         return self.tiers.filter(is_public=True)

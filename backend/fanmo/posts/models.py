@@ -107,6 +107,8 @@ class Post(BaseModel):
 
     is_published = models.BooleanField(default=True)
 
+    social_image = models.ImageField(upload_to="posts/social/", blank=True)
+
     def annotate_permissions(self, fan_user):
         annotate_post_permissions([self], fan_user)
 
