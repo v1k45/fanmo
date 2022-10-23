@@ -24,6 +24,8 @@ urlpatterns = [
         {"sitemaps": sitemaps},
         name="django.contrib.sitemaps.views.sitemap",
     ),
+    # API
+    path("api/", include("config.api_router")),
     path("", index_view, name="home"),
     path("pricing", index_view, name="pricing"),
     path("privacy", index_view, name="privacy"),
@@ -61,8 +63,7 @@ urlpatterns = [
     # posts
     path("p/<post_slug>/<post_id>/", post_view, name="post_detail"),
     path("<username>", page_view, name="creator_page"),
-    # API
-    path("api/", include("config.api_router")),
+    path("<username>/", RedirectView.as_view(pattern_name="creator_page")),
     # Your stuff: custom urls includes go here
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
