@@ -62,17 +62,19 @@
       <tbody v-show="memberships.results.length" class="text-sm">
         <tr v-for="membership in memberships.results" :key="membership.id">
           <th>
-            <div class="flex items-center">
-              <fm-avatar
-                :src="membership.creator_user.avatar && membership.creator_user.avatar.small"
-                :name="membership.creator_user.display_name"
-                size="w-5 h-5 lg:w-7 lg:h-7 mr-2 inline-block font-normal flex-shrink-0">
-              </fm-avatar>
-              <div class="max-w-[100px] lg:max-w-[200px] font-normal">
-                <div class="truncate text-xs lg:text-sm text-black" :title="membership.creator_user.display_name">{{ membership.creator_user.display_name }}</div>
-                <div v-if="membership.creator_user.one_liner" class="hidden lg:block truncate text-xs font-normal text-gray-500">{{ membership.creator_user.one_liner }}</div>
+            <nuxt-link :to="`/${membership.creator_user.username}`">
+              <div class="flex items-center">
+                <fm-avatar
+                  :src="membership.creator_user.avatar && membership.creator_user.avatar.small"
+                  :name="membership.creator_user.display_name"
+                  size="w-5 h-5 lg:w-7 lg:h-7 mr-2 inline-block font-normal flex-shrink-0">
+                </fm-avatar>
+                <div class="max-w-[100px] lg:max-w-[200px] font-normal">
+                  <div class="truncate text-xs lg:text-sm text-black" :title="membership.creator_user.display_name">{{ membership.creator_user.display_name }}</div>
+                  <div v-if="membership.creator_user.one_liner" class="hidden lg:block truncate text-xs font-normal text-gray-500">{{ membership.creator_user.one_liner }}</div>
+                </div>
               </div>
-            </div>
+            </nuxt-link>
           </th>
           <td>{{ membership.tier.name }}</td>
           <td :class="membership.is_active ? 'text-fm-success' : 'text-fm-error'" class="text-center">
@@ -114,19 +116,21 @@
 
     <template v-if="activeMembership">
       <!-- name, one liner and avatar start -->
-      <div class="flex items-center">
-        <fm-avatar
-          :src="activeMembership.creator_user.avatar && activeMembership.creator_user.avatar.small"
-          :name="activeMembership.creator_user.display_name"
-          size="w-8 h-8 mr-2 inline-block font-normal flex-shrink-0">
-        </fm-avatar>
-        <div>
-          <div class="text-black" :title="activeMembership.creator_user.display_name">{{ activeMembership.creator_user.display_name }}</div>
-          <div v-if="activeMembership.creator_user.one_liner" class="text-xs font-normal text-gray-500">
-            {{ activeMembership.creator_user.one_liner }}
+      <nuxt-link :to="`/${activeMembership.creator_user.username}`">
+        <div class="flex items-center">
+          <fm-avatar
+            :src="activeMembership.creator_user.avatar && activeMembership.creator_user.avatar.small"
+            :name="activeMembership.creator_user.display_name"
+            size="w-8 h-8 mr-2 inline-block font-normal flex-shrink-0">
+          </fm-avatar>
+          <div>
+            <div class="text-black" :title="activeMembership.creator_user.display_name">{{ activeMembership.creator_user.display_name }}</div>
+            <div v-if="activeMembership.creator_user.one_liner" class="text-xs font-normal text-gray-500">
+              {{ activeMembership.creator_user.one_liner }}
+            </div>
           </div>
         </div>
-      </div>
+      </nuxt-link>
       <!-- name, one liner and avatar end -->
 
       <hr class="my-4">
