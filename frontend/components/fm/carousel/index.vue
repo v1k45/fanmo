@@ -27,8 +27,8 @@
     </button>
   </div>
 
-  <fm-dialog v-model="fullSize.isVisible" no-padding>
-    <img v-if="fullSize.isVisible" :src="fullSize.image" class="w-full rounded-lg">
+  <fm-dialog v-model="fullSize.isVisible" dialog-class="!grow-0 md:mx-10" custom-width no-padding>
+    <img v-if="fullSize.isVisible" :src="fullSize.image" class="max-h-[90vh] rounded-lg">
   </fm-dialog>
 </div>
 </template>
