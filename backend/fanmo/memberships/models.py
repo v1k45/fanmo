@@ -279,7 +279,7 @@ class Plan(BaseModel):
             self.Period.MONTHLY: 12,
             self.Period.YEARLY: 1,
         }
-        return (base_term[self.period] * 5) // self.interval
+        return (base_term[self.period] * 1) // self.interval
 
     @classmethod
     def for_tier(cls, tier, period, interval=1, is_giveaway=False):
