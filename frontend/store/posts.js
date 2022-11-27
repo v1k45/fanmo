@@ -54,7 +54,11 @@ export const getters = {
 export const actions = {
   async loadProfilePosts({ commit }, username) {
     try {
-      const posts = await this.$axios.$get(`/api/posts/?creator_username=${username}`);
+      const [pinnedPosts, unpinnedPosts] = (await Promise.allSettled([
+        this.$axios.$get(`/api/posts/?creator_username=${username}&is_pinned=true`),
+        this.$axios.$get(`/api/posts/?creator_username=${username}&is_pinned=false`)
+      ])).map(promise => promise.value);
+      const posts = { next: unpinnedPosts.next, previous: unpinnedPosts.previous, results: [...pinnedPosts.results, ...unpinnedPosts.results] };
       commit('setProfilePosts', { username, posts });
       return SUCCESS(posts);
     } catch (err) {
@@ -110,6 +114,17 @@ export const actions = {
       return SUCCESS(postStats);
     } catch (err) {
       handleGenericError(err, true);
+      return ERROR(err.response.data);
+    }
+  },
+  // update
+  async updatePost({ commit, state }, { postId, payload }) {
+    try {
+      const post = await this.$axios.$patch(`/api/posts/${postId}/`, payload);
+      commit('updatePost', post);
+      return SUCCESS(post);
+    } catch (err) {
+      handleGenericError(err, false);
       return ERROR(err.response.data);
     }
   },
@@ -172,6 +187,9 @@ export const mutations = {
   },
   unsetCurrentPost(state) {
     state.currentPostId = null;
+  },
+  updatePost(state, post) {
+    state.postsById[post.id] = post;
   },
   updatePostStats(state, { postId, stats }) {
     state.postsById[postId].stats = stats;

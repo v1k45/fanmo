@@ -1,5 +1,12 @@
 <template>
-<div class="bg-white rounded-xl border pt-4 pb-1">
+<div class="bg-white rounded-xl border pt-4 pb-1 relative">
+  <div v-if="post.is_pinned" class="absolute right-0 top-0 flex">
+    <div
+      v-tooltip="'This is a pinned post.'"
+      class="p-1 rounded-bl-lg rounded-tr-lg text-xs bg-fm-success-600 border-2 border-fm-success-600 border-r-0 border-t-0 text-white text-center right-0 top-0">
+      <icon-pin class="h-em w-em"></icon-pin>
+    </div>
+  </div>
   <div class="post-body">
     <div class="flex items-center">
       <div class="flex flex-wrap flex-grow mr-auto">
@@ -18,7 +25,8 @@
             <icon-more-vertical class="h-6 w-6 text-gray-500"></icon-more-vertical>
           </button>
           <template #items>
-            <fm-dropdown-item type="error" @click="deletePostLocal">Delete</fm-dropdown-item>
+            <fm-dropdown-item @click="togglePin"><icon-pin class="h-em w-em"></icon-pin> {{ post.is_pinned ? 'Unpin' : 'Pin' }}</fm-dropdown-item>
+            <fm-dropdown-item type="error" @click="deletePostLocal"><icon-trash-2 class="h-em w-em"></icon-trash-2> Delete</fm-dropdown-item>
           </template>
         </fm-dropdown>
       </div>
@@ -209,7 +217,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('posts', ['deletePost', 'addOrRemoveReaction']),
+    ...mapActions('posts', ['updatePost', 'deletePost', 'addOrRemoveReaction']),
     ...mapMutations('ui', ['setGlobalLoader']),
 
     async deletePostLocal() {
@@ -222,6 +230,14 @@ export default {
       if (success) {
         this.$toast.info('Your post was deleted successfully.');
         this.$emit('deleted');
+      }
+    },
+    async togglePin() {
+      const { success, data } = await this.updatePost({ postId: this.post.id, payload: { is_pinned: !this.post.is_pinned } });
+      if (success) {
+        this.$toast.success(`${data.title} has been ${data.is_pinned ? 'pinned' : 'unpinned'}.`);
+      } else {
+        this.$toast.error(get(data, 'is_pinned[0].message'));
       }
     },
     async toggleReaction(emoji = 'heart') {

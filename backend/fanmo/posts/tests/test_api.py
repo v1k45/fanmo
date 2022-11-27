@@ -696,6 +696,91 @@ class TestPostCrudAPI:
         assert response.status_code == 201
         assert response.json()["slug"] == "post"
 
+    def test_update_post_pin(self, creator_user, api_client):
+        api_client.force_authenticate(creator_user)
+
+        post = Post.objects.create(
+            visibility=Post.Visiblity.PUBLIC,
+            author_user=creator_user,
+            content=Content.objects.create(type=Content.Type.TEXT, text="Hello world!"),
+        )
+        assert not post.is_pinned
+
+        response = api_client.patch(
+            f"/api/posts/{post.id}/",
+            {"title": "changed", "is_pinned": True},
+        )
+
+        assert response.status_code == 200
+        response_data = response.json()
+
+        assert response_data["title"] != "changed"
+        assert response_data["is_pinned"]
+
+        response = api_client.patch(
+            f"/api/posts/{post.id}/",
+            {"is_pinned": False},
+        )
+
+        assert response.status_code == 200
+        assert not response.json()["is_pinned"]
+
+    def test_pin_validation(self, creator_user, api_client):
+        api_client.force_authenticate(creator_user)
+
+        post_1 = Post.objects.create(
+            visibility=Post.Visiblity.PUBLIC,
+            author_user=creator_user,
+            is_pinned=True,
+            content=Content.objects.create(
+                type=Content.Type.TEXT, text="Hello world 1!"
+            ),
+        )
+        post_2 = Post.objects.create(
+            visibility=Post.Visiblity.PUBLIC,
+            author_user=creator_user,
+            is_pinned=True,
+            content=Content.objects.create(
+                type=Content.Type.TEXT, text="Hello world 2!"
+            ),
+        )
+        post_3 = Post.objects.create(
+            visibility=Post.Visiblity.PUBLIC,
+            author_user=creator_user,
+            is_pinned=True,
+            content=Content.objects.create(
+                type=Content.Type.TEXT, text="Hello world 3!"
+            ),
+        )
+        post_4 = Post.objects.create(
+            visibility=Post.Visiblity.PUBLIC,
+            author_user=creator_user,
+            content=Content.objects.create(
+                type=Content.Type.TEXT, text="Hello world 4!"
+            ),
+        )
+
+        response = api_client.patch(
+            f"/api/posts/{post_4.id}/",
+            {"is_pinned": True},
+        )
+        assert response.status_code == 400
+        assert response.json()["is_pinned"][0]["code"] == "pin_count_exceeded"
+
+        response = api_client.patch(
+            f"/api/posts/{post_3.id}/",
+            {"is_pinned": False},
+        )
+        assert response.status_code == 200
+        assert not response.json()["is_pinned"]
+
+        response = api_client.patch(
+            f"/api/posts/{post_4.id}/",
+            {"is_pinned": True},
+        )
+        assert response.status_code == 200
+        assert response.json()["is_pinned"]
+
 
 class TestCommentAPI:
     def test_list_without_post_id_or_donation_id(self, api_client):

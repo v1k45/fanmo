@@ -23,6 +23,7 @@ from fanmo.posts.api.serializers import (
     PostReactionSerializer,
     PostSerializer,
     PostStatsSerializer,
+    PostUpdateSerializer,
 )
 from fanmo.posts.models import Comment, Post, annotate_post_permissions
 from fanmo.posts.tasks import refresh_post_social_image
@@ -31,7 +32,10 @@ from fanmo.utils.throttling import Throttle
 
 
 class PostViewSet(
-    mixins.CreateModelMixin, mixins.DestroyModelMixin, viewsets.ReadOnlyModelViewSet
+    mixins.CreateModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.ReadOnlyModelViewSet,
 ):
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = PostSerializer
@@ -42,7 +46,7 @@ class PostViewSet(
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        if self.action == "destroy":
+        if self.action in ["destroy", "update", "partial_update"]:
             queryset = queryset.filter(author_user=self.request.user)
 
         queryset = (
@@ -68,6 +72,8 @@ class PostViewSet(
     def get_serializer_class(self):
         if self.action == "create":
             return PostCreateSerializer
+        if self.action in ["update", "partial_update"]:
+            return PostUpdateSerializer
         if self.action == "retrieve":
             return PostDetailSerializer
         if self.action == "reactions":

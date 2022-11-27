@@ -106,6 +106,7 @@ class Post(BaseModel):
     allowed_tiers = models.ManyToManyField("memberships.Tier")
 
     is_published = models.BooleanField(default=True)
+    is_pinned = models.BooleanField(default=False)
 
     social_image = models.ImageField(upload_to="posts/social/", blank=True)
 

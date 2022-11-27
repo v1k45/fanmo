@@ -214,6 +214,7 @@ class PostSerializer(serializers.ModelSerializer):
             "can_comment",
             "minimum_tier",
             "author_user",
+            "is_pinned",
             "created_at",
             "updated_at",
         ]
@@ -251,6 +252,28 @@ class PostSerializer(serializers.ModelSerializer):
 
 class PostDetailSerializer(PostSerializer):
     author_user = PublicUserSerializer(read_only=True)
+
+
+class PostUpdateSerializer(PostDetailSerializer):
+    class Meta:
+        model = Post
+        fields = PostSerializer.Meta.fields
+        # all fields except "is_pinned"
+        read_only_fields = fields.copy()
+        read_only_fields.remove("is_pinned")
+
+    def validate_is_pinned(self, is_pinned):
+        pinned_posts = Post.objects.filter(
+            author_user=self.context["request"].user,
+            is_published=True,
+            is_pinned=True,
+        )
+        if is_pinned and pinned_posts.count() >= 3:
+            raise serializers.ValidationError(
+                "You can only have upto 3 pinned posts. Please unpin other posts and try again.",
+                "pin_count_exceeded",
+            )
+        return is_pinned
 
 
 class PostPreviewSerializer(serializers.ModelSerializer):
