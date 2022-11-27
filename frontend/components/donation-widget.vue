@@ -22,8 +22,8 @@
           <button
             v-for="amount in presetAmounts" :key="amount" type="button"
             :title="`Tip ₹${amount}`"
-            class="py-1 px-2 text-sm rounded border border-fm-primary-400 text-fm-primary-400 hover:border-fm-primary-500 hover:bg-fm-primary-500 hover:text-white"
-            :class="{'border-fm-primary-500 bg-fm-primary-500 text-white': amount == form.amount}"
+            class="py-1 px-2 text-sm rounded border border-fm-primary-400 hover:border-fm-primary-500 hover:bg-fm-primary-500 hover:text-white"
+            :class="{'border-fm-primary-500 bg-fm-primary-500 text-white': amount == form.amount, 'text-fm-primary-400': amount !== form.amount}"
             @click="form.amount = amount;">
             {{ $currency(amount) }}
           </button>
