@@ -235,7 +235,7 @@ export default {
     async togglePin() {
       const { success, data } = await this.updatePost({ postId: this.post.id, payload: { is_pinned: !this.post.is_pinned } });
       if (success) {
-        this.$toast.success(`${data.title} has been ${data.is_pinned ? 'pinned' : 'unpinned'}.`);
+        this.$toast.success(`This post is now ${data.is_pinned ? 'pinned' : 'unpinned'}.`);
       } else {
         this.$toast.error(get(data, 'is_pinned[0].message'));
       }
