@@ -222,7 +222,7 @@ class TestMembershipFlow:
         rzp_sub_mock.assert_called_once_with(
             {
                 "plan_id": "plan_123",
-                "total_count": 12 * 5,
+                "total_count": 12 * 1,
                 "notes": {"external_id": response_data["scheduled_subscription"]["id"]},
                 "customer_notify": 0,
                 "expire_by": int(
@@ -298,7 +298,7 @@ class TestMembershipFlow:
         rzp_sub_mock.assert_called_once_with(
             {
                 "plan_id": "plan_123",
-                "total_count": 12 * 5,
+                "total_count": 12 * 1,
                 "notes": {"external_id": response_data["scheduled_subscription"]["id"]},
                 "customer_notify": 0,
                 "expire_by": int(
@@ -537,7 +537,7 @@ class TestMembershipFlow:
         rzp_sub_mock.assert_called_once_with(
             {
                 "plan_id": "plan_456",
-                "total_count": 12 * 5,
+                "total_count": 12 * 1,
                 "start_at": int(
                     active_membership.scheduled_subscription.cycle_start_at.timestamp()
                 ),
