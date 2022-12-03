@@ -85,7 +85,7 @@
             membership tiers.
           </p>
         </div>
-        <div class="col-8 sm:col-6 md:col-4 xl:col-5 xl:offset-1 order-1 md:order-2" aria-hidden="true">
+        <div class="col-10 sm:col-6 md:col-4 xl:col-5 xl:offset-1 order-1 md:order-2" aria-hidden="true">
           <img src="~/assets/marketing/memberships.optimized.svg" class="mx-auto">
         </div>
       </div>
@@ -97,7 +97,7 @@
   <section class="py-14">
     <div class="container">
       <div class="row items-center justify-center">
-        <div class="col-8 sm:col-6 md:col-4 xl:col-5" aria-hidden="true">
+        <div class="col-10 sm:col-6 md:col-4 xl:col-5" aria-hidden="true">
           <img src="~/assets/marketing/donations.optimized.svg" alt="" class="mx-auto">
         </div>
         <div class="col-12 md:col-8 xl:col-6 xl:offset-1 text-center md:text-left">
@@ -136,7 +136,7 @@
             Post exclusive and private content of any type for your fans and keep in touch by interacting with them using comments.
           </p>
         </div>
-        <div class="mb-8 md:mb-0 col-6 md:col-4 xl:col-5 xl:offset-1 order-1 md:order-2" aria-hidden="true">
+        <div class="mb-8 md:mb-0 col-10 md:col-4 xl:col-5 xl:offset-1 order-1 md:order-2" aria-hidden="true">
           <img src="~/assets/marketing/posts.optimized.svg" class="mx-auto max-h-48 lg:max-h-full">
         </div>
       </div>
