@@ -33,6 +33,7 @@ from .serializers import (
     PublicUserSerializer,
     RequestEmailVerificationSerializer,
     TOTPDeviceSerializer,
+    UserPreviewSerializer,
     UserSerializer,
     VerifyEmailSerializer,
 )
@@ -49,6 +50,11 @@ class UserViewSet(ReadOnlyModelViewSet):
     lookup_field = "username"
     filter_backends = (DjangoFilterBackend,)
     filterset_class = UserFilter
+
+    def get_serializer_class(self):
+        if "is_featured" in self.request.query_params:
+            return UserPreviewSerializer
+        return super().get_serializer_class()
 
     @extend_schema(request=None)
     @action(detail=True, methods=["POST"], permission_classes=[IsAuthenticated])

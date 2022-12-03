@@ -56,6 +56,7 @@ class User(BaseModel, AbstractUser):
 
     email_verified = models.BooleanField(default=False)
     is_creator = models.BooleanField(null=True)
+    is_featured = models.BooleanField(default=False)
 
     followers = models.ManyToManyField(
         "self",

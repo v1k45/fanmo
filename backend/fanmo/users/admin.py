@@ -77,7 +77,7 @@ class CreatorUser(User):
 
 
 @admin.register(CreatorUser)
-class OnboardingAdmin(admin.ModelAdmin):
+class CreatorUserAdmin(admin.ModelAdmin):
     fieldsets = (
         (
             _("Personal info"),
@@ -86,6 +86,7 @@ class OnboardingAdmin(admin.ModelAdmin):
                     "name",
                     "username",
                     "is_creator",
+                    "is_featured",
                     "email",
                     "email_verified",
                     "avatar",

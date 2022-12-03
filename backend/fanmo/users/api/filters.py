@@ -9,7 +9,7 @@ class UserFilter(filters.FilterSet):
 
     class Meta:
         model = User
-        fields = ["is_creator", "is_following"]
+        fields = ["is_creator", "is_following", "is_featured"]
 
     def filter_is_following(self, queryset, name, value):
         if not value:

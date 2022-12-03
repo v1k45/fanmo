@@ -144,6 +144,25 @@
   </section>
   <!-- feature: posts & comments end -->
 
+  <!-- feature: featured creators -->
+  <section v-if="creators.length" class="py-14">
+    <div class="container">
+      <div class="row items-center justify-center">
+        <h2 class="mb-10 text-4xl leading-tight font-title text-center md:text-5xl">Featured Creators</h2>
+        <div class="flex justify-center justify-evenly space-y-8 md:space-y-0 md:flex-row flex-col">
+          <nuxt-link v-for="creator in creators" :key="creator.username" :to="`/${creator.username}`" class="unstyled transform transition-transform hover:scale-105">
+            <div class="flex items-center flex-col">
+              <fm-avatar :src="creator.avatar && creator.avatar.medium" :name="creator.display_name" size="w-24 h-24 lg:w-32 lg:h-32"></fm-avatar>
+              <div class="text-2xl text-black font-bold mt-2">{{ creator.display_name }}</div>
+              <div v-if="creator.one_liner" class="text-gray-500">{{ creator.one_liner }}</div>
+            </div>
+          </nuxt-link>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- feature: featured creators end -->
+
   <!-- why fanmo start -->
   <section class="py-24 bg-fm-primary-50">
     <div class="container">
@@ -200,6 +219,18 @@ export default {
     IconVerified
   },
   layout: 'marketing',
-  auth: false
+  auth: false,
+  data() {
+    return {
+      creators: []
+    };
+  },
+  async mounted() {
+    try {
+      this.creators = (await this.$axios.$get('/api/users/?is_creator=true&is_featured=true')).results;
+    } catch (e) {
+      this.creators = [];
+    }
+  }
 };
 </script>
