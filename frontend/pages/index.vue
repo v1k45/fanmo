@@ -145,10 +145,10 @@
   <!-- feature: posts & comments end -->
 
   <!-- feature: featured creators -->
-  <section v-if="creators.length" class="py-14">
+  <section v-if="creators.length" class="py-14" style="background: linear-gradient(180deg, rgba(241, 248, 255, 0) 0, #F2F2FF 79.31%);">
     <div class="container">
       <div class="row items-center justify-center">
-        <h2 class="mb-10 text-4xl leading-tight font-title text-center md:text-5xl">Featured Creators</h2>
+        <h2 class="mb-14 text-4xl leading-tight font-title text-center sm:text-4xl md:text-5xl lg:text-6xl">Featured Creators</h2>
         <div class="flex justify-center justify-evenly space-y-8 md:space-y-0 md:flex-row flex-col">
           <nuxt-link v-for="creator in creators" :key="creator.username" :to="`/${creator.username}`" class="unstyled transform transition-transform hover:scale-105">
             <div class="flex items-center flex-col">
@@ -166,40 +166,42 @@
   <!-- why fanmo start -->
   <section class="py-24 bg-fm-primary-50">
     <div class="container">
-      <h2 class="mb-6 text-3xl leading-tight font-title text-center lg:text-left sm:text-4xl md:text-5xl lg:text-6xl">Why Fanmo?</h2>
+      <h2 class="mb-6 text-3xl leading-tight font-title text-center sm:text-4xl md:text-5xl lg:text-6xl">Why choose Fanmo?</h2>
 
-      <ul class="text-base md:text-lg lg:text-xl py-4 lg:py-8 space-y-4 lg:space-y-8">
-        <li class="flex items-center">
-          <icon-verified class="w-8 h-8 lg:w-12 lg:h-12 flex-shrink-0 inline-block mr-4 fill-current text-fm-success-600 stroke-white"></icon-verified>
-          <span>
-            <span class="font-bold text-title">Lowest platform fee.</span>
-            Without losing any features.
-          </span>
-        </li>
-        <li class="flex items-center">
-          <icon-verified class="w-8 h-8 lg:w-12 lg:h-12 flex-shrink-0 inline-block mr-4 fill-current text-fm-success-600 stroke-white"></icon-verified>
-          <span>
-            <span class="font-bold text-title">Fastest payouts.</span>
-            Get money in your bank account within 2 days of payment.
-          </span>
-        </li>
-        <li class="flex items-center">
-          <icon-verified class="w-8 h-8 lg:w-12 lg:h-12 flex-shrink-0 inline-block mr-4 fill-current text-fm-success-600 stroke-white"></icon-verified>
-          <span>
-            <span class="font-bold text-title">100% yours.</span>
-            Export all your data, any time you like.
-          </span>
-        </li>
-        <li class="flex items-center">
-          <icon-verified class="w-8 h-8 lg:w-12 lg:h-12 flex-shrink-0 inline-block mr-4 fill-current text-fm-success-600 stroke-white"></icon-verified>
-          <span>
-            <span class="font-bold text-title">Responsive support</span>
-            Get all the help and support you need, in any mode you prefer.
-          </span>
-        </li>
-      </ul>
+      <div class="flex flex-wrap text-center text-base md:text-lg lg:text-xl py-4 lg:py-8">
+        <div class="flex flex-col items-center w-full md:w-1/3 my-8 space-y-2">
+          <icon-indian-rupee class="w-8 h-8 lg:w-12 lg:h-12"></icon-indian-rupee>
+          <div class="font-bold text-title">Lowest platform fee</div>
+          <div class="mt-2 text-gray-500">Earn more without losing any features. Straight forward pricing without any hidden transaction processing fees.</div>
+        </div>
+        <div class="flex flex-col items-center w-full md:w-1/3 my-8 space-y-2">
+          <icon-line-chart class="w-8 h-8 lg:w-12 lg:h-12"></icon-line-chart>
+          <div class="font-bold text-title">Insightful Dashboard</div>
+          <div class="mt-2 text-gray-500">Real-time graphs, stats and activities of your memberships and payment trends. All in one place.</div>
+        </div>
+        <div class="flex flex-col items-center w-full md:w-1/3 my-8 space-y-2">
+          <icon-inbox class="w-8 h-8 lg:w-12 lg:h-12"></icon-inbox>
+          <div class="font-bold text-title">Email notifications</div>
+          <div class="mt-2 text-gray-500">Deliver your posts instantly to your members as emails. Get notified whenever someone supports you.</div>
+        </div>
+        <div class="flex flex-col items-center w-full md:w-1/3 my-8 space-y-2">
+          <icon-download class="w-8 h-8 lg:w-12 lg:h-12"></icon-download>
+          <div class="font-bold text-title">100% yours</div>
+          <div class="mt-2 text-gray-500">Take back control of your transactional and membership data. Export all your data as CSV, any time you like.</div>
+        </div>
+        <div class="flex flex-col items-center w-full md:w-1/3 my-8 space-y-2">
+          <icon-zap class="w-8 h-8 lg:w-12 lg:h-12"></icon-zap>
+          <div class="font-bold text-title">Fastest payouts</div>
+          <div class="mt-2 text-gray-500">Get money in you bank account within two working days of any membership or tip payment.</div>
+        </div>
+        <div class="flex flex-col items-center w-full md:w-1/3 my-8 space-y-2">
+          <icon-life-buoy class="w-8 h-8 lg:w-12 lg:h-12"></icon-life-buoy>
+          <div class="font-bold text-title">Responsive support</div>
+          <div class="mt-2 text-gray-500">Need help with something? Questions? Have feature suggestions? We are just an e-mail away.</div>
+        </div>
+      </div>
 
-      <div class="text-center lg:text-left">
+      <div class="text-center">
         <nuxt-link
           :to="$auth.loggedIn ? '/dashboard' : '/register'"
           class="unstyled inline-flex items-center mt-8 px-10 py-4 mx-auto lg:text-lg text-white rounded-full lg:mx-0 bg-fm-primary transform transition-transform hover:scale-105">
