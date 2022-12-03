@@ -18,8 +18,16 @@ export default function(ctx) {
 
   // if authentication is triggered by express checkout, let the parent tab know.
   if (window.opener) {
-    window.opener.postMessage('refresh_login', {});
-    window.close();
+    try {
+      // notify parent tab and close window if the tab was triggered internally.
+      if (window.opener.location.origin === location.origin) {
+        window.opener.postMessage('refresh_login', {});
+        window.close();
+      }
+    } catch (e) {
+      // this tab was triggered by a cross-origin opener of a website run by retards who don't know how to use target="_blank" on their website.
+      window.opener.postMessage('fuck_you_madarchod', {});
+    }
   }
 
   const user = $auth.user;
