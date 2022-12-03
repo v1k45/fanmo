@@ -170,32 +170,32 @@
 
       <div class="flex flex-wrap text-center text-base md:text-lg lg:text-xl py-4 lg:py-8">
         <div class="flex flex-col items-center w-full md:w-1/3 my-8 space-y-2">
-          <icon-indian-rupee class="w-8 h-8 lg:w-12 lg:h-12"></icon-indian-rupee>
+          <icon-indian-rupee class="w-8 h-8 lg:w-12 lg:h-12 text-fm-primary"></icon-indian-rupee>
           <div class="font-bold text-title">Lowest platform fee</div>
           <div class="mt-2 text-gray-500">Earn more without losing any features. Straight forward pricing without any hidden transaction processing fees.</div>
         </div>
         <div class="flex flex-col items-center w-full md:w-1/3 my-8 space-y-2">
-          <icon-line-chart class="w-8 h-8 lg:w-12 lg:h-12"></icon-line-chart>
+          <icon-line-chart class="w-8 h-8 lg:w-12 lg:h-12 text-fm-primary"></icon-line-chart>
           <div class="font-bold text-title">Insightful Dashboard</div>
           <div class="mt-2 text-gray-500">Real-time graphs, stats and activities of your memberships and payment trends. All in one place.</div>
         </div>
         <div class="flex flex-col items-center w-full md:w-1/3 my-8 space-y-2">
-          <icon-inbox class="w-8 h-8 lg:w-12 lg:h-12"></icon-inbox>
+          <icon-inbox class="w-8 h-8 lg:w-12 lg:h-12 text-fm-primary"></icon-inbox>
           <div class="font-bold text-title">Email notifications</div>
           <div class="mt-2 text-gray-500">Deliver your posts instantly to your members as emails. Get notified whenever someone supports you.</div>
         </div>
         <div class="flex flex-col items-center w-full md:w-1/3 my-8 space-y-2">
-          <icon-download class="w-8 h-8 lg:w-12 lg:h-12"></icon-download>
+          <icon-download class="w-8 h-8 lg:w-12 lg:h-12 text-fm-primary"></icon-download>
           <div class="font-bold text-title">100% yours</div>
           <div class="mt-2 text-gray-500">Take back control of your transactional and membership data. Export all your data as CSV, any time you like.</div>
         </div>
         <div class="flex flex-col items-center w-full md:w-1/3 my-8 space-y-2">
-          <icon-zap class="w-8 h-8 lg:w-12 lg:h-12"></icon-zap>
+          <icon-zap class="w-8 h-8 lg:w-12 lg:h-12 text-fm-primary"></icon-zap>
           <div class="font-bold text-title">Fastest payouts</div>
           <div class="mt-2 text-gray-500">Get money in you bank account within two working days of any membership or tip payment.</div>
         </div>
         <div class="flex flex-col items-center w-full md:w-1/3 my-8 space-y-2">
-          <icon-life-buoy class="w-8 h-8 lg:w-12 lg:h-12"></icon-life-buoy>
+          <icon-life-buoy class="w-8 h-8 lg:w-12 lg:h-12 text-fm-primary"></icon-life-buoy>
           <div class="font-bold text-title">Responsive support</div>
           <div class="mt-2 text-gray-500">Need help with something? Questions? Have feature suggestions? We are just an e-mail away.</div>
         </div>
