@@ -1,11 +1,15 @@
+from decimal import Decimal
+
 from django.db import models
 from django_fsm import FSMField
 from djmoney.models.fields import MoneyField
+from moneyed import INR
 from simple_history.models import HistoricalRecords
 
+from fanmo.donations.constants import DONATION_TIERS
 from fanmo.utils import razorpay_client
 from fanmo.utils.models import BaseModel, IPAddressHistoricalModel
-from fanmo.utils.money import money_to_sub_unit
+from fanmo.utils.money import Money, money_to_sub_unit
 
 
 class Donation(BaseModel):
@@ -38,3 +42,12 @@ class Donation(BaseModel):
         )
         self.external_id = external_data["id"]
         self.save()
+
+    def tier(self):
+        if not self.creator_user.user_preferences.enable_donation_tiers:
+            return None
+
+        return next(
+            (t for t in reversed(DONATION_TIERS) if self.amount >= t["min_amount"]),
+            None,
+        )

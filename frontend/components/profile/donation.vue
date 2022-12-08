@@ -1,5 +1,13 @@
 <template>
-<fm-card>
+<fm-card class="relative">
+  <div v-if="tier" class="absolute right-0 top-0 flex">
+    <div
+      v-tooltip="tier.style.label"
+      :class="tier.style.css"
+      class="rounded-bl-lg rounded-tr-lg p-0.5 text-sm md:text-base border-0 border-r-0 border-t-0 text-white text-center right-0 top-0">
+      <component :is="tier.style.icon" class="h-em w-em"></component>
+    </div>
+  </div>
   <div class="flex items-center">
     <fm-avatar
       :src="donation.fan_user.avatar && donation.fan_user.avatar.small"
@@ -87,6 +95,7 @@
 <script>
 import dayjs from 'dayjs';
 import { mapActions, mapGetters } from 'vuex';
+import { DONATION_TIER_STYLE_MAP } from '~/utils';
 
 export default {
   props: {
@@ -98,6 +107,7 @@ export default {
     };
   },
   computed: {
+    DONATION_TIER_STYLE_MAP,
     ...mapGetters('profile', ['isSelfProfile']),
     createdAt() {
       if (!this.donation) return '';
@@ -112,6 +122,10 @@ export default {
         ...acc,
         [emoji]: { isReacted, count }
       }), { heart: { isReacted: false, count: 0 } });
+    },
+    tier() {
+      if (!this.donation.tier) return null;
+      return { ...this.donation.tier, style: DONATION_TIER_STYLE_MAP[this.donation.tier.name] };
     }
   },
   methods: {

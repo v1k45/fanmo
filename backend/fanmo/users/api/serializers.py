@@ -15,6 +15,7 @@ from django.db.models.functions import Replace
 from django.forms import ValidationError
 from django_otp.plugins.otp_email.models import EmailDevice
 from django_otp.plugins.otp_totp.models import TOTPDevice
+from djmoney.contrib.django_rest_framework.fields import MoneyField
 from drf_extra_fields.fields import Base64ImageField
 from drf_spectacular.utils import extend_schema_field
 from ipware import get_client_ip
@@ -71,6 +72,16 @@ class UserTierSerializer(serializers.ModelSerializer):
         ]
 
 
+class DonationTierSerializer(serializers.Serializer):
+    name = serializers.CharField()
+    min_amount = MoneyField(
+        max_digits=7,
+        decimal_places=2,
+        default_currency="INR",
+    )
+    max_length = serializers.IntegerField()
+
+
 class SocialLinkSerializer(serializers.ModelSerializer):
     website_url = URLField(required=False, allow_blank=True)
     youtube_url = URLField(required=False, allow_blank=True)
@@ -93,6 +104,8 @@ class PublicUserPreferenceSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserPreference
         fields = [
+            "enable_donation_tiers",
+            "default_donation_amount",
             "is_accepting_payments",
             "minimum_amount",
             "thank_you_message",
@@ -104,6 +117,8 @@ class UserPreferenceSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserPreference
         fields = [
+            "enable_donation_tiers",
+            "default_donation_amount",
             "is_accepting_payments",
             "minimum_amount",
             "thank_you_message",
@@ -197,6 +212,7 @@ class ComputedUserFieldSerializer(serializers.Serializer):
 
 class PublicUserSerializer(ComputedUserFieldSerializer, serializers.ModelSerializer):
     tiers = UserTierSerializer(many=True, read_only=True, source="public_tiers")
+    donation_tiers = DonationTierSerializer(many=True, read_only=True)
     avatar = VersatileImageFieldSerializer("user_avatar")
     cover = VersatileImageFieldSerializer("user_cover")
     social_links = SocialLinkSerializer(read_only=True)
@@ -215,6 +231,7 @@ class PublicUserSerializer(ComputedUserFieldSerializer, serializers.ModelSeriali
             "avatar",
             "cover",
             "tiers",
+            "donation_tiers",
             "social_links",
             "follower_count",
             "preferences",
@@ -226,6 +243,7 @@ class PublicUserSerializer(ComputedUserFieldSerializer, serializers.ModelSeriali
 
 class UserSerializer(ComputedUserFieldSerializer, serializers.ModelSerializer):
     tiers = UserTierSerializer(many=True, read_only=True, source="public_tiers")
+    donation_tiers = DonationTierSerializer(many=True, read_only=True)
     social_links = SocialLinkSerializer()
     # TODO: ONLY EXPOSE IT TO OWN USER!!
     preferences = UserPreferenceSerializer(source="user_preferences", required=False)
@@ -249,6 +267,7 @@ class UserSerializer(ComputedUserFieldSerializer, serializers.ModelSerializer):
             "cover",
             "cover_base64",
             "tiers",
+            "donation_tiers",
             "social_links",
             "preferences",
             "onboarding",
@@ -262,6 +281,7 @@ class UserSerializer(ComputedUserFieldSerializer, serializers.ModelSerializer):
             "display_name",
             "email",
             "tiers",
+            "donation_tiers",
             "follower_count",
             "subscriber_count",
             "preferences",
