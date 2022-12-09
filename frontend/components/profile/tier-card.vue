@@ -1,9 +1,10 @@
 <template>
 <div
-  class="border bg-white border-gray-300 rounded-xl overflow-hidden relative"
+  class="border bg-white rounded-xl overflow-hidden relative"
   :class="{
     'min-h-[350px]': !hasGoodEnoughContent,
-    'border-4 border-fm-success-600': tier.is_recommended
+    'border-4 border-fm-success-600': tier.is_recommended,
+    'border-gray-300': !tier.is_recommended
   }">
 
   <!-- cover start -->
