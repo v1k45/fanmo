@@ -42,16 +42,19 @@
   <section class="py-24" style="background: linear-gradient(180deg, #F2F2FF 0%, rgba(241, 248, 255, 0) 79.31%);">
     <div class="container">
       <div class="row items-center justify-center">
-        <h2 class="mb-8 text-4xl leading-tight font-title text-center sm:text-4xl md:text-5xl lg:text-6xl">What is Fanmo?</h2>
-        <div class="max-w-2xl mx-auto mb-8">
-          <p class="sm:text-lg text-center">
-            Fanmo is a platform that empowers creators to earn a steady income by offering monthly memberships to their dedicated fans.
-            With Fanmo, you can share exclusive content and move closer to achieving complete financial independence.
-            By providing a space for paid subscribers, Fanmo helps you grow your audience and build a sustainable income stream.
+        <h2 class="mb-10 text-4xl leading-tight font-title text-center sm:text-4xl md:text-5xl lg:text-6xl">What is Fanmo?</h2>
+        <div class="max-w-2xl mx-auto mb-8 sm:text-lg text-center">
+          <p>
+            Fanmo is a platform for creators who want to earn a steady income by offering monthly memberships to their dedicated fans.
+            With Fanmo, you can follow your passion and build a sustainable income stream without the constraints of social media algorithms.
+          </p>
+          <p class="mt-6">
+            Fanmo makes it easy and fun to share exclusive content and grow your audience.
+            Try Fanmo now and start your journey towards the financial freedom you deserve.
           </p>
         </div>
         <template v-if="creators.length">
-          <h2 class="mb-8 text-2xl leading-tight font-title text-center sm:text-2xl md:text-3xl lg:text-4xl">Featured Creators</h2>
+          <h2 class="mb-10 text-2xl leading-tight font-title text-center sm:text-2xl md:text-3xl lg:text-4xl">Featured Creators</h2>
           <div class="flex justify-center justify-evenly space-y-8 md:space-y-0 md:flex-row flex-col">
             <nuxt-link v-for="creator in creators" :key="creator.username" :to="`/${creator.username}`" class="unstyled transform transition-transform hover:scale-105">
               <div class="flex items-center flex-col">
