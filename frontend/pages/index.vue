@@ -38,8 +38,35 @@
   </section>
   <!-- hero end -->
 
+  <!-- feature: featured creators -->
+  <section v-if="creators.length" class="py-24" style="background: linear-gradient(180deg, #F2F2FF 0%, rgba(241, 248, 255, 0) 79.31%);">
+    <div class="container">
+      <div class="row items-center justify-center">
+        <h2 class="mb-8 text-4xl leading-tight font-title text-center sm:text-4xl md:text-5xl lg:text-6xl">What is Fanmo?</h2>
+        <div class="max-w-2xl mx-auto mb-8">
+          <p class="sm:text-lg text-center">
+            Fanmo is a platform that empowers creators to earn a steady income by offering monthly memberships to their dedicated fans.
+            With Fanmo, you can share exclusive content and move closer to achieving complete financial independence.
+            By providing a space for paid subscribers, Fanmo helps you grow your audience and build a sustainable income stream.
+          </p>
+        </div>
+        <h2 class="mb-8 text-2xl leading-tight font-title text-center sm:text-2xl md:text-3xl lg:text-4xl">Featured Creators</h2>
+        <div class="flex justify-center justify-evenly space-y-8 md:space-y-0 md:flex-row flex-col">
+          <nuxt-link v-for="creator in creators" :key="creator.username" :to="`/${creator.username}`" class="unstyled transform transition-transform hover:scale-105">
+            <div class="flex items-center flex-col">
+              <fm-avatar :src="creator.avatar && creator.avatar.medium" :name="creator.display_name" size="w-24 h-24 lg:w-32 lg:h-32"></fm-avatar>
+              <div class="text-2xl text-black font-bold mt-2">{{ creator.display_name }}</div>
+              <div v-if="creator.one_liner" class="text-gray-500">{{ creator.one_liner }}</div>
+            </div>
+          </nuxt-link>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- feature: featured creators end -->
+
   <!-- fee comparison start -->
-  <section class="py-24" style="background: linear-gradient(180deg, #F2F2FF 0%, rgba(241, 248, 255, 0) 79.31%);">
+  <section class="py-14" style="background: linear-gradient(180deg, #F2F2FF 0%, rgba(241, 248, 255, 0) 79.31%);">
     <div class="container">
       <div class="lg:hidden text-center mb-12">
         <h1 class="text-4xl md:text-5xl font-semibold font-title">Stop losing money</h1>
@@ -143,25 +170,6 @@
     </div>
   </section>
   <!-- feature: posts & comments end -->
-
-  <!-- feature: featured creators -->
-  <section v-if="creators.length" class="py-14" style="background: linear-gradient(180deg, rgba(241, 248, 255, 0) 0, #F2F2FF 79.31%);">
-    <div class="container">
-      <div class="row items-center justify-center">
-        <h2 class="mb-14 text-4xl leading-tight font-title text-center sm:text-4xl md:text-5xl lg:text-6xl">Featured Creators</h2>
-        <div class="flex justify-center justify-evenly space-y-8 md:space-y-0 md:flex-row flex-col">
-          <nuxt-link v-for="creator in creators" :key="creator.username" :to="`/${creator.username}`" class="unstyled transform transition-transform hover:scale-105">
-            <div class="flex items-center flex-col">
-              <fm-avatar :src="creator.avatar && creator.avatar.medium" :name="creator.display_name" size="w-24 h-24 lg:w-32 lg:h-32"></fm-avatar>
-              <div class="text-2xl text-black font-bold mt-2">{{ creator.display_name }}</div>
-              <div v-if="creator.one_liner" class="text-gray-500">{{ creator.one_liner }}</div>
-            </div>
-          </nuxt-link>
-        </div>
-      </div>
-    </div>
-  </section>
-  <!-- feature: featured creators end -->
 
   <!-- why fanmo start -->
   <section class="py-24 bg-fm-primary-50">
