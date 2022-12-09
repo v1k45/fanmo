@@ -8,17 +8,17 @@ DONATION_TIERS = [
     {
         "name": "level_1",
         "min_amount": Money(Decimal("50"), INR),
-        "max_length": 50,
+        "max_length": 65,
     },
     {
         "name": "level_2",
         "min_amount": Money(Decimal("100"), INR),
-        "max_length": 150,
+        "max_length": 175,
     },
     {
         "name": "level_3",
         "min_amount": Money(Decimal("250"), INR),
-        "max_length": 200,
+        "max_length": 225,
     },
     {
         "name": "level_4",
