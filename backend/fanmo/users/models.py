@@ -19,6 +19,7 @@ from fanmo.core.models import (
     MEMBERSHIP_NOTIFICATIONS,
     POST_NOTIFICATIONS,
 )
+from fanmo.donations.constants import DONATION_TIERS
 from fanmo.payments.models import BankAccount
 from fanmo.users.validators import ASCIIUsernameValidator, validate_username
 from fanmo.utils.models import BaseModel, IPAddressHistoricalModel
@@ -87,6 +88,9 @@ class User(BaseModel, AbstractUser):
 
     def public_tiers(self):
         return self.tiers.filter(is_public=True)
+
+    def donation_tiers(self):
+        return DONATION_TIERS
 
     @cached_property
     def can_accept_payments(self):
@@ -165,6 +169,15 @@ class UserPreference(BaseModel):
     thank_you_message = models.TextField(default=settings.DEFAULT_THANK_YOU_MESSAGE)
     minimum_amount = MoneyField(
         max_digits=7, decimal_places=2, default=settings.MINIMUM_PAYMENT_AMOUNT
+    )
+
+    enable_donation_tiers = models.BooleanField(default=False)
+    default_donation_amount = MoneyField(
+        max_digits=7,
+        decimal_places=2,
+        default=settings.DEFAULT_DONATION_AMOUNT,
+        blank=True,
+        null=True,
     )
 
     platform_fee_percent = models.DecimalField(

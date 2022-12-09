@@ -141,6 +141,16 @@ export const STATUS_COLOR_MAP = {
   completed: 'text-fm-error'
 };
 
+export const DONATION_TIER_STYLE_MAP = {
+  level_1: { icon: 'icon-sprout', css: 'bg-violet-500', label: 'Level 1' },
+  level_2: { icon: 'icon-leaf', css: 'bg-indigo-500', label: 'Level 2' },
+  level_3: { icon: 'icon-flower', css: 'bg-blue-500', label: 'Level 3' },
+  level_4: { icon: 'icon-flower-2', css: 'bg-green-500', label: 'Level 4' },
+  level_5: { icon: 'icon-shrub', css: 'bg-yellow-500', label: 'Level 5' },
+  level_6: { icon: 'icon-tree-pine', css: 'bg-orange-500', label: 'Level 6' },
+  level_7: { icon: 'icon-trees', css: 'bg-red-500', label: 'Level 7' }
+};
+
 /**
  * @param {*} err - axios error to handle. if it's not an axios error, this will result in another error
  * @param {*} handleAll - whether 400s should be handled by the function too.

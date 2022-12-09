@@ -35,6 +35,15 @@ class TestAuthenticationFlow:
             "avatar": None,
             "cover": None,
             "tiers": [],
+            "donation_tiers": [
+                {"name": "level_1", "min_amount": "50.00", "max_length": 50},
+                {"name": "level_2", "min_amount": "100.00", "max_length": 150},
+                {"name": "level_3", "min_amount": "250.00", "max_length": 200},
+                {"name": "level_4", "min_amount": "500.00", "max_length": 250},
+                {"name": "level_5", "min_amount": "1000.00", "max_length": 300},
+                {"name": "level_6", "min_amount": "2500.00", "max_length": 350},
+                {"name": "level_7", "min_amount": "5000.00", "max_length": 500},
+            ],
             "social_links": {
                 "website_url": "",
                 "youtube_url": "",
@@ -43,6 +52,8 @@ class TestAuthenticationFlow:
                 "twitter_url": "",
             },
             "preferences": {
+                "default_donation_amount": "50.00",
+                "enable_donation_tiers": False,
                 "is_accepting_payments": True,
                 "minimum_amount": "10.00",
                 "donation_description": "",
@@ -108,6 +119,15 @@ class TestAuthenticationFlow:
             "avatar": None,
             "cover": None,
             "tiers": [],
+            "donation_tiers": [
+                {"name": "level_1", "min_amount": "50.00", "max_length": 50},
+                {"name": "level_2", "min_amount": "100.00", "max_length": 150},
+                {"name": "level_3", "min_amount": "250.00", "max_length": 200},
+                {"name": "level_4", "min_amount": "500.00", "max_length": 250},
+                {"name": "level_5", "min_amount": "1000.00", "max_length": 300},
+                {"name": "level_6", "min_amount": "2500.00", "max_length": 350},
+                {"name": "level_7", "min_amount": "5000.00", "max_length": 500},
+            ],
             "social_links": {
                 "website_url": "",
                 "youtube_url": "",
@@ -116,6 +136,8 @@ class TestAuthenticationFlow:
                 "twitter_url": "",
             },
             "preferences": {
+                "default_donation_amount": "50.00",
+                "enable_donation_tiers": False,
                 "is_accepting_payments": True,
                 "minimum_amount": "10.00",
                 "donation_description": "",
@@ -187,6 +209,15 @@ class TestMeAPI:
             "avatar": None,
             "cover": None,
             "tiers": [],
+            "donation_tiers": [
+                {"name": "level_1", "min_amount": "50.00", "max_length": 50},
+                {"name": "level_2", "min_amount": "100.00", "max_length": 150},
+                {"name": "level_3", "min_amount": "250.00", "max_length": 200},
+                {"name": "level_4", "min_amount": "500.00", "max_length": 250},
+                {"name": "level_5", "min_amount": "1000.00", "max_length": 300},
+                {"name": "level_6", "min_amount": "2500.00", "max_length": 350},
+                {"name": "level_7", "min_amount": "5000.00", "max_length": 500},
+            ],
             "social_links": {
                 "website_url": "",
                 "youtube_url": "",
@@ -195,6 +226,8 @@ class TestMeAPI:
                 "twitter_url": "",
             },
             "preferences": {
+                "default_donation_amount": "50.00",
+                "enable_donation_tiers": False,
                 "is_accepting_payments": True,
                 "minimum_amount": "10.00",
                 "donation_description": "",
@@ -241,6 +274,8 @@ class TestMeAPI:
                     "twitter_url": "https://twitter.com/google",
                 },
                 "preferences": {
+                    "default_donation_amount": "10.00",
+                    "enable_donation_tiers": True,
                     "is_accepting_payments": True,
                     "minimum_amount": "100",
                     "donation_description": "Hello world!",
@@ -268,6 +303,8 @@ class TestMeAPI:
             "twitter_url": "https://twitter.com/google",
         }
         assert response_data["preferences"] == {
+            "default_donation_amount": "10.00",
+            "enable_donation_tiers": True,
             "is_accepting_payments": True,
             "minimum_amount": "100.00",
             "donation_description": "Hello world!",
@@ -543,6 +580,15 @@ class TestUserAPI:
                     "is_recommended": False,
                 }
             ],
+            "donation_tiers": [
+                {"name": "level_1", "min_amount": "50.00", "max_length": 50},
+                {"name": "level_2", "min_amount": "100.00", "max_length": 150},
+                {"name": "level_3", "min_amount": "250.00", "max_length": 200},
+                {"name": "level_4", "min_amount": "500.00", "max_length": 250},
+                {"name": "level_5", "min_amount": "1000.00", "max_length": 300},
+                {"name": "level_6", "min_amount": "2500.00", "max_length": 350},
+                {"name": "level_7", "min_amount": "5000.00", "max_length": 500},
+            ],
             "social_links": {
                 "website_url": "",
                 "youtube_url": "",
@@ -551,6 +597,8 @@ class TestUserAPI:
                 "twitter_url": "",
             },
             "preferences": {
+                "default_donation_amount": "50.00",
+                "enable_donation_tiers": False,
                 "is_accepting_payments": True,
                 "minimum_amount": "10.00",
                 "donation_description": "",

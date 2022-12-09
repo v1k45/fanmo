@@ -147,6 +147,7 @@ class TestDonationAPI:
         assert response_data["message"] == "Some fancy text goes here!"
         assert response_data["fan_user"]["username"] == user.username
         assert response_data["creator_user"]["username"] == creator_user.username
+        assert response_data["tier"] is None
         assert response_data["amount"] == "100.00"
         assert response_data["payment"] == {
             "processor": "razorpay",
@@ -161,6 +162,75 @@ class TestDonationAPI:
             },
             "is_required": True,
         }
+
+    def test_create_minimum_amount(self, api_client, creator_user, user, mocker):
+        mocker.patch(
+            "fanmo.donations.models.razorpay_client.order.create",
+            return_value={"id": "ord_123"},
+        )
+
+        api_client.force_authenticate(user)
+        response = api_client.post(
+            "/api/donations/",
+            {
+                "creator_username": creator_user.username,
+                "message": "Some fancy text goes here!",
+                "amount": "9",
+            },
+        )
+        assert response.status_code == 400
+        response_data = response.json()
+        assert response_data["non_field_errors"][0]["code"] == "min_amount"
+
+    def test_create_with_donation_tier_enabled_does_not_allow_messages_for_small_donation(
+        self, api_client, creator_user, user, mocker
+    ):
+        # enable donation tier
+        creator_user.user_preferences.enable_donation_tiers = True
+        creator_user.user_preferences.save()
+
+        mocker.patch(
+            "fanmo.donations.models.razorpay_client.order.create",
+            return_value={"id": "ord_123"},
+        )
+
+        api_client.force_authenticate(user)
+        response = api_client.post(
+            "/api/donations/",
+            {
+                "creator_username": creator_user.username,
+                "message": "Some fancy text goes here!",
+                "amount": "49",
+            },
+        )
+        assert response.status_code == 400
+        response_data = response.json()
+        assert response_data["non_field_errors"][0]["code"] == "min_tier"
+
+    def test_create_with_donation_tier_enabled_validate_message_length_for_amount(
+        self, api_client, creator_user, user, mocker
+    ):
+        # enable donation tier
+        creator_user.user_preferences.enable_donation_tiers = True
+        creator_user.user_preferences.save()
+
+        mocker.patch(
+            "fanmo.donations.models.razorpay_client.order.create",
+            return_value={"id": "ord_123"},
+        )
+
+        api_client.force_authenticate(user)
+        response = api_client.post(
+            "/api/donations/",
+            {
+                "creator_username": creator_user.username,
+                "message": "na" * 100,
+                "amount": "99",
+            },
+        )
+        assert response.status_code == 400
+        response_data = response.json()
+        assert response_data["non_field_errors"][0]["code"] == "invalid_tier"
 
     def test_update_as_creator(self, api_client, creator_user, user):
         donation = Donation.objects.create(

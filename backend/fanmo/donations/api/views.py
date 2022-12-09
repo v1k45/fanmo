@@ -35,7 +35,9 @@ class DonationViewSet(
     throttle_classes = [Throttle("transaction_hour", "create")]
 
     def get_queryset(self):
-        queryset = Donation.objects.filter(status=Donation.Status.SUCCESSFUL)
+        queryset = Donation.objects.filter(
+            status=Donation.Status.SUCCESSFUL
+        ).select_related("fan_user", "creator_user__user_preferences")
         queryset = queryset.prefetch_related("reactions")
         queryset = queryset.annotate(
             lifetime_amount=Sum(

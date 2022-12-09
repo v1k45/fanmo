@@ -4,6 +4,7 @@ from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from fanmo.core.serializers import PaymentIntentSerializerMixin
+from fanmo.donations.constants import DONATION_TIERS
 from fanmo.donations.models import Donation
 from fanmo.posts.api.serializers import PostReactionSummarySerializer
 from fanmo.posts.models import Reaction
@@ -106,6 +107,16 @@ class DonationSocialStatsSerializer(serializers.ModelSerializer):
         return getattr(donation, "comment_count", 0)
 
 
+class DonationTierSerializer(serializers.Serializer):
+    name = serializers.CharField()
+    min_amount = MoneyField(
+        max_digits=7,
+        decimal_places=2,
+        default_currency="INR",
+    )
+    max_length = serializers.IntegerField()
+
+
 class DonationCreateSerializer(
     PaymentIntentSerializerMixin, serializers.ModelSerializer
 ):
@@ -119,6 +130,7 @@ class DonationCreateSerializer(
     creator_user = UserPreviewSerializer(read_only=True)
     stats = DonationSocialStatsSerializer(source="*", read_only=True)
     can_comment = serializers.SerializerMethodField()
+    tier = DonationTierSerializer(read_only=True)
 
     class Meta:
         model = Donation
@@ -133,6 +145,7 @@ class DonationCreateSerializer(
             "is_hidden",
             "stats",
             "can_comment",
+            "tier",
             "payment",
             "created_at",
         ]
@@ -142,11 +155,36 @@ class DonationCreateSerializer(
             "creator_user",
             "stats",
             "can_comment",
+            "tier",
             "created_at",
         ]
 
     def validate(self, attrs):
         attrs["fan_user"] = self.get_fan_user(attrs.pop("email", None))
+        user_preferences = attrs["creator_user"].user_preferences
+
+        # validate min amount
+        if attrs["amount"] < user_preferences.minimum_amount:
+            raise serializers.ValidationError(
+                f"Please tip at least {user_preferences.minimum_amount} to support {attrs['creator_user'].display_name}.",
+                "min_amount",
+            )
+
+        # validate message length
+        if user_preferences.enable_donation_tiers and attrs["message"]:
+            donation_tier = Donation(
+                creator_user=attrs["creator_user"], amount=attrs["amount"]
+            ).tier()
+            if not donation_tier:
+                raise serializers.ValidationError(
+                    f"Please tip at least {DONATION_TIERS[0]['min_amount']} to include a message.",
+                    "min_tier",
+                )
+            elif len(attrs["message"]) > donation_tier["max_length"]:
+                raise serializers.ValidationError(
+                    "Message is too long, increase tip amount to send a larger message.",
+                    "invalid_tier",
+                )
         return attrs
 
     def get_can_comment(self, donation):
@@ -168,6 +206,7 @@ class DonationSerializer(serializers.ModelSerializer):
     lifetime_amount = serializers.SerializerMethodField()
     stats = DonationSocialStatsSerializer(source="*", read_only=True)
     can_comment = serializers.SerializerMethodField()
+    tier = DonationTierSerializer(read_only=True)
 
     class Meta:
         model = Donation
@@ -182,6 +221,7 @@ class DonationSerializer(serializers.ModelSerializer):
             "status",
             "stats",
             "can_comment",
+            "tier",
             "created_at",
         ]
 
@@ -224,6 +264,7 @@ class DonationUpdateSerializer(DonationSerializer):
             "status",
             "stats",
             "can_comment",
+            "tier",
             "created_at",
         ]
         read_only_fields = [
@@ -235,6 +276,7 @@ class DonationUpdateSerializer(DonationSerializer):
             "status",
             "stats",
             "can_comment",
+            "tier",
             "created_at",
         ]
 
