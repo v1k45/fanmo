@@ -39,7 +39,7 @@
       <template #label>
         <div class="flex justify-between">
           <div>Message (optional)</div>
-          <div v-if="(user.preferences.enable_donation_tiers && tier)" class="text-sm flex items-center space-x-2" :class="{'text-fm-error': messageLength.used > tier.max_length}">
+          <div v-if="(user.preferences.enable_donation_tiers && tier)" v-tooltip="tier.style.label" class="text-sm flex items-center space-x-2" :class="{'text-fm-error': messageLength.used > tier.max_length}">
             <component :is="tier.style.icon" v-if="tier.name" class="h-em w-em"></component>
             <span>{{ messageLength.used }}/{{ tier.max_length }}</span>
           </div>
