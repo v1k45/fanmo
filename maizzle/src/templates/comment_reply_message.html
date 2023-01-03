@@ -8,7 +8,7 @@ bodyClass: bg-gray-100
     </p>
     <p><strong>@{{ obj.author_user.display_name }}</strong> replied to your comment on <strong>@{{ obj.post.title}}</strong>.</p>
     <p><em>@{{ obj.body }}</em></p>
-    <div class="leading-full">
+    <div class="leading-full text-center">
       <component src="src/components/button.html" target="post_detail" args="obj.post.slug obj.post.id">
         View Post
       </component>

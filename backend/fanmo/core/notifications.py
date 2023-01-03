@@ -176,11 +176,15 @@ def notify_donation(donation_id):
         channels=("email", "creator_activity"),
     )
     notify(
+        source=donation.creator_user,
         recipient=donation.fan_user,
         obj=donation,
         action=NotificationType.DONATION_SENT,
         silent=True,
         channels=("email",),
+        extra_data={
+            "context": {"source_as_sender_name": True},
+        },
     )
 
 
@@ -188,7 +192,11 @@ def notify_new_post(post_id):
     from fanmo.posts.models import Post
     from fanmo.users.models import User
 
-    post = Post.objects.get(id=post_id)
+    post = (
+        Post.objects.prefetch_related("allowed_tiers", "author_user__tiers")
+        .select_related("author_user")
+        .get(id=post_id)
+    )
 
     creator_user = post.author_user
     recipients = (
@@ -199,21 +207,22 @@ def notify_new_post(post_id):
             # users who are member of the creator
             | Q(memberships__creator_user=creator_user, memberships__is_active=True)
         )
+        .prefetch_related("memberships")
         .distinct()
     )
-    notify(
-        source=creator_user,
-        obj=post,
-        action=NotificationType.NEW_POST,
-        silent=True,
-        channels=("email",),
-        extra_data={
-            "context": {
-                "bulk": True,
-                "recipients": recipients,
-            }
-        },
-    )
+    for recipient in recipients:
+        post.annotate_permissions(recipient)
+        notify(
+            source=creator_user,
+            recipient=recipient,
+            obj=post,
+            action=NotificationType.NEW_POST,
+            silent=True,
+            channels=("email",),
+            extra_data={
+                "context": {"source_as_sender_name": True},
+            },
+        )
 
 
 def notify_comment(comment_id):

@@ -7,7 +7,7 @@ bodyClass: bg-gray-100
       <p class="text-xl sm:leading-32 text-black font-semibold m-0 mb-24">Hi @{{ obj.creator_user.display_name }},</p>
       <p><strong>@{{ obj.fan_user.display_name }}</strong> joined <strong>@{{ obj.tier.name }}</strong>.</p>
       <p class="m-0 mb-24">If you wish to contact @{{ obj.fan_user.display_name }} directly, you can send an email on <a href="mailto:@{{ obj.fan_user.email }}">@{{ obj.fan_user.email }}</a></p>
-      <div class="leading-full">
+      <div class="leading-full text-center">
         <component src="src/components/button.html" target="members" args="">
           View Members
         </component>

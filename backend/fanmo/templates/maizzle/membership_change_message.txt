@@ -1,5 +1,12 @@
+{% if obj.creator_user.avatar %} {% else %} {% endif %}
+
+{{ obj.creator_user.display_name }}
+{% if obj.creator_user.one_liner %} {{ obj.creator_user.one_liner }} {% endif %}
+
+{{ settings.BASE_URL }}{% url 'creator_page' obj.creator_user.username %}
+
 Hi {{ obj.fan_user.display_name }},
-Your membership tier for {{ obj.creator_user.display_name }} has been successfully updated to {{ obj.scheduled_subscription.plan.tier.name }}.
+Your membership tier has been successfully updated to {{ obj.scheduled_subscription.plan.tier.name }}.
 You will be charged {{ obj.scheduled_subscription.plan.amount }} per month from {{ obj.scheduled_subscription.cycle_start_at|date:"d F Y" }}.
 
 View Memberships
@@ -7,9 +14,20 @@ View Memberships
 
 {{ settings.BASE_URL }}{% url 'memberships'  %}
 
+ 
+
+
+
+
+
+
+
+
+https://fanmo.in
+
 Fanmo
 Need help? Email us on help@fanmo.in mailto:help@fanmo.in
 
-Website https://fanmo.in •
-Twitter https://twitter.com/getfanmo •
-Facebook https://facebook.com/getfanmo
+Email Settings https://fanmo.in/settings/ •
+Fanmo https://fanmo.in •
+Twitter https://twitter.com/getfanmo

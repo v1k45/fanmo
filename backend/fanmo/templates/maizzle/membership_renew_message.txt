@@ -1,3 +1,10 @@
+{% if obj.creator_user.avatar %} {% else %} {% endif %}
+
+{{ obj.creator_user.display_name }}
+{% if obj.creator_user.one_liner %} {{ obj.creator_user.one_liner }} {% endif %}
+
+{{ settings.BASE_URL }}{% url 'creator_page' obj.creator_user.username %}
+
 Hi {{ obj.fan_user.display_name }},
 Your {{ obj.tier.name }} membership has been successfully renewed.
 You were charged {{ obj.active_subscription.plan.amount }}. Your next renewal is on {{ obj.active_subscription.cycle_end_at|date:"d F Y" }}.
@@ -7,9 +14,20 @@ View Memberships
 
 {{ settings.BASE_URL }}{% url 'memberships'  %}
 
+ 
+
+
+
+
+
+
+
+
+https://fanmo.in
+
 Fanmo
 Need help? Email us on help@fanmo.in mailto:help@fanmo.in
 
-Website https://fanmo.in •
-Twitter https://twitter.com/getfanmo •
-Facebook https://facebook.com/getfanmo
+Email Settings https://fanmo.in/settings/ •
+Fanmo https://fanmo.in •
+Twitter https://twitter.com/getfanmo

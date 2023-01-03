@@ -39,6 +39,8 @@ django-debug-toolbar==3.5.0  # https://github.com/jazzband/django-debug-toolbar
 django-coverage-plugin==2.0.3  # https://github.com/nedbat/django_coverage_plugin
 pytest-django==4.5.2  # https://github.com/pytest-dev/pytest-django
 
+# not actively used, only needed for imports
+django-storages[boto3]==1.12.3  # https://github.com/jschneier/django-storages
 
 # Debug
 # ------------------------------------------------------------------------------

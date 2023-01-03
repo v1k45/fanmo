@@ -236,6 +236,7 @@ TEMPLATES = [
                 "django.contrib.messages.context_processors.messages",
                 "fanmo.utils.context_processors.settings_context",
             ],
+            "builtins": ["fanmo.core.template_builtins"]
         },
     }
 ]

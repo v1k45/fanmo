@@ -1,0 +1,13 @@
+<tr>
+  <td class="py-24 px-32 sm:py-32 sm:px-24">
+    <a class="no-underline text-title" href="@{{ settings.BASE_URL }}{% url 'creator_page' obj.creator_user.username %}">
+      <div class="text-center">
+      {% if obj.creator_user.avatar %}<img class="rounded-full h-72 w-72" src="{% image_url obj.creator_user.avatar.crop.80x80 %}" class="w-auto max-w-xs" alt="Creator Avatar Picture">{% else %}<img src="https://fanmo.in/static/images/logo.mid.png" class="w-auto max-w-xs" alt="Fanmo">{% endif %}
+      </div>
+      <div class="mt-20 text-center">
+        <div class="text-xl font-semibold">@{{ obj.creator_user.display_name }}</div>
+        {% if obj.creator_user.one_liner %}<div>@{{ obj.creator_user.one_liner }}</div>{% endif %}
+      </div>
+    </a>
+  </td>
+</tr>

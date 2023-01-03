@@ -2,12 +2,12 @@
 bodyClass: bg-gray-100
 ---
 
-<extends src="src/layouts/main.html">
+<extends src="src/layouts/creator.html">
   <block name="template">
     <p class="text-xl sm:leading-32 text-black font-semibold m-0 mb-24">Hi @{{ obj.fan_user.display_name }},</p>
     <p><strong>@{{ obj.tier.name }}</strong> has been scheduled to cancel on @{{ obj.active_subscription.cycle_end_at|date:"d F Y" }}.</p>
     <p>You won't be charged on the next renewal.</p>
-    <div class="leading-full">
+    <div class="leading-full text-center">
       <component src="src/components/button.html" target="memberships" args="">
         View Memberships
       </component>

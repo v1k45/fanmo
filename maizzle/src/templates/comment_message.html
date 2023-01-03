@@ -8,19 +8,19 @@ bodyClass: bg-gray-100
     <p><strong>@{{ obj.author_user.display_name }}</strong> commented on <strong>{% if obj.post %}@{{ obj.post.title }}{% else %}@{{ obj.donation.amount }} tip{% endif %}</strong>.</p>
     <p><em>@{{ obj.body }}</em></p>
     {% if obj.post %}
-    <div class="leading-full">
+    <div class="leading-full text-center">
       <component src="src/components/button.html" target="post_detail" args="obj.post.slug obj.post.id">
         View Post
       </component>
     </div>
     {% elif obj.donation and obj.recipient == obj.creator_user %}
-    <div class="leading-full">
+    <div class="leading-full text-center">
       <component src="src/components/button.html" target="received-tips" args="">
         View Tips
       </component>
     </div>
     {% elif obj.donation and obj.recipient != obj.creator_user %}
-    <div class="leading-full">
+    <div class="leading-full text-center">
       <component src="src/components/button.html" target="sent-tips" args="">
         View Tips
       </component>
