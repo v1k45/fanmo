@@ -60,7 +60,7 @@ class TestDiscordServerAPI:
         assert sorted([r["name"] for r in response_data["roles"]]) == ["gold", "silver"]
 
         get_token_mock.assert_called_with(
-            "foobar_123", "https://localhost/auth/callback/discord/"
+            "foobar_123", "https://localhost:7777/auth/callback/discord/"
         )
         get_user_mock.assert_called_with("access_123")
 
@@ -224,7 +224,7 @@ class TestDiscordUserAPI:
         assert response_data["name"] == "booboo#2160"
 
         get_token_mock.assert_called_with(
-            "code_123", "https://localhost/auth/callback/discord/"
+            "code_123", "https://localhost:7777/auth/callback/discord/"
         )
         get_user_mock.assert_called_with("access_123")
         refresh_token_mock.assert_called_with("refresh_123")

@@ -1,14 +1,54 @@
-Hi {{ recipient.display_name }},
-{{ obj.author_user.display_name }} just added a new post.
-"{{ obj.title }}"
+{% if obj.creator_user.avatar %} {% else %} {% endif %}
+
+{{ obj.creator_user.display_name }}
+{% if obj.creator_user.one_liner %} {{ obj.creator_user.one_liner }} {% endif %}
+
+{{ settings.BASE_URL }}{% url 'creator_page' obj.creator_user.username %}
+
+{{ obj.title }} {{ settings.BASE_URL }}{% url 'post_detail' obj.slug obj.id %}
+
+{% if obj.can_access %}
+      {% if obj.content.type == "text" %}
+{{ obj.content.text|safe }}
+{% elif obj.content.type == "link" %}
+
+{{ obj.content.text|safe }}
+{{ obj.content.link }} {{ obj.content.link }}
+
+{% elif obj.content.type == "images" %}
+
+{{ obj.content.text|safe }}
+{% for file in obj.content.files.all %}
+
+{% if file.type == "image" %}
+
+{% endif %}
+
+{% endfor %}
+
+{% endif %}
+    {% else %}
+Become a member to unlock this post.
+{% endif %}
 
 View Post   →
 
 {{ settings.BASE_URL }}{% url 'post_detail' obj.slug obj.id %}
 
+ 
+
+
+
+
+
+
+
+
+https://fanmo.in
+
 Fanmo
 Need help? Email us on help@fanmo.in mailto:help@fanmo.in
 
-Website https://fanmo.in •
-Twitter https://twitter.com/getfanmo •
-Facebook https://facebook.com/getfanmo
+Unsubscribe https://fanmo.in/settings/ •
+Fanmo https://fanmo.in •
+Twitter https://twitter.com/getfanmo

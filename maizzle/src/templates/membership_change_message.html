@@ -2,12 +2,12 @@
 bodyClass: bg-gray-100
 ---
 
-<extends src="src/layouts/main.html">
+<extends src="src/layouts/creator.html">
   <block name="template">
     <p class="text-xl sm:leading-32 text-black font-semibold m-0 mb-24">Hi @{{ obj.fan_user.display_name }},</p>
-    <p>Your membership tier for <strong>@{{ obj.creator_user.display_name }}</strong> has been successfully updated to @{{ obj.scheduled_subscription.plan.tier.name }}.</p>
+    <p>Your membership tier has been successfully updated to @{{ obj.scheduled_subscription.plan.tier.name }}.</p>
     <p>You will be charged @{{ obj.scheduled_subscription.plan.amount }} per month from @{{ obj.scheduled_subscription.cycle_start_at|date:"d F Y" }}.</p>
-    <div class="leading-full">
+    <div class="leading-full text-center">
       <component src="src/components/button.html" target="memberships" args="">
         View Memberships
       </component>

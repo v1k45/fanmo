@@ -116,6 +116,10 @@ class Post(BaseModel):
     def get_absolute_url(self):
         return reverse("post_detail", args=[self.slug, self.id])
 
+    @property
+    def creator_user(self):
+        return self.author_user
+
 
 class Content(BaseModel):
     class Type(models.TextChoices):

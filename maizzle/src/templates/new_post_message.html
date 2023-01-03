@@ -2,15 +2,36 @@
 bodyClass: bg-gray-100
 ---
 
-<extends src="src/layouts/main.html">
+<extends src="src/layouts/creator.html">
   <block name="template">
-    <p class="text-xl sm:leading-32 text-black font-semibold m-0 mb-24">Hi @{{ recipient.display_name }},</p>
-    <p><strong>@{{ obj.author_user.display_name }}</strong> just added a new post.</p>
-    <p>
-      <em>"@{{ obj.title }}"</em>
+    <p class="text-3xl text-black font-semibold m-0 mb-32 text-center">
+      <a href="@{{ settings.BASE_URL }}{% url 'post_detail' obj.slug obj.id %}" class="text-black no-underline">@{{ obj.title }}</a>
     </p>
-    <div class="leading-full">
-      <component src="src/components/button.html" target="post_detail" args="obj.slug obj.id">View Post</component>
+    {% if obj.can_access %}
+      {% if obj.content.type == "text" %}
+      <div>@{{ obj.content.text|safe }}</div>
+      {% elif obj.content.type == "link" %}
+      <div>
+        <div>@{{ obj.content.text|safe }}</div>
+        <p><a href="@{{ obj.content.link }}">@{{ obj.content.link }}</a></p>
       </div>
+      {% elif obj.content.type == "images" %}
+      <div>
+        <div>@{{ obj.content.text|safe }}</div>
+        {% for file in obj.content.files.all %}
+          <div class="mt-8 text-center">
+          {% if file.type == "image" %}
+          <img src="{% image_url file.image.thumbnail.990x600 %}" class="w-auto" />
+          {% endif %}
+          </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    {% else %}
+      <p><em>Become a member to unlock this post.</em></p>
+    {% endif %}
+    <div class="leading-full mt-24 text-center">
+      <component src="src/components/button.html" target="post_detail" args="obj.slug obj.id">View Post</component>
+    </div>
   </block>
 </extends>
