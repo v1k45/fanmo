@@ -11,4 +11,4 @@ def image_url(file_instance):
     if isinstance(file_instance.storage, MediaRootS3Boto3Storage):
         return file_instance.storage.url(file_instance.name, expire=3600 * 24 * 365)
     else:
-        return settings.BASE_URL + file_instance.storage.url
+        return settings.BASE_URL + file_instance.url
