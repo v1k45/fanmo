@@ -31,7 +31,7 @@ class EmailNotificationChannel(BaseNotificationChannel):
         if self.context.get("source_as_sender_name"):
             email_label = self.notification.source.display_name
             email_address = settings.DEFAULT_FROM_EMAIL_ADDRESS
-            payload["from_email"] = f"{email_label} (via Fanmo.in) {email_address}"
+            payload["from_email"] = f"{email_label} (via Fanmo) {email_address}"
         return payload
 
     def render_template(self, suffix, format="txt", **context):
