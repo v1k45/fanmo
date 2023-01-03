@@ -17,7 +17,7 @@ bodyClass: bg-gray-100
       </div>
       {% elif obj.content.type == "images" %}
       <div>
-        <div>@{{ obj.content.text|safe }}</div>
+        <div class="mb-16">@{{ obj.content.text|safe }}</div>
         {% for file in obj.content.files.all %}
           <div class="mt-8 text-center">
           {% if file.type == "image" %}
@@ -28,7 +28,7 @@ bodyClass: bg-gray-100
       </div>
       {% endif %}
     {% else %}
-      <p><em>Become a member to unlock this post.</em></p>
+      <p class="text-center"><em>Become a member to unlock this post.</em></p>
     {% endif %}
     <div class="leading-full mt-24 text-center">
       <component src="src/components/button.html" target="post_detail" args="obj.slug obj.id">View Post</component>

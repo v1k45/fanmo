@@ -72,7 +72,7 @@
       </div>
       {% elif obj.content.type == "images" %}
       <div>
-        <div>{{ obj.content.text|safe }}</div>
+        <div style="margin-bottom: 16px">{{ obj.content.text|safe }}</div>
         {% for file in obj.content.files.all %}
           <div style="margin-top: 8px; text-align: center">
           {% if file.type == "image" %}
@@ -83,7 +83,7 @@
       </div>
       {% endif %}
     {% else %}
-      <p><em>Become a member to unlock this post.</em></p>
+      <p style="text-align: center"><em>Become a member to unlock this post.</em></p>
     {% endif %}
     <div style="margin-top: 24px; text-align: center; line-height: 100%">
       <a href="{{ settings.BASE_URL }}{% url 'post_detail' obj.slug obj.id %}" class="hover-bg-fm-primary-600" style="display: inline-block; border-radius: 9999px; background-color: #6366f1; padding-top: 16px; padding-bottom: 16px; padding-left: 24px; padding-right: 24px; text-align: center; font-size: 16px; font-weight: 600; color: #fff; text-decoration-line: none">
