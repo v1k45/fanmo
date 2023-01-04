@@ -61,7 +61,7 @@
       </fm-input>
     </div>
 
-    <fm-button type="primary" native-type="submit" class="btn-donate mt-4" :loading="loading" block>Support</fm-button>
+    <fm-button type="primary" native-type="submit" class="btn-donate mt-4" :loading="loading" block>Send Tip</fm-button>
   </fm-form>
 </fm-card>
 </template>
