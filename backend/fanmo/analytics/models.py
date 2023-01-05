@@ -32,3 +32,22 @@ class StatisticByDateAndObject(
 
     def datestamp(self):
         return datestamp(self.date)
+
+
+class ApplicationEvent(BaseModel):
+    class EventName(models.TextChoices):
+        PAYMENT_FAILED = "payment_failed"
+
+    name = models.CharField(max_length=15, choices=EventName.choices)
+    payload = models.JSONField()
+
+    # optional, but related metadata
+    donation = models.ForeignKey(
+        "donations.Donation", blank=True, null=True, on_delete=models.CASCADE
+    )
+    subscription = models.ForeignKey(
+        "memberships.Subscription", blank=True, null=True, on_delete=models.CASCADE
+    )
+
+    def __str__(self) -> str:
+        return self.name

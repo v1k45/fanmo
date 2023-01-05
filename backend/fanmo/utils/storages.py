@@ -28,7 +28,7 @@ class MediaRootS3Boto3Storage(S3Boto3Storage):
         # set cache timeout to less than 1 hour irrespecitve of the actual expiration
         # this keeps the URL refreshed for cases where it is intended to be consumed by an external system like an e-mail client.
         # by refreshing the link early, the e-mail client will be able display the media upto the specified expiration time (e.g. a year)
-        # if this is not done, we could hit an edge-case where the email client consumes a URL which is valid but about to expire very soon. 
+        # if this is not done, we could hit an edge-case where the email client consumes a URL which is valid but about to expire very soon.
         timeout = int(settings.AWS_QUERYSTRING_EXPIRE * 0.75)
         result = super().url(name, parameters, expire, http_method)
         cache.set(cache_key, result, timeout)

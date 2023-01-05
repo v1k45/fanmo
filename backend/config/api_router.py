@@ -12,7 +12,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 from ipware import get_client_ip
 from rest_framework_extensions.routers import ExtendedSimpleRouter
 
-from fanmo.analytics.api.views import AnalyticsAPIView
+from fanmo.analytics.api.views import AnalyticsAPIView, ApplicationEventAPIView
 from fanmo.donations.api.views import DonationViewSet
 from fanmo.integrations.api.views import (
     DiscordServerConnectView,
@@ -109,6 +109,7 @@ api_patterns = [
     path("integrations/", include(integration_patterns)),
     path("webhooks/razorpay/", razorpay_webhook),
     path("stats/", AnalyticsAPIView.as_view(), name="analytics"),
+    path("events/", ApplicationEventAPIView.as_view(), name="events"),
 ]
 
 api_docs_patterns = []
