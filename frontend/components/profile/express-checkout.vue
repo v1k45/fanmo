@@ -44,7 +44,7 @@
       </div>
 
       <fm-button native-type="submit" type="primary" class="mt-4" block :loading="loading">
-        <div class="py-1 text-base">Proceed with payment</div>
+        <div class="py-1 text-base">Proceed to payment</div>
       </fm-button>
     </fm-form>
   </div>

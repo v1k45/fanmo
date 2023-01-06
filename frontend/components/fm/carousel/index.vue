@@ -28,7 +28,16 @@
   </div>
 
   <fm-dialog v-model="fullSize.isVisible" dialog-class="!grow-0 md:mx-10" custom-width no-padding>
-    <img v-if="fullSize.isVisible" :src="fullSize.image" class="max-h-[90vh] rounded-lg">
+    <img v-if="fullSize.isVisible" v-swipe :src="getImage(images[currentItem], 'full')" class="max-h-[90vh] rounded-lg" @swiped="handleSwipe">
+    <button v-if="currentItem > 0" type="button" class="fm-carousel__previous" @click="navigate(-1)">
+      <icon-chevron-left></icon-chevron-left>
+    </button>
+    <button v-if="currentItem < images.length - 1" type="button" class="fm-carousel__next" @click="navigate(1)">
+      <icon-chevron-right></icon-chevron-right>
+    </button>
+    <div v-if="images.length > 1" class="fm-carousel__info">
+      {{ currentItem + 1 }}/{{ images.length }}
+    </div>
   </fm-dialog>
 </div>
 </template>

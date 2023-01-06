@@ -523,12 +523,27 @@ export default {
       // TODO: handle error in a more fancy way
       // failed
       rzp1.on('payment.failed', (response) => {
-        // response.error.description, response.error.reason
         this.loadingLockedPostId = null;
         this.loadingTierId = null;
         this.donationLoading = false;
+        this.logApplicationEvent(
+          'payment_failed',
+          response,
+          supportType === DONATION ? donationOrSubscription.id : null,
+          supportType === MEMBERSHIP ? donationOrSubscription.id : null
+        );
       });
       rzp1.open();
+    },
+
+    async logApplicationEvent(name, payload, donationId, subscriptionId) {
+      try {
+        await this.$axios.$post('/api/events/', {
+          name, payload, donation_id: donationId, subscription_id: subscriptionId
+        });
+      } catch (err) {
+        // do nothing
+      }
     },
 
     handlePaymentSuccessNext(actionType) {
