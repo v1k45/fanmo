@@ -195,7 +195,7 @@
         <div class="flex flex-col items-center w-full md:w-1/3 my-8 space-y-2">
           <icon-inbox class="w-8 h-8 lg:w-12 lg:h-12 text-fm-primary"></icon-inbox>
           <div class="font-bold text-title">Email notifications</div>
-          <div class="mt-2 text-gray-500">Deliver your posts instantly to your members as emails. Get notified whenever someone supports you.</div>
+          <div class="mt-2 text-gray-500">Deliver your posts instantly to your members as newsletters. Get notified whenever someone supports you.</div>
         </div>
         <div class="flex flex-col items-center w-full md:w-1/3 my-8 space-y-2">
           <icon-download class="w-8 h-8 lg:w-12 lg:h-12 text-fm-primary"></icon-download>

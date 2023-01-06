@@ -149,7 +149,7 @@
               <td><icon-x-circle class="icon-x"></icon-x-circle></td>
             </tr>
             <tr>
-              <th>Email Notifications</th>
+              <th>Newsletters</th>
               <td><icon-check-circle-2 class="icon-check"></icon-check-circle-2></td>
               <td><icon-check-circle-2 class="icon-check"></icon-check-circle-2></td>
               <td><icon-check-circle-2 class="icon-check"></icon-check-circle-2></td>
