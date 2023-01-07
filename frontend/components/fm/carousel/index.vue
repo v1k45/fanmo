@@ -5,7 +5,7 @@
       <div
         v-for="(image, idx) in images" :key="idx" class="fm-carousel__item"
         :style="{ left: `${idx * 100}%` }" title="Click to view the full size image"
-        @click="showFullSize(image)">
+        @click="fullSize.isVisible = true">
         <img :src="getImage(image, 'medium')" :alt="`Image ${idx + 1}`">
       </div>
     </div>
@@ -19,16 +19,20 @@
       {{ currentItem + 1 }}/{{ images.length }}
     </div>
   </div>
-  <div v-if="images.length > 1" class="fm-carousel__index">
+  <div v-if="images.length > 1" class="px-5 py-2">
+    <input v-model.number="currentItem" class="w-full" type="range" :min="0" :step="1" :max="images.length - 1">
+  </div>
+  <!-- temporarily disable image based nav, in future mix range + image nav -->
+  <div v-if="false" class="fm-carousel__index">
     <button v-for="(image, idx) in images" :key="idx" type="button" class="fm-carousel__index-item" :class="{
       'fm-carousel__index-item--active': currentItem === idx
-    }" @click="currentItem = idx;">
+    }" @click="selectImage(idx)">
       <img :src="getImage(image, 'small')" :alt="`Image ${idx + 1}`">
     </button>
   </div>
 
-  <fm-dialog v-model="fullSize.isVisible" dialog-class="!grow-0 md:mx-10" custom-width no-padding>
-    <img v-if="fullSize.isVisible" v-swipe :src="getImage(images[currentItem], 'full')" class="max-h-[90vh] rounded-lg" @swiped="handleSwipe">
+  <fm-dialog v-model="fullSize.isVisible" dialog-class="!grow-0 md:mx-10" class="!items-center" custom-width no-padding>
+    <img v-swipe :src="getImage(images[currentItem], 'full')" class="max-h-[90vh] rounded-lg" @swiped="handleSwipe">
     <button v-if="currentItem > 0" type="button" class="fm-carousel__previous" @click="navigate(-1)">
       <icon-chevron-left></icon-chevron-left>
     </button>
@@ -46,7 +50,7 @@
 import debounce from 'lodash/debounce';
 export default {
   props: {
-    height: { type: String, default: 'h-[300px] lg:h-[400px]' },
+    height: { type: String, default: 'h-[300px] lg:h-[450px]' },
     images: { type: Array, default: () => [] }
   },
   data() {
@@ -54,9 +58,17 @@ export default {
       currentItem: 0,
       fullSize: {
         isVisible: false,
-        image: null
+        handler: null
       }
     };
+  },
+  created() {
+    this.fullSize.handler = (evt) => this.handleKeyboardNav(evt);
+    // eslint-disable-next-line nuxt/no-globals-in-created
+    window.addEventListener('keydown', this.fullSize.handler);
+  },
+  beforeDestroy() {
+    window.removeEventListener('keydown', this.fullSize.handler);
   },
   methods: {
     navigate(by) {
@@ -70,15 +82,26 @@ export default {
         if (this.currentItem > 0) this.navigate(-1);
       }
     }, 100, { leading: true, trailing: false }),
+    handleKeyboardNav(evt) {
+      if (!this.fullSize.isVisible) return;
+      if (evt.key === 'Escape') {
+        this.fullSize.isVisible = false;
+      } else if (evt.key === 'ArrowRight') {
+        if (this.currentItem < this.images.length - 1) this.navigate(1);
+      } else if (evt.key === 'ArrowLeft') {
+        if (this.currentItem > 0) this.navigate(-1);
+      }
+    },
     getImage(image, size) {
       if (typeof image !== 'object') return image;
       return image[size];
     },
-    showFullSize(image) {
-      this.fullSize = {
-        isVisible: true,
-        image: this.getImage(image, 'full')
-      };
+    selectImage(idx) {
+      if (this.currentItem === idx) {
+        this.fullSize.isVisible = true;
+      } else {
+        this.currentItem = idx;
+      }
     }
   }
 };
@@ -96,7 +119,7 @@ export default {
 .fm-carousel__item {
   @apply h-full w-full cursor-pointer absolute top-0;
   > img {
-    @apply h-full w-full object-cover;
+    @apply h-full w-full object-contain;
   }
 }
 .fm-carousel__previous,
