@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
 
-from .models import Comment, Content, Post, Reaction
+from .models import Comment, Content, ContentFile, Post, Reaction
 
 
 @admin.register(Post)
@@ -29,6 +29,10 @@ class PostAdmin(admin.ModelAdmin):
     date_hierarchy = "created_at"
 
 
+class ContentFileInlineAdmin(admin.StackedInline):
+    model = ContentFile
+
+
 @admin.register(Content)
 class ContentAdmin(admin.ModelAdmin):
     list_display = (
@@ -44,6 +48,7 @@ class ContentAdmin(admin.ModelAdmin):
     )
     list_filter = ("created_at", "updated_at")
     date_hierarchy = "created_at"
+    inlines = [ContentFileInlineAdmin]
 
 
 @admin.register(Comment)

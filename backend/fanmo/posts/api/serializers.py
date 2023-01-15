@@ -1,4 +1,6 @@
 import bleach
+from django.conf import settings
+from django.urls import reverse
 from drf_extra_fields.fields import Base64FileField, Base64ImageField
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
@@ -6,7 +8,7 @@ from rest_framework import serializers
 from fanmo.donations.models import Donation
 from fanmo.memberships.api.serializers import TierPreviewSerializer
 from fanmo.memberships.models import Tier
-from fanmo.posts.models import Comment, Content, ContentFile, Post, Reaction
+from fanmo.posts.models import Comment, Content, ContentFile, Post, PostImage, Reaction
 from fanmo.users.api.serializers import PublicUserSerializer, UserPreviewSerializer
 from fanmo.utils.fields import FileField, VersatileImageFieldSerializer
 
@@ -76,8 +78,9 @@ class ContentSerializer(serializers.ModelSerializer):
                 "li",
                 "blockquote",
                 "hr",
+                "img",
             ],
-            attributes={"a": ["href", "rel", "target"]},
+            attributes={"a": ["href", "rel", "target"], "img": ["src"]},
         )
 
     def validate(self, attrs):
@@ -491,3 +494,36 @@ class LinkPreviewSerializer(serializers.Serializer):
         attrs["link_og"] = content.link_og
         attrs["link_embed"] = content.link_embed
         return attrs
+
+
+class PostImageProxySerializer(serializers.ModelSerializer):
+    small = serializers.SerializerMethodField()
+    medium = serializers.SerializerMethodField()
+    full = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PostImage
+        fields = ["small", "medium", "full"]
+
+    def get_small(self, post_image):
+        return self._get_post_image(post_image, "small")
+
+    def get_medium(self, post_image):
+        return self._get_post_image(post_image, "medium")
+
+    def get_full(self, post_image):
+        return self._get_post_image(post_image, "full")
+
+    def _get_post_image(self, post_image, size):
+        return settings.BASE_URL + reverse(
+            "post_image_proxy", args=[post_image.uuid, "small"]
+        )
+
+
+class PostImageSerializer(serializers.ModelSerializer):
+    image = PostImageProxySerializer(source="*", read_only=True)
+    image_base64 = Base64ImageField(write_only=True, required=True, source="image")
+
+    class Meta:
+        model = PostImage
+        fields = ["id", "image", "image_base64", "created_at", "updated_at"]

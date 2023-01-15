@@ -46,6 +46,10 @@ export default {
     font-size: 90%;
   }
 
+  img {
+    @apply mx-auto;
+  }
+
   code,
   kbd,
   pre,

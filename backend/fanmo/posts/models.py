@@ -1,3 +1,5 @@
+import uuid
+
 import metadata_parser
 import structlog
 from django.core.cache import cache
@@ -131,6 +133,7 @@ class Content(BaseModel):
 
     type = models.CharField(max_length=16, choices=Type.choices)
     text = models.TextField(blank=True)
+    # todo: remove or replace image field to act as post cover image
     image = VersatileImageField(upload_to="uploads/content/", blank=True)
     link = models.URLField(blank=True)
 
@@ -199,6 +202,15 @@ class ContentFile(BaseModel):
 
     class Meta:
         ordering = ["order"]
+
+
+class PostImage(BaseModel):
+    uuid = models.UUIDField(default=uuid.uuid4)
+    image = VersatileImageField(upload_to="uploads/posts/")
+    creator_user = models.ForeignKey("users.User", on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.image.name
 
 
 class CommentModelMeta(type(BaseModel), type(MPTTModel)):

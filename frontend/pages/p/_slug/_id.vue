@@ -48,8 +48,8 @@
         <fm-button type="primary" block class="ml-2" @click="$router.replace(`/${$auth.user.username}`)">Go to your profile</fm-button>
       </div>
     </div>
-    <div v-else class="max-w-6xl grid grid-cols-12 gap-5 mx-auto">
-      <div class="col-span-12 lg:col-span-7">
+    <div v-else class="max-w-4xl mx-auto">
+      <div>
         <!-- TODO: showCreatorInfo on phone [needs breakpoint service] -->
         <profile-post
           v-if="post"
@@ -72,9 +72,7 @@
           </template>
         </profile-post>
       </div>
-      <div v-if="user" class="col-span-12 lg:col-span-5 h-full">
-        <div class="lg:hidden mt-4"></div>
-
+      <div v-if="user" class="h-full mt-4">
         <fm-card class="overflow-hidden sticky top-20">
           <div class="text-xl text-black font-bold truncate mb-3">About</div>
 

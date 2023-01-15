@@ -13,10 +13,10 @@
         <fm-form id="createPostForm" :errors="errors" @submit.prevent="handleSubmit">
           <fm-tabs v-model="contentType" stretched>
             <!-- text only post start -->
-            <fm-tabs-pane id="text" label="Text" lazy>
+            <fm-tabs-pane id="text" label="Content" lazy>
               <template v-if="contentType === 'text'">
                 <fm-input v-model="form.title" uid="title" type="text" placeholder="Title" input-class="font-bold !text-lg" required></fm-input>
-                <fm-input-rich v-model="form.content.text" uid="content.text" preset="advanced" :props="{ minHeight: '200px' }"></fm-input-rich>
+                <fm-input-rich v-model="form.content.text" uid="content.text" preset="advanced" :props="{ minHeight: '400px', maxHeight: 'none' }"></fm-input-rich>
               </template>
             </fm-tabs-pane>
             <!-- text only post end -->
