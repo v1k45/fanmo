@@ -494,7 +494,9 @@ export default {
         this.loadingTierId = null;
         this.loadingLockedPostId = null;
         this.donationLoading = false;
+        this.isLoading = 'Processing payment... Do not close or refresh this page.';
         const { error, response } = await this.processPayment({ donationOrSubscription, paymentResponse, supportType });
+        this.isLoading = false;
         if (error) {
           // TODO: add a retry option to the dialog
           this.$alert.error(response, 'Error');

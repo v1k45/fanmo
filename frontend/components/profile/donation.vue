@@ -107,7 +107,6 @@ export default {
     };
   },
   computed: {
-    DONATION_TIER_STYLE_MAP,
     ...mapGetters('profile', ['isSelfProfile']),
     createdAt() {
       if (!this.donation) return '';
