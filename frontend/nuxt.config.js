@@ -16,8 +16,8 @@ const config = {
 const envConfig = config[process.env.STAGE || 'dev'];
 
 const seoValues = {
-  title: 'Fanmo - Home for your most passionate fans',
-  description: 'Fanmo is the simplest way to offer memberships, accept tips and post member-exclusive content. Create your Fanmo page today, it takes less than 5 minutes to get started.',
+  title: 'Fanmo - Build a stable income from your passion',
+  description: 'Fanmo is the simplest way to offer monthly memberships, accept tips and post member-only content. Create your Fanmo page today, it takes less than 5 minutes to get started.',
   keywords: 'fanmo, memberships, donations, tips, patreon alternative, buymeacoffee alternative, india, creators, supporters, low cost',
   image: envConfig.ogImage
 };
@@ -40,7 +40,7 @@ export default {
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     // title has to be hardcoded because nuxt is pasting the function contents over to the component  https://github.com/nuxt/nuxt.js/issues/4457
-    titleTemplate: titleChunk => titleChunk ? `${titleChunk} | Fanmo` : 'Fanmo - Home for your most passionate fans',
+    titleTemplate: titleChunk => titleChunk ? `${titleChunk} | Fanmo` : 'Fanmo - Build a stable income from your passion',
     htmlAttrs: {
       lang: 'en',
       'data-theme': 'brand'

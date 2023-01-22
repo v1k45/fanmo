@@ -10,9 +10,9 @@
     }" alt="Cheerful animated character representing a creator sitting in front of the computer">
     <div class="container">
       <div class="text-center lg:max-w-lg lg:text-left">
-        <h1 class="mb-6 text-4xl font-semibold leading-tight font-title sm:text-5xl lg:text-6xl">Home for your most passionate fans</h1>
+        <h1 class="mb-6 mt-6 lg:mt-0 text-4xl font-semibold leading-tight font-title sm:text-5xl lg:text-6xl">Build a stable income from your passion</h1>
 
-        <p class="mb-8 leading-relaxed sm:text-lg">Simplest way to offer memberships, accept tips and post member-exclusive content.</p>
+        <p class="mb-8 leading-relaxed sm:text-lg">Simplest way to offer monthly memberships, accept tips and post member-only content.</p>
 
         <nuxt-link
           :to="$auth.loggedIn ? '/dashboard' : '/register'"

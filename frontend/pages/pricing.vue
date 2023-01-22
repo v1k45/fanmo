@@ -2,7 +2,7 @@
 <main>
 
   <!-- hero start -->
-  <section class="py-16 lg:py-24 min-h-[550px] bg-fm-primary-50">
+  <section class="py-10 lg:py-24 min-h-[550px] bg-fm-primary-50">
     <div class="container flex flex-wrap">
       <div>
         <div class="lg:max-w-lg">
@@ -13,6 +13,13 @@
             Fanmo takes a small platform fee from your earnings. <br><br>
             Unlike other platforms, with Fanmo you don't have to guess the money you'll get in your bank account.
           </p>
+        </div>
+        <div class="text-center sm:text-left">
+          <nuxt-link
+            :to="$auth.loggedIn ? '/dashboard' : '/register'"
+            class="unstyled inline-flex items-center px-10 py-4 mx-auto text-lg text-white rounded-full lg:mx-0 bg-fm-primary transform transition-transform hover:scale-105">
+            {{ $auth.loggedIn ? 'Go to Dashboard' : 'Register Now' }}
+          </nuxt-link>
         </div>
         <div class="flex flex-col mt-6 lg:mt-12 mb-6 space-y-3 sm:flex-row sm:space-y-0 sm:space-x-6 lg:mb-0">
           <div class="flex items-center">
@@ -38,7 +45,7 @@
 
           <ul class="space-y-4 mt-6 font-bold">
             <li
-              v-for="feature in ['Membership tiers', 'Tips', 'Posts', 'Fast payouts', 'UPI, Netbanking, Cards', 'Responsive support']" :key="feature"
+              v-for="feature in ['Membership tiers', 'Tips', 'Posts and Comments', 'Newsletters', 'Discord Invites', 'Fast payouts', 'UPI, Netbanking, Cards']" :key="feature"
               class="flex items-center">
               <icon-check class="mr-3"></icon-check> {{ feature }}
             </li>
@@ -46,7 +53,7 @@
 
           <nuxt-link
             :to="$auth.loggedIn ? '/dashboard' : '/register'"
-            class="unstyled flex justify-center items-center mt-8 px-10 py-4 mx-auto lg:text-lg text-fm-primary rounded-full lg:mx-0 bg-white transform transition-transform hover:scale-105">
+            class="unstyled flex justify-center items-center mt-8 px-10 py-4 mx-auto lg:text-lg text-fm-primary rounded-full lg:mx-0 bg-white transform transition-transform hover:scale-105 sm:hidden">
             {{ $auth.loggedIn ? 'Go to Dashboard' : 'Register Now' }}
           </nuxt-link>
         </div>
