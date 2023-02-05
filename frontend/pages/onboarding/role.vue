@@ -15,7 +15,7 @@
         <div class="text-xs mt-1">You will still be able to support your favorite creators.</div>
       </fm-input>
       <fm-input v-model="form.is_creator" uid="is_creator" :native-value="false" name="type" type="radio" required>
-        <div class="font-bold">I'm a supporter</div>
+        <div class="font-bold">I'm here to support creators</div>
         <div class="text-xs mt-1">Don't worry, you can change your account type at any time.</div>
       </fm-input>
 
