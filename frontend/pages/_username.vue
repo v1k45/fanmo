@@ -387,7 +387,7 @@ export default {
 
     // logic is documented in createOrGetMembership
     async handleSubscribeClick(tier, { postId = null } = {}) {
-      if (!this.$auth.loggedIn) {
+      if (!this.currentUserHasActiveSubscription) {
         this.expressCheckout = {
           isVisible: true,
           tier,
