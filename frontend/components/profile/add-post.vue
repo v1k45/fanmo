@@ -9,7 +9,7 @@
 
   <div class="container py-6">
     <div class="row">
-      <div class="col-12 lg:col-6">
+      <div class="col-12" :class="{'lg:col-6': showPreview}">
         <fm-form id="createPostForm" :errors="errors" @submit.prevent="handleSubmit">
           <fm-tabs v-model="contentType" stretched>
             <!-- text only post start -->
@@ -59,12 +59,20 @@
           </div>
           <!-- visibility end -->
 
+          <div v-if="!showPreview" class="my-4 max-w-xl flex justify-between items-center">
+            <div>See how this post will look when it is published</div>
+            <fm-button size="sm" @click="showPreview = true"><icon-eye class="h-em w-em"></icon-eye> Show Preview</fm-button>
+          </div>
+
         </fm-form>
       </div>
-      <div class="hidden lg:block col-6">
+      <div class="hidden" :class="{'lg:block col-6': showPreview}">
         <div class="bg-gray-50 min-h-full rounded-lg px-6 py-4">
           <!-- TODO: once breakpoint service is available, add a preview tab for phones -->
-          <div class="text-lg font-bold mb-4">Preview</div>
+          <div class="mb-3 flex justify-between">
+            <div class="text-lg font-bold">Preview</div>
+            <fm-button size="sm" @click="showPreview = false"><icon-eye-off class="h-em w-em"></icon-eye-off> Hide Preview</fm-button>
+          </div>
           <!-- preview card start -->
           <div class="bg-white rounded-xl border pt-4 pb-1">
             <div class="post-body">
@@ -235,6 +243,7 @@ export default {
         link_og: null,
         link_embed: null
       },
+      showPreview: true,
       loading: false
     };
   },

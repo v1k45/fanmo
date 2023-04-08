@@ -516,7 +516,7 @@ class PostImageProxySerializer(serializers.ModelSerializer):
 
     def _get_post_image(self, post_image, size):
         return settings.BASE_URL + reverse(
-            "post_image_proxy", args=[post_image.uuid, "small"]
+            "post_image_proxy", args=[post_image.uuid, size]
         )
 
 

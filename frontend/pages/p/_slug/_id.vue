@@ -48,7 +48,7 @@
         <fm-button type="primary" block class="ml-2" @click="$router.replace(`/${$auth.user.username}`)">Go to your profile</fm-button>
       </div>
     </div>
-    <div v-else class="max-w-4xl mx-auto">
+    <div v-else class="max-w-6xl mx-auto">
       <div>
         <!-- TODO: showCreatorInfo on phone [needs breakpoint service] -->
         <profile-post

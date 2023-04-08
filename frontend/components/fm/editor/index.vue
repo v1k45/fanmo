@@ -262,7 +262,17 @@ export default {
       try {
         const imageBase64 = await getBase64FromFile(cloneDeep(this.imageUploader.form).image_base64);
         const postImage = await this.$axios.$post('/api/images/', { image_base64: imageBase64 });
-        this.editor.chain().focus().setImage({ src: postImage.image.medium }).run();
+        this.editor.chain().focus().insertContent([
+          {
+            type: 'image',
+            attrs: {
+              src: postImage.image.medium
+            }
+          },
+          {
+            type: 'hardBreak'
+          }
+        ]).run();
         this.imageUploader.isVisible = false;
         this.imageUploader.form.image_base64 = '';
       } catch (err) {
@@ -312,6 +322,9 @@ italic, bold, strikethrough, list, paragraph, h1-h6, blockquote, hr
   @apply border border-gray-300 border-t-0 rounded-lg rounded-t-none py-4 px-4 overflow-auto flex-grow flex;
   > .ProseMirror {
     @apply min-h-[100px] h-max outline-none flex-grow;
+    img.ProseMirror-selectednode {
+      @apply ring ring-offset-0 ring-gray-500
+    }
   }
 }
 
