@@ -60,7 +60,7 @@
           <!-- visibility end -->
 
           <div v-if="!showPreview" class="my-4 max-w-xl flex justify-between items-center">
-            <div>See how this post will look when it is published</div>
+            <div class="text-gray-500 flex items-center space-x-2"><icon-info class="h-em w-em"></icon-info> <span>See how this post will look when it is published.</span></div>
             <fm-button size="sm" @click="showPreview = true"><icon-eye class="h-em w-em"></icon-eye> Show Preview</fm-button>
           </div>
 
