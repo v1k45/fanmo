@@ -48,8 +48,8 @@
         <fm-button type="primary" block class="ml-2" @click="$router.replace(`/${$auth.user.username}`)">Go to your profile</fm-button>
       </div>
     </div>
-    <div v-else class="max-w-6xl grid grid-cols-12 gap-5 mx-auto">
-      <div class="col-span-12 lg:col-span-7">
+    <div v-else class="max-w-5xl mx-auto">
+      <div>
         <!-- TODO: showCreatorInfo on phone [needs breakpoint service] -->
         <profile-post
           v-if="post"
@@ -72,11 +72,20 @@
           </template>
         </profile-post>
       </div>
-      <div v-if="user" class="col-span-12 lg:col-span-5 h-full">
-        <div class="lg:hidden mt-4"></div>
-
-        <fm-card class="overflow-hidden sticky top-20">
-          <div class="text-xl text-black font-bold truncate mb-3">About</div>
+      <div v-if="user" class="h-full mt-4">
+        <hr class="mb-4">
+        <fm-card class="overflow-hidden sticky top-20 max-w-3xl mx-auto">
+          <div class="my-4">
+            <fm-avatar :src="user.avatar && user.avatar.medium" :name="user.display_name" size="w-24 h-24" class="flex-shrink-0 mx-auto"></fm-avatar>
+            <div class="flex items-center justify-center space-x-3 my-3">
+              <fm-button type="primary" @click="$router.push({ name: 'username', params: { username: post.author_user.username, data: { intent: 'preselect-tab', tab: 'tiers' } } })">
+                <icon-crown class="h-em w-em"></icon-crown> Join
+              </fm-button>
+              <fm-button type="primary" @click="$router.push({ name: 'username', params: { username: post.author_user.username, data: { intent: 'preselect-tab', tab: 'donation' } } })">
+                <icon-coins class="h-em w-em"></icon-coins> Tip
+              </fm-button>
+            </div>
+          </div>
 
           <fm-read-more lines="2" class="lg:hidden mb-4">
             <fm-markdown-styled>

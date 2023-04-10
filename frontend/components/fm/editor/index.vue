@@ -35,6 +35,12 @@
       <icon-link></icon-link>
     </button>
     <button
+      v-if="currentPreset.image" type="button" title="Image"
+      :class="{ 'is-active': editor.isActive('image') }"
+      @click="setImage">
+      <icon-image></icon-image>
+    </button>
+    <button
       v-if="currentPreset.hardBreak" type="button" title="Newline (Shift + Enter)"
       @click="editor.chain().focus().setHardBreak().run()">
       <icon-corner-down-left></icon-corner-down-left>
@@ -70,8 +76,24 @@
   </div>
 
   <fm-markdown-styled>
-    <editor-content class="fm-editor__editor" :style="{ minHeight, maxHeight }" :editor="editor"></editor-content>
+    <editor-content class="fm-editor__editor" :class="{ 'resize-y': preset === 'advanced' }" :style="{ minHeight, maxHeight }" :editor="editor"></editor-content>
   </fm-markdown-styled>
+
+  <fm-dialog v-model="imageUploader.isVisible">
+    <template #header><div class="text-base">Insert an image</div></template>
+    <div class="text-sm">
+      <fm-form :errors="imageUploader.errors" @submit.prevent="">
+        <fm-input v-model="imageUploader.form.image_base64" uid="image_base64" type="file" accept="image/*"></fm-input>
+      </fm-form>
+    </div>
+    <template #footer>
+      <div class="text-right">
+        <fm-button :disabled="imageUploader.loading" @click="imageUploader.isVisible = false;">Close</fm-button>
+        <fm-button type="primary" :loading="imageUploader.loading" @click="uploadImage">Upload</fm-button>
+      </div>
+    </template>
+  </fm-dialog>
+
 </div>
 <div v-else>
   Loading...
@@ -93,6 +115,9 @@ import {
 import { Editor, EditorContent } from '@tiptap/vue-2';
 import StarterKit from '@tiptap/starter-kit';
 import LinkExtension from '@tiptap/extension-link';
+import ImageExtension from '@tiptap/extension-image';
+import cloneDeep from 'lodash/cloneDeep';
+import { getBase64FromFile, handleGenericError } from '~/utils';
 
 const options = () => ({
   document: true,
@@ -136,7 +161,8 @@ const preset = (() => {
       levels: [3]
     },
     blockquote: true,
-    horizontalRule: true
+    horizontalRule: true,
+    image: true
   });
   return {
     basic,
@@ -169,7 +195,13 @@ export default {
   data() {
     return {
       editor: null,
-      currentPreset: preset[this.preset]() // could and should throw here if incorrect preset value is passed
+      currentPreset: preset[this.preset](), // could and should throw here if incorrect preset value is passed
+      imageUploader: {
+        isVisible: false,
+        loading: false,
+        form: { image_base64: '' },
+        errors: {}
+      }
     };
   },
 
@@ -186,7 +218,8 @@ export default {
       content: this.value,
       extensions: [
         StarterKit.configure(this.currentPreset),
-        ...(this.currentPreset.link ? [LinkExtension.configure({ openOnClick: false })] : [])
+        ...(this.currentPreset.link ? [LinkExtension.configure({ openOnClick: false })] : []),
+        ...(this.currentPreset.image ? [ImageExtension] : [])
       ]
     });
 
@@ -220,6 +253,33 @@ export default {
 
       // update link
       this.editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+    },
+    setImage() {
+      this.imageUploader.isVisible = true;
+    },
+    async uploadImage() {
+      this.loading = true;
+      try {
+        const imageBase64 = await getBase64FromFile(cloneDeep(this.imageUploader.form).image_base64);
+        const postImage = await this.$axios.$post('/api/images/', { image_base64: imageBase64 });
+        this.editor.chain().focus().insertContent([
+          {
+            type: 'image',
+            attrs: {
+              src: postImage.image.medium
+            }
+          },
+          {
+            type: 'hardBreak'
+          }
+        ]).run();
+        this.imageUploader.isVisible = false;
+        this.imageUploader.form.image_base64 = '';
+      } catch (err) {
+        handleGenericError(err);
+        this.imageUploader.errors = err.response.data;
+      }
+      this.loading = false;
     }
   }
 };
@@ -262,6 +322,9 @@ italic, bold, strikethrough, list, paragraph, h1-h6, blockquote, hr
   @apply border border-gray-300 border-t-0 rounded-lg rounded-t-none py-4 px-4 overflow-auto flex-grow flex;
   > .ProseMirror {
     @apply min-h-[100px] h-max outline-none flex-grow;
+    img.ProseMirror-selectednode {
+      @apply ring ring-offset-0 ring-gray-500
+    }
   }
 }
 

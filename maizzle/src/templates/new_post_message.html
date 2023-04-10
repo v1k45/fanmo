@@ -9,7 +9,7 @@ bodyClass: bg-gray-100
     </p>
     {% if obj.can_access %}
       {% if obj.content.type == "text" %}
-      <div>@{{ obj.content.text|safe }}</div>
+      <div class="post-body">@{{ obj.content.text|safe }}</div>
       {% elif obj.content.type == "link" %}
       <div>
         <div>@{{ obj.content.text|safe }}</div>

@@ -1,12 +1,99 @@
 <template>
-<div class="fm-markdown-styled">
+<div ref="content" class="fm-markdown-styled">
   <slot></slot>
+  <fm-dialog v-if="images.length" v-model="dialogVisible" dialog-class="!grow-0 md:mx-10" class="!items-center" custom-width no-padding>
+
+    <img v-swipe :src="getImage(images[currentItem], 'full')" class="max-h-[90vh] rounded-lg" @swiped="handleSwipe">
+    <button v-if="currentItem > 0" type="button" class="fm-carousel__previous" @click="navigate(-1)">
+      <icon-chevron-left></icon-chevron-left>
+    </button>
+    <button v-if="currentItem < images.length - 1" type="button" class="fm-carousel__next" @click="navigate(1)">
+      <icon-chevron-right></icon-chevron-right>
+    </button>
+    <div v-if="images.length > 1" class="fm-carousel__info">
+      {{ currentItem + 1 }}/{{ images.length }}
+    </div>
+  </fm-dialog>
 </div>
 </template>
 
 <script>
+import debounce from 'lodash/debounce';
 export default {
-
+  data() {
+    return {
+      images: [],
+      currentItem: 0,
+      dialogVisible: false,
+      handler: null
+    };
+  },
+  created() {
+    this.handler = (evt) => this.handleKeyboardNav(evt);
+    // eslint-disable-next-line nuxt/no-globals-in-created
+    window.addEventListener('keydown', this.handler);
+  },
+  mounted() {
+    this.addImgEventListeners();
+  },
+  beforeDestroy() {
+    this.removeImgEventListeners();
+    window.removeEventListener('keydown', this.handler);
+  },
+  methods: {
+    getImage(image, size) {
+      if (!image.includes('/imageproxy/')) return image;
+      return image.replace('medium', size);
+    },
+    selectImage(idx) {
+      if (this.currentItem === idx) {
+        this.dialogVisible = true;
+      } else {
+        this.currentItem = idx;
+      }
+    },
+    navigate(by) {
+      this.currentItem = (this.currentItem + by) % (this.images.length);
+    },
+    handleSwipe: debounce(function(evt) {
+      const direction = evt.detail.dir;
+      if (direction === 'left') {
+        if (this.currentItem < this.images.length - 1) this.navigate(1);
+      } else if (direction === 'right') {
+        if (this.currentItem > 0) this.navigate(-1);
+      }
+    }, 100, { leading: true, trailing: false }),
+    handleKeyboardNav(evt) {
+      if (!this.dialogVisible) return;
+      if (evt.key === 'Escape') {
+        this.dialogVisible = false;
+      } else if (evt.key === 'ArrowRight') {
+        if (this.currentItem < this.images.length - 1) this.navigate(1);
+      } else if (evt.key === 'ArrowLeft') {
+        if (this.currentItem > 0) this.navigate(-1);
+      }
+    },
+    addImgEventListeners() {
+      const imgTags = this.$refs.content.querySelectorAll('img');
+      imgTags.forEach((img) => {
+        this.images.push(img.src);
+        img.addEventListener('click', this.handleImgClick);
+      });
+    },
+    removeImgEventListeners() {
+      const imgTags = this.$refs.content.querySelectorAll('img');
+      imgTags.forEach((img) => {
+        img.removeEventListener('click', this.handleImgClick);
+      });
+    },
+    handleImgClick(event) {
+      const imgIdx = this.images.indexOf(event.target.src);
+      if (imgIdx !== -1) {
+        this.currentItem = imgIdx;
+        this.dialogVisible = true;
+      }
+    }
+  }
 };
 </script>
 
@@ -44,6 +131,10 @@ export default {
 
   small {
     font-size: 90%;
+  }
+
+  img {
+    @apply mx-auto;
   }
 
   code,

@@ -20,6 +20,7 @@ from fanmo.posts.api.serializers import (
     LinkPreviewSerializer,
     PostCreateSerializer,
     PostDetailSerializer,
+    PostImageSerializer,
     PostReactionSerializer,
     PostSerializer,
     PostStatsSerializer,
@@ -210,3 +211,14 @@ class CommentViewSet(
             comment_trees[0], context=self.get_serializer_context()
         )
         return Response(response_serializer.data)
+
+
+class PostImageViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
+    serializer_class = PostImageSerializer
+    permission_classes = [permissions.IsAuthenticated, IsCreator]
+
+    def get_queryset(self):
+        return self.request.user.post_images.all()
+
+    def perform_create(self, serializer):
+        serializer.save(creator_user=self.request.user)

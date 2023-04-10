@@ -8,7 +8,7 @@ from django.views.generic import RedirectView
 from fanmo.core.sitemaps import sitemaps
 
 
-from fanmo.core.views import index_view, page_view, post_view
+from fanmo.core.views import index_view, page_view, post_view, post_image_proxy_view
 
 urlpatterns = [
     # Django Admin, use {% url 'admin:index' %}
@@ -26,6 +26,7 @@ urlpatterns = [
     ),
     # API
     path("api/", include("config.api_router")),
+    path("imageproxy/<image_uuid>/<image_size>.jpg", post_image_proxy_view, name="post_image_proxy"),
     path("", index_view, name="home"),
     path("pricing", index_view, name="pricing"),
     path("privacy", index_view, name="privacy"),

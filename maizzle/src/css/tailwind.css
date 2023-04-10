@@ -15,3 +15,9 @@
 
 /* Your custom utility classes */
 @import "utilities";
+
+.post-body {
+    img {
+        @apply max-w-full h-auto mx-auto;
+    }
+}

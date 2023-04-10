@@ -1,6 +1,9 @@
-from django.http.response import HttpResponse
+from django.conf import settings
+from django.http.response import Http404, HttpResponse
+from django.shortcuts import get_object_or_404, redirect
+from versatileimagefield.utils import build_versatileimagefield_url_set
 
-from fanmo.posts.models import Post
+from fanmo.posts.models import Post, PostImage
 from fanmo.users.models import User
 from fanmo.utils.fields import VersatileImageFieldSerializer
 from fanmo.utils.helpers import replace_format
@@ -60,6 +63,22 @@ def post_view(request, post_slug, post_id):
         f"Support {post.author_user.display_name} on Fanmo. Become a member, get access to exclusive content, send tips and much more on Fanmo.",
         image_url,
     )
+
+
+def post_image_proxy_view(request, image_uuid, image_size):
+    """
+    Proxy request to actual image files on the storage backend
+    This is used in post content so that we are able to serve private content in future.
+    """
+    post_image = get_object_or_404(PostImage, uuid=image_uuid)
+    image_set = build_versatileimagefield_url_set(
+        post_image.image,
+        settings.VERSATILEIMAGEFIELD_RENDITION_KEY_SETS["post_image"],
+        request,
+    )
+    if image_size not in image_set:
+        raise Http404
+    return redirect(image_set[image_size])
 
 
 def serve_index(title=None, description=None, image=None, status=200):

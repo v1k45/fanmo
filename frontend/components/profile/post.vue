@@ -8,12 +8,12 @@
     </div>
   </div>
   <div class="post-body">
-    <div class="flex items-center">
+    <div class="flex items-center" :class="{'mb-3': $route.name == 'p-slug-id'}">
       <div class="flex flex-wrap flex-grow mr-auto">
         <nuxt-link
           :to="{ name: 'p-slug-id', params: { slug: post.slug, id: post.id } }"
           class="w-full basis-auto unstyled" title="Open post">
-          <div class="text-lg md:text-xl text-black font-bold w-full">{{ post.title }}</div>
+          <div class="text-xl text-black font-bold w-full" :class="{'md:text-3xl': $route.name == 'p-slug-id', 'md:text-2xl': $route.name !== 'p-slug-id'}">{{ post.title }}</div>
         </nuxt-link>
       </div>
 
@@ -72,7 +72,7 @@
 
   <template v-if="post.content">
     <div v-if="post.content.text" class="post-body">
-      <fm-read-more-height :max-height="$route.name == 'p-slug-id' ? null : '200'" class="mt-4">
+      <fm-read-more-height :max-height="$route.name == 'p-slug-id' ? null : '300'" :route="{ name: 'p-slug-id', params: { slug: post.slug, id: post.id } }" class="mt-4">
         <fm-markdown-styled>
           <div class="whitespace-pre-line" v-html="post.content.text"></div>
         </fm-markdown-styled>

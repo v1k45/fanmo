@@ -127,6 +127,14 @@
                   <icon-facebook :size="24"></icon-facebook>
                 </a>
               </div>
+              <div class="flex items-center justify-center space-x-3 border-t mt-4 py-4">
+                <fm-button type="primary" @click="activeTab = tabName.TIERS">
+                  <icon-crown class="h-em w-em"></icon-crown> Join
+                </fm-button>
+                <fm-button type="primary" @click="activeTab = tabName.DONATION">
+                  <icon-coins class="h-em w-em"></icon-coins> Tip
+                </fm-button>
+              </div>
             </fm-card>
           </div>
         </div>
