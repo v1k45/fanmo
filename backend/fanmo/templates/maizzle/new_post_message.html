@@ -18,6 +18,12 @@
     td,th,div,p,a,h1,h2,h3,h4,h5,h6 {font-family: "Segoe UI", sans-serif; mso-line-height-rule: exactly;}
   </style>
   <![endif]-->    <style>
+.post-body img {
+  margin-left: auto;
+  margin-right: auto;
+  height: auto;
+  max-width: 100%;
+}
 .hover-bg-fm-primary-600:hover {
   background-color: #4f46e5 !important;
 }
@@ -66,7 +72,7 @@
     </p>
     {% if obj.can_access %}
       {% if obj.content.type == "text" %}
-      <div>{{ obj.content.text|safe }}</div>
+      <div class="post-body">{{ obj.content.text|safe }}</div>
       {% elif obj.content.type == "link" %}
       <div>
         <div>{{ obj.content.text|safe }}</div>
