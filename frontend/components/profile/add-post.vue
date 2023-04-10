@@ -123,7 +123,7 @@
 
             <template v-if="form.content">
               <div v-if="form.content.text" class="post-body">
-                <fm-read-more-height :max-height="$route.name == 'p-slug-id' ? null : '200'" class="mt-4">
+                <fm-read-more-height :max-height="$route.name == 'p-slug-id' ? null : '300'" class="mt-4">
                   <fm-markdown-styled>
                     <div class="whitespace-pre-line" v-html="form.content.text"></div>
                   </fm-markdown-styled>

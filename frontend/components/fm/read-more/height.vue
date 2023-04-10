@@ -9,7 +9,7 @@
     }">
     <slot></slot>
   </div>
-  <div :class="[showMoreClass, !showingMore ? 'absolute right-0 bottom-0 z-10' : 'text-right leading-none']">
+  <div class="px-2 rounded-tl" :class="[showMoreClass, !showingMore ? 'absolute right-0 bottom-0 z-10' : 'text-right leading-none']">
     <fm-button
       v-if="hasOverflow"
       type="link"
@@ -43,7 +43,8 @@ export default {
   },
   props: {
     maxHeight: { type: [Number, String], default: null },
-    showMoreClass: { type: [String, Array, Object], default: 'bg-white' }
+    showMoreClass: { type: [String, Array, Object], default: 'bg-white' },
+    route: { type: Object, default: null }
   },
   data() {
     return {
@@ -112,6 +113,9 @@ export default {
       if (shouldSetShowingMore) this.showingMore = true;
     },
     toggleShowMore() {
+      if (this.route) {
+        this.$router.push(this.route);
+      }
       this.skipExtraTextCompute = true;
       this.showingMore = !this.showingMore;
     }
