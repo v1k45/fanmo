@@ -92,6 +92,10 @@ class PostViewSet(
         async_task(refresh_post_social_image, serializer.instance.pk)
         async_task(notify_new_post, serializer.instance.pk)
 
+    def perform_update(self, serializer):
+        super().perform_update(serializer)
+        async_task(refresh_post_social_image, serializer.instance.pk)
+
     @extend_schema(responses=PostStatsSerializer)
     @action(
         detail=True, permission_classes=[permissions.IsAuthenticated], methods=["POST"]

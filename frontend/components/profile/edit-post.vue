@@ -2,7 +2,7 @@
 <fm-dialog v-model="isVisible" fullscreen no-padding require-explicit-close>
   <template #header>
     <div class="relative">
-      <div class="container">Create post</div>
+      <div class="container">Edit post</div>
       <logo class="h-5 absolute right-10 top-1"></logo>
     </div>
   </template>
@@ -10,37 +10,26 @@
   <div class="container py-6">
     <div class="row">
       <div class="col-12" :class="{'lg:col-6': showPreview}">
-        <fm-form id="createPostForm" :errors="errors" @submit.prevent="handleSubmit">
-          <fm-tabs v-model="contentType" stretched>
-            <!-- text only post start -->
-            <fm-tabs-pane id="text" label="Content" lazy>
-              <template v-if="contentType === 'text'">
-                <fm-input v-model="form.title" uid="title" type="text" placeholder="Title" input-class="font-bold !text-lg" required></fm-input>
-                <fm-input-rich v-model="form.content.text" uid="content.text" preset="advanced" :props="{ minHeight: '400px', maxHeight: '70vh' }"></fm-input-rich>
-              </template>
-            </fm-tabs-pane>
-            <!-- text only post end -->
+        <fm-form id="updatePostForm" :errors="errors" @submit.prevent="handleSubmit">
 
-            <!-- text+image(s) post start -->
-            <fm-tabs-pane id="images" label="Images" lazy>
-              <template v-if="contentType === 'images'">
-                <fm-input v-model="form.title" uid="title" type="text" placeholder="Title" input-class="font-bold !text-lg" required></fm-input>
-                <fm-input v-model="form.content.files" uid="content.files" type="file" label="Images" multiple accept="image/*" required></fm-input>
-                <fm-input v-model="form.content.text" uid="content.text" label="Description (optional)" type="textarea"></fm-input>
-              </template>
-            </fm-tabs-pane>
-            <!-- text+image(s) post end -->
+          <template v-if="contentType === 'text'">
+            <fm-input v-model="form.title" uid="title" type="text" placeholder="Title" input-class="font-bold !text-lg" required></fm-input>
+            <fm-input-rich v-model="form.content.text" uid="content.text" preset="advanced" :props="{ minHeight: '400px', maxHeight: '70vh' }"></fm-input-rich>
+          </template>
+          <template v-else-if="contentType === 'images'">
+            <fm-input v-model="form.title" uid="title" type="text" placeholder="Title" input-class="font-bold !text-lg" required></fm-input>
+            <div class="text-sm">
 
-            <!-- text+link post start -->
-            <fm-tabs-pane id="link" label="Link" lazy>
-              <template v-if="contentType === 'link'">
-                <fm-input v-model="form.title" uid="title" type="text" placeholder="Title" input-class="font-bold !text-lg" required></fm-input>
-                <fm-input v-model="form.content.link" uid="content.link" type="text" label="Link" placeholder="https://example.com/example" required></fm-input>
-                <fm-input v-model="form.content.text" uid="content.text" label="Description (optional)" type="textarea"></fm-input>
-              </template>
-            </fm-tabs-pane>
-            <!-- text+link post end -->
-          </fm-tabs>
+            </div>
+            <fm-input v-if="false" v-model="form.content.files" uid="content.files" type="file" label="Images" multiple accept="image/*" required></fm-input>
+            <fm-input v-model="form.content.text" uid="content.text" label="Description (optional)" type="textarea"></fm-input>
+            <fm-alert class="text-sm my-4" title="Editing images is currently not supported" message="Adding or removing images from an already published image post is currently not possible."></fm-alert>
+          </template>
+          <template v-else-if="contentType === 'link'">
+            <fm-input v-model="form.title" uid="title" type="text" placeholder="Title" input-class="font-bold !text-lg" required></fm-input>
+            <fm-input v-model="form.content.link" uid="content.link" type="text" label="Link" placeholder="https://example.com/example" required></fm-input>
+            <fm-input v-model="form.content.text" uid="content.text" label="Description (optional)" type="textarea"></fm-input>
+          </template>
 
           <!-- visibility start -->
           <fm-input v-model="form.visibility" uid="visibility" type="select" label="Who can see this post?" class="mt-6">
@@ -188,7 +177,7 @@
   <template #footer>
     <div class="text-right">
       <fm-button :disabled="loading" @click="isVisible = false;">Close</fm-button>
-      <fm-button native-type="submit" form="createPostForm" type="primary" :loading="loading">Create post</fm-button>
+      <fm-button native-type="submit" form="updatePostForm" type="primary" :loading="loading">Update post</fm-button>
     </div>
   </template>
 </fm-dialog>
@@ -223,7 +212,8 @@ export default {
     FmInputRich
   },
   props: {
-    value: { type: Boolean, default: false }
+    value: { type: Boolean, default: false },
+    post: { type: Object, default: null }
   },
   data() {
     const contents = contentPreset();
@@ -258,7 +248,7 @@ export default {
     },
     imagePreviews() {
       if (!this.form.content.files || !this.form.content.files.length) return [];
-      return this.form.content.files.map(file => URL.createObjectURL(file));
+      return this.form.content.files.map(file => file.id ? file.image.medium : URL.createObjectURL(file));
     },
     linkPreviewComputed() {
       if (this.contentType !== 'link' || !this.linkPreview.link || !this.form.content.link) return null;
@@ -290,15 +280,21 @@ export default {
     isVisible(isVisible) {
       if (!isVisible) this.reset();
       // TODO: you will lose your progress
-    },
-    contentType(type) {
-      if (type === 'text') this.form.content = this.contents.text;
-      if (type === 'images') this.form.content = this.contents.images;
-      if (type === 'link') this.form.content = this.contents.link;
     }
   },
+  created() {
+    this.contentType = this.post.content.type;
+    this.form.title = this.post.title;
+    this.form.content.type = this.post.content.type;
+    this.form.content.text = this.post.content.text;
+    this.form.content.files = this.post.content.files;
+    this.form.content.link = this.post.content.link;
+    this.form.visibility = this.post.visibility;
+    this.form.allowed_tiers_ids = this.post.allowed_tiers.map(t => t.id);
+  },
   methods: {
-    ...mapActions('profile', ['createPost', 'getLinkPreview']),
+    ...mapActions('profile', ['getLinkPreview']),
+    ...mapActions('posts', ['updatePost']),
     reset() {
       const contents = contentPreset();
       Object.assign(this, {
@@ -336,14 +332,14 @@ export default {
         payload.content.files = base64s.map(b64 => ({ type: 'image', image_base64: b64 }));
       }
       if (payload.content.text && /^(<p>\s*<\/p>)+$/.test(payload.content.text.trim())) payload.content.text = '';
-      const { success, data } = await this.createPost(payload);
+      const { success, data } = await this.updatePost({ postId: this.post.id, payload });
       if (!success) {
         this.errors = data;
         this.loading = false;
         return;
       }
-      this.$toast.success('Your post was published successfully. Your followers will be notified shortly.');
-      await this.$router.push({ name: 'p-slug-id', params: { slug: data.slug, id: data.id, share: '1' } });
+      this.$toast.success('Your post was updated successfully.');
+      // await this.$router.push({ name: 'p-slug-id', params: { slug: data.slug, id: data.id, share: '1' } });
       this.loading = false;
       this.isVisible = false;
     },

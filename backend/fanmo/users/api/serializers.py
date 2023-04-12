@@ -5,7 +5,9 @@ from allauth.account.models import EmailAddress
 from allauth.account.utils import filter_users_by_email
 from dj_rest_auth.registration.serializers import (
     RegisterSerializer as BaseRegisterSerializer,
-    SocialLoginSerializer as BaseSocialLoginSerializer
+)
+from dj_rest_auth.registration.serializers import (
+    SocialLoginSerializer as BaseSocialLoginSerializer,
 )
 from dj_rest_auth.serializers import (
     PasswordChangeSerializer as RestAuthPasswordResetSerializer,
@@ -64,16 +66,16 @@ class SocialLoginSerializer(BaseSocialLoginSerializer):
     is_creator = serializers.BooleanField(required=False)
 
     def validate(self, attrs):
-        is_creator = attrs.pop('is_creator', None)
+        is_creator = attrs.pop("is_creator", None)
         attrs = super().validate(attrs)
 
         # mark onboarding as completed if the user is not a creator
         if is_creator is not None:
-            attrs['user'].is_creator = is_creator
-            attrs['user'].save()
+            attrs["user"].is_creator = is_creator
+            attrs["user"].save()
 
-            attrs['user'].user_onboarding.status = UserOnboarding.Status.COMPLETED
-            attrs['user'].user_onboarding.save()
+            attrs["user"].user_onboarding.status = UserOnboarding.Status.COMPLETED
+            attrs["user"].user_onboarding.save()
 
         return attrs
 
@@ -370,8 +372,12 @@ class UserSerializer(ComputedUserFieldSerializer, serializers.ModelSerializer):
         # set onboarding status
         if user_onboarding.pop("submit_for_review", None):
             instance.user_onboarding.status = UserOnboarding.Status.SUBMITTED
-        
-        if instance.is_creator is None and validated_data.get("is_creator") is False  and instance.email_verified:
+
+        if (
+            instance.is_creator is None
+            and validated_data.get("is_creator") is False
+            and instance.email_verified
+        ):
             # if user selects account type for the first time and their email is already verified mark the onboarding as completed.
             # this can happen when user signs up using social account
             instance.user_onboarding.status = UserOnboarding.Status.COMPLETED
