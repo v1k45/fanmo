@@ -302,12 +302,9 @@ export default {
       this.loading = false;
     },
     toggleAlign(direction) {
-      console.log({ direction });
       if (this.editor.isActive({ textAlign: direction })) {
-        console.log({ action: 'unset' });
         this.editor.chain().focus().unsetTextAlign().run();
       } else {
-        console.log({ action: 'set' });
         this.editor.chain().focus().setTextAlign(direction).run();
       }
     }
