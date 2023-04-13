@@ -26,6 +26,7 @@
           </button>
           <template #items>
             <fm-dropdown-item @click="togglePin"><icon-pin class="h-em w-em"></icon-pin> {{ post.is_pinned ? 'Unpin' : 'Pin' }}</fm-dropdown-item>
+            <fm-dropdown-item @click="$router.push({ name: 'posts-id-edit', params: { id: post.id } })"><icon-edit class="h-em w-em"></icon-edit> Edit</fm-dropdown-item>
             <fm-dropdown-item type="error" @click="deletePostLocal"><icon-trash-2 class="h-em w-em"></icon-trash-2> Delete</fm-dropdown-item>
           </template>
         </fm-dropdown>
@@ -92,7 +93,7 @@
         class="unstyled block border overflow-hidden rounded-lg bg-gray-50 mt-3"
         :href="linkPreviewOGComputed.link" target="_blank" rel="noopener noreferrer nofollow">
         <div v-if="linkPreviewOGComputed.image" class="overflow-hidden flex-none">
-          <img :src="linkPreviewOGComputed.image" class="w-full max-h-48 object-cover" alt="">
+          <img :src="linkPreviewOGComputed.image" class="w-full max-h-64 object-cover" alt="">
         </div>
         <div class="p-4 pt-3 flex-grow overflow-hidden">
           <div class="block font-bold max-w-full">{{ linkPreviewOGComputed.title }}</div>

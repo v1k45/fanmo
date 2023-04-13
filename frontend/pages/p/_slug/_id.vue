@@ -226,7 +226,7 @@ export default {
     },
     isSelfProfile() {
       return !!(
-        (get(this.$auth, 'user.username') && this.post.author_user.username) &&
+        (get(this.$auth, 'user.username') && get(this.post, 'author_user.username')) &&
         (this.$auth.user.username === this.post.author_user.username)
       );
     },

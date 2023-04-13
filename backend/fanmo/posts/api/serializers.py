@@ -1,4 +1,5 @@
 import bleach
+from bleach.css_sanitizer import CSSSanitizer
 from django.conf import settings
 from django.urls import reverse
 from drf_extra_fields.fields import Base64FileField, Base64ImageField
@@ -21,7 +22,14 @@ class ContentFileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ContentFile
-        fields = ["type", "image", "image_base64", "attachment", "attachment_base64"]
+        fields = [
+            "id",
+            "type",
+            "image",
+            "image_base64",
+            "attachment",
+            "attachment_base64",
+        ]
         read_only_files = ["image", "attachment"]
 
     def validate(self, attrs):
@@ -60,6 +68,8 @@ class ContentSerializer(serializers.ModelSerializer):
         read_only_fields = ["link_og", "link_embed", "image"]
 
     def validate_text(self, text):
+        css_sanitizer = CSSSanitizer(allowed_css_properties=["text-align"])
+
         return bleach.clean(
             text,
             tags=[
@@ -80,7 +90,13 @@ class ContentSerializer(serializers.ModelSerializer):
                 "hr",
                 "img",
             ],
-            attributes={"a": ["href", "rel", "target"], "img": ["src"]},
+            attributes={
+                "a": ["href", "rel", "target"],
+                "img": ["src"],
+                "p": ["style"],
+                "h3": ["style"],
+            },
+            css_sanitizer=css_sanitizer,
         )
 
     def validate(self, attrs):
@@ -258,12 +274,16 @@ class PostDetailSerializer(PostSerializer):
 
 
 class PostUpdateSerializer(PostDetailSerializer):
+    content = ContentSerializer()
+
     class Meta:
         model = Post
         fields = PostSerializer.Meta.fields
-        # all fields except "is_pinned"
         read_only_fields = fields.copy()
-        read_only_fields.remove("is_pinned")
+        read_only_fields = list(
+            set(read_only_fields)
+            - set(["is_pinned", "content", "title", "visibility", "allowed_tier_ids"])
+        )
 
     def validate_is_pinned(self, is_pinned):
         pinned_posts = Post.objects.filter(
@@ -277,6 +297,18 @@ class PostUpdateSerializer(PostDetailSerializer):
                 "pin_count_exceeded",
             )
         return is_pinned
+
+    def update(self, instance, validated_data):
+        content = validated_data.pop("content", None)
+        post = super().update(instance, validated_data)
+        if content:
+            if "text" in content:
+                post.content.text = content["text"]
+            if "link" in content and post.content.type == Content.Type.LINK:
+                post.content.link = content["link"]
+                post.content.update_link_metadata()
+            post.content.save()
+        return post
 
 
 class PostPreviewSerializer(serializers.ModelSerializer):
