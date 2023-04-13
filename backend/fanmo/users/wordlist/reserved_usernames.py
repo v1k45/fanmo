@@ -409,6 +409,7 @@ reserved_usernames = list(
             "portal",
             "portfolio",
             "post",
+            "posts",
             "postfix",
             "postmaster",
             "poweruser",

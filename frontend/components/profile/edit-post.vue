@@ -285,10 +285,18 @@ export default {
   created() {
     this.contentType = this.post.content.type;
     this.form.title = this.post.title;
-    this.form.content.type = this.post.content.type;
+    this.form.content = contentPreset()[this.post.content.type];
     this.form.content.text = this.post.content.text;
-    this.form.content.files = this.post.content.files;
-    this.form.content.link = this.post.content.link;
+
+    if (this.post.content.type === 'images') {
+      this.form.content.files = this.post.content.files;
+    } else if (this.post.content.type === 'link') {
+      this.form.content.link = this.post.content.link;
+      this.linkPreview.link = new URL(this.post.content.link);
+      this.linkPreview.link_embed = this.post.content.link_embed;
+      this.linkPreview.link_og = this.post.content.link_og;
+    }
+
     this.form.visibility = this.post.visibility;
     this.form.allowed_tiers_ids = this.post.allowed_tiers.map(t => t.id);
   },
@@ -328,8 +336,8 @@ export default {
       this.loading = true;
       const payload = cloneDeep(this.form);
       if (this.contentType === 'images') {
-        const base64s = await Promise.all(payload.content.files.map(file => this.getBase64(file)));
-        payload.content.files = base64s.map(b64 => ({ type: 'image', image_base64: b64 }));
+        // TODO: Handle image uploads
+        payload.content.files = payload.content.files.map(b64 => ({ type: 'image', image_base64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==' }));
       }
       if (payload.content.text && /^(<p>\s*<\/p>)+$/.test(payload.content.text.trim())) payload.content.text = '';
       const { success, data } = await this.updatePost({ postId: this.post.id, payload });
@@ -339,7 +347,6 @@ export default {
         return;
       }
       this.$toast.success('Your post was updated successfully.');
-      // await this.$router.push({ name: 'p-slug-id', params: { slug: data.slug, id: data.id, share: '1' } });
       this.loading = false;
       this.isVisible = false;
     },

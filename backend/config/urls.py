@@ -63,6 +63,7 @@ urlpatterns = [
     path("settings", index_view, name="settings"),
     # posts
     path("p/<post_slug>/<post_id>/", post_view, name="post_detail"),
+    path("posts/<post_id>/edit", index_view, name="post_edit"),
     path("<username>", page_view, name="creator_page"),
     path("<username>/", RedirectView.as_view(pattern_name="creator_page")),
     # Your stuff: custom urls includes go here
