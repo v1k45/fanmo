@@ -1,6 +1,14 @@
 <template>
 <div v-loading="loading">
-  <profile-edit-post v-if="post && isSelfProfile" v-model="visible" :post="post"></profile-edit-post>
+  <fm-card
+    v-if="loading"
+    class="mx-auto max-w-xl overflow-hidden" body-class="text-center !pt-16 !pb-20">
+    <icon-loader-2 class="h-16 w-16 stroke-1 animate-spin"></icon-loader-2>
+    <div class="mt-2 font-medium">
+      Loading
+    </div>
+  </fm-card>
+  <profile-edit-post v-else-if="post && isSelfProfile" v-model="visible" :post="post"></profile-edit-post>
   <fm-card
     v-else
     class="mx-auto max-w-xl overflow-hidden" body-class="text-center !pt-16 !pb-20">
