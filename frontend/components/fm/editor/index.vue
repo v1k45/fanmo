@@ -46,6 +46,22 @@
       <icon-corner-down-left></icon-corner-down-left>
     </button>
 
+    <hr v-if="currentPreset.textAlign">
+    <button
+      v-if="currentPreset.textAlign" type="button" title="Align Left"
+      :class="{ 'is-active': editor.isActive({ textAlign: 'left' }) }" @click="toggleAlign('left')">
+      <icon-align-left></icon-align-left>
+    </button>
+    <button
+      v-if="currentPreset.textAlign" type="button" title="Align Center"
+      :class="{ 'is-active': editor.isActive({ textAlign: 'center' }) }" @click="toggleAlign('center')">
+      <icon-align-center></icon-align-center>
+    </button>
+    <button
+      v-if="currentPreset.textAlign" type="button" title="Align Right"
+      :class="{ 'is-active': editor.isActive({ textAlign: 'right' }) }" @click="toggleAlign('right')">
+      <icon-align-right></icon-align-right>
+    </button>
 
     <hr v-if="(currentPreset.heading || currentPreset.bold || currentPreset.italic || currentPreset.strike || currentPreset.hardBreak) && (currentPreset.bulletList || currentPreset.orderedList)">
 
@@ -115,6 +131,7 @@ import {
 import { Editor, EditorContent } from '@tiptap/vue-2';
 import StarterKit from '@tiptap/starter-kit';
 import LinkExtension from '@tiptap/extension-link';
+import TextAlignExtension from '@tiptap/extension-text-align';
 import ImageExtension from '@tiptap/extension-image';
 import cloneDeep from 'lodash/cloneDeep';
 import { getBase64FromFile, handleGenericError } from '~/utils';
@@ -138,6 +155,7 @@ const options = () => ({
   italic: false,
   listItem: false,
   orderedList: false,
+  textAlign: false,
   strike: false
 });
 
@@ -162,7 +180,8 @@ const preset = (() => {
     },
     blockquote: true,
     horizontalRule: true,
-    image: true
+    image: true,
+    textAlign: true
   });
   return {
     basic,
@@ -219,7 +238,8 @@ export default {
       extensions: [
         StarterKit.configure(this.currentPreset),
         ...(this.currentPreset.link ? [LinkExtension.configure({ openOnClick: false })] : []),
-        ...(this.currentPreset.image ? [ImageExtension] : [])
+        ...(this.currentPreset.image ? [ImageExtension] : []),
+        ...(this.currentPreset.textAlign ? [TextAlignExtension.configure({ types: ['heading', 'paragraph'] })] : [])
       ]
     });
 
@@ -280,6 +300,16 @@ export default {
         this.imageUploader.errors = err.response.data;
       }
       this.loading = false;
+    },
+    toggleAlign(direction) {
+      console.log({ direction });
+      if (this.editor.isActive({ textAlign: direction })) {
+        console.log({ action: 'unset' });
+        this.editor.chain().focus().unsetTextAlign().run();
+      } else {
+        console.log({ action: 'set' });
+        this.editor.chain().focus().setTextAlign(direction).run();
+      }
     }
   }
 };

@@ -1,4 +1,5 @@
 import bleach
+from bleach.css_sanitizer import CSSSanitizer
 from django.conf import settings
 from django.urls import reverse
 from drf_extra_fields.fields import Base64FileField, Base64ImageField
@@ -67,6 +68,8 @@ class ContentSerializer(serializers.ModelSerializer):
         read_only_fields = ["link_og", "link_embed", "image"]
 
     def validate_text(self, text):
+        css_sanitizer = CSSSanitizer(allowed_css_properties=["text-align"])
+
         return bleach.clean(
             text,
             tags=[
@@ -87,7 +90,13 @@ class ContentSerializer(serializers.ModelSerializer):
                 "hr",
                 "img",
             ],
-            attributes={"a": ["href", "rel", "target"], "img": ["src"]},
+            attributes={
+                "a": ["href", "rel", "target"],
+                "img": ["src"],
+                "p": ["style"],
+                "h3": ["style"],
+            },
+            css_sanitizer=css_sanitizer,
         )
 
     def validate(self, attrs):
