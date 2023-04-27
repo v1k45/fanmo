@@ -267,7 +267,7 @@ export default {
       }
 
       // prevent unexpected relative URLs
-      if (!url.startsWith('http') || !url.startsWith('mailto')) {
+      if (!(url.startsWith('http') || url.startsWith('mailto'))) {
         url = 'http://' + url;
       }
 
