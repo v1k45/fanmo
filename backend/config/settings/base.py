@@ -504,6 +504,7 @@ VERSATILEIMAGEFIELD_RENDITION_KEY_SETS = {
     "post_image": [
         ("full", "url"),
         ("medium", "thumbnail__990x600"),
+        ("social", "crop__1200x630"),
         ("small", "thumbnail__198x120"),
     ],
 }

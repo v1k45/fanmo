@@ -99,6 +99,7 @@ class Post(BaseModel):
         populate_from="title", allow_duplicates=True, slugify_function=slugify
     )
     content = models.OneToOneField("posts.Content", on_delete=models.CASCADE)
+    meta = models.OneToOneField("posts.PostMeta", on_delete=models.CASCADE, null=True, default=None)
 
     author_user = models.ForeignKey("users.User", on_delete=models.CASCADE)
 
@@ -122,6 +123,15 @@ class Post(BaseModel):
     def creator_user(self):
         return self.author_user
 
+
+class PostMeta(BaseModel):
+    title = models.CharField(max_length=255, blank=True)
+    description = models.TextField(max_length=500, blank=True)
+    keywords = models.CharField(max_length=255, blank=True)
+    image = VersatileImageField(upload_to="posts/poster/", blank=True)
+
+    def __str__(self) -> str:
+        return self.title
 
 class Content(BaseModel):
     class Type(models.TextChoices):

@@ -9,7 +9,7 @@ from rest_framework import serializers
 from fanmo.donations.models import Donation
 from fanmo.memberships.api.serializers import TierPreviewSerializer
 from fanmo.memberships.models import Tier
-from fanmo.posts.models import Comment, Content, ContentFile, Post, PostImage, Reaction
+from fanmo.posts.models import Comment, Content, ContentFile, Post, PostImage, Reaction, PostMeta
 from fanmo.users.api.serializers import PublicUserSerializer, UserPreviewSerializer
 from fanmo.utils.fields import FileField, VersatileImageFieldSerializer
 
@@ -166,6 +166,14 @@ class ContentSerializer(serializers.ModelSerializer):
 
         return super().validate(attrs)
 
+class PostMetaSerializer(serializers.ModelSerializer):
+    image = VersatileImageFieldSerializer("post_image", read_only=True)
+    image_base64 = Base64ImageField(write_only=True, required=False, source="image")
+
+    class Meta:
+        model = PostMeta
+        fields = ["title", "description", "keywords", "image", "image_base64"]
+
 
 class PostReactionSummarySerializer(serializers.Serializer):
     emoji = serializers.ChoiceField(choices=Reaction.Emoji.choices)
@@ -205,6 +213,7 @@ class PostSerializer(serializers.ModelSerializer):
     content = serializers.SerializerMethodField()
     author_user = UserPreviewSerializer(read_only=True)
     stats = PostStatsSerializer(source="*", read_only=True)
+    meta = PostMetaSerializer()
     can_access = serializers.SerializerMethodField()
     can_comment = serializers.SerializerMethodField()
     minimum_tier = serializers.SerializerMethodField()
@@ -226,6 +235,7 @@ class PostSerializer(serializers.ModelSerializer):
             "slug",
             "content",
             "stats",
+            "meta",
             "visibility",
             "allowed_tiers",
             "allowed_tiers_ids",
@@ -300,6 +310,7 @@ class PostUpdateSerializer(PostDetailSerializer):
 
     def update(self, instance, validated_data):
         content = validated_data.pop("content", None)
+        meta_payload = validated_data.pop("meta", None)
         post = super().update(instance, validated_data)
         if content:
             if "text" in content:
@@ -308,6 +319,15 @@ class PostUpdateSerializer(PostDetailSerializer):
                 post.content.link = content["link"]
                 post.content.update_link_metadata()
             post.content.save()
+
+        if meta_payload:
+            if post.meta:
+                for attr, value in meta_payload.items():
+                    setattr(post.meta, attr, value)
+                post.meta.save()
+            else:
+                post.meta = PostMeta.objects.create(**meta_payload)
+                post.save()
         return post
 
 
@@ -397,8 +417,12 @@ class PostCreateSerializer(PostSerializer):
         for idx, file_payload in enumerate(files_payload):
             ContentFile.objects.create(content=content, order=idx, **file_payload)
 
+        meta_payload = validated_data["meta"]
+        meta = PostMeta.objects.create(**meta_payload)
+
         validated_data["content"] = content
         validated_data["author_user"] = self.context["request"].user
+        validated_data["meta"] = meta
         return super().create(validated_data)
 
 

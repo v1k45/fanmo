@@ -7,6 +7,7 @@ import Avatar from './avatar';
 import Button from './button';
 import Card from './card';
 import Carousel from './carousel';
+import Collapse from './collapse';
 import Dialog from './dialog';
 import Dropdown from './dropdown';
 import DropdownDivider from './dropdown/divider';
@@ -40,6 +41,7 @@ export default (context, inject, ...args) => {
   Vue.component('FmButton', Button);
   Vue.component('FmCard', Card);
   Vue.component('FmCarousel', Carousel);
+  Vue.component('FmCollapse', Collapse);
   Vue.component('FmDialog', Dialog);
   Vue.component('FmDropdown', Dropdown);
   Vue.component('FmDropdownDivider', DropdownDivider);
