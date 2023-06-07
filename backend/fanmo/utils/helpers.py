@@ -2,6 +2,7 @@ import re
 from time import mktime
 
 from django.template.defaultfilters import slugify as dj_slugify
+from django.utils.html import escape
 
 
 def datestamp(date):
@@ -13,4 +14,4 @@ def slugify(value):
 
 
 def replace_format(html, template, value):
-    return re.sub(template % "(.*)", template % value, html, 1)
+    return re.sub(template % "(.*)", template % escape(value), html, 1)
