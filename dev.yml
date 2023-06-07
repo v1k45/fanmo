@@ -6,7 +6,7 @@ volumes:
 
 services:
   django: &django
-    image: v1k45/fanmo:2023.04.1151-dev
+    image: v1k45/fanmo:2023.06.1152-dev
     volumes:
       - ./backend/fanmo/media:/app/fanmo/media
     depends_on:
