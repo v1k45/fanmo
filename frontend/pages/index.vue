@@ -55,7 +55,7 @@
         </div>
         <template v-if="creators.length">
           <h2 class="mb-10 text-2xl leading-tight font-title text-center sm:text-2xl md:text-3xl lg:text-4xl">Featured Creators</h2>
-          <div class="flex justify-between space-y-8 md:space-y-0 md:flex-row flex-col">
+          <div class="flex justify-between items-center md:items-start space-y-8 md:space-y-0 md:flex-row flex-col">
             <nuxt-link v-for="creator in creators" :key="creator.username" :to="`/${creator.username}`" class="unstyled transform transition-transform hover:scale-105 w-1/4">
               <div class="flex items-center flex-col">
                 <fm-avatar :src="creator.avatar && creator.avatar.medium" :name="creator.display_name" size="w-24 h-24 lg:w-32 lg:h-32"></fm-avatar>
