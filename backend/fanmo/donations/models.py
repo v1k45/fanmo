@@ -22,6 +22,9 @@ class Donation(BaseModel):
     creator_user = models.ForeignKey(
         "users.User", on_delete=models.CASCADE, related_name="donations_received"
     )
+    post = models.ForeignKey(
+        "posts.Post", on_delete=models.SET_NULL, null=True, default=None, blank=True
+    )
 
     message = models.TextField(blank=True, max_length=3000)
     status = FSMField(default=Status.PENDING, choices=Status.choices)

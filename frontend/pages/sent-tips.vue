@@ -166,6 +166,15 @@
         </div>
         <!-- lifetime amount end -->
 
+        <!-- lifetime amount start -->
+        <div v-if="activeDonation.post" class="flex items-baseline mb-2">
+          <dt class="text-sm text-gray-500 w-1/3 mr-2 md:w-1/4">Unlocked Post</dt>
+          <dd class="flex-grow">
+            <nuxt-link :to="{ name: 'p-slug-id', params: { slug: activeDonation.post.slug, id: activeDonation.post.id } }">{{ activeDonation.post.title }}</nuxt-link>
+          </dd>
+        </div>
+        <!-- lifetime amount end -->
+
         <!-- message visibility start -->
         <div v-if="activeDonation.message" class="flex items-baseline mb-2">
           <dt class="text-sm text-gray-500 w-1/3 mr-2 md:w-1/4">Message visibility</dt>

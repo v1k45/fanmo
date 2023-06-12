@@ -100,6 +100,19 @@
               <td><icon-check-circle-2 class="icon-check"></icon-check-circle-2></td>
             </tr>
             <tr>
+              <th>
+                Pay per post
+                <fm-tooltip class="inline" content="Sell post to people who are not your members yet">
+                  <span class="cursor-pointer">
+                    <icon-info class="h-4 w-4 text-fm-info fill-current stroke-white"></icon-info>
+                  </span>
+                </fm-tooltip>
+              </th>
+              <td><icon-check-circle-2 class="icon-check"></icon-check-circle-2></td>
+              <td><icon-x-circle class="icon-x"></icon-x-circle></td>
+              <td><icon-x-circle class="icon-x"></icon-x-circle></td>
+            </tr>
+            <tr>
               <th>Fee</th>
               <td class="font-bold text-fm-success-600"><span class="text-xl md:text-3xl">4.9%</span></td>
               <td>

@@ -8,30 +8,49 @@ import versatileimagefield.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('posts', '0006_postimage'),
+        ("posts", "0006_postimage"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='PostMeta',
+            name="PostMeta",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('title', models.CharField(blank=True, max_length=255)),
-                ('description', models.TextField(blank=True, max_length=500)),
-                ('keywords', models.CharField(blank=True, max_length=255)),
-                ('image', versatileimagefield.fields.VersatileImageField(blank=True, upload_to='posts/poster/')),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                ("title", models.CharField(blank=True, max_length=255)),
+                ("description", models.TextField(blank=True, max_length=500)),
+                ("keywords", models.CharField(blank=True, max_length=255)),
+                (
+                    "image",
+                    versatileimagefield.fields.VersatileImageField(
+                        blank=True, upload_to="posts/poster/"
+                    ),
+                ),
             ],
             options={
-                'db_table': 'post_meta',
-                'ordering': ('-created_at',),
-                'default_related_name': 'post_meta',
+                "db_table": "post_meta",
+                "ordering": ("-created_at",),
+                "default_related_name": "post_meta",
             },
         ),
         migrations.AddField(
-            model_name='post',
-            name='meta',
-            field=models.OneToOneField(default=None, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='posts', to='posts.postmeta'),
+            model_name="post",
+            name="meta",
+            field=models.OneToOneField(
+                default=None,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="posts",
+                to="posts.postmeta",
+            ),
         ),
     ]

@@ -1,5 +1,5 @@
 Hi {{ obj.creator_user.display_name }},
-{{ obj.fan_user.display_name }} tipped {{ obj.amount }}.
+{{ obj.fan_user.display_name }} tipped {{ obj.amount }} {% if obj.post %} for unlocking {{ obj.post.title }} {% endif %}.
 {% if obj.message %} {{ obj.message }} {% endif %}
 You can comment on this tip from your Fanmo page or dashboard. If you wish to contact {{ obj.fan_user.display_name }} directly, you can send an email on {{ obj.fan_user.email }} mailto:{{ obj.fan_user.email }}
 

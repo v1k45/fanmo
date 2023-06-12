@@ -157,7 +157,7 @@ class CreatorActivityChannel(BaseNotificationChannel):
         return CreatorActivity(
             type=CreatorActivity.Type.DONATION,
             donation=donation,
-            message=f"{donation.fan_user.display_name} tipped {donation.amount}.",
+            message=f"{donation.fan_user.display_name} tipped {donation.amount}{f' to unlock {donation.post.title}' if donation.post else ''}.",
             creator_user=donation.creator_user,
             fan_user=donation.fan_user,
         )

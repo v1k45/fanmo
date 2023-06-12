@@ -8,6 +8,7 @@ from django.template.defaultfilters import truncatewords
 from django.urls import reverse
 from django.utils.functional import cached_property
 from django_extensions.db.fields import AutoSlugField
+from djmoney.models.fields import MoneyField
 from micawber.exceptions import ProviderException
 from micawber.providers import bootstrap_oembed
 from mptt.models import MPTTModel, TreeForeignKey
@@ -31,8 +32,17 @@ def annotate_post_permissions(object_list, fan_user):
             if fan_user.is_authenticated
             else None
         )
+        donation = (
+            fan_user.get_donation(post.author_user_id, post.id)
+            if fan_user.is_authenticated
+            else None
+        )
         # post authors can access and comment
         if post.author_user_id == fan_user.pk:
+            can_access = True
+            can_comment = True
+        # purchased post can seen and commented by fan
+        elif donation is not None:
             can_access = True
             can_comment = True
         # public posts can be seen by anyone, but commented by members
@@ -99,7 +109,9 @@ class Post(BaseModel):
         populate_from="title", allow_duplicates=True, slugify_function=slugify
     )
     content = models.OneToOneField("posts.Content", on_delete=models.CASCADE)
-    meta = models.OneToOneField("posts.PostMeta", on_delete=models.CASCADE, null=True, default=None)
+    meta = models.OneToOneField(
+        "posts.PostMeta", on_delete=models.CASCADE, null=True, default=None
+    )
 
     author_user = models.ForeignKey("users.User", on_delete=models.CASCADE)
 
@@ -110,6 +122,9 @@ class Post(BaseModel):
 
     is_published = models.BooleanField(default=True)
     is_pinned = models.BooleanField(default=False)
+
+    is_purchaseable = models.BooleanField(default=False)
+    minimum_amount = MoneyField(max_digits=7, decimal_places=2, default=0)
 
     social_image = models.ImageField(upload_to="posts/social/", blank=True)
 
@@ -132,6 +147,7 @@ class PostMeta(BaseModel):
 
     def __str__(self) -> str:
         return self.title
+
 
 class Content(BaseModel):
     class Type(models.TextChoices):

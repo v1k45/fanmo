@@ -76,6 +76,9 @@ export default {
         await this.$axios.$post('/api/auth/password/reset/confirm/', this.form);
         this.$toast.success('Your password was set successfully.');
         await this.$auth.loginWith('cookie', { data: { email: this.form.email, password: this.form.new_password } });
+        if (this.$route.params.next) {
+          this.$router.push(this.$route.params.next);
+        }
         Object.assign(this, initialFormState());
         this.loading = false;
       } catch (err) {

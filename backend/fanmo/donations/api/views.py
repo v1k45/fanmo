@@ -37,7 +37,7 @@ class DonationViewSet(
     def get_queryset(self):
         queryset = Donation.objects.filter(
             status=Donation.Status.SUCCESSFUL
-        ).select_related("fan_user", "creator_user__user_preferences")
+        ).select_related("fan_user", "post", "creator_user__user_preferences")
         queryset = queryset.prefetch_related("reactions")
         queryset = queryset.annotate(
             lifetime_amount=Sum(

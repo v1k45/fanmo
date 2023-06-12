@@ -268,10 +268,10 @@ export const actions = {
   },
 
   // eslint-disable-next-line camelcase
-  async createDonation({ state, dispatch }, { amount, creator_username, email, message, is_hidden }) {
+  async createDonation({ state, dispatch }, { amount, creator_username, post_id, email, message, is_hidden }) {
     let donation;
     try {
-      donation = await this.$axios.$post('/api/donations/', { amount, creator_username, email, message, is_hidden });
+      donation = await this.$axios.$post('/api/donations/', { amount, creator_username, post_id, email, message, is_hidden });
       return { success: true, data: donation };
     } catch (err) {
       console.error(err.response.data);

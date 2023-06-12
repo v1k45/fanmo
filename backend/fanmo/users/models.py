@@ -20,6 +20,7 @@ from fanmo.core.models import (
     POST_NOTIFICATIONS,
 )
 from fanmo.donations.constants import DONATION_TIERS
+from fanmo.donations.models import Donation
 from fanmo.payments.models import BankAccount
 from fanmo.users.validators import ASCIIUsernameValidator, validate_username
 from fanmo.utils.models import BaseModel, IPAddressHistoricalModel
@@ -74,6 +75,7 @@ class User(BaseModel, AbstractUser):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.get_membership = lru_cache()(self._get_membership)
+        self.get_donation = lru_cache()(self._get_donation)
 
     @property
     def display_name(self):
@@ -128,6 +130,19 @@ class User(BaseModel, AbstractUser):
                 for membership in self.memberships.all()
                 if membership.is_active
                 and membership.creator_user_id == creator_user_id
+            ),
+            None,
+        )
+
+    def _get_donation(self, creator_user_id, post_id):
+        # PERF: assumes donations are prefetched!
+        return next(
+            (
+                donation
+                for donation in self.donations.all()
+                if donation.status == Donation.Status.SUCCESSFUL
+                and donation.creator_user_id == creator_user_id
+                and donation.post_id == post_id
             ),
             None,
         )

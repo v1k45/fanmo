@@ -412,6 +412,7 @@ class UserSerializer(ComputedUserFieldSerializer, serializers.ModelSerializer):
 
 class UserPreviewSerializer(ComputedUserFieldSerializer, serializers.ModelSerializer):
     avatar = VersatileImageFieldSerializer("user_avatar")
+    cover = VersatileImageFieldSerializer("user_cover")
 
     class Meta:
         model = User
@@ -420,6 +421,7 @@ class UserPreviewSerializer(ComputedUserFieldSerializer, serializers.ModelSerial
             "username",
             "name",
             "avatar",
+            "cover",
             "one_liner",
             "is_creator",
             "is_following",

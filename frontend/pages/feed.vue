@@ -119,6 +119,8 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations, mapState } from 'vuex';
+import { loadRazorpay } from '~/utils';
+
 export default {
   auth: true,
   layout: 'with-sidebar',
@@ -147,6 +149,7 @@ export default {
     this.setCurrentPage('feed');
     this.loadFeedPostsLocal();
     this.loadFollowingUsers();
+    loadRazorpay();
   },
   methods: {
     ...mapActions('posts', ['loadFeedPosts', 'loadNextFeedPosts']),

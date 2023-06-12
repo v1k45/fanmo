@@ -200,7 +200,7 @@ export default {
   },
 
   loadingIndicator: {
-    name: 'cube-grid',
+    name: 'circle',
     color: '#626be9',
     background: 'white'
   }

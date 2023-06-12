@@ -179,6 +179,8 @@
 import cloneDeep from 'lodash/cloneDeep';
 import { mapActions, mapGetters, mapMutations } from 'vuex';
 import get from 'lodash/get';
+import { loadRazorpay } from '~/utils';
+
 export default {
   layout: 'empty',
   auth: false,
@@ -246,6 +248,7 @@ export default {
     }
   },
   created() {
+    loadRazorpay();
     if (this.$route.params.share === '1') {
       this.sharePost.isVisible = true;
     }

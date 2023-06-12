@@ -186,6 +186,20 @@ def notify_donation(donation_id):
             "context": {"source_as_sender_name": True},
         },
     )
+    if donation.post:
+        post = donation.post
+        post.annotate_permissions(donation.fan_user)
+        notify(
+            source=donation.creator_user,
+            recipient=donation.fan_user,
+            obj=post,
+            action=NotificationType.NEW_POST,
+            silent=True,
+            channels=("email",),
+            extra_data={
+                "context": {"source_as_sender_name": True},
+            },
+        )
 
 
 def notify_new_post(post_id):
@@ -207,7 +221,7 @@ def notify_new_post(post_id):
             # users who are member of the creator
             | Q(memberships__creator_user=creator_user, memberships__is_active=True)
         )
-        .prefetch_related("memberships")
+        .prefetch_related("memberships", "donations")
         .distinct()
     )
     for recipient in recipients:

@@ -50,7 +50,11 @@ def page_view(request, username):
 
 
 def post_view(request, post_slug, post_id):
-    post = Post.objects.filter(id=post_id, is_published=True).select_related("meta").first()
+    post = (
+        Post.objects.filter(id=post_id, is_published=True)
+        .select_related("meta")
+        .first()
+    )
     if not post:
         return serve_index(status=404)
 
@@ -73,7 +77,7 @@ def post_view(request, post_slug, post_id):
         image_url = request.build_absolute_uri(post.social_image.url)
     elif post.author_user.social_image:
         image_url = request.build_absolute_uri(post.author_user.social_image.url)
-    
+
     return serve_index(
         title=title,
         description=description,
@@ -147,7 +151,7 @@ def serve_index(*, title=None, description=None, image=None, keywords=None, stat
             'property="og:image" content="%s" data-hid="og:image"',
             image,
         )
-    
+
     if keywords:
         response_text = replace_format(
             response_text,

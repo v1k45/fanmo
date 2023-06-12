@@ -7,7 +7,7 @@
 
 Hi {{ obj.fan_user.display_name }},
 
-You have sucessfully tipped {{ obj.amount }} to {{ obj.creator_user.display_name}}.
+You have sucessfully tipped {{ obj.amount }} to {{ obj.creator_user.display_name}}.{% if obj.post %} You have unlocked {{ obj.post.title }} with this tip.{% endif %}
 
 {% if obj.creator_user.user_preferences.thank_you_message %}
 {{ obj.creator_user.user_preferences.thank_you_message }}

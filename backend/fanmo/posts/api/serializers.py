@@ -2,6 +2,7 @@ import bleach
 from bleach.css_sanitizer import CSSSanitizer
 from django.conf import settings
 from django.urls import reverse
+from djmoney.contrib.django_rest_framework.fields import MoneyField
 from drf_extra_fields.fields import Base64FileField, Base64ImageField
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
@@ -9,7 +10,15 @@ from rest_framework import serializers
 from fanmo.donations.models import Donation
 from fanmo.memberships.api.serializers import TierPreviewSerializer
 from fanmo.memberships.models import Tier
-from fanmo.posts.models import Comment, Content, ContentFile, Post, PostImage, Reaction, PostMeta
+from fanmo.posts.models import (
+    Comment,
+    Content,
+    ContentFile,
+    Post,
+    PostImage,
+    PostMeta,
+    Reaction,
+)
 from fanmo.users.api.serializers import PublicUserSerializer, UserPreviewSerializer
 from fanmo.utils.fields import FileField, VersatileImageFieldSerializer
 
@@ -166,6 +175,7 @@ class ContentSerializer(serializers.ModelSerializer):
 
         return super().validate(attrs)
 
+
 class PostMetaSerializer(serializers.ModelSerializer):
     image = VersatileImageFieldSerializer("post_image", read_only=True)
     image_base64 = Base64ImageField(write_only=True, required=False, source="image")
@@ -209,6 +219,12 @@ class PostStatsSerializer(serializers.ModelSerializer):
         return getattr(post, "comment_count", 0)
 
 
+class PostPreviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ["id", "title", "slug"]
+
+
 class PostSerializer(serializers.ModelSerializer):
     content = serializers.SerializerMethodField()
     author_user = UserPreviewSerializer(read_only=True)
@@ -226,6 +242,11 @@ class PostSerializer(serializers.ModelSerializer):
         queryset=Tier.objects.filter(is_public=True),
         source="allowed_tiers",
     )
+    minimum_amount = MoneyField(
+        max_digits=7,
+        decimal_places=2,
+        default_currency="INR",
+    )
 
     class Meta:
         model = Post
@@ -239,6 +260,8 @@ class PostSerializer(serializers.ModelSerializer):
             "visibility",
             "allowed_tiers",
             "allowed_tiers_ids",
+            "is_purchaseable",
+            "minimum_amount",
             "can_access",
             "can_comment",
             "minimum_tier",
@@ -292,7 +315,17 @@ class PostUpdateSerializer(PostDetailSerializer):
         read_only_fields = fields.copy()
         read_only_fields = list(
             set(read_only_fields)
-            - set(["is_pinned", "content", "title", "visibility", "allowed_tier_ids"])
+            - set(
+                [
+                    "is_pinned",
+                    "content",
+                    "title",
+                    "visibility",
+                    "allowed_tier_ids",
+                    "is_purchaseable",
+                    "minimum_amount",
+                ]
+            )
         )
 
     def validate_is_pinned(self, is_pinned):
@@ -307,6 +340,23 @@ class PostUpdateSerializer(PostDetailSerializer):
                 "pin_count_exceeded",
             )
         return is_pinned
+
+    def validate(self, attrs):
+        if attrs.get("is_purchaseable"):
+            if attrs["visibility"] == Post.Visiblity.PUBLIC:
+                raise serializers.ValidationError(
+                    "Posts with 'public' visibility cannot be purchased.",
+                    "not_purchaseable",
+                )
+            elif (
+                attrs["minimum_amount"]
+                < self.instance.creator_user.user_preferences.minimum_amount
+            ):
+                raise serializers.ValidationError(
+                    f"Amount cannot be lower than {self.instance.creator_user.user_preferences.minimum_amount} - your minimum tip amount.",
+                    "minimum",
+                )
+        return super().validate(attrs)
 
     def update(self, instance, validated_data):
         content = validated_data.pop("content", None)

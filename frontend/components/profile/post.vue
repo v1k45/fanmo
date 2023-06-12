@@ -103,16 +103,23 @@
       </a>
     </div>
   </template>
-  <div v-else class="mt-6 min-h-[300px] bg-gradient-to-tr from-fm-primary-400 to-fm-primary-700 flex items-center justify-center">
-    <div class="text-center text-white">
+  <div v-else class="mt-6 min-h-[450px] bg-gradient-to-tr from-gray-400 to-gray-700 flex items-center justify-center relative">
+    <div class="absolute inset-0">
+      <div class="relative h-full w-full">
+        <img v-if="post.author_user.cover" :src="post.author_user.cover.medium" class="object-cover object-center w-full h-full" alt="">
+        <div class="w-full h-full backdrop-blur-lg bg-gray-500/50 absolute inset-0"></div>
+      </div>
+    </div>
+    <div v-if="!showPurchaseForm" class="text-center text-white m-2 md:m-4 z-10">
       <icon-lock class="h-16 w-16 animatecss animatecss-shake animatecss-delay-3s"></icon-lock>
       <template v-if="post.minimum_tier">
         <div class="mt-4 px-4">
           Join <strong>{{ post.minimum_tier.name }}</strong> to unlock this post now!
         </div>
-        <div class="mt-6 rounded-l-full rounded-r-full">
+        <div class="mt-6 rounded-l-full rounded-r-full px-4">
           <fm-button
-            type="" class="text-body" :loading="joinActionLoading" block @click="handleSubscribeIntent">
+            type="primary" class="text-body" :loading="joinActionLoading" block @click="handleSubscribeIntent">
+            <icon-crown class="h-em w-em"></icon-crown>
             Join now for {{ $currency(post.minimum_tier.amount) }}/month
           </fm-button>
         </div>
@@ -121,6 +128,45 @@
       <div v-else class="mt-4 px-4">
         Become a member to unlock this post now!
       </div>
+      <template v-if="post.is_purchaseable">
+        <div class="mt-4 rounded-l-full rounded-r-full px-4">
+          <fm-button
+            type="" class="text-body" :loading="donationLoading" block @click="handlePurchaseIntent">
+            <icon-coins class="h-em w-em"></icon-coins>
+            Unlock with a {{ $currency(post.minimum_amount) }} tip
+          </fm-button>
+        </div>
+      </template>
+    </div>
+    <div v-if="showPurchaseForm" v-loading="loading" class="max-w-lg w-full m-2 md:m-4 overflow-auto z-10">
+      <post-donation :post="post" :user="post.author_user" :loading="donationLoading" @donate-click="handleDonateClick" @cancel="showPurchaseForm = false">
+      </post-donation>
+
+      <!-- dialogs start -->
+      <profile-express-checkout
+        v-model="expressCheckout.isVisible"
+        :user="post.author_user"
+        :tier="expressCheckout.tier"
+        :post="post"
+        :donation-data="expressCheckout.donationData"
+        :support-type="expressCheckout.supportType"
+        @submit="handleExpressCheckoutSubmit">
+      </profile-express-checkout>
+
+      <profile-payment-success
+        v-model="paymentSuccess.isVisible"
+        :tier="paymentSuccess.tier"
+        :user="post.author_user"
+        :post="post"
+        :support-type="paymentSuccess.supportType"
+        :success-message="paymentSuccess.successMessage"
+        :donation-data="paymentSuccess.donationData"
+        @dashboard-click="handlePaymentSuccessNext('dashboard')"
+        @authenticated-next-click="handlePaymentSuccessNext('authenticated-next')"
+        @unauthenticated-next-click="handlePaymentSuccessNext('unauthenticated-next')"
+        @donation-close-click="handlePaymentSuccessNext('donation-close')">
+      </profile-payment-success>
+
     </div>
   </div>
 
@@ -156,6 +202,12 @@
 import dayjs from 'dayjs';
 import get from 'lodash/get';
 import { mapActions, mapMutations } from 'vuex';
+import { base64 } from '~/utils';
+
+
+const MEMBERSHIP = 'membership';
+const DONATION = 'donation';
+
 
 export default {
   props: {
@@ -166,7 +218,26 @@ export default {
   },
   data() {
     return {
-      likedInThisSession: false
+      likedInThisSession: false,
+      showPurchaseForm: false,
+      expressCheckout: {
+        isVisible: false,
+        tier: null,
+        supportType: null,
+        donationData: null
+      },
+      paymentSuccess: {
+        isVisible: false,
+        fanUser: null, // stores fan_user to facilitate the "Activate account" functionality during express checkout success
+        successMessage: null,
+        tier: null,
+        donationData: null,
+        supportType: null
+      },
+      donationLoading: false,
+      loadingLockedPostId: null,
+      loadingTierId: null,
+      loading: false
     };
   },
   computed: {
@@ -219,6 +290,7 @@ export default {
   },
   methods: {
     ...mapActions('posts', ['updatePost', 'deletePost', 'addOrRemoveReaction']),
+    ...mapActions('profile', ['fetchProfileUser', 'fetchProfile', 'createDonation', 'processPayment']),
     ...mapMutations('ui', ['setGlobalLoader']),
 
     async deletePostLocal() {
@@ -270,6 +342,141 @@ export default {
           }
         }
       });
+    },
+    handlePurchaseIntent() {
+      this.showPurchaseForm = true;
+    },
+    async handleDonateClick(donationData) {
+      if (!this.$auth.loggedIn) {
+        this.expressCheckout = {
+          isVisible: true,
+          tier: null,
+          donationData,
+          supportType: DONATION
+        };
+        return;
+      }
+
+      this.donationLoading = true;
+      const { success, data } = await this.createDonation(donationData);
+      if (!success) {
+        if (data.message) data.non_field_errors = data.message;
+        else if (data.amount) data.non_field_errors = data.amount;
+        if (get(data, 'creator_username[0]')) this.$toast.error(data.creator_username[0].message);
+        else this.$toast.error(data);
+        this.donationLoading = false;
+        return;
+      }
+      const donation = data;
+      this.initiateRazorpayPayment(donation, DONATION, data);
+    },
+
+    handleExpressCheckoutSubmit(membershipOrDonationResponse) {
+      const type = this.expressCheckout.supportType;
+      this.expressCheckout = {
+        isVisible: false,
+        tier: null,
+        supportType: null,
+        donationData: null
+      };
+      this.initiateRazorpayPayment(
+        type === MEMBERSHIP ? membershipOrDonationResponse.scheduled_subscription : membershipOrDonationResponse,
+        type,
+        membershipOrDonationResponse
+      );
+    },
+
+    initiateRazorpayPayment(donationOrSubscription, supportType, donationOrSubscriptionResponse) {
+      const paymentOptions = donationOrSubscription.payment.payload;
+      // success
+      paymentOptions.handler = async (paymentResponse) => {
+        this.loadingTierId = null;
+        this.loadingLockedPostId = null;
+        this.donationLoading = false;
+        this.loading = 'Processing payment... Do not close or refresh this page.';
+        const { error, response } = await this.processPayment({ donationOrSubscription, paymentResponse, supportType });
+        this.loading = false;
+        if (error) {
+          // TODO: add a retry option to the dialog
+          this.$alert.error(response, 'Error');
+          return;
+        }
+        if (this.$refs.donationWidget) this.$refs.donationWidget.reset();
+        this.paymentSuccess = {
+          isVisible: true,
+          fanUser: donationOrSubscriptionResponse.fan_user,
+          successMessage: response.message,
+          tier: supportType === MEMBERSHIP ? donationOrSubscription.tier : null,
+          donationData: supportType === DONATION ? donationOrSubscription : null,
+          supportType
+        };
+      };
+      // cancel
+      paymentOptions.modal = {
+        ondismiss: () => {
+          this.loadingLockedPostId = null;
+          this.loadingTierId = null;
+          this.donationLoading = false;
+        }
+      };
+      const rzp1 = new window.Razorpay(paymentOptions);
+
+      // TODO: handle error in a more fancy way
+      // failed
+      rzp1.on('payment.failed', (response) => {
+        this.loadingLockedPostId = null;
+        this.loadingTierId = null;
+        this.donationLoading = false;
+        this.logApplicationEvent(
+          'payment_failed',
+          response,
+          supportType === DONATION ? donationOrSubscription.id : null,
+          supportType === MEMBERSHIP ? donationOrSubscription.id : null
+        );
+      });
+      rzp1.open();
+    },
+
+    async logApplicationEvent(name, payload, donationId, subscriptionId) {
+      try {
+        await this.$axios.$post('/api/events/', {
+          name, payload, donation_id: donationId, subscription_id: subscriptionId
+        });
+      } catch (err) {
+        // do nothing
+      }
+    },
+
+    handlePaymentSuccessNext(actionType) {
+      const fanUser = this.paymentSuccess.fanUser;
+      this.paymentSuccess = {
+        isVisible: false,
+        fanUser: null,
+        successMessage: null,
+        tier: null,
+        donationData: null,
+        supportType: null
+      };
+      if (actionType === 'dashboard') this.$router.push('dashboard');
+      else if (actionType === 'authenticated-next') {
+        this.fetchProfile(this.user.username);
+        this.activeTab = this.tabName.POSTS;
+      } else if (actionType === 'unauthenticated-next') {
+        // set password
+        this.$router.push({
+          name: 'set-password-token',
+          params: { token: base64.encode(fanUser.email), next: { name: 'p-slug-id', params: { slug: this.post.slug, id: this.post.id } } },
+          query: { s: '1' }
+        });
+      } else if (actionType === 'donation-close') {
+        // go to post detail page if already authentioated
+        // refresh post to show updated info
+        if (this.$route.name === 'p-slug-id') {
+          this.$router.go(0);
+        } else {
+          this.$router.push({ name: 'p-slug-id', params: { slug: this.post.slug, id: this.post.id } });
+        }
+      }
     }
   }
 };

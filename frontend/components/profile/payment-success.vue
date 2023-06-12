@@ -8,14 +8,19 @@
   <!-- creator's avatar end -->
 
   <!-- support {creator} & support-type success start -->
-  <div class="mt-4 text-black font-bold text-xl text-center">
+  <div class="my-4 font-semibold text-lg text-center">
+    Payment Successful! <icon-check-circle-2 class="inline-block text-white bg-fm-success h-em w-em rounded-full mx-1 mb-1"></icon-check-circle-2>
+  </div>
+  <div class="text-center">
     <span v-if="supportType === 'membership'">
       You have successfully joined <span class="text-fm-primary">{{ tier.name }}</span>.
     </span>
     <span v-else-if="supportType === 'donation'">
-      Your one-time payment of <span class="text-fm-primary">{{ $currency(donationData.amount) }}</span> was successful.
+      <template v-if="post">
+        You have successfully unlocked <span class="font-semibold">{{ post.title }}</span> with a tip of <span class="font-semibold">{{ $currency(donationData.amount) }}</span>. A copy of this post has been sent to your email.
+      </template>
+      <template v-else>Your have successfully tipped <span class="font-semibold">{{ $currency(donationData.amount) }}</span>.</template>
     </span>
-    <icon-check-circle-2 class="inline-block text-white bg-fm-success h-em w-em rounded-full mx-1 mb-1"></icon-check-circle-2>
   </div>
 
   <div class="mt-4 text-center whitespace-pre-line">{{ successMessage }}</div>
@@ -24,11 +29,11 @@
   <!-- buttons start -->
   <div v-if="$auth.loggedIn" class="mt-8 mb-6">
     <div v-if="supportType === 'membership' && !isPreview" class="flex space-x-3">
-      <fm-button block @click="$emit('dashboard-click')">Dashboard</fm-button>
-      <fm-button block type="primary" @click="$emit('authenticated-next-click')">Done</fm-button>
+      <fm-button block @click="$emit('dashboard-click')">Go to Dashboard</fm-button>
+      <fm-button block type="primary" @click="$emit('authenticated-next-click')">Ok</fm-button>
     </div>
     <div v-else-if="supportType === 'donation' && !isPreview" class="text-center">
-      <fm-button class="w-36" @click="$emit('donation-close-click')">Done</fm-button>
+      <fm-button class="w-36" @click="$emit('donation-close-click')">Ok</fm-button>
     </div>
   </div>
   <template v-else>
@@ -54,6 +59,7 @@ export default {
     value: { type: Boolean, default: true },
     tier: { type: Object, default: null },
     user: { type: Object, required: true },
+    post: { type: Object, required: false, default: null },
     successMessage: { type: String, default: null },
     donationData: { type: Object, default: null },
     showClose: { type: Boolean, default: false },

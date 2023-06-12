@@ -6,8 +6,11 @@ from rest_framework import serializers
 from fanmo.core.serializers import PaymentIntentSerializerMixin
 from fanmo.donations.constants import DONATION_TIERS
 from fanmo.donations.models import Donation
-from fanmo.posts.api.serializers import PostReactionSummarySerializer
-from fanmo.posts.models import Reaction
+from fanmo.posts.api.serializers import (
+    PostPreviewSerializer,
+    PostReactionSummarySerializer,
+)
+from fanmo.posts.models import Post, Reaction
 from fanmo.users.api.serializers import FanUserPreviewSerializer, UserPreviewSerializer
 from fanmo.utils.fields import VersatileImageFieldSerializer
 
@@ -125,6 +128,12 @@ class DonationCreateSerializer(
         decimal_places=2,
         default_currency="INR",
     )
+    post_id = serializers.PrimaryKeyRelatedField(
+        source="post",
+        queryset=Post.objects.filter(is_published=True, is_purchaseable=True),
+        required=False,
+        allow_null=True,
+    )
     payment = DonationPaymentSerializer(source="*", read_only=True)
     fan_user = FanUserPreviewSerializer(read_only=True)
     creator_user = UserPreviewSerializer(read_only=True)
@@ -140,6 +149,7 @@ class DonationCreateSerializer(
             "email",
             "fan_user",
             "creator_user",
+            "post_id",
             "amount",
             "message",
             "is_hidden",
@@ -162,6 +172,19 @@ class DonationCreateSerializer(
     def validate(self, attrs):
         attrs["fan_user"] = self.get_fan_user(attrs.pop("email", None))
         user_preferences = attrs["creator_user"].user_preferences
+
+        post = attrs.get("post", None)
+        if post is not None:
+            if attrs["creator_user"].pk != post.author_user_id:
+                raise serializers.ValidationError(
+                    f"This post does not belong to {attrs['creator_user'].display_name}.",
+                    "invalid",
+                )
+            if attrs["amount"] < post.minimum_amount:
+                raise serializers.ValidationError(
+                    f"Please tip at least {post.minimum_amount} to unlock this post.",
+                    "min_amount",
+                )
 
         # validate min amount
         if attrs["amount"] < user_preferences.minimum_amount:
@@ -202,6 +225,7 @@ class DonationCreateSerializer(
 class DonationSerializer(serializers.ModelSerializer):
     fan_user = FanUserPreviewSerializer()
     creator_user = UserPreviewSerializer()
+    post = PostPreviewSerializer(read_only=True)
     message = serializers.SerializerMethodField()
     lifetime_amount = serializers.SerializerMethodField()
     stats = DonationSocialStatsSerializer(source="*", read_only=True)
@@ -214,6 +238,7 @@ class DonationSerializer(serializers.ModelSerializer):
             "id",
             "fan_user",
             "creator_user",
+            "post",
             "message",
             "amount",
             "is_hidden",

@@ -72,7 +72,7 @@
                   <tr>
                     <td class="sm-px-24" style="border-radius: 4px; background-color: #fff; padding: 48px; text-align: left; font-size: 16px; line-height: 24px; color: #1f2937">    <p class="sm-leading-32" style="margin: 0; margin-bottom: 24px; font-size: 20px; font-weight: 600; color: #000">Hi {{ obj.fan_user.display_name }},</p>
     <p>
-      You have sucessfully tipped <strong>{{ obj.amount }}</strong> to <strong>{{ obj.creator_user.display_name}}</strong>.
+      You have sucessfully tipped <strong>{{ obj.amount }}</strong> to <strong>{{ obj.creator_user.display_name}}</strong>.{% if obj.post %} You have unlocked <strong>{{ obj.post.title }}</strong> with this tip.{% endif %}
     </p>
     {% if obj.creator_user.user_preferences.thank_you_message %}
     <p><em>{{ obj.creator_user.user_preferences.thank_you_message }}</em></p>

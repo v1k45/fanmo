@@ -6,7 +6,7 @@ bodyClass: bg-gray-100
   <block name="template">
     <p class="text-xl sm:leading-32 text-black font-semibold m-0 mb-24">Hi @{{ obj.fan_user.display_name }},</p>
     <p>
-      You have sucessfully tipped <strong>@{{ obj.amount }}</strong> to <strong>@{{ obj.creator_user.display_name}}</strong>.
+      You have sucessfully tipped <strong>@{{ obj.amount }}</strong> to <strong>@{{ obj.creator_user.display_name}}</strong>.{% if obj.post %} You have unlocked <strong>@{{ obj.post.title }}</strong> with this tip.{% endif %}
     </p>
     {% if obj.creator_user.user_preferences.thank_you_message %}
     <p><em>@{{ obj.creator_user.user_preferences.thank_you_message }}</em></p>

@@ -17,7 +17,12 @@
       <strong>{{ $currency(tier.amount) }}</strong> per month.
     </div>
     <div v-else-if="supportType === 'donation'">
-      Send a one-time payment of <strong>{{ $currency(donationData.amount) }}</strong>.
+      <template v-if="post">
+        Unlock <strong>{{ post.title }}</strong> for a one-time payment of <strong>{{ $currency(donationData.amount) }}</strong>.
+      </template>
+      <template v-else>
+        Send a one-time payment of <strong>{{ $currency(donationData.amount) }}</strong>.
+      </template>
     </div>
   </div>
   <!-- support {creator} & support-type end -->
@@ -137,6 +142,7 @@ export default {
   props: {
     value: { type: Boolean, default: true },
     user: { type: Object, required: true },
+    post: { type: Object, required: false, default: null },
     tier: { type: Object, default: null },
     donationData: { type: Object, default: null },
     supportType: { type: String, default: null, validator: val => ['membership', 'donation'].includes(val) }

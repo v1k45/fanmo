@@ -71,6 +71,43 @@
 
           <hr class="my-4">
 
+          <!-- monetization start -->
+          <fm-collapse
+            v-model="isExpanded.monetization"
+            icon="indian-rupee"
+            title="Monetization"
+            description="Allow non-members to unlock this post by sending a tip"
+            class="p-3"
+            :class="{'bg-gray-50 rounded-sm': isExpanded.monetization}">
+
+            <div class="xmt-2" foo="p-2 border border-gray-300 rounded">
+              <fm-input v-model="form.is_purchaseable" uid="is_purchaseable" type="checkbox">Allow non-members to purchase this post</fm-input>
+              <div class="text-gray-500 text-sm">
+                Users who are not your members will be able to unlock this post by sending you a tip of their choice.
+              </div>
+              <fm-input
+                v-if="form.is_purchaseable"
+                v-model.number="form.minimum_amount" type="number" uid="minimum_amount" label="Minimum Amount" class="mt-2"
+                :min="$auth.user.preferences.minimum_amount" max="10000" placeholder="Enter an amount">
+                <template #after-label>
+                  <div class="flex space-x-1 overflow-auto pb-1 mb-1">
+                    <button
+                      v-for="amount in presetAmounts" :key="amount" type="button"
+                      class="py-1 px-2 text-sm rounded border border-fm-primary-400 hover:border-fm-primary-500 hover:bg-fm-primary-500 hover:text-white"
+                      :class="{'border-fm-primary-500 bg-fm-primary-500 text-white': parseFloat(amount) === parseFloat(form.minimum_amount), 'text-fm-primary-400': parseFloat(amount) !== parseFloat(form.minimum_amount)}"
+                      @click="form.minimum_amount = amount;">
+                      {{ $currency(amount) }}
+                    </button>
+                  </div>
+                </template>
+                <template #prepend>₹</template>
+              </fm-input>
+            </div>
+          </fm-collapse>
+          <!-- monetization end -->
+
+          <hr class="my-4">
+
           <fm-collapse
             v-model="isExpanded.preview"
             icon="view"
@@ -268,6 +305,8 @@ export default {
           image_base64: ''
         },
         visibility: 'public',
+        is_purchaseable: false,
+        minimum_amount: parseFloat(this.$auth.user.preferences.default_donation_amount),
         allowed_tiers_ids: []
       },
       errors: {},
@@ -279,7 +318,8 @@ export default {
       isExpanded: {
         meta: false,
         visibility: true,
-        preview: false
+        preview: false,
+        monetization: false
       },
       loading: false
     };
@@ -292,6 +332,9 @@ export default {
       set(val) {
         this.$emit('input', val);
       }
+    },
+    presetAmounts() {
+      return [25, 50, 100, 250, 500, 1000, 2500, 5000].filter(amount => amount >= this.$auth.user.preferences.minimum_amount);
     },
     imagePreviews() {
       if (!this.form.content.files || !this.form.content.files.length) return [];
@@ -351,6 +394,8 @@ export default {
             keywords: '',
             image_base64: ''
           },
+          is_purchaseable: false,
+          minimum_amount: parseFloat(this.$auth.user.preferences.default_donation_amount),
           visibility: 'public',
           allowed_tiers_ids: []
         },
@@ -359,6 +404,12 @@ export default {
           link: null,
           link_og: null,
           link_embed: null
+        },
+        isExpanded: {
+          meta: false,
+          visibility: true,
+          preview: false,
+          monetization: false
         },
         loading: false
       });
