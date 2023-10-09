@@ -354,9 +354,12 @@ export default {
       this.activeTab = routeData.tab === this.tabName.TIERS && !this.shouldShowTiersTab ? this.tabName.POSTS : routeData.tab;
     } else {
       this.activeTab = (() => {
-        if (this.currentUserHasActiveSubscription || this.isSelfProfile) return this.tabName.POSTS;
-        if (this.shouldShowTiersTab) return this.tabName.TIERS;
-        return this.tabName.DONATION;
+        // if (this.currentUserHasActiveSubscription || this.isSelfProfile) return this.tabName.POSTS;
+        // if (this.shouldShowTiersTab) return this.tabName.TIERS;
+        // return this.tabName.DONATION;
+
+        // force to show posts tab for now
+        return this.tabName.POSTS;
       })();
     }
 
