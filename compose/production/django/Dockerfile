@@ -37,6 +37,20 @@ COPY ./frontend/ .
 
 RUN yarn generate
 
+# Build docs
+FROM node:18-alpine as docs-build-stage
+ARG STAGE=prod
+ENV STAGE ${STAGE}
+
+WORKDIR /app
+COPY ./docs/package.json .
+COPY ./docs/package-lock.json .
+RUN npm install
+ENV PATH /app/node_modules/.bin:$PATH
+COPY ./docs/ .
+
+RUN npm run build
+
 # Python 'run' stage
 FROM python as python-run-stage
 
@@ -99,6 +113,7 @@ RUN chmod +x /qcluster
 
 # copy nuxt generated files
 COPY --chown=django:django --from=node-build-stage /app/dist /var/www/html/
+COPY --chown=django:django --from=docs-build-stage /app/dist /var/www/html/docs/
 COPY --chown=django:django ./backend ${APP_HOME}
 COPY --chown=django:django ./backend ${APP_HOME}
 COPY --chown=django:django ./supervisord.conf /etc/

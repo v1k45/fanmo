@@ -22,6 +22,34 @@ COPY ./backend/requirements .
 RUN pip wheel --wheel-dir /usr/src/app/wheels  \
   -r ${BUILD_ENVIRONMENT}.txt
 
+# Build UI
+FROM node:14-alpine as node-build-stage
+ARG STAGE=dev
+ENV STAGE ${STAGE}
+
+WORKDIR /app
+COPY ./frontend/package.json .
+COPY ./frontend/yarn.lock .
+RUN yarn install
+ENV PATH /app/node_modules/.bin:$PATH
+COPY ./frontend/ .
+
+RUN yarn generate
+
+# Build docs
+FROM node:18-alpine as docs-build-stage
+ARG STAGE=prod
+ENV STAGE ${STAGE}
+
+WORKDIR /app
+COPY ./docs/package.json .
+COPY ./docs/package-lock.json .
+RUN npm install
+ENV PATH /app/node_modules/.bin:$PATH
+COPY ./docs/ .
+
+RUN npm run build
+
 
 # Python 'run' stage
 FROM python as python-run-stage
@@ -68,6 +96,8 @@ COPY ./compose/local/django/qcluster /qcluster
 RUN sed -i 's/\r$//g' /qcluster
 RUN chmod +x /qcluster
 
+COPY --from=node-build-stage /app/dist /var/www/html/
+COPY --from=docs-build-stage /app/dist /var/www/html/docs/
 
 # # copy application code to WORKDIR
 # COPY . ${APP_HOME}

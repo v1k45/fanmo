@@ -17,7 +17,7 @@ services:
       - redis
     volumes:
       - ./backend:/app:z
-      - ./frontend/dist:/var/www/html
+      # - ./frontend/dist:/var/www/html
     env_file:
       - ./.envs/.local/.django
       - ./.envs/.local/.postgres
@@ -69,6 +69,7 @@ services:
       - ./caddy/data:/data
       - ./caddy/config:/config
       - ./backend/fanmo/media:/var/www/html/media
+      # - ./docs/dist:/var/www/html/docs
     ports:
       - "7070:80"
       - "7777:443"

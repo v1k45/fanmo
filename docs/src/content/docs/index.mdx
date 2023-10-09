@@ -1,0 +1,44 @@
+---
+title: Fanmo Help
+description: Learn how to build your creator page and make the most of Fanmo
+template: splash
+hero:
+  tagline: Take a step towards building a sustainable income from your passion.
+  image:
+    file: ../../assets/logo-circle.png
+  actions:
+    - text: Get started
+      link: /docs/getting-started/intro/
+      icon: right-arrow
+      variant: primary
+    - text: Go to Home
+      link: /
+      icon: external
+---
+
+import { CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+## Quick links
+
+<CardGrid>
+	<LinkCard
+		title="Getting Started"
+		href="/docs/getting-started/intro/"
+		description="Learn how to build your page and make the most of Fanmo."
+	/>
+	<LinkCard
+		title="Memberships"
+		href="/docs/memberships/intro/"
+		description="Find out how to build stable monthly income with memberships."
+	/>
+	<LinkCard
+		title="Tips"
+		href="/docs/tips/intro/"
+		description="Accept tips from your fans and create an new revenue stream."
+	/>
+	<LinkCard
+		title="Posts"
+		href="/docs/posts/intro/"
+		description="Post exclusive content for your members and fans."
+	/>
+</CardGrid>

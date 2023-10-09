@@ -30,7 +30,7 @@
           <template v-if="$auth.loggedIn">
             <template v-if="marketing">
               <li><nuxt-link class="unstyled" to="/pricing">Pricing</nuxt-link></li>
-              <li><nuxt-link class="unstyled" to="/pricing#comparison">Comparison</nuxt-link></li>
+              <li><a class="unstyled" href="/docs">Help</a></li>
             </template>
             <li>
               <layout-navigation type="hamburger"></layout-navigation>
@@ -38,7 +38,7 @@
           </template>
           <template v-else>
             <li><nuxt-link class="unstyled" to="/pricing">Pricing</nuxt-link></li>
-            <li><nuxt-link class="unstyled" to="/pricing#comparison">Comparison</nuxt-link></li>
+            <li><a class="unstyled" href="/docs">Help</a></li>
             <li><nuxt-link class="unstyled" to="/login">Login</nuxt-link></li>
             <li>
               <nuxt-link
