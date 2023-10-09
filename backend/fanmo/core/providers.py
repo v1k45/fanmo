@@ -1,3 +1,4 @@
+from time import sleep
 from django.core.mail import EmailMultiAlternatives, get_connection
 from notifications.providers import BaseNotificationProvider
 
@@ -22,9 +23,15 @@ class EmailNotificationProvider(BaseNotificationProvider):
         email_message.send()
 
     def send_bulk(self, payloads):
-        messages = (self._get_email_message(payload) for payload in payloads)
-        connection = get_connection()
-        connection.send_messages(messages)
+        # split payloads into chunks of 10 and they send delay each chunk by 2 second
+        chunks = [payloads[x : x + 10] for x in range(0, len(payloads), 10)]
+        for chunk in chunks:
+            conn = get_connection()
+            conn.send_messages(
+                [self._get_email_message(payload) for payload in chunk]
+            )
+            # this is to avoid hitting the rate limit
+            sleep(2)
 
 
 class CreatorActivityProvider(BaseNotificationProvider):
