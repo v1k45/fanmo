@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from fanmo.core.notifications import notify_comment, notify_new_post
 from fanmo.core.tasks import async_task
 from fanmo.donations.models import Donation
-from fanmo.posts.api.filters import PostFilter
+from fanmo.posts.api.filters import PostFilter, SectionFilter
 from fanmo.posts.api.serializers import (
     CommentReactionSerializer,
     CommentSerializer,
@@ -25,8 +25,9 @@ from fanmo.posts.api.serializers import (
     PostSerializer,
     PostStatsSerializer,
     PostUpdateSerializer,
+    SectionSerializer,
 )
-from fanmo.posts.models import Comment, Post, annotate_post_permissions
+from fanmo.posts.models import Comment, Post, Section, annotate_post_permissions
 from fanmo.posts.tasks import refresh_post_social_image
 from fanmo.users.api.permissions import IsCreator
 from fanmo.utils.throttling import Throttle
@@ -226,3 +227,23 @@ class PostImageViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(creator_user=self.request.user)
+
+
+class SectionViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, viewsets.ReadOnlyModelViewSet):
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    serializer_class = SectionSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filterset_class = SectionFilter
+    ordering_fields = ("title",)
+    queryset = Section.objects.all()
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        if self.action in ["destroy", "update", "partial_update"]:
+            queryset = queryset.filter(creator_user=self.request.user)
+
+        queryset = queryset.annotate(
+            post_count=Count("posts", filter=Q(posts__is_published=True))
+        )
+        return queryset.order_by("title")

@@ -156,6 +156,7 @@ export const actions = {
   async fetchProfile({ dispatch, rootState }, username) {
     const pValues = (await Promise.allSettled([
       dispatch('posts/loadProfilePosts', username, { root: true }),
+      dispatch('posts/loadSections', username, { root: true }),
       dispatch('fetchProfileUser', username),
       dispatch('fetchProfileDonations', username),
       dispatch('fetchExistingMemberships', { creatorUsername: username, fanUsername: get(rootState, 'auth.user.username') })

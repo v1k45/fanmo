@@ -15,7 +15,9 @@ export const state = () => ({
   profilePosts_raw: null, // { previous, next, postIds }
 
   // feed page
-  feedPosts_raw: null // { previous, next, postIds }
+  feedPosts_raw: null, // { previous, next, postIds }
+
+  sections_raw: null // { previous, next, reuslts }
 });
 
 export const getters = {
@@ -43,6 +45,10 @@ export const getters = {
       ...state.feedPosts_raw, // previous, next
       results: (state.feedPosts_raw.postIds || []).map(postId => state.postsById[postId]).filter(post => !!post)
     };
+  },
+  sections(state) {
+    if (!state.sections_raw) return [];
+    return state.sections_raw.results;
   },
   currentPost(state) {
     const post = state.postsById[state.currentPostId];
@@ -91,6 +97,29 @@ export const actions = {
       const posts = await this.$axios.$get(state.feedPosts_raw.next);
       commit('setNextFeedPosts', { posts });
       return SUCCESS(posts);
+    } catch (err) {
+      handleGenericError(err, true);
+      return ERROR(err.response.data);
+    }
+  },
+  async loadSections({ commit }, username) {
+    try {
+      const sections = await this.$axios.$get('/api/sections/', { params: { creator_username: username } });
+      commit('setSections', { sections });
+      return SUCCESS(sections);
+    } catch (err) {
+      handleGenericError(err, true);
+      return ERROR(err.response.data);
+    }
+  },
+  async loadNextSections({ commit, state, dispatch }) {
+    try {
+      const sections = await this.$axios.$get(state.sections_raw.next);
+      commit('setNextSections', { sections });
+      if (sections.next) {
+        await dispatch('loadNextSections');
+      }
+      return SUCCESS(sections);
     } catch (err) {
       handleGenericError(err, true);
       return ERROR(err.response.data);
@@ -180,6 +209,19 @@ export const mutations = {
       state.feedPosts_raw.postIds.push(post.id);
     });
     Object.assign(state.feedPosts_raw, { previous, next });
+  },
+  setSections(state, { sections }) {
+    const { previous, next, results } = sections;
+    state.sections_raw = {
+      previous,
+      next,
+      results
+    };
+  },
+  setNextSections(state, { sections }) {
+    const { previous, next, results } = sections;
+    state.sections_raw.results.push(...results);
+    Object.assign(state.sections_raw, { previous, next });
   },
   setCurrentPost(state, { post }) {
     state.currentPostId = post.id;

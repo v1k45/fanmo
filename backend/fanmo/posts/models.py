@@ -113,6 +113,9 @@ class Post(BaseModel):
         "posts.PostMeta", on_delete=models.CASCADE, null=True, default=None
     )
 
+    section = models.ForeignKey(
+        "posts.Section", on_delete=models.SET_NULL, null=True, blank=True
+    )
     author_user = models.ForeignKey("users.User", on_delete=models.CASCADE)
 
     visibility = models.CharField(
@@ -144,6 +147,20 @@ class PostMeta(BaseModel):
     description = models.TextField(max_length=500, blank=True)
     keywords = models.CharField(max_length=255, blank=True)
     image = VersatileImageField(upload_to="posts/poster/", blank=True)
+
+    def __str__(self) -> str:
+        return self.title
+
+
+class Section(BaseModel):
+    title = models.CharField(max_length=255)
+    slug = AutoSlugField(
+        populate_from="title", allow_duplicates=True, slugify_function=slugify, overwrite=True
+    )
+    creator_user = models.ForeignKey("users.User", on_delete=models.CASCADE)
+    
+    class Meta:
+        unique_together = ["creator_user", "title"]
 
     def __str__(self) -> str:
         return self.title

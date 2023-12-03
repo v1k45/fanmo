@@ -1,6 +1,6 @@
 from django_filters import rest_framework as filters
 
-from fanmo.posts.models import Post
+from fanmo.posts.models import Post, Section
 
 
 class PostFilter(filters.FilterSet):
@@ -15,3 +15,10 @@ class PostFilter(filters.FilterSet):
         if value:
             return queryset.filter(author_user__followers=self.request.user.pk)
         return queryset
+
+class SectionFilter(filters.FilterSet):
+    creator_username = filters.CharFilter(field_name="creator_user__username")
+
+    class Meta:
+        model = Section
+        fields = ["creator_username"]

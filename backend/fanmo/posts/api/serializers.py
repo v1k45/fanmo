@@ -18,6 +18,7 @@ from fanmo.posts.models import (
     PostImage,
     PostMeta,
     Reaction,
+    Section,
 )
 from fanmo.users.api.serializers import PublicUserSerializer, UserPreviewSerializer
 from fanmo.utils.fields import FileField, VersatileImageFieldSerializer
@@ -633,3 +634,15 @@ class PostImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = PostImage
         fields = ["id", "image", "image_base64", "created_at", "updated_at"]
+
+
+class SectionSerializer(serializers.ModelSerializer):
+    post_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Section
+        fields = ["id", "title", "slug", "post_count", "created_at", "updated_at"]
+
+    @extend_schema_field(serializers.IntegerField())
+    def get_post_count(self, section):
+        return getattr(section, "post_count", 0)

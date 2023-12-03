@@ -25,7 +25,7 @@ from fanmo.memberships.api.views import (
     TierViewSet,
 )
 from fanmo.payments.api.views import BankAccountViewSet, PaymentViewSet, PayoutViewSet
-from fanmo.posts.api.views import CommentViewSet, PostViewSet, PostImageViewSet
+from fanmo.posts.api.views import CommentViewSet, PostViewSet, PostImageViewSet, SectionViewSet
 from fanmo.users.api.views import (
     CreatorActivityViewSet,
     FacebookLoginView,
@@ -67,6 +67,7 @@ router.register("users", UserViewSet, basename="users")
 router.register("activities", CreatorActivityViewSet, basename="activities")
 router.register("tiers", TierViewSet, basename="tiers")
 router.register("posts", PostViewSet, basename="posts")
+router.register("sections", SectionViewSet, basename="sections")
 router.register("images", PostImageViewSet, basename="images")
 router.register("comments", CommentViewSet, basename="comments")
 router.register("memberships", MembershipViewSet, basename="memberships")

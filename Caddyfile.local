@@ -30,6 +30,7 @@
 
   # Send requests to app server.
   reverse_proxy django:8000
+  tls internal
 
   encode gzip
 }

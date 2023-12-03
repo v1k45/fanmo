@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.contrib import admin
 
-from .models import Comment, Content, ContentFile, Post, Reaction
+from .models import Comment, Content, ContentFile, Post, Reaction, Section
 
 
 @admin.register(Post)
@@ -83,4 +83,26 @@ class ReactionAdmin(admin.ModelAdmin):
         "author_user",
     )
     list_filter = ("created_at", "updated_at", "post", "author_user")
+    date_hierarchy = "created_at"
+
+
+@admin.register(Section)
+class SectionAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "title",
+        "slug",
+        "creator_user",
+        "created_at",
+        "updated_at",
+    )
+    list_filter = (
+        "created_at",
+        "updated_at",
+        "creator_user",
+    )
+    readonly_fields = (
+        "created_at",
+        "updated_at",
+    )
     date_hierarchy = "created_at"

@@ -81,61 +81,76 @@
               <!-- no posts public end -->
             </div>
           </div>
-          <div v-if="user.about || isSelfProfile" class="col-12 lg:col-5 mb-6 lg:mb-0">
-            <fm-card body-class="" class="overflow-hidden sticky top-20">
-              <div class="text-xl text-black font-bold mb-3">About</div>
-              <div v-if="user.about">
-                <!-- TODO: remove duplication once breakpoint service is available -->
-                <fm-read-more lines="2" class="lg:hidden mb-4">
-                  <fm-markdown-styled>
-                    <div v-html="user.about"></div>
-                  </fm-markdown-styled>
-                </fm-read-more>
-                <fm-read-more lines="6" class="hidden lg:block mb-4">
-                  <fm-markdown-styled>
-                    <div v-html="user.about"></div>
-                  </fm-markdown-styled>
-                </fm-read-more>
-              </div>
-              <div
-                v-else
-                class="mx-auto overflow-hidden text-center pt-10 pb-14">
-                <icon-scroll class="h-16 w-16 stroke-1"></icon-scroll>
-                <div class="mt-2">
-                  Start by telling your fans a bit about yourself and where they can find you.
-
-                  <div class="text-sm text-gray-500 mt-3">
-                    Click on <span class="text-black">Edit Page</span> to get started.
-                  </div>
-
+          <div class="col-12 lg:col-5 mb-6 lg:mb-0">
+            <div class="overflow-hidden sticky top-20">
+              <fm-card v-if="sections || isSelfProfile" body-class="" class="mb-4">
+                <template #header>
+                  Categories
+                </template>
+                <div class="flex flex-col space-y-2">
+                  <nuxt-link v-for="section in sections" :key="section.id" :to="`/${user.username}/?section=${section.slug}--${section.id}`">
+                    <div class="flex justify-between">
+                      <div>{{ section.title }}</div>
+                      <div>({{ section.post_count }})</div>
+                    </div>
+                  </nuxt-link>
                 </div>
-              </div>
-              <div class="flex justify-center space-x-4 text-gray-600">
-                <a v-if="user.social_links.website_url" class="unstyled hover:text-gray-800" title="Website" target="_blank" :href="user.social_links.website_url">
-                  <icon-globe :size="24"></icon-globe>
-                </a>
-                <a v-if="user.social_links.twitter_url" class="unstyled hover:text-gray-800" title="Twitter" target="_blank" :href="user.social_links.twitter_url">
-                  <icon-twitter :size="24"></icon-twitter>
-                </a>
-                <a v-if="user.social_links.youtube_url" class="unstyled hover:text-gray-800" title="Youtube" target="_blank" :href="user.social_links.youtube_url">
-                  <icon-youtube :size="24"></icon-youtube>
-                </a>
-                <a v-if="user.social_links.instagram_url" class="unstyled hover:text-gray-800" title="Instagram" target="_blank" :href="user.social_links.instagram_url">
-                  <icon-instagram :size="24"></icon-instagram>
-                </a>
-                <a v-if="user.social_links.facebook_url" class="unstyled hover:text-gray-800" title="Facebook" target="_blank" :href="user.social_links.facebook_url">
-                  <icon-facebook :size="24"></icon-facebook>
-                </a>
-              </div>
-              <div class="flex items-center justify-center space-x-3 border-t mt-4 py-4">
-                <fm-button type="primary" @click="activeTab = tabName.TIERS">
-                  <icon-crown class="h-em w-em"></icon-crown> Join
-                </fm-button>
-                <fm-button type="primary" @click="activeTab = tabName.DONATION">
-                  <icon-coins class="h-em w-em"></icon-coins> Tip
-                </fm-button>
-              </div>
-            </fm-card>
+              </fm-card>
+              <fm-card v-if="user.about || isSelfProfile" body-class="">
+                <div class="text-xl text-black font-bold mb-3">About</div>
+                <div v-if="user.about">
+                  <!-- TODO: remove duplication once breakpoint service is available -->
+                  <fm-read-more lines="2" class="lg:hidden mb-4">
+                    <fm-markdown-styled>
+                      <div v-html="user.about"></div>
+                    </fm-markdown-styled>
+                  </fm-read-more>
+                  <fm-read-more lines="6" class="hidden lg:block mb-4">
+                    <fm-markdown-styled>
+                      <div v-html="user.about"></div>
+                    </fm-markdown-styled>
+                  </fm-read-more>
+                </div>
+                <div
+                  v-else
+                  class="mx-auto overflow-hidden text-center pt-10 pb-14">
+                  <icon-scroll class="h-16 w-16 stroke-1"></icon-scroll>
+                  <div class="mt-2">
+                    Start by telling your fans a bit about yourself and where they can find you.
+
+                    <div class="text-sm text-gray-500 mt-3">
+                      Click on <span class="text-black">Edit Page</span> to get started.
+                    </div>
+
+                  </div>
+                </div>
+                <div class="flex justify-center space-x-4 text-gray-600">
+                  <a v-if="user.social_links.website_url" class="unstyled hover:text-gray-800" title="Website" target="_blank" :href="user.social_links.website_url">
+                    <icon-globe :size="24"></icon-globe>
+                  </a>
+                  <a v-if="user.social_links.twitter_url" class="unstyled hover:text-gray-800" title="Twitter" target="_blank" :href="user.social_links.twitter_url">
+                    <icon-twitter :size="24"></icon-twitter>
+                  </a>
+                  <a v-if="user.social_links.youtube_url" class="unstyled hover:text-gray-800" title="Youtube" target="_blank" :href="user.social_links.youtube_url">
+                    <icon-youtube :size="24"></icon-youtube>
+                  </a>
+                  <a v-if="user.social_links.instagram_url" class="unstyled hover:text-gray-800" title="Instagram" target="_blank" :href="user.social_links.instagram_url">
+                    <icon-instagram :size="24"></icon-instagram>
+                  </a>
+                  <a v-if="user.social_links.facebook_url" class="unstyled hover:text-gray-800" title="Facebook" target="_blank" :href="user.social_links.facebook_url">
+                    <icon-facebook :size="24"></icon-facebook>
+                  </a>
+                </div>
+                <div class="flex items-center justify-center space-x-3 border-t mt-4 py-4">
+                  <fm-button type="primary" @click="activeTab = tabName.TIERS">
+                    <icon-crown class="h-em w-em"></icon-crown> Join
+                  </fm-button>
+                  <fm-button type="primary" @click="activeTab = tabName.DONATION">
+                    <icon-coins class="h-em w-em"></icon-coins> Tip
+                  </fm-button>
+                </div>
+              </fm-card>
+            </div>
           </div>
         </div>
       </div>
@@ -375,7 +390,7 @@ export default {
     ...mapState('profile', ['user', 'donations', 'posts', 'isPreviewMode']),
     ...mapState('ui', ['showGlobalLoader']),
     ...mapGetters('profile', ['isSelfProfile', 'currentUserHasActiveSubscription']),
-    ...mapGetters('posts', ['profilePosts']),
+    ...mapGetters('posts', ['profilePosts', 'sections']),
 
     shouldShowTiersTab() {
       if (!this.user) return false;
