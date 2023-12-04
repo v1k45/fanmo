@@ -10,6 +10,10 @@ export const state = () => ({
       title: 'Earnings',
       description: 'View your earnings and stats.'
     },
+    posts: {
+      title: 'Posts',
+      description: 'View and manage your posts.'
+    },
     feed: {
       title: 'Feed',
       description: 'Content from all the creators you follow or subscribe to.'

@@ -29,7 +29,7 @@ from fanmo.posts.api.serializers import (
 )
 from fanmo.posts.models import Comment, Post, Section, annotate_post_permissions
 from fanmo.posts.tasks import refresh_post_social_image
-from fanmo.users.api.permissions import IsCreator
+from fanmo.users.api.permissions import IsCreator, IsCreatorOrReadOnly
 from fanmo.utils.throttling import Throttle
 
 
@@ -42,9 +42,11 @@ class PostViewSet(
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     serializer_class = PostSerializer
     queryset = Post.objects.filter(is_published=True)
-    filter_backends = (DjangoFilterBackend,)
+    filter_backends = (DjangoFilterBackend, SearchFilter, OrderingFilter)
     filterset_class = PostFilter
     throttle_classes = [Throttle("post_hour", "create")]
+    search_fields = ["title"]
+    ordering_fields = ["created_at", "updated_at"]
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -230,7 +232,7 @@ class PostImageViewSet(mixins.CreateModelMixin, viewsets.ReadOnlyModelViewSet):
 
 
 class SectionViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, viewsets.ReadOnlyModelViewSet):
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsCreatorOrReadOnly]
     serializer_class = SectionSerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = SectionFilter
@@ -247,3 +249,6 @@ class SectionViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin, mixins.De
             post_count=Count("posts", filter=Q(posts__is_published=True))
         )
         return queryset.order_by("title")
+    
+    def perform_create(self, serializer):
+        serializer.save(creator_user=self.request.user)

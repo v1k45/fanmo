@@ -210,6 +210,7 @@ export default {
         creator: [
           { id: 'creator-pages', label: 'Creator pages' },
           { id: 'dashboard', label: 'Dashboard', icon: Home, url: '/dashboard/' },
+          { id: 'posts', label: 'Posts', icon: LayoutList, url: '/posts/' },
           { id: 'members', label: 'Members', icon: Users, url: '/members/' },
           { id: 'creator-donations', label: 'Tips', icon: Coins, url: '/received-tips/' },
           { id: 'earnings', label: 'Earnings', icon: Wallet, url: '/earnings/' },

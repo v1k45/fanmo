@@ -72,6 +72,17 @@ export const actions = {
       return ERROR(err.response.data);
     }
   },
+  // eslint-disable-next-line camelcase
+  async fetchPosts({ commit }, { creator_username, section_id, search, ordering }) {
+    try {
+      const posts = await this.$axios.$get('/api/posts/', { params: { creator_username, section_id, search, ordering } });
+      commit('setProfilePosts', { username: creator_username, posts });
+      return SUCCESS(posts);
+    } catch (err) {
+      handleGenericError(err, true);
+      return ERROR(err.response.data);
+    }
+  },
   async loadNextProfilePosts({ commit, state }, username) {
     try {
       const posts = await this.$axios.$get(state.profilePosts_raw.next);
@@ -135,7 +146,16 @@ export const actions = {
       return ERROR(err.response.data);
     }
   },
-
+  // create
+  async createSection({ dispatch }, payload) {
+    try {
+      const section = await this.$axios.$post('/api/sections/', payload);
+      return SUCCESS(section);
+    } catch (err) {
+      handleGenericError(err);
+      return ERROR(err.response.data);
+    }
+  },
   async addOrRemoveReaction({ commit, state }, { postId, action, emoji = 'heart' }) {
     try {
       const postStats = await this.$axios.$post(`/api/posts/${postId}/reactions/`, { action, emoji });
@@ -157,6 +177,16 @@ export const actions = {
       return ERROR(err.response.data);
     }
   },
+  async updateSection({ commit, dispatch }, { sectionId, payload }) {
+    try {
+      const section = await this.$axios.$patch(`/api/sections/${sectionId}/`, payload);
+      commit('updateSection', section);
+      return SUCCESS(section);
+    } catch (err) {
+      handleGenericError(err);
+      return ERROR(err.response.data);
+    }
+  },
   // delete
   async deletePost({ commit, state }, postId) {
     try {
@@ -165,6 +195,16 @@ export const actions = {
       return SUCCESS();
     } catch (err) {
       return handleGenericError(err, true);
+    }
+  },
+  async deleteSection({ commit, dispatch }, sectionId) {
+    try {
+      await this.$axios.$delete(`/api/sections/${sectionId}/`);
+      commit('deleteSection', sectionId);
+      return SUCCESS();
+    } catch (err) {
+      handleGenericError(err, true);
+      return ERROR(err.response.data);
     }
   }
 };
@@ -241,5 +281,13 @@ export const mutations = {
   },
   deletePost(state, postId) {
     Vue.delete(state.postsById, postId);
+  },
+  updateSection(state, section) {
+    const sectionIdx = state.sections_raw.results.findIndex(currSection => currSection.id === section.id);
+    state.sections_raw.results.splice(sectionIdx, 1, section);
+  },
+  deleteSection(state, sectionId) {
+    const sectionIdx = state.sections_raw.results.findIndex(currSection => currSection.id === sectionId);
+    state.sections_raw.results.splice(sectionIdx, 1);
   }
 };

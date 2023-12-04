@@ -11,6 +11,18 @@ class IsCreator(BasePermission):
 
     def has_permission(self, request, view):
         return request.user.is_creator
+    
+
+class IsCreatorOrReadOnly(BasePermission):
+    """
+    Allows access only to creator users.
+    """
+
+    message = "Only creators are allowed to perform this action."
+    code = "creator_required"
+
+    def has_permission(self, request, view):
+        return request.method in ["GET", "HEAD", "OPTIONS"] or request.user.is_creator
 
 
 class HasVerifiedEmail(BasePermission):
