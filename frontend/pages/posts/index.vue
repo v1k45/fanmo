@@ -109,6 +109,7 @@ export default {
   },
   created() {
     this.loadPosts();
+    this.loadSections(this.$auth.user.username);
   },
   methods: {
     ...mapActions('posts', ['fetchPosts', 'loadNextProfilePosts', 'loadSections']),

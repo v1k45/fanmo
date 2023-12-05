@@ -37,7 +37,8 @@ export default {
   async fetch() {
     this.loading = true;
     await Promise.allSettled([
-      this.loadPost(this.$route.params.id)
+      this.loadPost(this.$route.params.id),
+      this.loadSections(this.$auth.user.username)
     ]);
     this.loading = false;
   },
@@ -73,7 +74,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('posts', ['loadPost'])
+    ...mapActions('posts', ['loadPost', 'loadSections'])
   }
 };
 </script>

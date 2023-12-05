@@ -135,7 +135,7 @@ export default {
     }
   },
   created() {
-    this.loadSections();
+    this.loadSections(this.$auth.user.username);
     if (this.$route.params.add === '1') {
       this.isAddFormVisible = true;
     }
@@ -163,7 +163,7 @@ export default {
 
       if (response.success) {
         this.$toast.success(this.isEditing ? 'Section updated successfully.' : 'Section created successfully.');
-        await this.loadSections();
+        await this.loadSections(this.$auth.user.username);
         this.isAddFormVisible = false;
       } else {
         this.formErrors = response.data;
