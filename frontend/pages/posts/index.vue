@@ -1,6 +1,6 @@
 <template>
-<div v-if="profilePosts">
-  <div class="flex flex-col-reverse xl:flex-row flex-wrap xl:flex-nowrap xl:space-x-8">
+<div>
+  <div v-if="profilePosts" class="flex flex-col-reverse xl:flex-row flex-wrap xl:flex-nowrap xl:space-x-8">
     <!-- posts start -->
     <div class="w-full md:max-w-2xl mx-auto md:flex-shrink-0">
       <template v-if="profilePosts">
@@ -26,7 +26,7 @@
         <!-- filters start -->
         <div class="flex flex-col w-full space-y-4">
 
-          <fm-button type="primary" block><icon-image-plus class="mr-1 -mt-0.5" :size="16"></icon-image-plus> Add a post</fm-button>
+          <fm-button type="primary" block @click="addPost.isVisible = true;"><icon-image-plus class="mr-1 -mt-0.5" :size="16"></icon-image-plus> Add a post</fm-button>
 
           <hr>
 
@@ -68,6 +68,8 @@
     </div>
   </div>
 
+  <profile-add-post v-model="addPost.isVisible"></profile-add-post>
+
   <!-- dialogs start -->
   <profile-share v-model="sharePost.isVisible" :text="sharePost.text" :relative-url="sharePost.relativeUrl"></profile-share>
   <!-- dialogs end -->
@@ -91,6 +93,9 @@ export default {
       },
       profilePostsLoading: false,
       nextPostsLoading: false,
+      addPost: {
+        isVisible: false
+      },
       sharePost: {
         isVisible: false,
         relativeUrl: null,

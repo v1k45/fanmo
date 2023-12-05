@@ -31,6 +31,11 @@
             <fm-input v-model="form.content.text" uid="content.text" label="Description (optional)" type="textarea"></fm-input>
           </template>
 
+          <fm-input v-model="form.section_id" type="select" uid="section_id" label="Post Section" class="mt-6">
+            <option :value="null">None</option>
+            <option v-for="section in sections" :key="section.id" :value="section.id">{{ section.title }}</option>
+          </fm-input>
+
           <hr class="my-4">
 
           <!-- visibility start -->
@@ -251,7 +256,7 @@
 import dayjs from 'dayjs';
 import get from 'lodash/get';
 import cloneDeep from 'lodash/cloneDeep';
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import FmInputRich from '~/components/fm/input/rich.vue';
 import { getBase64FromFile } from '~/utils';
 
@@ -298,6 +303,7 @@ export default {
         is_purchaseable: false,
         minimum_amount: parseFloat(this.$auth.user.preferences.default_donation_amount),
         visibility: 'public',
+        section_id: null,
         allowed_tiers_ids: []
       },
       errors: {},
@@ -318,6 +324,7 @@ export default {
     };
   },
   computed: {
+    ...mapGetters('posts', ['sections']),
     isVisible: {
       get() {
         return this.value;
@@ -394,6 +401,7 @@ export default {
     }
 
     this.form.visibility = this.post.visibility;
+    this.form.section_id = this.post.section ? this.post.section.id : null;
     this.form.allowed_tiers_ids = this.post.allowed_tiers.map(t => t.id);
   },
   methods: {
@@ -417,6 +425,7 @@ export default {
           is_purchaseable: false,
           minimum_amount: parseFloat(this.$auth.user.preferences.default_donation_amount),
           visibility: 'public',
+          section_id: null,
           allowed_tiers_ids: []
         },
         errors: {},

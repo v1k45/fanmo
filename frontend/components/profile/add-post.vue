@@ -42,6 +42,11 @@
             <!-- text+link post end -->
           </fm-tabs>
 
+          <fm-input v-model="form.section_id" type="select" uid="section_id" label="Post Section" class="mt-6">
+            <option :value="null">None</option>
+            <option v-for="section in sections" :key="section.id" :value="section.id">{{ section.title }}</option>
+          </fm-input>
+
           <hr class="my-4">
 
           <!-- visibility start -->
@@ -262,7 +267,7 @@
 import dayjs from 'dayjs';
 import get from 'lodash/get';
 import cloneDeep from 'lodash/cloneDeep';
-import { mapActions } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 import FmInputRich from '~/components/fm/input/rich.vue';
 
 const contentPreset = () => ({
@@ -307,6 +312,7 @@ export default {
         visibility: 'public',
         is_purchaseable: false,
         minimum_amount: parseFloat(this.$auth.user.preferences.default_donation_amount),
+        section_id: null,
         allowed_tiers_ids: []
       },
       errors: {},
@@ -325,6 +331,7 @@ export default {
     };
   },
   computed: {
+    ...mapGetters('posts', ['sections']),
     isVisible: {
       get() {
         return this.value;

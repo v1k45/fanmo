@@ -13,8 +13,9 @@
         <nuxt-link
           :to="{ name: 'p-slug-id', params: { slug: post.slug, id: post.id } }"
           class="w-full basis-auto unstyled" title="Open post">
-          <div class="text-xl text-black font-bold w-full" :class="{'md:text-3xl': $route.name == 'p-slug-id', 'md:text-2xl': $route.name !== 'p-slug-id'}">{{ post.title }}</div>
+          <div class="text-xl hover:text-gray-700 text-gray-800 font-bold w-full" :class="{'md:text-3xl': $route.name == 'p-slug-id', 'md:text-2xl': $route.name !== 'p-slug-id'}">{{ post.title }}</div>
         </nuxt-link>
+        <nuxt-link v-if="post.section" :to="`/${post.author_user.username}`" class="text-base font-thin my-1 unstyled hover:text-gray-600 text-gray-500">{{ post.section.title }}</nuxt-link>
       </div>
 
       <!-- options for self profile start -->
@@ -38,7 +39,7 @@
       <!-- avatar and name start -->
       <nuxt-link
         :to="`/${post.author_user.username}/`"
-        class="unstyled flex items-center mr-auto mt-1 overflow-hidden md:max-w-[47.5%]">
+        class="unstyled flex items-center mr-auto mt-1 overflow-hidden md:max-w-[47.5%] text-gray-600 hover:text-gray-500">
         <!-- avatar start -->
         <fm-avatar
           :src="post.author_user.avatar && post.author_user.avatar.small"
@@ -73,7 +74,7 @@
 
   <template v-if="post.content">
     <div v-if="post.content.text" class="post-body">
-      <fm-read-more-height :max-height="$route.name == 'p-slug-id' ? null : '300'" :route="{ name: 'p-slug-id', params: { slug: post.slug, id: post.id } }" class="mt-4">
+      <fm-read-more-height :max-height="$route.name == 'p-slug-id' ? null : '300'" :route="{ name: 'p-slug-id', params: { slug: post.slug, id: post.id } }" class="mt-4 border-t border-gray-200">
         <fm-markdown-styled>
           <div class="whitespace-pre-line" v-html="post.content.text"></div>
         </fm-markdown-styled>

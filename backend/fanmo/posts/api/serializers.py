@@ -177,6 +177,12 @@ class ContentSerializer(serializers.ModelSerializer):
         return super().validate(attrs)
 
 
+class SectionPreviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Section
+        fields = ["id", "title", "slug"]
+
+
 class PostMetaSerializer(serializers.ModelSerializer):
     image = VersatileImageFieldSerializer("post_image", read_only=True)
     image_base64 = Base64ImageField(write_only=True, required=False, source="image")
@@ -234,6 +240,14 @@ class PostSerializer(serializers.ModelSerializer):
     can_access = serializers.SerializerMethodField()
     can_comment = serializers.SerializerMethodField()
     minimum_tier = serializers.SerializerMethodField()
+    section = SectionPreviewSerializer(read_only=True)
+    section_id = serializers.PrimaryKeyRelatedField(
+        source="section",
+        queryset=Section.objects.all(),
+        write_only=True,
+        allow_null=True,
+        required=False,
+    )
     allowed_tiers = TierPreviewSerializer(many=True, read_only=True)
     allowed_tiers_ids = serializers.PrimaryKeyRelatedField(
         many=True,
@@ -259,6 +273,8 @@ class PostSerializer(serializers.ModelSerializer):
             "stats",
             "meta",
             "visibility",
+            "section",
+            "section_id",
             "allowed_tiers",
             "allowed_tiers_ids",
             "is_purchaseable",
@@ -277,6 +293,10 @@ class PostSerializer(serializers.ModelSerializer):
         super().__init__(*args, **kwargs)
         tiers_qs = self.fields["allowed_tiers_ids"].child_relation.queryset
         self.fields["allowed_tiers_ids"].child_relation.queryset = tiers_qs.filter(
+            creator_user=self.context["request"].user.pk
+        )
+        section_qs = self.fields["section_id"].queryset
+        self.fields["section_id"].queryset = section_qs.filter(
             creator_user=self.context["request"].user.pk
         )
 
@@ -322,6 +342,7 @@ class PostUpdateSerializer(PostDetailSerializer):
                     "content",
                     "title",
                     "visibility",
+                    "section_id",
                     "allowed_tier_ids",
                     "is_purchaseable",
                     "minimum_amount",
@@ -646,3 +667,13 @@ class SectionSerializer(serializers.ModelSerializer):
     @extend_schema_field(serializers.IntegerField())
     def get_post_count(self, section):
         return getattr(section, "post_count", 0)
+    
+    def validate_title(self, title):
+        if self.instance and self.instance.title == title:
+            return title
+
+        if Section.objects.filter(creator_user=self.context["request"].user, title__iexact=title).exists():
+            raise serializers.ValidationError(
+                "You already have a section with this title.", "duplicate_title"
+            )
+        return title

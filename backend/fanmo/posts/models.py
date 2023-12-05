@@ -155,7 +155,7 @@ class PostMeta(BaseModel):
 class Section(BaseModel):
     title = models.CharField(max_length=255)
     slug = AutoSlugField(
-        populate_from="title", allow_duplicates=True, slugify_function=slugify, overwrite=True
+        populate_from="title", allow_duplicates=False, slugify_function=slugify, overwrite=True
     )
     creator_user = models.ForeignKey("users.User", on_delete=models.CASCADE)
     
