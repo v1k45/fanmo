@@ -81,7 +81,7 @@
     </div>
   </div>
 
-  <div class="bg-gray-50 pt-6 pb-10 min-h-[300px]">
+  <div v-if="user.username === $route.params.username" class="bg-gray-50 pt-6 pb-10 min-h-[300px]">
     <nuxt-child
       :key="$route.path"
       :loading="isLoading"
