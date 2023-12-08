@@ -87,6 +87,7 @@ class ContentSerializer(serializers.ModelSerializer):
                 "b",
                 "strong",
                 "i",
+                "u",
                 "strike",
                 "em",
                 "s",
@@ -677,3 +678,10 @@ class SectionSerializer(serializers.ModelSerializer):
                 "You already have a section with this name.", "duplicate_name"
             )
         return name
+    
+    def validate_description(self, description):
+        return bleach.clean(
+            description,
+            tags=["p", "b", "strong", "i", "u", "strike", "em", "s", "br", "a"],
+            attributes={"a": ["href", "rel", "target"]},
+        )

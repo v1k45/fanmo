@@ -24,6 +24,11 @@
       <icon-italic></icon-italic>
     </button>
     <button
+      v-if="currentPreset.underline" type="button" title="Underline"
+      :class="{ 'is-active': editor.isActive('underline') }" @click="editor.chain().focus().toggleUnderline().run()">
+      <icon-underline></icon-underline>
+    </button>
+    <button
       v-if="currentPreset.strike" type="button" title="Strikethrough"
       :class="{ 'is-active': editor.isActive('strike') }" @click="editor.chain().focus().toggleStrike().run()">
       <icon-strikethrough></icon-strikethrough>
@@ -133,6 +138,7 @@ import StarterKit from '@tiptap/starter-kit';
 import LinkExtension from '@tiptap/extension-link';
 import TextAlignExtension from '@tiptap/extension-text-align';
 import ImageExtension from '@tiptap/extension-image';
+import UnderlineExtension from '@tiptap/extension-underline';
 import cloneDeep from 'lodash/cloneDeep';
 import { getBase64FromFile, handleGenericError } from '~/utils';
 
@@ -156,7 +162,8 @@ const options = () => ({
   listItem: false,
   orderedList: false,
   textAlign: false,
-  strike: false
+  strike: false,
+  underline: false
 });
 
 const preset = (() => {
@@ -165,7 +172,8 @@ const preset = (() => {
     bold: true,
     italic: true,
     strike: true,
-    link: true
+    link: true,
+    underline: true
   });
   const intermediate = () => ({
     ...basic(),
@@ -239,7 +247,8 @@ export default {
         StarterKit.configure(this.currentPreset),
         ...(this.currentPreset.link ? [LinkExtension.configure({ openOnClick: false })] : []),
         ...(this.currentPreset.image ? [ImageExtension] : []),
-        ...(this.currentPreset.textAlign ? [TextAlignExtension.configure({ types: ['heading', 'paragraph'] })] : [])
+        ...(this.currentPreset.textAlign ? [TextAlignExtension.configure({ types: ['heading', 'paragraph'] })] : []),
+        ...(this.currentPreset.underline ? [UnderlineExtension] : [])
       ]
     });
 
