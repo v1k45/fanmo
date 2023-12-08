@@ -255,7 +255,7 @@ export default {
       for (const section of this.sections.filter(s => s.show_in_menu)) {
         sectionTabs.push({
           name: `username-s-${section.slug}`,
-          label: section.title,
+          label: section.name,
           url: `/${this.user.username}/s/${section.slug}`,
           isActive: routeName === 'username-s-slug' && this.$route.params.slug === section.slug,
           hideOnSM: true,

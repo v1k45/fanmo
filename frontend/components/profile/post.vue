@@ -10,7 +10,7 @@
   <div class="post-body">
     <div class="flex items-center" :class="{'mb-3': $route.name == 'p-slug-id'}">
       <div class="flex flex-wrap flex-grow mr-auto">
-        <nuxt-link v-if="post.section" :to="{ name: 'username-s-slug', params: { username: post.author_user.username, slug: post.section.slug } }" class="text-sm font-thin my-1 unstyled hover:text-gray-600 text-gray-500">{{ post.section.title }}</nuxt-link>
+        <nuxt-link v-if="post.section" :to="{ name: 'username-s-slug', params: { username: post.author_user.username, slug: post.section.slug } }" class="text-sm font-thin my-1 unstyled hover:text-gray-600 text-gray-500">{{ post.section.name }}</nuxt-link>
         <nuxt-link
           :to="{ name: 'p-slug-id', params: { slug: post.slug, id: post.id } }"
           class="w-full basis-auto unstyled" title="Open post">

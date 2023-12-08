@@ -153,19 +153,19 @@ class PostMeta(BaseModel):
 
 
 class Section(BaseModel):
-    title = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
     slug = AutoSlugField(
-        populate_from="title", allow_duplicates=False, slugify_function=slugify, overwrite=True
+        populate_from="name", allow_duplicates=False, slugify_function=slugify, overwrite=True
     )
-    description = models.TextField(max_length=500, blank=True)
+    description = models.TextField(max_length=2048, blank=True)
     show_in_menu = models.BooleanField(default=True)
     creator_user = models.ForeignKey("users.User", on_delete=models.CASCADE)
     
     class Meta:
-        unique_together = ["creator_user", "title"]
+        unique_together = ["creator_user", "name"]
 
     def __str__(self) -> str:
-        return self.title
+        return self.name
 
 
 class Content(BaseModel):

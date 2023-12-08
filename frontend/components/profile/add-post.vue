@@ -44,7 +44,7 @@
 
           <fm-input v-model="form.section_id" type="select" uid="section_id" label="Post Section" class="mt-6">
             <option :value="null">None</option>
-            <option v-for="section in sections" :key="section.id" :value="section.id">{{ section.title }}</option>
+            <option v-for="section in sections" :key="section.id" :value="section.id">{{ section.name }}</option>
           </fm-input>
 
           <hr class="my-4">

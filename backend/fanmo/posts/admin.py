@@ -90,7 +90,7 @@ class ReactionAdmin(admin.ModelAdmin):
 class SectionAdmin(admin.ModelAdmin):
     list_display = (
         "id",
-        "title",
+        "name",
         "slug",
         "creator_user",
         "created_at",

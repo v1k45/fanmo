@@ -236,19 +236,19 @@ class SectionViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin, mixins.De
     serializer_class = SectionSerializer
     filter_backends = (DjangoFilterBackend,)
     filterset_class = SectionFilter
-    ordering_fields = ("title",)
+    ordering_fields = ("name",)
     queryset = Section.objects.all()
 
     def get_queryset(self):
         queryset = super().get_queryset()
 
-        if self.action in ["destroy", "update", "partial_update"]:
+        if self.action in ["create", "destroy", "update", "partial_update"]:
             queryset = queryset.filter(creator_user=self.request.user)
 
         queryset = queryset.annotate(
             post_count=Count("posts", filter=Q(posts__is_published=True))
         )
-        return queryset.order_by("title")
+        return queryset.order_by("name")
     
     def perform_create(self, serializer):
         serializer.save(creator_user=self.request.user)

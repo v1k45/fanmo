@@ -31,7 +31,7 @@
     </thead>
     <tbody v-show="sections.length" class="text-sm">
       <tr v-for="section in sections" :key="section.id">
-        <td>{{ section.title }}</td>
+        <td>{{ section.name }}</td>
         <td :class="section.show_in_menu ? 'text-fm-success' : 'text-fm-error'" class="text-center">
           <icon-check v-if="section.show_in_menu" class="h-6 w-6"></icon-check>
           <icon-x v-else class="h-6 w-6"></icon-x>
@@ -72,7 +72,7 @@
         <!-- form start -->
         <div class="col">
           <fm-form id="createOrEditSectionForm" :errors="formErrors" @submit.prevent="save">
-            <fm-input v-model="form.title" uid="title" label="Name" type="text" required></fm-input>
+            <fm-input v-model="form.name" uid="name" label="Name" type="text" required></fm-input>
             <fm-input-rich v-model="form.description" uid="description" label="Description"></fm-input-rich>
             <fm-input v-model="form.show_in_menu" uid="show_in_menu" type="checkbox">Show in menu</fm-input>
           </fm-form>
@@ -106,7 +106,7 @@ import { mapActions, mapGetters } from 'vuex';
 import FmInputRich from '~/components/fm/input/rich.vue';
 
 const initialFormState = () => ({
-  title: '',
+  name: '',
   description: '',
   show_in_menu: true
 });
@@ -125,7 +125,7 @@ export default {
     };
   },
   head: {
-    title: 'Manage tiers'
+    title: 'Manage Sections'
   },
   computed: {
     ...mapGetters('posts', ['sections']),
@@ -187,7 +187,7 @@ export default {
     },
     async deleteConfirm(section) {
       try {
-        await this.$confirm.error(`Are you sure you want to delete the section "${section.title}"? Associated posts will no longer have a section.`, 'Delete section');
+        await this.$confirm.error(`Are you sure you want to delete the section "${section.name}"? Associated posts will no longer have a section.`, 'Delete section');
       } catch (err) {
         return;
       }

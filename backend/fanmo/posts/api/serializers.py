@@ -180,7 +180,7 @@ class ContentSerializer(serializers.ModelSerializer):
 class SectionPreviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Section
-        fields = ["id", "title", "slug", "description", "show_in_menu"]
+        fields = ["id", "name", "slug", "description", "show_in_menu"]
 
 
 class PostMetaSerializer(serializers.ModelSerializer):
@@ -662,18 +662,18 @@ class SectionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Section
-        fields = ["id", "title", "slug", "description", "show_in_menu", "post_count", "created_at", "updated_at"]
+        fields = ["id", "name", "slug", "description", "show_in_menu", "post_count", "created_at", "updated_at"]
 
     @extend_schema_field(serializers.IntegerField())
     def get_post_count(self, section):
         return getattr(section, "post_count", 0)
     
-    def validate_title(self, title):
-        if self.instance and self.instance.title == title:
-            return title
+    def validate_name(self, name):
+        if self.instance and self.instance.name == name:
+            return name
 
-        if Section.objects.filter(creator_user=self.context["request"].user, title__iexact=title).exists():
+        if Section.objects.filter(creator_user=self.context["request"].user, name__iexact=name).exists():
             raise serializers.ValidationError(
-                "You already have a section with this title.", "duplicate_title"
+                "You already have a section with this name.", "duplicate_name"
             )
-        return title
+        return name

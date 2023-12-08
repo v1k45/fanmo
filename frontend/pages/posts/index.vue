@@ -59,7 +59,7 @@
             <label class="text-sm block font-bold mb-2">Section</label>
             <fm-input v-model="filter.sectionId" type="select" @change="loadPosts">
               <option :value="null">All</option>
-              <option v-for="section in sections" :key="section.id" :value="section.id">{{ section.title }}</option>
+              <option v-for="section in sections" :key="section.id" :value="section.id">{{ section.name }}</option>
             </fm-input>
           </div>
           <!-- section filter end -->

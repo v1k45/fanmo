@@ -80,7 +80,7 @@
             <label class="font-medium">Section</label>
             <nuxt-link v-for="section in sections" :key="section.id" :to="{ name: 'username-s-slug', params: { username: user.username, slug: section.slug } }">
               <div class="flex justify-between" :class="{ 'font-semibold': section.slug == $route.params.slug }">
-                {{ section.title }}
+                {{ section.name }}
               </div>
             </nuxt-link>
           </div>
