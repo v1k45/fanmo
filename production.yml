@@ -31,3 +31,4 @@ services:
       options:
         awslogs-group: fanmo
         awslogs-create-group: "true"
+        awslogs-region: ap-south-1
