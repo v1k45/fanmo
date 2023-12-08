@@ -14,14 +14,16 @@
         <div v-if="user.one_liner" v-tooltip="user.one_liner" class="mt-1 text-xs lg:text-sm text-gray-500 max-w-max truncate">{{ user.one_liner }}</div>
       </div>
 
-      <fm-input :value="activeTab" type="select" size="sm" class="mx-4 hidden md:block" @change="gotoTab($event.target.value)">
-        <option disabled>Jump to</option>
-        <option :value="tabName.POSTS">Feed</option>
-        <option v-if="shouldShowTiersTab" :value="tabName.TIERS">Memberships</option>
-        <option :value="tabName.DONATION">Tips</option>
-      </fm-input>
+      <div class="space-x-2 hidden md:block">
+        <fm-button type="primary" @click="$router.push({ name: 'username-memberships', params: { username: user.username } })">
+          <icon-crown class="h-em w-em"></icon-crown> Join
+        </fm-button>
+        <fm-button type="primary" @click="$router.push({ name: 'username-tips', params: { username: user.username } })">
+          <icon-coins class="h-em w-em"></icon-coins> Tip
+        </fm-button>
+      </div>
 
-      <fm-button :type="user.is_following ? 'success' : 'primary'" class="w-36 hidden md:block" :loading="isFollowLoading" @click="toggleFollow">
+      <fm-button v-if="false" :type="user.is_following ? 'success' : 'primary'" class="w-36 hidden md:block" :loading="isFollowLoading" @click="toggleFollow">
         <div v-if="user.is_following" class="flex items-center justify-center">
           <icon-check class="inline-block mr-1 h-em w-em flex-shrink-0"></icon-check> Following
         </div>
@@ -39,188 +41,61 @@
   </header>
   <!-- sticky header end -->
 
-  <profile-above-the-tab ref="above-the-tab" v-intersect="handleIntersect" @add-post="addPost.isVisible = true;"></profile-above-the-tab>
+  <profile-above-the-tab ref="above-the-tab" v-intersect="handleIntersect" @add-post="$router.push({ name: 'posts', params: { data: { intent: 'add' } } })"></profile-above-the-tab>
 
-  <fm-tabs v-model="activeTab" centered class="mt-8 md:mt-2 hide-tab-headers-on-phone" :class="{ 'min-h-[400px]': isLoading }">
-
-    <fm-tabs-pane :id="tabName.POSTS" lazy label="Feed" class="bg-gray-50 pb-10">
-      <div class="container min-h-[300px]">
-        <div class="max-w-6xl row gx-0 lg:gx-4 mx-auto flex-wrap-reverse">
-          <div class="col-12 lg:col-7">
-
-            <div>
-              <div v-if="profilePosts.results.length">
-                <profile-post
-                  v-for="post in profilePosts.results" :key="post.id"
-                  :post="post" :hide-options="isPreviewMode" class="mb-6 md:mb-8" :join-action-loading="loadingLockedPostId === post.id"
-                  @share-click="handleShareClick" @subscribe-click="handleSubscribeClick($event, { postId: post.id })">
-                </profile-post>
-              </div>
-              <div v-if="profilePosts.next" class="text-center mt-4">
-                <fm-button :loading="nextPostsLoading" @click="loadNextPostsLocal">Load more</fm-button>
-              </div>
-
-              <!-- no posts action start -->
-              <fm-card
-                v-else-if="isSelfProfile && !profilePosts.results.length"
-                class="mx-auto overflow-hidden" body-class="text-center !pt-16 !pb-20">
-                <icon-image-plus class="h-16 w-16 stroke-1 animatecss animatecss-tada"></icon-image-plus>
-                <div class="mt-2">
-                  Post exclusive and private content of any type for your fans and keep in touch by interacting with them using comments.
-                </div>
-                <fm-button class="mt-4 min-w-[200px]" type="primary" @click="addPost.isVisible = true;">
-                  Add a post
-                </fm-button>
-              </fm-card>
-              <!-- no posts action end -->
-
-              <!-- no posts public start -->
-              <div v-else-if="!isSelfProfile && !profilePosts.results.length" class="text-center text-gray-500">
-                {{ user.display_name }} hasn't posted anything yet.
-              </div>
-              <!-- no posts public end -->
+  <div class="mt-2 flex justify-center" :class="{ 'min-h-[400px]': isLoading }">
+    <div class="flex xjustify-center max-w-full overflow-x-auto border-b">
+      <div v-for="item in nav" :key="item.name" class="pb-1 bg-white group">
+        <template v-if="!item.children">
+          <nuxt-link
+            :to="item.url" replace
+            class="px-8 py-3 unstyled block relative font-medium text-gray-700 hover:text-gray-600 hover:bg-gray-100 rounded-t whitespace-nowrap"
+            :class="{ 'hidden md:block': item.hideOnSM }"
+            exact-active-class="!text-fm-primary font-bold">
+            {{ item.label }}
+            <div
+              :class="{ 'bg-fm-primary': item.isActive, 'bg-white group-hover:bg-gray-100': !item.isActive }"
+              class="absolute left-0 -bottom-1 w-full h-1"></div>
+          </nuxt-link>
+        </template>
+        <template v-else>
+          <fm-dropdown :class="{ 'md:hidden': item.hideOnMD }" placement="bottom">
+            <div
+              :class="{ '!text-fm-primary font-bold': item.isActive }"
+              class="px-8 py-3 unstyled block relative font-medium text-gray-700 hover:text-gray-600 hover:bg-gray-100 rounded-t whitespace-nowrap">
+              {{ item.label }} <icon-chevron-down class="inline-block h-4 w-4"></icon-chevron-down>
+              <div
+                :class="{ 'bg-fm-primary': item.isActive, 'bg-white group-hover:bg-gray-100': !item.isActive }"
+                class="absolute left-0 -bottom-1 w-full h-1"></div>
             </div>
-          </div>
-          <div class="col-12 lg:col-5 mb-6 lg:mb-0">
-            <div class="overflow-hidden sticky top-20">
-              <fm-card v-if="sections || isSelfProfile" body-class="" class="mb-4">
-                <template #header>
-                  Categories
-                </template>
-                <div class="flex flex-col space-y-2">
-                  <nuxt-link v-for="section in sections" :key="section.id" :to="`/${user.username}/?section=${section.slug}--${section.id}`">
-                    <div class="flex justify-between">
-                      <div>{{ section.title }}</div>
-                      <div>({{ section.post_count }})</div>
-                    </div>
-                  </nuxt-link>
-                </div>
-              </fm-card>
-              <fm-card v-if="user.about || isSelfProfile" body-class="">
-                <div class="text-xl text-black font-bold mb-3">About</div>
-                <div v-if="user.about">
-                  <!-- TODO: remove duplication once breakpoint service is available -->
-                  <fm-read-more lines="2" class="lg:hidden mb-4">
-                    <fm-markdown-styled>
-                      <div v-html="user.about"></div>
-                    </fm-markdown-styled>
-                  </fm-read-more>
-                  <fm-read-more lines="6" class="hidden lg:block mb-4">
-                    <fm-markdown-styled>
-                      <div v-html="user.about"></div>
-                    </fm-markdown-styled>
-                  </fm-read-more>
-                </div>
-                <div
-                  v-else
-                  class="mx-auto overflow-hidden text-center pt-10 pb-14">
-                  <icon-scroll class="h-16 w-16 stroke-1"></icon-scroll>
-                  <div class="mt-2">
-                    Start by telling your fans a bit about yourself and where they can find you.
-
-                    <div class="text-sm text-gray-500 mt-3">
-                      Click on <span class="text-black">Edit Page</span> to get started.
-                    </div>
-
-                  </div>
-                </div>
-                <div class="flex justify-center space-x-4 text-gray-600">
-                  <a v-if="user.social_links.website_url" class="unstyled hover:text-gray-800" title="Website" target="_blank" :href="user.social_links.website_url">
-                    <icon-globe :size="24"></icon-globe>
-                  </a>
-                  <a v-if="user.social_links.twitter_url" class="unstyled hover:text-gray-800" title="Twitter" target="_blank" :href="user.social_links.twitter_url">
-                    <icon-twitter :size="24"></icon-twitter>
-                  </a>
-                  <a v-if="user.social_links.youtube_url" class="unstyled hover:text-gray-800" title="Youtube" target="_blank" :href="user.social_links.youtube_url">
-                    <icon-youtube :size="24"></icon-youtube>
-                  </a>
-                  <a v-if="user.social_links.instagram_url" class="unstyled hover:text-gray-800" title="Instagram" target="_blank" :href="user.social_links.instagram_url">
-                    <icon-instagram :size="24"></icon-instagram>
-                  </a>
-                  <a v-if="user.social_links.facebook_url" class="unstyled hover:text-gray-800" title="Facebook" target="_blank" :href="user.social_links.facebook_url">
-                    <icon-facebook :size="24"></icon-facebook>
-                  </a>
-                </div>
-                <div class="flex items-center justify-center space-x-3 border-t mt-4 py-4">
-                  <fm-button type="primary" @click="activeTab = tabName.TIERS">
-                    <icon-crown class="h-em w-em"></icon-crown> Join
-                  </fm-button>
-                  <fm-button type="primary" @click="activeTab = tabName.DONATION">
-                    <icon-coins class="h-em w-em"></icon-coins> Tip
-                  </fm-button>
-                </div>
-              </fm-card>
-            </div>
-          </div>
-        </div>
+            <template #items>
+              <fm-dropdown-item v-for="childItem in item.children" :key="childItem.name" class="max-w-[90vw] truncate" :active="childItem.isActive">
+                <nuxt-link :to="childItem.url" class="w-full block unstyled" replace>
+                  {{ childItem.label }}
+                </nuxt-link>
+              </fm-dropdown-item>
+            </template>
+          </fm-dropdown>
+        </template>
       </div>
-    </fm-tabs-pane>
+    </div>
+  </div>
 
-    <fm-tabs-pane
-      v-if="shouldShowTiersTab"
-      :id="tabName.TIERS" lazy label="Memberships" class="pb-10 bg-gray-50">
-      <div class="container min-h-[300px]">
-        <div class="max-w-6xl mx-auto">
-          <div class="row justify-center gy-4 px-4">
-            <div v-for="tier in user.tiers" :key="tier.id" class="col-12 md:col-6 lg:col-4">
-              <profile-tier-card
-                class="max-w-sm mx-auto h-full"
-                v-bind="{ tier, loading: loadingTierId === tier.id }"
-                @subscribe-click="handleSubscribeClick(tier)">
-              </profile-tier-card>
-            </div>
-          </div>
-
-          <!-- no tier action start -->
-          <fm-card
-            v-if="!user.tiers.length"
-            class="mx-auto max-w-xl overflow-hidden mt-6" body-class="text-center !pt-16 !pb-20">
-            <icon-crown class="h-16 w-16 stroke-1 animatecss animatecss-tada"></icon-crown>
-            <div class="mt-2">
-              Make a steady monthly income while offering exclusive content and experience based on membership tiers to your fans.
-            </div>
-            <nuxt-link :to="{ name: 'members-tiers', params: { add: '1' } }">
-              <fm-button type="primary" class="mt-4">Create your first tier &rarr;</fm-button>
-            </nuxt-link>
-          </fm-card>
-          <!-- no tier action end -->
-
-        </div>
-      </div>
-    </fm-tabs-pane>
-
-    <fm-tabs-pane :id="tabName.DONATION" lazy label="Tips" class="bg-gray-50 pb-10">
-      <div class="container min-h-[300px]">
-        <div class="row gx-0 lg:gx-4 max-w-6xl mx-auto justify-center">
-          <div v-if="donations" class="col-12 order-2 lg:col-7 lg:order-1">
-            <hr class="mt-6 mb-8 lg:hidden">
-            <div class="text-xl font-bold mb-4">Recent tips</div>
-            <fm-lazy v-for="(donation, idx) in donations" :key="donation.id"
-              :class="{ 'mb-4 lg:mb-6': idx !== donations.length - 1 }" min-height="100">
-              <profile-donation :donation="donation">
-              </profile-donation>
-            </fm-lazy>
-            <div v-if="!donations.length" class="text-gray-500 text-center max-w-md mx-auto my-24">
-              <template v-if="isSelfProfile">
-                Your recent tips will show up here.
-              </template>
-              <template v-else>
-                Become the first one to show your support for {{ user.display_name }}. Your contribution will show up here.
-              </template>
-            </div>
-          </div>
-          <div class="col-12 order-1 mb-6 sm:col-10 md:col-8 lg:col-5 lg:order-2 lg:mb-0">
-            <donation-widget
-              ref="donationWidget" :user="user" :loading="donationLoading"
-              class="donation-card-sticky"
-              @donate-click="handleDonateClick">
-            </donation-widget>
-          </div>
-        </div>
-      </div>
-    </fm-tabs-pane>
-
-  </fm-tabs>
+  <div class="bg-gray-50 pt-6 pb-10 min-h-[300px]">
+    <nuxt-child
+      :key="$route.path"
+      :loading="isLoading"
+      :donation-loading="donationLoading"
+      :posts-loading="nextPostsLoading"
+      :loading-locked-post-id="loadingLockedPostId"
+      :loading-tier-id="loadingTierId"
+      :is-preview-mode="isPreviewMode"
+      @share="handleShareClick"
+      @load-more-posts="loadNextPostsLocal"
+      @subscribe="handleSubscribeClick"
+      @donate="handleDonateClick">
+    </nuxt-child>
+  </div>
 
   <!-- footer start -->
   <footer class="pt-4 md:pb-4 pb-20 px-6 text-center">
@@ -235,34 +110,31 @@
   <nav class="bottom-0 fixed z-20 w-full bg-white border-t md:hidden py-1 shadow">
     <ul class="flex items-center h-full max-w-full sm:max-w-md md:max-w-lg mx-2 sm:mx-auto justify-around">
       <li class="mx-2 cursor-pointer text-center text-xs sm:text-sm font-medium flex-1 min-w-0">
-        <div
-          class="unstyled rounded-xl focus:bg-fm-primary focus:text-white inline-block px-2 py-2 w-full"
-          :class="{ 'text-white bg-fm-primary pointer-events-none': activeTab === tabName.POSTS }"
-          @click="gotoTab(tabName.POSTS)">
-
-          <icon-image class="h-6 w-6"></icon-image>
+        <nuxt-link
+          class="unstyled rounded focus:bg-fm-primary focus:text-white inline-block px-2 py-2 w-full"
+          exact-active-class="text-white bg-fm-primary pointer-events-none"
+          :to="{ name: 'username', params: { username: user.username } }">
+          <icon-image class="h-4 w-4"></icon-image>
           <div class="mt-1 truncate" title="Feed">Feed</div>
-        </div>
+        </nuxt-link>
       </li>
       <li v-if="shouldShowTiersTab" class="mx-2 cursor-pointer text-center text-xs sm:text-sm font-medium flex-1 min-w-0">
-        <div
-          class="unstyled rounded-xl focus:bg-fm-primary focus:text-white inline-block px-2 py-2 w-full"
-          :class="{ 'text-white bg-fm-primary pointer-events-none': activeTab === tabName.TIERS }"
-          @click="gotoTab(tabName.TIERS)">
-
-          <icon-crown class="h-6 w-6"></icon-crown>
+        <nuxt-link
+          class="unstyled rounded focus:bg-fm-primary focus:text-white inline-block px-2 py-2 w-full"
+          exact-active-class="text-white bg-fm-primary pointer-events-none"
+          :to="{ name: 'username-memberships', params: { username: user.username } }">
+          <icon-crown class="h-4 w-4"></icon-crown>
           <div class="mt-1 truncate" title="Feed">Memberships</div>
-        </div>
+        </nuxt-link>
       </li>
       <li class="mx-2 cursor-pointer text-center text-xs sm:text-sm font-medium flex-1 min-w-0">
-        <div
-          class="unstyled rounded-xl focus:bg-fm-primary focus:text-white inline-block px-2 py-2 w-full"
-          :class="{ 'text-white bg-fm-primary pointer-events-none': activeTab === tabName.DONATION }"
-          @click="gotoTab(tabName.DONATION)">
-
-          <icon-coins class="h-6 w-6"></icon-coins>
+        <nuxt-link
+          class="unstyled rounded focus:bg-fm-primary focus:text-white inline-block px-2 py-2 w-full"
+          exact-active-class="text-white bg-fm-primary pointer-events-none"
+          :to="{ name: 'username-tips', params: { username: user.username } }">
+          <icon-coins class="h-4 w-4"></icon-coins>
           <div class="mt-1 truncate" title="Feed">Tips</div>
-        </div>
+        </nuxt-link>
       </li>
     </ul>
   </nav>
@@ -292,8 +164,6 @@
     @donation-close-click="handlePaymentSuccessNext('donation-close')">
   </profile-payment-success>
 
-  <profile-add-post v-if="isSelfProfile" v-model="addPost.isVisible"></profile-add-post>
-
   <profile-share v-model="sharePost.isVisible" :text="sharePost.text" :relative-url="sharePost.relativeUrl"></profile-share>
   <!-- dialogs end -->
 </div>
@@ -310,15 +180,8 @@ const DONATION = 'donation';
 export default {
   layout: 'empty',
   data() {
-    const tabName = {
-      POSTS: 'posts',
-      TIERS: 'tiers',
-      DONATION: 'donation'
-    };
     return {
-      tabName,
       showStickyNav: false,
-      activeTab: null,
       isLoading: true,
       donationFormErrors: null,
       expressCheckout: {
@@ -362,20 +225,8 @@ export default {
 
     const routeData = (this.$route.params.data || {});
     if (routeData.intent === 'subscribe-through-post') {
-      this.activeTab = this.tabName.TIERS;
       await this.handleSubscribeClick(routeData.tier);
       this.setGlobalLoader(false);
-    } else if (routeData.intent === 'preselect-tab') {
-      this.activeTab = routeData.tab === this.tabName.TIERS && !this.shouldShowTiersTab ? this.tabName.POSTS : routeData.tab;
-    } else {
-      this.activeTab = (() => {
-        // if (this.currentUserHasActiveSubscription || this.isSelfProfile) return this.tabName.POSTS;
-        // if (this.shouldShowTiersTab) return this.tabName.TIERS;
-        // return this.tabName.DONATION;
-
-        // force to show posts tab for now
-        return this.tabName.POSTS;
-      })();
     }
 
     this.isLoading = false;
@@ -396,6 +247,40 @@ export default {
       if (!this.user) return false;
       const hasTiers = !!this.user.tiers.length;
       return this.isSelfProfile || hasTiers;
+    },
+
+    nav() {
+      const routeName = this.$route.name;
+      const sectionTabs = [];
+      for (const section of this.sections.filter(s => s.show_in_menu)) {
+        sectionTabs.push({
+          name: `username-s-${section.slug}`,
+          label: section.title,
+          url: `/${this.user.username}/s/${section.slug}`,
+          isActive: routeName === 'username-s-slug' && this.$route.params.slug === section.slug,
+          hideOnSM: true,
+          replace: true
+        });
+      }
+
+      if (sectionTabs.length) {
+        sectionTabs.push({
+          name: 'username-s',
+          label: 'Sections',
+          url: `/${this.user.username}/s`,
+          isActive: routeName === 'username-s-slug',
+          hideOnMD: true,
+          children: [...sectionTabs]
+        });
+      }
+
+      return [
+        { name: 'username', label: 'Feed', url: `/${this.user.username}`, isActive: routeName === 'username' },
+        ...sectionTabs,
+        { name: 'username-memberships', label: 'Memberships', url: `/${this.user.username}/memberships`, isActive: routeName === 'username-memberships', hideOnSM: true },
+        { name: 'username-tips', label: 'Tips', url: `/${this.user.username}/tips`, isActive: routeName === 'username-tips', hideOnSM: true },
+        { name: 'username-about', label: 'About', url: `/${this.user.username}/about`, isActive: routeName === 'username-about' }
+      ];
     }
   },
   created() {
@@ -405,11 +290,6 @@ export default {
     ...mapActions('profile', ['fetchProfile', 'createOrGetMembership', 'createDonation', 'processPayment', 'follow', 'unfollow']),
     ...mapActions('posts', ['loadNextProfilePosts']),
     ...mapMutations('ui', ['setGlobalLoader']),
-
-    gotoTab(tabId) {
-      this.activeTab = tabId;
-      this.$refs['above-the-tab'].$el.scrollIntoView({ behavior: 'smooth', block: 'end' });
-    },
 
     // logic is documented in createOrGetMembership
     async handleSubscribeClick(tier, { postId = null } = {}) {
@@ -587,7 +467,10 @@ export default {
       if (actionType === 'dashboard') this.$router.push('dashboard');
       else if (actionType === 'authenticated-next') {
         this.fetchProfile(this.user.username);
-        this.activeTab = this.tabName.POSTS;
+        this.$router.push({
+          name: 'username',
+          params: { username: this.user.username }
+        });
       } else if (actionType === 'unauthenticated-next') {
         this.$router.push({
           name: 'set-password-token',

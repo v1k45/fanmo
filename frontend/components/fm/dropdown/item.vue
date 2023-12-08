@@ -1,7 +1,8 @@
 <template>
 <button class="fm-dropdown__item" :class="{
   'fm-dropdown__item--error': type === 'error',
-  'fm-dropdown__item--static': $props.static
+  'fm-dropdown__item--static': $props.static,
+  'fm-dropdown__item--active': active
 }" type="button" v-on="$listeners">
   <slot></slot>
 </button>
@@ -11,7 +12,8 @@
 export default {
   props: {
     static: { type: Boolean, default: false },
-    type: { type: String, default: '', validator: val => !val || ['error'].includes(val) }
+    type: { type: String, default: '', validator: val => !val || ['error'].includes(val) },
+    active: { type: Boolean, default: false }
   }
 };
 </script>
@@ -31,5 +33,8 @@ export default {
 }
 .fm-dropdown__item--static {
   @apply cursor-auto pointer-events-none;
+}
+.fm-dropdown__item--active {
+  @apply bg-fm-primary-500 text-white;
 }
 </style>

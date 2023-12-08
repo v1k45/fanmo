@@ -10,12 +10,12 @@
   <div class="post-body">
     <div class="flex items-center" :class="{'mb-3': $route.name == 'p-slug-id'}">
       <div class="flex flex-wrap flex-grow mr-auto">
+        <nuxt-link v-if="post.section" :to="{ name: 'username-s-slug', params: { username: post.author_user.username, slug: post.section.slug } }" class="text-sm font-thin my-1 unstyled hover:text-gray-600 text-gray-500">{{ post.section.title }}</nuxt-link>
         <nuxt-link
           :to="{ name: 'p-slug-id', params: { slug: post.slug, id: post.id } }"
           class="w-full basis-auto unstyled" title="Open post">
           <div class="text-xl hover:text-gray-700 text-gray-800 font-bold w-full" :class="{'md:text-3xl': $route.name == 'p-slug-id', 'md:text-2xl': $route.name !== 'p-slug-id'}">{{ post.title }}</div>
         </nuxt-link>
-        <nuxt-link v-if="post.section" :to="`/${post.author_user.username}`" class="text-base font-thin my-1 unstyled hover:text-gray-600 text-gray-500">{{ post.section.title }}</nuxt-link>
       </div>
 
       <!-- options for self profile start -->
@@ -74,7 +74,7 @@
 
   <template v-if="post.content">
     <div v-if="post.content.text" class="post-body">
-      <fm-read-more-height :max-height="$route.name == 'p-slug-id' ? null : '300'" :route="{ name: 'p-slug-id', params: { slug: post.slug, id: post.id } }" class="mt-4 border-t border-gray-200">
+      <fm-read-more-height :max-height="$route.name == 'p-slug-id' ? null : '300'" :route="{ name: 'p-slug-id', params: { slug: post.slug, id: post.id } }" class="pt-2 mt-4 border-t border-gray-200">
         <fm-markdown-styled>
           <div class="whitespace-pre-line" v-html="post.content.text"></div>
         </fm-markdown-styled>
@@ -328,13 +328,13 @@ export default {
       this.$router.push({ name: 'p-slug-id', params: { slug: this.post.slug, id: this.post.id } });
     },
     handleSubscribeIntent() {
-      if (this.$route.name === 'username') { // on profile page, simply emit and the page can handle the rest
+      if (this.$route.name.startsWith('username')) { // on profile page, simply emit and the page can handle the rest
         this.$emit('subscribe-click', this.post.minimum_tier);
         return;
       }
       this.setGlobalLoader('Just a moment...');
       this.$router.push({
-        name: 'username',
+        name: 'username-memberships',
         params: {
           username: this.post.author_user.username,
           data: {

@@ -15,21 +15,14 @@
         </div>
       </nuxt-link>
 
-      <fm-input v-model="activeTab" type="select" size="sm" class="mx-4 hidden md:block" @change="gotoTab()">
-        <option :value="null" disabled selected>Jump to</option>
-        <option :value="tabName.POSTS">Feed</option>
-        <option v-if="shouldShowTiersTab" :value="tabName.TIERS">Memberships</option>
-        <option :value="tabName.DONATION">Tip</option>
-      </fm-input>
-
-      <fm-button :type="user.is_following ? 'success' : 'primary'" class="w-36 hidden md:block" :loading="isFollowLoading" @click="toggleFollow">
-        <div v-if="user.is_following" class="flex items-center justify-center">
-          <icon-check class="inline-block mr-1 h-em w-em flex-shrink-0"></icon-check> Following
-        </div>
-        <div v-else class="flex items-center justify-center">
-          <icon-plus class="inline-block mr-1 h-em w-em flex-shrink-0"></icon-plus> Follow
-        </div>
-      </fm-button>
+      <div class="space-x-2 hidden md:block">
+        <fm-button type="primary" @click="$router.push({ name: 'username-memberships', params: { username: user.username } })">
+          <icon-crown class="h-em w-em"></icon-crown> Join
+        </fm-button>
+        <fm-button type="primary" @click="$router.push({ name: 'username-tips', params: { username: user.username } })">
+          <icon-coins class="h-em w-em"></icon-coins> Tip
+        </fm-button>
+      </div>
 
       <layout-navigation
         :type="$auth.loggedIn ? 'hamburger-minimal' : 'anonymous-hamburger'"
@@ -40,7 +33,7 @@
   </header>
   <!-- sticky header end -->
 
-  <div class="container py-8">
+  <div class="container py-4">
     <div v-if="postDeleted" class="max-w-md mt-[20vh] mx-auto">
       <fm-alert type="error" :show-icon="false">This post has been deleted.</fm-alert>
       <div class="flex mt-4">
@@ -78,10 +71,10 @@
           <div class="my-4">
             <fm-avatar :src="user.avatar && user.avatar.medium" :name="user.display_name" size="w-24 h-24" class="flex-shrink-0 mx-auto"></fm-avatar>
             <div class="flex items-center justify-center space-x-3 my-3">
-              <fm-button type="primary" @click="$router.push({ name: 'username', params: { username: post.author_user.username, data: { intent: 'preselect-tab', tab: 'tiers' } } })">
+              <fm-button type="primary" @click="$router.push({ name: 'username-memberships', params: { username: post.author_user.username } })">
                 <icon-crown class="h-em w-em"></icon-crown> Join
               </fm-button>
-              <fm-button type="primary" @click="$router.push({ name: 'username', params: { username: post.author_user.username, data: { intent: 'preselect-tab', tab: 'donation' } } })">
+              <fm-button type="primary" @click="$router.push({ name: 'username-tips', params: { username: post.author_user.username } })">
                 <icon-coins class="h-em w-em"></icon-coins> Tip
               </fm-button>
             </div>
@@ -134,17 +127,17 @@
     <ul class="flex items-center h-full max-w-full sm:max-w-md md:max-w-lg mx-2 sm:mx-auto justify-around">
       <li class="mx-2 cursor-pointer text-center text-xs sm:text-sm font-medium flex-1 min-w-0">
         <div
-          class="unstyled rounded-xl focus:bg-fm-primary focus:text-white inline-block px-2 py-2 w-full"
+          class="unstyled rounded focus:bg-fm-primary focus:text-white inline-block px-2 py-2 w-full"
           :class="{ 'text-white bg-fm-primary pointer-events-none': activeTab === tabName.POSTS }"
           @click="gotoTab(tabName.POSTS)">
 
-          <icon-image class="h-6 w-6"></icon-image>
+          <icon-image class="h-4 w-4"></icon-image>
           <div class="mt-1 truncate" title="Feed">Feed</div>
         </div>
       </li>
       <li v-if="shouldShowTiersTab" class="mx-2 cursor-pointer text-center text-xs sm:text-sm font-medium flex-1 min-w-0">
         <div
-          class="unstyled rounded-xl focus:bg-fm-primary focus:text-white inline-block px-2 py-2 w-full"
+          class="unstyled rounded focus:bg-fm-primary focus:text-white inline-block px-2 py-2 w-full"
           :class="{ 'text-white bg-fm-primary pointer-events-none': activeTab === tabName.TIERS }"
           @click="gotoTab(tabName.TIERS)">
 
@@ -154,11 +147,11 @@
       </li>
       <li class="mx-2 cursor-pointer text-center text-xs sm:text-sm font-medium flex-1 min-w-0">
         <div
-          class="unstyled rounded-xl focus:bg-fm-primary focus:text-white inline-block px-2 py-2 w-full"
+          class="unstyled rounded focus:bg-fm-primary focus:text-white inline-block px-2 py-2 w-full"
           :class="{ 'text-white bg-fm-primary pointer-events-none': activeTab === tabName.DONATION }"
           @click="gotoTab(tabName.DONATION)">
 
-          <icon-coins class="h-6 w-6"></icon-coins>
+          <icon-coins class="h-4 w-4"></icon-coins>
           <div class="mt-1 truncate" title="Feed">Tips</div>
         </div>
       </li>

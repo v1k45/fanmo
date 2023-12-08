@@ -157,6 +157,8 @@ class Section(BaseModel):
     slug = AutoSlugField(
         populate_from="title", allow_duplicates=False, slugify_function=slugify, overwrite=True
     )
+    description = models.TextField(max_length=500, blank=True)
+    show_in_menu = models.BooleanField(default=True)
     creator_user = models.ForeignKey("users.User", on_delete=models.CASCADE)
     
     class Meta:

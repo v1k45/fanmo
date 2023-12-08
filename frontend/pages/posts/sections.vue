@@ -2,7 +2,7 @@
 <div>
   <!-- add tier button start -->
   <div class="text-right">
-    <fm-button type="primary" @click="openFormDialog()">
+    <fm-button type="primary" class="w-full md:w-auto" @click="openFormDialog()">
       <icon-plus class="mr-1" :size="16"></icon-plus>
       Add a section
     </fm-button>
@@ -13,6 +13,7 @@
   <fm-table class="mt-8 table-fixed lg:table-auto" first-column-sticky>
     <colgroup>
       <col class="min-w-[140px]"> <!-- name -->
+      <col class="min-w-[75px]"> <!-- show in menu -->
       <col class="min-w-[75px]"> <!-- post count -->
       <col class="min-w-[130px]"> <!-- created at -->
       <col class="w-[100px]"> <!-- edit -->
@@ -21,6 +22,7 @@
     <thead>
       <tr class="text-xs uppercase">
         <th>Name</th>
+        <th class="!text-center">Show in menu</th>
         <th class="!text-center">Post Count</th>
         <th>Created At</th>
         <th>Edit</th>
@@ -30,6 +32,10 @@
     <tbody v-show="sections.length" class="text-sm">
       <tr v-for="section in sections" :key="section.id">
         <td>{{ section.title }}</td>
+        <td :class="section.show_in_menu ? 'text-fm-success' : 'text-fm-error'" class="text-center">
+          <icon-check v-if="section.show_in_menu" class="h-6 w-6"></icon-check>
+          <icon-x v-else class="h-6 w-6"></icon-x>
+        </td>
         <td class="!text-center">{{ section.post_count }}</td>
         <td>{{ $datetime(section.created_at) }}</td>
         <td>
@@ -66,8 +72,9 @@
         <!-- form start -->
         <div class="col">
           <fm-form id="createOrEditSectionForm" :errors="formErrors" @submit.prevent="save">
-            <fm-input v-model="form.title" uid="title" label="Section name" type="text" required></fm-input>
-            <fm-input v-model="form.description" uid="description" label="Description" type="textarea"></fm-input>
+            <fm-input v-model="form.title" uid="title" label="Name" type="text" required></fm-input>
+            <fm-input-rich v-model="form.description" uid="description" label="Description"></fm-input-rich>
+            <fm-input v-model="form.show_in_menu" uid="show_in_menu" type="checkbox">Show in menu</fm-input>
           </fm-form>
         </div>
         <!-- form end -->
@@ -96,11 +103,18 @@
 import pick from 'lodash/pick';
 import cloneDeep from 'lodash/cloneDeep';
 import { mapActions, mapGetters } from 'vuex';
+import FmInputRich from '~/components/fm/input/rich.vue';
+
 const initialFormState = () => ({
   title: '',
-  description: ''
+  description: '',
+  show_in_menu: true
 });
+
 export default {
+  components: {
+    FmInputRich
+  },
   data() {
     return {
       loading: false,

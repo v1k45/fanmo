@@ -23,6 +23,7 @@ export const state = () => ({
 export const getters = {
   profilePosts(state) {
     if (!state.profilePosts_raw) return {
+      notLoaded: true,
       currentProfileUsername: null,
       previous: null,
       next: null,
@@ -50,6 +51,9 @@ export const getters = {
     if (!state.sections_raw) return [];
     return state.sections_raw.results;
   },
+  sectionsLoaded(state) {
+    return !!state.sections_raw;
+  },
   currentPost(state) {
     const post = state.postsById[state.currentPostId];
     if (!post) return null;
@@ -60,6 +64,7 @@ export const getters = {
 export const actions = {
   async loadProfilePosts({ commit }, username) {
     try {
+      commit('clearProfilePosts');
       const [pinnedPosts, unpinnedPosts] = (await Promise.allSettled([
         this.$axios.$get(`/api/posts/?creator_username=${username}&is_pinned=true`),
         this.$axios.$get(`/api/posts/?creator_username=${username}&is_pinned=false`)
@@ -73,9 +78,13 @@ export const actions = {
     }
   },
   // eslint-disable-next-line camelcase
-  async fetchPosts({ commit }, { creator_username, section_id, search, ordering }) {
+  async fetchPosts({ commit }, { creator_username, section_id, section_slug, allowed_tiers, visibility, search, ordering }) {
+    commit('clearProfilePosts');
+
     try {
-      const posts = await this.$axios.$get('/api/posts/', { params: { creator_username, section_id, search, ordering } });
+      const posts = await this.$axios.$get('/api/posts/', {
+        params: { creator_username, section_id, section_slug, allowed_tiers, visibility, search, ordering }
+      });
       commit('setProfilePosts', { username: creator_username, posts });
       return SUCCESS(posts);
     } catch (err) {
@@ -222,6 +231,9 @@ export const mutations = {
       postIds: results.map(p => p.id)
     };
     state.currentProfileUsername = username;
+  },
+  clearProfilePosts(state) {
+    state.profilePosts_raw = null;
   },
   setNextProfilePosts(state, { posts }) {
     const { previous, next, results } = posts;

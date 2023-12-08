@@ -180,7 +180,7 @@ class ContentSerializer(serializers.ModelSerializer):
 class SectionPreviewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Section
-        fields = ["id", "title", "slug"]
+        fields = ["id", "title", "slug", "description", "show_in_menu"]
 
 
 class PostMetaSerializer(serializers.ModelSerializer):
@@ -662,7 +662,7 @@ class SectionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Section
-        fields = ["id", "title", "slug", "post_count", "created_at", "updated_at"]
+        fields = ["id", "title", "slug", "description", "show_in_menu", "post_count", "created_at", "updated_at"]
 
     @extend_schema_field(serializers.IntegerField())
     def get_post_count(self, section):

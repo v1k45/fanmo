@@ -42,14 +42,14 @@
     <template v-for="(item) in ($auth.user.is_creator ? bottomNav.creator : bottomNav.supporter)">
       <li :key="item.label" class="text-center text-xs sm:text-sm font-medium flex-1 min-w-0">
         <nuxt-link
-          :to="item.url" class="unstyled rounded-xl hover:bg-fm-primary-100 focus:bg-fm-primary focus:text-white inline-block px-2 py-2 w-full"
+          :to="item.url" class="unstyled rounded hover:bg-fm-primary-100 focus:bg-fm-primary focus:text-white inline-block px-2 py-2 w-full"
           exact-active-class="text-white bg-fm-primary pointer-events-none">
 
           <logo
             v-if="item.id === 'home'" circle uncolored
-            class="w-6 h-6 inline -ml-3 transform scale-125 text-inherit">
+            class="w-4 h-4 inline -ml-3 transform scale-125 text-inherit">
           </logo>
-          <component :is="item.icon" v-else class="h-6 w-6"></component>
+          <component :is="item.icon" v-else class="h-4 w-4"></component>
           <div class="mt-1 truncate" :title="item.label">{{ item.label }}</div>
         </nuxt-link>
       </li>
@@ -236,7 +236,7 @@ export default {
           { id: 'members', label: 'Members', icon: Users, url: '/members/' },
           { id: 'donations', label: 'Tips', icon: Coins, url: '/received-tips/' },
           { id: 'home', label: 'Home', url: '/dashboard/' }, // has special behavior based on the id
-          { id: 'earnings', label: 'Earnings', icon: Wallet, url: '/earnings/' }
+          { id: 'posts', label: 'Posts', icon: LayoutList, url: '/posts/' }
         ],
         supporter: [
           { id: 'memberships', label: 'Memberships', icon: UserCheck, url: '/memberships/' },

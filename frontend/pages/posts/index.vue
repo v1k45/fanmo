@@ -14,6 +14,9 @@
       <div v-if="!profilePosts.notLoaded && !profilePosts.results.length" class="text-sm text-gray-500">
         No posts to show here yet.
       </div>
+      <div v-if="profilePosts.notLoaded">
+        <profile-post-skeleton v-for="n in [1,2,3,4,5]" :key="n"></profile-post-skeleton>
+      </div>
       <div v-if="profilePosts.notLoaded && profilePostsLoading" class="text-sm text-gray-500 text-center">
         Loading posts...
       </div>
@@ -59,7 +62,20 @@
               <option v-for="section in sections" :key="section.id" :value="section.id">{{ section.title }}</option>
             </fm-input>
           </div>
-        <!-- section filter end -->
+          <!-- section filter end -->
+
+          <!-- tier filter start -->
+          <div class="flex flex-col space-y-1.5 mb-4">
+            <label class="font-medium">Tier</label>
+            <fm-input v-model="filter.tier" type="select" @change="loadPosts">
+              <option :value="null">All</option>
+              <option value="public">Public</option>
+              <option value="all_members">All Members</option>
+              <option v-for="tier in $auth.user.tiers" :key="tier.id" :value="tier.id">{{ tier.name }}</option>
+            </fm-input>
+          </div>
+
+        <!-- tier filter end -->
 
         </div>
       <!-- filters end -->
@@ -88,7 +104,7 @@ export default {
         search: '',
         isActive: null,
         sectionId: null,
-        tierIds: [],
+        tier: null,
         orderBy: '-created_at'
       },
       profilePostsLoading: false,
@@ -115,6 +131,10 @@ export default {
   created() {
     this.loadPosts();
     this.loadSections(this.$auth.user.username);
+    const routeData = (this.$route.params.data || {});
+    if (routeData.intent === 'add') {
+      this.addPost.isVisible = true;
+    }
   },
   methods: {
     ...mapActions('posts', ['fetchPosts', 'loadNextProfilePosts', 'loadSections']),
@@ -129,6 +149,13 @@ export default {
       if (this.filter.sectionId) {
         params.section_id = this.filter.sectionId;
       }
+
+      if (typeof this.filter.tier === 'number') {
+        params.allowed_tiers = this.filter.tier;
+      } else if (this.filter.tier) {
+        params.visibility = this.filter.tier;
+      }
+
       this.profilePostsLoading = true;
       await this.fetchPosts(params);
       this.profilePostsLoading = false;
