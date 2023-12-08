@@ -44,14 +44,18 @@
       <div class="overflow-hidden sticky top-20">
 
         <fm-card v-if="selectedSection" body-class="" class="mb-4">
-          <fm-markdown-styled>
-            <div v-html="selectedSection.description"></div>
-          </fm-markdown-styled>
+          <fm-read-more lines="6">
+            <fm-markdown-styled>
+              <div v-html="selectedSection.description"></div>
+            </fm-markdown-styled>
+          </fm-read-more>
         </fm-card>
         <fm-card v-else-if="user.about" body-class="" class="mb-4">
-          <fm-markdown-styled>
-            <div v-html="user.about"></div>
-          </fm-markdown-styled>
+          <fm-read-more lines="6">
+            <fm-markdown-styled>
+              <div v-html="user.about"></div>
+            </fm-markdown-styled>
+          </fm-read-more>
         </fm-card>
 
         <div class="text-right md:hidden mb-2">
