@@ -24,6 +24,23 @@
   height: auto;
   max-width: 100%;
 }
+blockquote {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  background-color: #f3f4f6;
+  padding: 8px;
+    border-left: 4px solid #6b68f9;
+    margin-block-start: 0em;
+    margin-block-end: 0em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+}
+blockquote > :first-child {
+        margin-top: 0;
+    }
+blockquote > :last-child {
+        margin-bottom: 0;
+    }
 .hover-bg-fm-primary-600:hover {
   background-color: #4f46e5 !important;
 }
@@ -67,7 +84,7 @@
               <td align="center" class="sm-px-24">
                 <table style="width: 100%" cellpadding="0" cellspacing="0" role="presentation">
                   <tr>
-                    <td class="sm-px-24" style="border-radius: 4px; background-color: #fff; padding: 48px; text-align: left; font-size: 16px; line-height: 24px; color: #1f2937">    <p style="margin: 0; margin-bottom: 32px; text-align: center; font-size: 30px; font-weight: 600; color: #000">
+                    <td class="sm-px-24" style="border-radius: 4px; background-color: #fff; padding: 48px; text-align: left; font-size: 16px; line-height: 24px; color: #1f2937">    <p style="margin: 0; margin-bottom: 32px; text-align: center; font-size: 30px; font-weight: 600; line-height: 36px; color: #000">
       <a href="{{ settings.BASE_URL }}{% url 'post_detail' obj.slug obj.id %}" style="color: #000; text-decoration-line: none">{{ obj.title }}</a>
     </p>
     {% if obj.can_access %}

@@ -4,7 +4,7 @@ bodyClass: bg-gray-100
 
 <extends src="src/layouts/creator.html">
   <block name="template">
-    <p class="text-3xl text-black font-semibold m-0 mb-32 text-center">
+    <p class="text-3xl text-black font-semibold m-0 mb-32 text-center leading-36">
       <a href="@{{ settings.BASE_URL }}{% url 'post_detail' obj.slug obj.id %}" class="text-black no-underline">@{{ obj.title }}</a>
     </p>
     {% if obj.can_access %}
