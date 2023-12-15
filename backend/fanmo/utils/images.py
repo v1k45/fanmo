@@ -5,6 +5,7 @@ from django.core.files.base import ContentFile
 from wand.color import Color
 from wand.drawing import Drawing
 from wand.image import Image
+from django.utils.text import Truncator
 
 from fanmo.posts.models import Content, Post
 
@@ -58,15 +59,26 @@ def generate_post_summary(post):
             canvas,
             "Become a member on Fanmo to unlock this post",
             x=0,
-            y=100,
+            y=50,
             font_size=28,
             gravity="north",
         )
+
+        post_title = Truncator(post.title).chars(140)
+        # determine y position for post title based on length
+        title_y = 200
+        if len(post_title) > 130:
+            title_y = 125
+        elif len(post_title) > 100:
+            title_y = 150
+        elif len(post_title) > 70:
+            title_y = 175
+
         draw_text(
             canvas,
-            post.title,
+            post_title,
             x=0,
-            y=200,
+            y=title_y,
             bold=True,
             font_size=48,
             gravity="north",
@@ -76,17 +88,17 @@ def generate_post_summary(post):
         # user info next to profile image drawn in bottom left
         draw_text(
             canvas,
-            post.author_user.display_name,
+            Truncator(post.author_user.display_name).chars(50),
             x=280,
             y=150,
             bold=True,
-            font_size=48,
+            font_size=42,
             gravity="south_west",
         )
         if post.author_user.one_liner:
             draw_text(
                 canvas,
-                post.author_user.one_liner,
+                Truncator(post.author_user.one_liner).chars(60),
                 x=280,
                 y=120,
                 font_size=28,
