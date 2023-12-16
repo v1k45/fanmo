@@ -285,6 +285,7 @@ class PostSerializer(serializers.ModelSerializer):
             "minimum_tier",
             "author_user",
             "is_pinned",
+            "is_pinned_in_section",
             "created_at",
             "updated_at",
         ]
@@ -340,6 +341,7 @@ class PostUpdateSerializer(PostDetailSerializer):
             - set(
                 [
                     "is_pinned",
+                    "is_pinned_in_section",
                     "content",
                     "title",
                     "visibility",
@@ -363,6 +365,23 @@ class PostUpdateSerializer(PostDetailSerializer):
                 "pin_count_exceeded",
             )
         return is_pinned
+    
+    def validate_is_pinned_in_section(self, is_pinned_in_section):
+        if not self.instance.section:
+            return self.instance.is_pinned_in_section
+
+        pinned_posts = Post.objects.filter(
+            author_user=self.context["request"].user,
+            is_published=True,
+            is_pinned_in_section=True,
+            section=self.instance.section,
+        )
+        if is_pinned_in_section and pinned_posts.count() >= 3:
+            raise serializers.ValidationError(
+                "You can only have upto 3 pinned posts in a section. Please unpin other posts and try again.",
+                "pin_count_exceeded",
+            )
+        return is_pinned_in_section
 
     def validate(self, attrs):
         if attrs.get("is_purchaseable"):

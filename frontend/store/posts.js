@@ -62,29 +62,37 @@ export const getters = {
 };
 
 export const actions = {
-  async loadProfilePosts({ commit }, username) {
-    try {
-      commit('clearProfilePosts');
-      const [pinnedPosts, unpinnedPosts] = (await Promise.allSettled([
-        this.$axios.$get(`/api/posts/?creator_username=${username}&is_pinned=true`),
-        this.$axios.$get(`/api/posts/?creator_username=${username}&is_pinned=false`)
-      ])).map(promise => promise.value);
-      const posts = { next: unpinnedPosts.next, previous: unpinnedPosts.previous, results: [...pinnedPosts.results, ...unpinnedPosts.results] };
-      commit('setProfilePosts', { username, posts });
-      return SUCCESS(posts);
-    } catch (err) {
-      handleGenericError(err, true);
-      return ERROR(err.response.data);
-    }
-  },
   // eslint-disable-next-line camelcase
-  async fetchPosts({ commit }, { creator_username, section_id, section_slug, allowed_tiers, visibility, search, ordering }) {
+  async fetchPosts({ commit }, { creator_username, section_id, section_slug, allowed_tiers, visibility, search, ordering, pinnedFirst }) {
     commit('clearProfilePosts');
 
+    const params = {
+      creator_username, section_id, section_slug, allowed_tiers, visibility, search, ordering
+    };
+
+    let posts = {};
+    if (pinnedFirst) {
+      const pinnedParams = params;
+      const unpinnedParams = params;
+
+      if (params.section_id) {
+        pinnedParams.is_pinned_in_section = true;
+        unpinnedParams.is_pinned_in_section = false;
+      } else {
+        pinnedParams.is_pinned = true;
+        unpinnedParams.is_pinned = false;
+      }
+
+      const [pinnedPosts, unpinnedPosts] = (await Promise.allSettled([
+        this.$axios.$get('/api/posts/', { params: { ...params, is_pinned_in_section: true } }),
+        this.$axios.$get('/api/posts/', { params: { ...params, is_pinned_in_section: false } })
+      ])).map(promise => promise.value);
+      posts = { next: unpinnedPosts.next, previous: unpinnedPosts.previous, results: [...pinnedPosts.results, ...unpinnedPosts.results] };
+    } else {
+      posts = await this.$axios.$get('/api/posts/', { params });
+    }
+
     try {
-      const posts = await this.$axios.$get('/api/posts/', {
-        params: { creator_username, section_id, section_slug, allowed_tiers, visibility, search, ordering }
-      });
       commit('setProfilePosts', { username: creator_username, posts });
       return SUCCESS(posts);
     } catch (err) {

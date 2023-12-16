@@ -148,10 +148,11 @@ export default {
     };
   },
   fetch() {
+    const params = { creator_username: this.user.username, pinnedFirst: true };
     if (this.$route.params.slug) {
-      this.fetchPosts({ creator_username: this.user.username, section_slug: this.$route.params.slug });
+      this.fetchPosts({ ...params, section_slug: this.$route.params.slug });
     } else {
-      this.loadProfilePosts(this.user.username);
+      this.fetchPosts(params);
     }
   },
   computed: {
@@ -171,7 +172,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('posts', ['fetchPosts', 'loadProfilePosts']),
+    ...mapActions('posts', ['fetchPosts']),
     loadPosts() {
       const params = { creator_username: this.user.username };
       if (this.$route.params.slug) {

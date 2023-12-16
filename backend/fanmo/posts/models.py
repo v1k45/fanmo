@@ -125,6 +125,7 @@ class Post(BaseModel):
 
     is_published = models.BooleanField(default=True)
     is_pinned = models.BooleanField(default=False)
+    is_pinned_in_section = models.BooleanField(default=False)
 
     is_purchaseable = models.BooleanField(default=False)
     minimum_amount = MoneyField(max_digits=7, decimal_places=2, default=0)

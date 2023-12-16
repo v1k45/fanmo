@@ -1,6 +1,6 @@
 <template>
 <div class="bg-white rounded-xl border pt-4 pb-1 relative">
-  <div v-if="post.is_pinned" class="absolute right-0 top-0 flex">
+  <div v-if="post.is_pinned || post.is_pinned_in_section" class="absolute right-0 top-0 flex">
     <div
       v-tooltip="'This is a pinned post.'"
       class="p-1 rounded-bl-lg rounded-tr-lg text-xs bg-fm-success-600 border-2 border-fm-success-600 border-r-0 border-t-0 text-white text-center right-0 top-0">
@@ -27,6 +27,7 @@
           </button>
           <template #items>
             <fm-dropdown-item @click="togglePin"><icon-pin class="h-em w-em"></icon-pin> {{ post.is_pinned ? 'Unpin' : 'Pin' }}</fm-dropdown-item>
+            <fm-dropdown-item v-if="post.section" @click="togglePinInSection"><icon-pin class="h-em w-em"></icon-pin> {{ post.is_pinned_in_section ? 'Unpin' : 'Pin' }} in {{ post.section.name }}</fm-dropdown-item>
             <fm-dropdown-item @click="$router.push({ name: 'posts-id-edit', params: { id: post.id } })"><icon-edit class="h-em w-em"></icon-edit> Edit</fm-dropdown-item>
             <fm-dropdown-item type="error" @click="deletePostLocal"><icon-trash-2 class="h-em w-em"></icon-trash-2> Delete</fm-dropdown-item>
           </template>
@@ -312,6 +313,14 @@ export default {
         this.$toast.success(`This post is now ${data.is_pinned ? 'pinned' : 'unpinned'}.`);
       } else {
         this.$toast.error(get(data, 'is_pinned[0].message'));
+      }
+    },
+    async togglePinInSection() {
+      const { success, data } = await this.updatePost({ postId: this.post.id, payload: { is_pinned_in_section: !this.post.is_pinned_in_section } });
+      if (success) {
+        this.$toast.success(`This post is now ${data.is_pinned_in_section ? 'pinned' : 'unpinned'} in ${this.post.section.name}.`);
+      } else {
+        this.$toast.error(get(data, 'is_pinned_in_section[0].message'));
       }
     },
     async toggleReaction(emoji = 'heart') {

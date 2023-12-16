@@ -13,7 +13,10 @@ class PostFilter(filters.FilterSet):
 
     class Meta:
         model = Post
-        fields = ["creator_username", "is_following", "is_pinned", "section_id", "section_slug", "allowed_tiers", "visibility"]
+        fields = [
+            "creator_username", "is_following", "is_pinned", "is_pinned_in_section",
+            "section_id", "section_slug", "allowed_tiers", "visibility"
+        ]
 
     def filter_is_following(self, queryset, name, value):
         if value:
