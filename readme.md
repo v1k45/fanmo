@@ -90,4 +90,4 @@ yarn dev
 
 ### Credits
 
-@v1k45 and @dumptyd
+[@v1k45](https://github.com/v1k45) and [@dumptyd](https://github.com/dumptyd).
