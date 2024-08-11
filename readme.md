@@ -78,15 +78,16 @@ You can run the backend using the following commands:
 docker-compose -f local.yml up
 ```
 
-You can run the frontend using the following commands:
+Then go to `https://localhost:7777`. If you see an SSL error, type `thisisunsafe` to bypass it.
+
+You can run the frontend separately using the following commands:
 
 ```bash
 cd frontend
 yarn dev
 ```
 
-> [!IMPORTANT]  
-> The project has been renamed from `memberships` to `fanmo`. So, you may need to update the imports and references accordingly.
+You'll need to update the frontend configuration to point to the backend. You can do this by updating the `API_URL` configuration to proxy API requests to the backend.
 
 ### Credits
 
