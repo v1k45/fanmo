@@ -6,4 +6,4 @@ set -o pipefail
 set -o nounset
 
 git pull
-sudo docker stack deploy --compose-file dev.yml memberships --with-registry-auth
+sudo docker stack deploy --compose-file dev.yml fanmo --with-registry-auth

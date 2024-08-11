@@ -10,7 +10,7 @@ set -o nounset
 git pull
 
 # update env settings
-aws ssm get-parameter --name "/django/settings" --output text --query Parameter.Value --region ap-south-1 > /home/ubuntu/memberships/.envs/.prod/.django
+aws ssm get-parameter --name "/django/settings" --output text --query Parameter.Value --region ap-south-1 > /home/ubuntu/fanmo/.envs/.prod/.django
 
 # update and reload caddy
 sudo cp ./deploy/conf/Caddyfile /etc/caddy/Caddyfile

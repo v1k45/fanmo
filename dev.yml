@@ -39,7 +39,7 @@ services:
 
   postgres:
     image: postgres:13.2-alpine
-    container_name: memberships_postgres
+    container_name: fanmo_postgres
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -d $${POSTGRES_DB} -U $${POSTGRES_USER}"]
       interval: 10s
@@ -67,7 +67,7 @@ services:
 
   mailhog:
     image: mailhog/mailhog:v1.0.0
-    container_name: memberships_mailhog
+    container_name: fanmo_mailhog
     ports:
       - "8025:8025"
     networks:
@@ -75,7 +75,7 @@ services:
 
   redis:
     image: redis:6-alpine
-    container_name: memberships_redis
+    container_name: fanmo_redis
     networks:
       - backend
     healthcheck:
@@ -102,7 +102,7 @@ services:
     depends_on:
       - django
     env_file: ./.envs/.dev/.caddy
-    container_name: memberships_caddy
+    container_name: fanmo_caddy
     volumes:
       - ./Caddyfile.local:/etc/caddy/Caddyfile
       - ./caddy/data:/data

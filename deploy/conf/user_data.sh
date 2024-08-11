@@ -33,16 +33,16 @@ echo -e "Host github.com\n\tIdentityFile ~/.ssh/github_rsa\n\tIdentitiesOnly yes
 sudo -u ubuntu bash -c "
   cd /home/ubuntu/;
   mkdir -p logs;
-  git clone git@github.com:v1k45/memberships.git;
-  cd memberships;
+  git clone git@github.com:v1k45/fanmo.git;
+  cd fanmo;
   mkdir -p .envs/.prod/
 "
 
 # copy cronjob
-cp /home/ubuntu/memberships/deploy/conf/fanmo.cron /etc/cron.d/fanmo
+cp /home/ubuntu/fanmo/deploy/conf/fanmo.cron /etc/cron.d/fanmo
 
 # setup redis
-cp /home/ubuntu/memberships/deploy/conf/redis.conf /etc/redis/redis.conf
+cp /home/ubuntu/fanmo/deploy/conf/redis.conf /etc/redis/redis.conf
 chown -R redis:redis /etc/redis/redis.conf
 mkdir -p /etc/systemd/system/redis-server.service.d/
 { echo "[Service]"; echo "Type=notify"; } | tee /etc/systemd/system/redis-server.service.d/override.conf
@@ -51,12 +51,12 @@ systemctl enable redis-server
 systemctl restart redis-server 
 
 # setup caddy
-cp /home/ubuntu/memberships/deploy/conf/Caddyfile /etc/caddy/Caddyfile
+cp /home/ubuntu/fanmo/deploy/conf/Caddyfile /etc/caddy/Caddyfile
 chown -R caddy:caddy /etc/caddy/Caddyfile
 systemctl restart caddy
 
 # setup docker
-cp /home/ubuntu/memberships/deploy/conf/docker.json /etc/docker/daemon.json
+cp /home/ubuntu/fanmo/deploy/conf/docker.json /etc/docker/daemon.json
 systemctl restart docker
 aws ssm get-parameter --name "docker-token" --output text --query Parameter.Value --region ap-south-1 | docker login -u v1k45 --password-stdin
 # use a custom address pool; default pool is 10.20.0.0/16 which clashes with AWS VPC

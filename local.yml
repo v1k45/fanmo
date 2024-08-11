@@ -9,8 +9,8 @@ services:
     build:
       context: .
       dockerfile: ./compose/local/django/Dockerfile
-    image: memberships_local_django
-    container_name: memberships_django
+    image: fanmo_local_django
+    container_name: fanmo_django
     depends_on:
       - postgres
       - mailhog
@@ -28,8 +28,8 @@ services:
 
   qcluster:
     <<: *django
-    image: memberships_local_qcluster
-    container_name: memberships_qcluster
+    image: fanmo_local_qcluster
+    container_name: fanmo_qcluster
     ports: []
     command: /qcluster
 
@@ -37,8 +37,8 @@ services:
     build:
       context: .
       dockerfile: ./compose/production/postgres/Dockerfile
-    image: memberships_production_postgres
-    container_name: memberships_postgres
+    image: fanmo_production_postgres
+    container_name: fanmo_postgres
     volumes:
       - local_postgres_data:/var/lib/postgresql/data:Z
       - local_postgres_data_backups:/backups:z
@@ -49,13 +49,13 @@ services:
 
   mailhog:
     image: mailhog/mailhog:v1.0.0
-    container_name: memberships_mailhog
+    container_name: fanmo_mailhog
     ports:
       - "8025:8025"
 
   redis:
     image: redis:6
-    container_name: memberships_redis
+    container_name: fanmo_redis
 
   caddy:
     image: "caddy:2.1.1"
@@ -63,7 +63,7 @@ services:
     depends_on:
       - django
     env_file: ./.envs/.local/.caddy
-    container_name: memberships_caddy
+    container_name: fanmo_caddy
     volumes:
       - ./Caddyfile.local:/etc/caddy/Caddyfile
       - ./caddy/data:/data
