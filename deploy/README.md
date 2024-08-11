@@ -41,10 +41,10 @@ DJANGO_SECURE_SSL_REDIRECT=no
 
 # Third party
 # ------------------------------------------------------------------------------
-GOOGLE_OAUTH2_CLIENT_ID=FANMO_SECRET_CHANGE_ME
+GOOGLE_OAUTH2_CLIENT_ID=<change-this>
 GOOGLE_OAUTH2_SECRET=<change-this>
 
-FACEBOOK_OAUTH2_CLIENT_ID=FANMO_SECRET_CHANGE_ME
+FACEBOOK_OAUTH2_CLIENT_ID=<change-this>
 FACEBOOK_OAUTH2_SECRET=<change-this>
 
 DISCORD_OAUTH2_CLIENT_ID=change-this
@@ -54,7 +54,7 @@ RAZORPAY_KEY=<change-this>
 RAZORPAY_SECRET=<change-this>
 RAZORPAY_WEBHOOK_SECRET=<change-this>
 
-SENTRY_DSN=FANMO_SECRET_CHANGE_ME
+SENTRY_DSN=<change-this>
 
 # Redis
 # ------------------------------------------------------------------------------
