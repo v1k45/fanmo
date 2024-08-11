@@ -5,7 +5,7 @@ volumes:
   local_postgres_data_backups: {}
 
 services:
-  django: &django
+  django:
     build:
       context: .
       dockerfile: ./compose/local/django/Dockerfile
@@ -25,13 +25,6 @@ services:
       - "8801:8000"
       - "5678:5678"
     command: /start
-
-  qcluster:
-    <<: *django
-    image: fanmo_local_qcluster
-    container_name: fanmo_qcluster
-    ports: []
-    command: /qcluster
 
   postgres:
     build:

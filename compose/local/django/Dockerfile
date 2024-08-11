@@ -26,6 +26,7 @@ RUN pip wheel --wheel-dir /usr/src/app/wheels  \
 FROM node:14-alpine as node-build-stage
 ARG STAGE=dev
 ENV STAGE ${STAGE}
+RUN apk add --update python3 make g++ && rm -rf /var/cache/apk/*
 
 WORKDIR /app
 COPY ./frontend/package.json .
@@ -40,6 +41,7 @@ RUN yarn generate
 FROM node:18-alpine as docs-build-stage
 ARG STAGE=prod
 ENV STAGE ${STAGE}
+RUN apk add --update python3 make g++ && rm -rf /var/cache/apk/*
 
 WORKDIR /app
 COPY ./docs/package.json .
@@ -98,8 +100,10 @@ RUN chmod +x /qcluster
 
 COPY --from=node-build-stage /app/dist /var/www/html/
 COPY --from=docs-build-stage /app/dist /var/www/html/docs/
+COPY --chown=django:django ./supervisord.conf /etc/
 
 # # copy application code to WORKDIR
 # COPY . ${APP_HOME}
 
 ENTRYPOINT ["/entrypoint"]
+CMD ["supervisord"]

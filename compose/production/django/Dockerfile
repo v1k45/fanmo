@@ -27,6 +27,7 @@ RUN pip wheel --wheel-dir /usr/src/app/wheels  \
 FROM node:${NODE_VERSION} as node-build-stage
 ARG STAGE=prod
 ENV STAGE ${STAGE}
+RUN apk add --update python3 make g++ && rm -rf /var/cache/apk/*
 
 WORKDIR /app
 COPY ./frontend/package.json .
@@ -41,6 +42,7 @@ RUN yarn generate
 FROM node:18-alpine as docs-build-stage
 ARG STAGE=prod
 ENV STAGE ${STAGE}
+RUN apk add --update python3 make g++ && rm -rf /var/cache/apk/*
 
 WORKDIR /app
 COPY ./docs/package.json .

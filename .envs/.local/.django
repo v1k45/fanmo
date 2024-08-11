@@ -6,7 +6,7 @@ IPYTHONDIR=/app/.ipython
 DOMAIN_NAME=localhost:7777
 STORAGE_BUCKET_NAME=fanmo
 DJANGO_ADMIN_URL=/admin/
-DATABASE_URL=postgres://debug:debug@postgres:5432/memberships
+DATABASE_URL=postgres://debug:debug@postgres:5432/fanmo
 DJANGO_SETTINGS_MODULE=config.settings.local
 
 # Third party
