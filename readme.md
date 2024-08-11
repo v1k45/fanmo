@@ -4,7 +4,7 @@
 
 The idea is to allow creators to create a page where they can list their membership tiers and accept donations. Fans can then support their favourite creators by becoming members or donating. Creators can offer rewards to their members by creating posts that are visible only to members of a certain tier. They can also offer one-time rewards to donors.
 
-It was made with Indian creators in mind, so it supports Indian payment methods like UPI, netbanking, and wallets.
+It was made with Indian creators in mind, razorpay seemed reliable enoguh, so the payment logic is tightly coupled aroound it.
 
 ## Why Open Source?
 
@@ -31,9 +31,9 @@ For backend code, see the `backend` directory. `backend/fanmo` contains the Djan
 
 ### Frontend
 
-For frontend code, see the `frontend` directory. It is a Vue.js project:
+For frontend code, see the `frontend` directory. It is a Vue.js project which uses Nuxt.js as framework:
 
-- `frontend/components/fm` contains all components made for the custom design system.
+- `frontend/components/fm` contains all low level components made for the custom design system.
 - `frontend/components` for all other components.
 - `frontend/pages` for the routes.
 - `frontend/store` for the Vuex store.
@@ -89,6 +89,6 @@ yarn dev
 
 You'll need to update the frontend configuration to point to the backend. You can do this by updating the `API_URL` configuration to proxy API requests to the backend.
 
-### Credits
+### Who built this?
 
 [@v1k45](https://github.com/v1k45) and [@dumptyd](https://github.com/dumptyd).
