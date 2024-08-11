@@ -1,96 +1,89 @@
 ## Fanmo
 
-[fanmo](https://fanmo.in) is a memberships and donations platform, similar to Patreon, Ko-fi, and Buy Me a Coffee. It is built with Django and Vue.js. It uses Razorpay for payments.
+[Fanmo](https://fanmo.in) is a membership and donations platform designed for creators, similar to Patreon, Ko-fi, and Buy Me a Coffee. Built with Django and Vue.js, Fanmo integrates Razorpay for seamless payment processing.
 
-The idea is to allow creators to create a page where they can list their membership tiers and accept donations. Fans can then support their favourite creators by becoming members or donating. Creators can offer rewards to their members by creating posts that are visible only to members of a certain tier. They can also offer one-time rewards to donors.
+Fanmo allows creators to set up a personalized page to list membership tiers and accept donations. Fans can support their favorite creators by subscribing to memberships or making one-time donations. Creators, in turn, can offer exclusive content to their members based on tier levels and provide special rewards to donors.
 
-It was made with Indian creators in mind, razorpay seemed reliable enoguh, so the payment logic is tightly coupled aroound it.
+Fanmo was developed with Indian creators in mind, leveraging Razorpay for reliable payment handling.
 
-Built by [@v1k45](https://github.com/v1k45) and [@dumptyd](https://github.com/dumptyd).
+Created by [@v1k45](https://github.com/v1k45) and [@dumptyd](https://github.com/dumptyd).
 
 ## Why Open Source?
 
-I am open sourcing this project because I had to shut it down.
+Fanmo is being open-sourced due to the unfortunate need to shut it down.
 
-The primary reason was that Razorpay for some vague reason decided to stop supporting fanmo's payment account. I tried to get in touch with them multiple times, but they never responded. Because of this fanmo couldn't accept payments anymore. I also couldn't find many users because I didn't have the resources or knowledge to market it properly.
+The main issue arose when Razorpay unexpectedly stopped supporting Fanmo’s payment account. Despite multiple attempts to resolve the issue, Razorpay remained unresponsive, rendering Fanmo unable to process payments. Additionally, the platform struggled to gain traction due to limited marketing resources.
 
-I am open sourcing it because I think it is a good project and it can be useful to someone. I also want to show my work to the world. I am proud of what I have built, and I'd rather make it open than let it rot as a private repo.
+By open-sourcing Fanmo, I hope it can benefit others. I'm proud of the work put into this project and would rather share it with the community than let it rot in a private repository.
 
-## How is it built?
+## How It’s Built
 
-The backend is built with Django and Django Rest Framework. The frontend is built with Vue.js. The payments are handled by Razorpay.
+Fanmo’s backend is powered by Django and Django Rest Framework, while the frontend is developed using Vue.js. Payments are managed through Razorpay.
 
 ### Backend
 
-For backend code, see the `backend` directory. `backend/fanmo` contains the Django project:
+The backend code is located in the `backend` directory, with the core Django project in `backend/fanmo`:
 
-- `fanmo/memberships` contains memberships, tiers, and subscriptions.
-- `fanmo/posts` contains posts that creators can create, and comments on those posts.
-- `fanmo/users` contains has all the user-related stuff like authentication, preferences, etc.
-- `fanmo/donations` has the donation model.
-- `fanmo/payments` handles payments and payouts.
-- `fanmo/analytics` for basic analytics around memberships and donations.
+- `fanmo/memberships`: Manages memberships, tiers, and subscriptions.
+- `fanmo/posts`: Handles creator posts and comments.
+- `fanmo/users`: Manages user authentication and preferences.
+- `fanmo/donations`: Contains the donation model.
+- `fanmo/payments`: Manages payment and payout processes.
+- `fanmo/analytics`: Provides basic analytics on memberships and donations.
 
 ### Frontend
 
-For frontend code, see the `frontend` directory. It is a Vue.js project which uses Nuxt.js as framework:
+The frontend code is in the `frontend` directory, built with Vue.js and Nuxt.js:
 
-- `frontend/components/fm` contains all low level components made for the custom design system.
-- `frontend/components` for all other components.
-- `frontend/pages` for the routes.
-- `frontend/store` for the Vuex store.
-- `frontend/utils` for utility functions.
-- `frontend/plugins` and `frontend/middleware` for Nuxt.js plugins and middleware.
+- `frontend/components/fm`: Custom design system components.
+- `frontend/components`: General components.
+- `frontend/pages`: Route definitions.
+- `frontend/store`: Vuex store for state management.
+- `frontend/utils`: Utility functions.
+- `frontend/plugins` and `frontend/middleware`: Nuxt.js plugins and middleware.
 
 ### Documentation
 
-Product documentation is in the `docs` directory. It contains contains overview of the features and how to use them. It is built using Astro.
+Product documentation is available in the `docs` directory, created using Astro. It provides an overview of features and usage instructions.
 
 ### Email Templates
 
-Email templates are in the `maizzle` directory. They are built using Maizzle. The setup is very basic, and requires manually building the templates every time. The build templates are then copied to the Django project.
+Email templates are located in the `maizzle` directory, built using Maizzle. The setup is simple but requires manual building of templates, which are then integrated into the Django project.
 
 ### Deployment
 
-The deployment is done on AWS. CDK is used for infrastructure as code. The infrastructure code is in the `deploy` directory.
+Deployment is managed on AWS using CDK (Cloud Development Kit) for infrastructure as code. The infrastructure setup is in the `deploy` directory.
 
-`deploy/fanmo-stack.js` contains the CDK stack that deploys the backend. It creates an RDS instance, an EC2 instance, S3 buckets, CDN, ElasticIP, and other necessary resources. It also uses SSM to store configuration values.
+- `deploy/fanmo-stack.js`: Contains the CDK stack for backend deployment, including RDS, EC2, S3, CDN, ElasticIP, and SSM for configuration storage.
+- `user_data.sh`: Script for setting up the EC2 instance, installing dependencies, and running the Django server.
 
-The `user_data.sh` script is used to set up the EC2 instance with the necessary dependencies and run the Django server.
+Fanmo runs in a Docker container, deployed using Docker Swarm for scalability and easy updates. The production Docker image is built using `compose/production/django/Dockerfile`, and static files are served using WhiteNoise.
 
-The server is run inside a Docker container deployed using Docker Swarm to make it easier to scale or update.
+Deployment flow:
 
-The production Docker image is built using `compose/production/django/Dockerfile`. The docker image also builds the frontend and docs and the static files are served using WhiteNoise.
+1. Manually build and push the Docker image to DockerHub using the `release.sh` script.
+2. Update the image tag in the `production.yml` docker-compose file and push to GitHub.
+3. The EC2 instance periodically pulls the latest docker-compose file, updates the image, and restarts the service. Alternatively, the `prod.deploy.sh` script can be run for manual updates.
 
-The deployment flow goes like this:
+Caddy Server is used to proxy the Django server, with the configuration in the `deploy/conf/Caddyfile`.
 
-- The docker image is manually built and pushed DockerHub. `release.sh` script is used for this.
-- The docker image tag is updated in the `production.yml` docker-compose file. It is pushed to GitHub.
-- The EC2 instance is configured to pull the latest docker-compose file periodically. It then pulls the latest image and restarts the docker service. Otherwise, `prod.deploy.sh` script can be run to manually update the service.
+## Running Fanmo Locally
 
-The django server is proxied by Caddy Server. The Caddyfile is in the `deploy/conf/Caddyfile`.
+To run Fanmo locally:
 
-## How to run it?
-
-Locally, you can run the backend and frontend separately. The backend runs on `localhost:7777` and the frontend runs on `localhost:3000`.
-
-You can run the backend using the following commands:
+1. Start the backend:
 
 ```bash
 docker-compose -f local.yml up
 ```
 
-Then go to `https://localhost:7777`. If you see an SSL error, type `thisisunsafe` to bypass it.
+Visit `https://localhost:7777`. If you encounter an SSL error, type `thisisunsafe` to bypass it.
 
-You can run the frontend separately using the following commands:
+2. Start the frontend:
 
 ```bash
 cd frontend
 yarn dev
 ```
 
-You'll need to update the frontend configuration to point to the backend. You can do this by updating the `API_URL` configuration to proxy API requests to the backend.
-
-### Who built this?
-
-[@v1k45](https://github.com/v1k45) and [@dumptyd](https://github.com/dumptyd).
+Update the frontend configuration to point to the backend by setting the `API_URL` to proxy API requests.
