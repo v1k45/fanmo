@@ -6,13 +6,15 @@ The idea is to allow creators to create a page where they can list their members
 
 It was made with Indian creators in mind, razorpay seemed reliable enoguh, so the payment logic is tightly coupled aroound it.
 
+Built by [@v1k45](https://github.com/v1k45) and [@dumptyd](https://github.com/dumptyd).
+
 ## Why Open Source?
 
 I am open sourcing this project because I had to shut it down.
 
-The primary reason was that Razorpay for some vague reason decided to stop supporting my account. I tried to get in touch with them multiple times, but they never responded. I had to shut it down because I couldn't accept payments anymore. I also couldn't find many users because I didn't have the resources or knowledge to market it properly.
+The primary reason was that Razorpay for some vague reason decided to stop supporting fanmo's payment account. I tried to get in touch with them multiple times, but they never responded. Because of this fanmo couldn't accept payments anymore. I also couldn't find many users because I didn't have the resources or knowledge to market it properly.
 
-I am open sourcing it because I think it is a good project and it can be useful to someone. I also want to show my work to the world. I am proud of what I have built, and I want to share it with others.
+I am open sourcing it because I think it is a good project and it can be useful to someone. I also want to show my work to the world. I am proud of what I have built, and I'd rather make it open than let it rot as a private repo.
 
 ## How is it built?
 
